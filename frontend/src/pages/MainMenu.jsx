@@ -100,7 +100,7 @@ export default function MainMenu() {
               <div key={d.name} className="flex items-center justify-between border border-slate-800 px-3 py-2">
                 <button className="text-left" data-testid={`load-design-${d.name}`} onClick={() => { g.loadDesign(d); setDlg(null); g.go("hangar"); }}>
                   <div className="text-sm">{d.name}</div>
-                  <div className="font-mono text-[10px] text-slate-500">{d.stack.length} parts · {new Date(d.savedAt).toLocaleString()}</div>
+                  <div className="font-mono text-[10px] text-slate-500">{d.stack.length + (d.radials || []).reduce((a, r) => a + r.symmetry, 0)} parts · {new Date(d.savedAt).toLocaleString()}</div>
                 </button>
                 <button data-testid={`delete-design-${d.name}`} onClick={() => { storage.deleteDesign(d.name); setDesigns(storage.designs()); }} className="p-1 text-slate-500 hover:text-red-400"><Trash2 size={14} /></button>
               </div>

@@ -69,12 +69,12 @@ function upperTwrCheck(stats) {
   const ups = stats.dv.phases.filter((p) => !p.atmospheric);
   if (!ups.length) return null;
   const worst = ups.reduce((a, b) => (b.twrVac < a.twrVac ? b : a));
-  const status = worst.twrVac >= 0.5 ? "pass" : worst.twrVac >= 0.25 ? "warn" : "fail";
+  const status = worst.twrVac >= 0.35 ? "pass" : worst.twrVac >= 0.2 ? "warn" : "fail";
   return {
     id: "upper_twr",
     subsystem: "Upper-stage thrust-to-weight",
     status,
-    summary: `Lowest upper-stage vacuum TWR ${fmt(worst.twrVac, 2)} (${worst.burning}) (≥ 0.5 recommended)`,
+    summary: `Lowest upper-stage vacuum TWR ${fmt(worst.twrVac, 2)} (${worst.burning}) (≥ 0.35 recommended)`,
     values: { twr: worst.twrVac },
     calc: {
       formula: "TWR_vac = F_vac / (m_stage-start · g₀)",

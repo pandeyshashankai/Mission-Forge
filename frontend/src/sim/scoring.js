@@ -18,7 +18,7 @@ export function evaluateFlight(sim, design, mission, difficulty) {
   const objectives = [
     { id: "orbit", label: mission.objectives[0], met: inOrbit && stats.hasControl, detail: inOrbit ? `Periapsis ${km(el.periapsis)}` : `Periapsis ${el.periapsis > -EARTH.radius ? km(el.periapsis) : "below surface"}` },
     { id: "band", label: mission.objectives[1], met: inOrbit && Math.abs(el.apoapsis - tgt.altitude) <= tgt.tolerance && Math.abs(el.periapsis - tgt.altitude) <= tgt.tolerance, detail: inOrbit ? `${km(el.apoapsis)} × ${km(el.periapsis)}` : "No orbit" },
-    { id: "inc", label: mission.objectives[2], met: inOrbit && Math.abs(incDeg - tgt.inclination) <= tgt.incTolerance, detail: `i = ${fmt(incDeg, 2)}°` },
+    { id: "inc", label: mission.objectives[2], met: inOrbit && Math.abs(incDeg - tgt.inclination) <= tgt.incTolerance, detail: inOrbit ? `i = ${fmt(incDeg, 2)}°` : "No orbit" },
     { id: "budget", label: mission.objectives[3], met: stats.cost <= budget, detail: `$${fmt(stats.cost, 1)}M of $${fmt(budget, 1)}M` },
   ];
   const metCount = objectives.filter((o) => o.met).length;
@@ -80,6 +80,11 @@ function buildRecommendations(sim, inOrbit, remDv, req, el, tgt, incDeg) {
     if (pct < 3) recs.push(`Fuel margin at orbit insertion was ${fmt(pct, 1)}% (${fmt(remDv)} m/s); add ~${fmt(0.05 * req - remDv)} m/s of Δv or move to a hydrogen upper stage.`);
     else if (pct > 20) recs.push(`${fmt(remDv)} m/s (${fmt(pct)}%) was left over — a smaller upper-stage tank would cut cost and mass.`);
     else recs.push(`Fuel margin ${fmt(pct, 1)}% (${fmt(remDv)} m/s) is healthy.`);
+  } else if (sim.prematureStaging.length) {
+    const p = sim.prematureStaging[0];
+    recs.push(`A stage was separated at T+${fmt(p.t)} s while it still had propellant (${fmt(p.fuel / 1000, 1)} t). Stage only after flameout, or enable automatic staging.`);
+  } else if (remDv > 200) {
+    recs.push(`The vehicle still had ${fmt(remDv)} m/s of Δv when the flight ended — the design could have continued. Let the guidance computer finish the ascent or keep burning prograde.`);
   } else if (!(sim.clamped && sim.status !== "prelaunch")) {
     const r = EARTH.radius + tgt.altitude;
     const eTarget = -EARTH.mu / (2 * r);

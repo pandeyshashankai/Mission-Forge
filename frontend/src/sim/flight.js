@@ -38,6 +38,7 @@ export class FlightSim {
     this.log = [];
     this.telemetry = [];
     this.flameouts = [];
+    this.prematureStaging = [];
     this.stagedAt = [];
     this.maxQ = { q: 0, t: 0, alt: 0 };
     this.maxApo = -Infinity;
@@ -137,6 +138,12 @@ export class FlightSim {
   fireNextEvent() {
     const id = this.rt.events[this.rt.eventIndex];
     if (!id) return false;
+    const dropped = dropsOf(this.rt, id);
+    if (dropped.length) {
+      const fuel = dropped.reduce((a, s) => a + (s.kind === "section" ? this.rt.sections[s.s].tanks[s.prop] : this.rt.radials.find((r) => r.uid === s.uid).fuel), 0);
+      this.prematureStaging.push({ t: this.t, id, fuel });
+      this.addLog("warn", `Staged with ${(fuel / 1000).toFixed(1)} t of propellant still in the dropped stage`);
+    }
     applyEvent(this.rt, id);
     this.rt.eventIndex++;
     if (id !== "ignite-0") {

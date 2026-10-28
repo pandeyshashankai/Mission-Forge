@@ -35,7 +35,8 @@ export function adviseDesign(design, review) {
     const topEngines = stats.sections[stats.sections.length - 1]?.engines.map((e) => PARTS[e.partId]) || [];
     const bestIsp = PART_LIST.filter((p) => p.engine && !p.engine.solid).sort((a, b) => b.engine.ispVac - a.engine.ispVac)[0];
     const fixes = [];
-    if (remove != null) fixes.push(`Reduce mass carried by the top stage by about ${fmt(remove / 1000, 2)} t (payload or unneeded parts) — recalculated with the phase model.`);
+    if (v.available <= 0) fixes.push("There is no usable engine + propellant combination: add tanks and a matching engine below them.");
+    else if (remove != null) fixes.push(`Reduce mass carried by the top stage by about ${fmt(remove / 1000, 2)} t (payload or unneeded parts) — recalculated with the phase model.`);
     else fixes.push("Mass reduction on the top stage alone cannot close the gap; add propellant or stages.");
     if (topEngines.length && bestIsp && topEngines.every((e) => e.engine.ispVac < bestIsp.engine.ispVac))
       fixes.push(`Use a more efficient upper-stage engine: ${bestIsp.name} (${bestIsp.engine.ispVac} s vacuum) vs your ${topEngines[0].name} (${topEngines[0].engine.ispVac} s); it needs hydrolox tanks.`);
@@ -50,7 +51,9 @@ export function adviseDesign(design, review) {
     });
   }
   const twr = byId.twr;
-  if (twr && twr.status !== "pass") {
+  if (twr && twr.values.thrust <= 0) {
+    items.push({ id: "adv-twr", severity: "fail", ref: "twr", title: "No engine can produce thrust at liftoff.", problems: ["Liftoff thrust is 0 kN — Stage 1 has no working engine."], fixes: ["Add fuel tanks and an engine at the bottom of the stack (e.g. Kerolox Tank Long + K-9 Cluster), or radial solid boosters."] });
+  } else if (twr && twr.status !== "pass") {
     const need = 1.2 * twr.values.weight - twr.values.thrust;
     const srb = PARTS.srb_63;
     const srbPair = 2 * engineSL(srb.engine);

@@ -88,7 +88,7 @@ export default function Flight() {
     if (endedRef.current) return;
     endedRef.current = true;
     const sim = simRef.current;
-    if (!sim.isEnded()) sim.end("ended", "Flight ended by the flight director");
+    if (!sim.isEnded()) sim.end("ended", sim.orbitAt ? "Mission completed — flight director closed the flight" : "Flight ended by the flight director");
     const res = evaluateFlight(sim, g.design, mission, g.difficulty);
     storage.addAttempt(res);
     g.setResult(res);

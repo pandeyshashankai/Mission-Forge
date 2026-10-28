@@ -17,7 +17,7 @@ export const MISSIONS = [
     milestone: 1,
     site: "cape",
     target: { altitude: 200000, tolerance: 25000, inclination: 28.6, incTolerance: 2 },
-    baseBudget: 60,
+    baseBudget: 70,
     massLimit: 600000,
     reserve: 0.05,
     duration: "≈ 10 minutes to orbit",
