@@ -1,0 +1,60 @@
+const read = (k, d) => {
+  try {
+    const v = localStorage.getItem(k);
+    return v ? JSON.parse(v) : d;
+  } catch {
+    return d;
+  }
+};
+const write = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+
+export const storage = {
+  settings: () => read("mf.settings", { graphics: "medium", camera: "chase" }),
+  saveSettings: (s) => write("mf.settings", s),
+  autosave: () => read("mf.autosave", null),
+  saveAutosave: (s) => write("mf.autosave", s),
+  designs: () => read("mf.designs", []),
+  saveDesign(design) {
+    const list = read("mf.designs", []).filter((d) => d.name !== design.name);
+    list.unshift({ ...design, savedAt: new Date().toISOString() });
+    write("mf.designs", list.slice(0, 30));
+  },
+  deleteDesign(name) {
+    write("mf.designs", read("mf.designs", []).filter((d) => d.name !== name));
+  },
+  attempts: (missionId, difficulty) => read(`mf.attempts.${missionId}.${difficulty}`, []),
+  addAttempt(result) {
+    const k = `mf.attempts.${result.missionId}.${result.difficulty}`;
+    const list = read(k, []);
+    list.unshift({ at: result.at, designName: result.designName, outcome: result.outcome, total: result.total, ...result.summary });
+    write(k, list.slice(0, 20));
+  },
+};
+
+export function downloadJSON(filename, data) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+export function readJSONFile(file) {
+  return new Promise((res, rej) => {
+    const fr = new FileReader();
+    fr.onload = () => {
+      try {
+        res(JSON.parse(fr.result));
+      } catch (e) {
+        rej(e);
+      }
+    };
+    fr.onerror = rej;
+    fr.readAsText(file);
+  });
+}
+
+export function isValidDesign(d) {
+  return d && typeof d.name === "string" && Array.isArray(d.stack) && d.stack.every((n) => n.uid && n.partId);
+}
