@@ -19,7 +19,16 @@ Build MissionForge 2026 from the uploaded "MissionForge_2026_Complete_Developmen
 - Results: objectives, score breakdown, cause chain, recommendations, charts, event log, previous attempts, export.
 - Physics checks passing: atmosphere densities, rocket equation, circular speed/period, orbit shape, energy conservation, required Δv band, both presets reach 200 km orbit (±25 km, i ±2°), determinism, underpowered vehicle stays on pad.
 
+## Implemented (2026-06, Milestone 2 — Orbital operations)
+- Attitude dynamics (sim/attitude.js): cylinder inertia, engine gimbal, reaction wheels with momentum saturation, RCS (hydrazine, Isp 220 s) with wheel unloading, gravity-gradient + aero disturbance torques. Hold modes: auto/hold/prograde/retrograde/normal/anti-normal/radial±/Sun/free. New parts RW-4, RCS ring, monoprop tank; presets carry RCS.
+- Readiness: Attitude control check (torque & momentum for 90°/60 s slew) + advisor rule.
+- Orbital Map camera: stepped-RK4 predicted path, Ap/Pe/Node markers, dashed post-node path. Maneuver planner (node at Ap/Pe/now, raise-Ap & circularize suggestions, prograde/normal/radial Δv) and guidance execution (burn split around node, cut-off on delivered Δv, warp auto-capped).
+- Checkpoints: auto (orbit, before burn, 24 h coast) + manual; resume from main menu; exact continuation (tested).
+- Earth Observer mission (Vandenberg, 700 km SSO 98.2°, parking orbit + Hohmann), in-plane ascent steering.
+- Cinematic camera: cuts at liftoff (pad cam), stage separation & fairing jettison (inertial drift cams), burns (orbiting cam).
+- Jest: 16 checks pass (adds torque-free rotation, wheel saturation/unloading, prediction closure, checkpoint determinism, Hohmann 200→700 km, EO ascent).
+
 ## Backlog
-- P0 M2: Orbital map, maneuver nodes + guided burns, attitude hold modes, attitude dynamics (wheels/RCS), checkpoints, Earth Observer.
+- P0 M3 Moon next. M2 leftover: target-pointing mode (needs comms, M4).
 - P1 M3 Moon; M4 power/comms/thermal/events/full catalog; M5 Mars.
 - P2 M6 game layer (custom difficulty, custom missions, tutorials, comparison, best scores, cinematic/cockpit cameras, dynamic quality). Phase 2/3 per plan.

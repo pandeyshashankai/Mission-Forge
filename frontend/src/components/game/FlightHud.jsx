@@ -29,7 +29,7 @@ export const TelemetryPanel = ({ s }) => (
     <Row label="Dyn. pressure" value={fmt(s.q / 1000, 1)} unit="kPa" testId="telemetry-q-value" />
     <Row label="Mach" value={fmt(s.mach, 2)} testId="telemetry-mach-value" />
     <Row label="Mass" value={fmt(s.mass / 1000, 1)} unit="t" testId="telemetry-mass-value" />
-    <Row label="Pitch / heading" value={`${fmt(s.pitch, 1)}° / ${fmt(s.heading, 1)}°`} testId="telemetry-attitude-value" />
+    <Row label="Pitch/Hdg" value={`${fmt(s.pitch, 1)}° / ${fmt(s.heading, 1)}°`} testId="telemetry-attitude-value" />
   </div>
 );
 

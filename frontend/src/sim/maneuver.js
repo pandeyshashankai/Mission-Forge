@@ -126,6 +126,7 @@ export class ManeuverExec {
       sim.throttle = 0;
       this.phase = "done";
       this.done = true;
+      sim.node = null;
       sim.addLog("success", `Maneuver complete — residual ${remM.toFixed(2)} m/s`);
       return;
     }

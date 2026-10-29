@@ -35,9 +35,9 @@ export const AttitudePanel = ({ s, sim }) => {
 const Adj = ({ label, value, onChange, testId }) => (
   <div className="flex items-center gap-1">
     <span className="w-16 font-mono text-[10px] text-slate-400">{label}</span>
-    {[-10, -1, -0.1].map((d) => <button key={d} onClick={() => onChange(value + d)} className="bg-slate-900 px-1 font-mono text-[10px] text-slate-400 hover:text-white">{d}</button>)}
+    {[-10, -1, -0.1].map((d) => <button key={d} data-testid={`${testId}-${d}`} onClick={() => onChange(value + d)} className="bg-slate-900 px-1 font-mono text-[10px] text-slate-400 hover:text-white">{d}</button>)}
     <input data-testid={testId} type="number" step="0.1" value={Number(value.toFixed(2))} onChange={(e) => onChange(parseFloat(e.target.value) || 0)} className="w-16 border border-slate-800 bg-slate-950 px-1 text-right font-mono text-[11px] text-sky-300" />
-    {[0.1, 1, 10].map((d) => <button key={d} onClick={() => onChange(value + d)} className="bg-slate-900 px-1 font-mono text-[10px] text-slate-400 hover:text-white">+{d}</button>)}
+    {[0.1, 1, 10].map((d) => <button key={d} data-testid={`${testId}-plus-${d}`} onClick={() => onChange(value + d)} className="bg-slate-900 px-1 font-mono text-[10px] text-slate-400 hover:text-white">+{d}</button>)}
   </div>
 );
 
@@ -83,7 +83,7 @@ export const ManeuverPanel = ({ s, sim, targetAlt, onWarpTo }) => {
           <div className="flex items-center justify-between font-mono text-[11px]">
             <span className="text-slate-400">Node in <span className="text-sky-300" data-testid="node-time-to">{mmss(node.t - sim.t)}</span></span>
             <span className="flex gap-1">
-              {[-60, -10, 10, 60].map((d) => <button key={d} onClick={() => set({ ...node, t: Math.max(sim.t + 5, node.t + d) })} className="bg-slate-900 px-1 text-[10px] text-slate-400 hover:text-white">{d > 0 ? "+" : ""}{d}s</button>)}
+              {[-60, -10, 10, 60].map((d) => <button key={d} data-testid={`node-time-${d}`} onClick={() => set({ ...node, t: Math.max(sim.t + 5, node.t + d) })} className="bg-slate-900 px-1 text-[10px] text-slate-400 hover:text-white">{d > 0 ? "+" : ""}{d}s</button>)}
             </span>
           </div>
           <Adj label="Prograde" value={node.dv[0]} onChange={(v) => set({ ...node, dv: [v, node.dv[1], node.dv[2]] })} testId="node-dv-prograde" />

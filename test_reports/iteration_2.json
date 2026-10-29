@@ -1,0 +1,35 @@
+{
+  "summary": "Milestone 2 frontend testing (MissionForge 2026). Jest physics suite 16/16 pass. UI (Playwright, 1920x1080, graphics low): Earth Observer planner card + Orbiter-9 EO preset, Hangar attitude parts, Readiness 'Attitude control' row + calc + adv-att advisor, Resume Flight from /ck_test.json, attitude panel (all 10 modes, RCS toggle, retrograde slew), Map camera with orbit line + Ap/Pe markers, maneuver planner (apo/peri/now/raise/circ buttons, +/-10, normal/radial inputs, delete), Execute with guidance (align -> burn -> done, warp auto-capped ×10 -> ×1 at ~45 s, Ap 699.7 km), auto 'Before burn' checkpoint + toast, manual checkpoint save/restore/delete, restore of 'Before burn' re-flies the burn to 699.6 km, cinematic camera at liftoff/through staging and fairing jettison, chase/free/map/cinematic switching + C/M keys. No page errors or console errors in any run. All requested features work; only minor UX issues and one spec mismatch found.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "ManeuverPanel after a completed burn", "issue": "The executed node is not cleared. The panel keeps showing 'Node in -00:07', 'GUIDANCE: DONE · STARTS IN -00:08', and 'After: Ap × Pe 1,250 × 200 km' (it predicts applying the same 141.7 m/s again from the new orbit). The map also keeps drawing a 'Node' marker. Clear sim.node (or mark it executed and hide the prediction) when maneuver.done, and don't show 'starts in' when the phase is done.", "selector": "[data-testid='maneuver-status'], [data-testid='node-after-orbit']", "priority": "MEDIUM"},
+      {"component": "Flight launch checklist", "issue": "The heading is hardcoded to 'Pad 39A — <design>' even for Earth Observer (Vandenberg SLC-4E). The line 'weather GO (not simulated in Milestone 1)' is also out of date.", "selector": "[data-testid='launch-checklist']", "priority": "LOW"},
+      {"component": "Map view labels", "issue": "After the raise burn, the 'Node' and 'Pe' labels are drawn on top of each other and are unreadable ('Nqde').", "selector": "map canvas", "priority": "LOW"}
+    ],
+    "integration_issues": [
+      {"flow": "Readiness: Empty preset attitude check", "issue": "The review request expects Empty (probe core only) to FAIL attitude and show adv-att. It actually PASSES ('30 N·m vs 0 N·m needed, best 90° turn ≈ 3 s'), which is physically correct for a 120 kg probe core. adv-att does work: I confirmed it with a saved design that has no RCS ring or monoprop tank (Orbiter-9 stack minus rcs_ring/tank_mono), which gives FAIL, the adv-att item, and a working 'Show calculation' link. Update the expectation or the spec.", "affected_selectors": ["check-row-attitude", "advisor-item-adv-att"]}
+    ],
+    "design_issues": [
+      {"screen": "Flight HUD", "issues": ["The Adj -10/-1/-0.1/+0.1/+1/+10 buttons and the node time -60/-10/+10/+60 buttons have no data-testid", "After a camera is chosen with the C key, the previously clicked camera button keeps its white focus ring, so two buttons look active", "The 'PITCH / HEADING' label wraps onto 2 lines when the values are long"]}
+    ]
+  },
+  "test_report_links": ["/app/frontend/src/sim/__tests__/physics.test.js"],
+  "action_items": [
+    "Clear or hide the maneuver node after maneuver.done: stale 'Node in -00:07', 'STARTS IN -00:08' and an 'After' prediction of 1,250 km; also remove the map Node marker",
+    "Use the mission launch site in the launch checklist heading instead of the hardcoded 'Pad 39A'; update the 'Milestone 1' wording",
+    "Optional: add data-testids to the maneuver +/- and time-shift buttons",
+    "Optional: allow some physics warp (×2–×10) during long guided burns. The cap is ×1 for the whole burn, which will be slow for low-TWR stages"
+  ],
+  "critical_code_review_comments": [
+    "Flight.jsx restoreCheckpoint builds the sim from ck.design/ck.profile but never updates g.design or g.profile. The list is filtered only by missionId, so restoring a checkpoint made with another design of the same mission makes finish() -> evaluateFlight(sim, g.design, ...) score with the wrong design (cost/payload), and the HUD shows the wrong design name. Either call g.loadDesign(ck.design) or filter by design.",
+    "Auto checkpoints are queued inside sim.advance and saved after the frame finishes, so the state can include up to one frame of burn. It is fine at the ×1 cap (I confirmed delivered = 0 on 'Before burn'), but it is fragile if the cap ever changes.",
+    "FlightPanels ManeuverPanel useMemo depends on s.t, so nodePrediction runs RK4 propagation every 0.1 s snapshot. That is acceptable now, but propagating to far-future nodes (e.g. apoapsis 45 min ahead with 5 s steps) runs on every snapshot."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend-only app)", "frontend": "~95% (all 10 requested feature groups work; 3 minor UI issues, 1 spec mismatch)"},
+  "seed_data_creation": "localStorage only: mf.checkpoints from /ck_test.json; a TEST_noRCS design in mf.designs for the adv-att check (each browser session starts fresh)",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Fastest path to orbit: fetch('/ck_test.json') -> localStorage mf.checkpoints, mf.settings={graphics:low}, reload, then menu-resume-flight-btn -> checkpoint-restore-test1 (T+07:17, 200.6×198.6 km, i 98.20). Hohmann: camera-map-btn -> node-suggest-raise-btn (141.7 m/s, 700.0×200.1) -> node-execute-btn -> time-warp-10. Warp caps to ×1 about 45 s sim before the burn, so the full flow takes ~80 s real time. Burn is ~2.5 s and ends at Ap ≈ 699.6–699.7 km. The maneuver +/- buttons have no testid; use xpath //input[@data-testid='node-dv-prograde']/following-sibling::button[normalize-space(.)='+10']. The body text always contains 'Separate Stage 1' (next-stage panel), so don't use it to detect staging. Jest: cd /app/frontend && CI=true yarn test --watchAll=false src/sim (16 pass, ~16 s)."
+}

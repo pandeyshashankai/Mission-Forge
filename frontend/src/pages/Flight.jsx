@@ -10,7 +10,7 @@ import { describeEvent } from "../sim/design";
 import { evaluateFlight } from "../sim/scoring";
 import { storage } from "../sim/storage";
 import { ATMOS_TOP } from "../sim/atmosphere";
-import { DEG } from "../sim/constants";
+import { DEG, LAUNCH_SITES } from "../sim/constants";
 import { GuidancePanel } from "../components/game/GuidancePanel";
 import { TelemetryPanel, OrbitPanel, PropulsionPanel, EventLog } from "../components/game/FlightHud";
 import { GoNoGo } from "../components/game/Status";
@@ -220,7 +220,7 @@ export default function Flight() {
             ))}
             <span className="mx-1 h-4 w-px bg-slate-700" />
             {CAMS.map((c) => (
-              <button key={c} data-testid={`camera-${c}-btn`} onClick={() => setCam(c)} className={`flex items-center gap-1 px-2 py-0.5 font-mono text-[11px] uppercase ${cam === c ? "bg-cyan-500/20 text-cyan-200" : "text-slate-400 hover:text-white"}`}><Camera size={11} />{c}</button>
+              <button key={c} data-testid={`camera-${c}-btn`} onClick={() => setCam(c)} className={`flex items-center gap-1 px-2 py-0.5 font-mono text-[11px] uppercase focus:outline-none ${cam === c ? "bg-cyan-500/20 text-cyan-200" : "text-slate-400 hover:text-white"}`}><Camera size={11} />{c}</button>
             ))}
             <span className="mx-1 h-4 w-px bg-slate-700" />
             {s.guidance !== undefined && simRef.current.guidance && (
@@ -275,12 +275,12 @@ export default function Flight() {
           <div className="panel grid w-full max-w-4xl grid-cols-2 gap-8 rounded-sm p-6 rise" data-testid="launch-checklist">
             <div>
               <div className="eyebrow text-cyan-400">Launch checklist</div>
-              <div className="mt-2 font-display text-3xl font-bold uppercase tracking-tight">Pad 39A — {g.design.name}</div>
+              <div className="mt-2 font-display text-3xl font-bold uppercase tracking-tight">{LAUNCH_SITES[mission.site].name.replace(" (approx.)", "")} — {g.design.name}</div>
               <ul className="mt-4 space-y-2 text-sm">
                 <li className="flex items-center gap-2" data-testid="checklist-readiness">{review.overall === "NO-GO" ? <AlertTriangle size={15} className="text-red-400" /> : <CheckCircle2 size={15} className="text-emerald-400" />} Readiness review <span className="ml-auto"><GoNoGo overall={review.overall} testId="checklist-go-nogo" /></span></li>
                 <li className="flex items-center gap-2"><CheckCircle2 size={15} className="text-emerald-400" /> Propellant loaded — {(review.stats.mass / 1000).toFixed(1)} t on the pad</li>
                 <li className="flex items-center gap-2"><CheckCircle2 size={15} className="text-emerald-400" /> Flight mode — {guidanceOn ? "Guidance computer" : "Manual"}</li>
-                <li className="flex items-center gap-2"><CheckCircle2 size={15} className="text-emerald-400" /> Range clear · weather GO (not simulated in Milestone 1)</li>
+                <li className="flex items-center gap-2"><CheckCircle2 size={15} className="text-emerald-400" /> Range clear · weather GO (weather not simulated)</li>
               </ul>
               <div className="mt-6 flex gap-2">
                 <button data-testid="start-countdown-btn" onClick={() => { setCount(10); setHold(false); setPhase("countdown"); }} className="hazard border border-emerald-500/60 bg-emerald-500/10 px-5 py-2.5 font-display text-lg font-semibold uppercase tracking-widest text-emerald-300">Start countdown</button>

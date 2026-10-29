@@ -83,7 +83,7 @@ function setLine(line, pts) {
   if (line.material.isLineDashedMaterial) line.computeLineDistances();
 }
 
-function marker(text, color) {
+function marker(text, color, cy = 0.25) {
   const c = document.createElement("canvas");
   c.width = 128;
   c.height = 64;
@@ -98,7 +98,7 @@ function marker(text, color) {
   const tex = new THREE.CanvasTexture(c);
   const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, depthTest: false, sizeAttenuation: false, transparent: true }));
   sp.scale.set(0.07, 0.035, 1);
-  sp.center.set(0.5, 0.25);
+  sp.center.set(0.5, cy);
   sp.renderOrder = 10;
   return sp;
 }
@@ -194,7 +194,7 @@ export const FlightView = ({ simRef, cameraMode, quality = "medium", onFrame }) 
     const nodeLine = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineDashedMaterial({ color: "#f59e0b", dashSize: 2e5, gapSize: 1.2e5 }));
     nodeLine.frustumCulled = false;
     earthCenter.add(nodeLine);
-    const apoM = marker("Ap", "#38bdf8"), periM = marker("Pe", "#10b981"), nodeM = marker("Node", "#f59e0b"), vesselM = marker("◆", "#e2e8f0");
+    const apoM = marker("Ap", "#38bdf8"), periM = marker("Pe", "#10b981"), nodeM = marker("Node", "#f59e0b", 0.95), vesselM = marker("◆", "#e2e8f0");
     earthCenter.add(apoM, periM, nodeM);
     scene.add(vesselM);
     const mapPrev = new THREE.Vector3();
