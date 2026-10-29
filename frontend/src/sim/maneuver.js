@@ -1,54 +1,66 @@
 import { EARTH, G0 } from "./constants";
 import { add, cross, dot, len, norm, scale, sub, clamp } from "./vec";
 import { thrustState, runtimeMass } from "./design";
-import { orbitalElements } from "./orbit";
+import { rk4, propagate, primaryOf, elementsOf, moonState } from "./bodies";
 
-const grav = (r) => {
-  const rm = len(r);
-  return scale(r, -EARTH.mu / (rm * rm * rm));
-};
-
-function rk4(r, v, dt) {
-  const k1v = grav(r);
-  const v2 = add(v, scale(k1v, dt / 2));
-  const k2v = grav(add(r, scale(v, dt / 2)));
-  const v3 = add(v, scale(k2v, dt / 2));
-  const k3v = grav(add(r, scale(v2, dt / 2)));
-  const v4 = add(v, scale(k3v, dt));
-  const k4v = grav(add(r, scale(v3, dt)));
-  return {
-    r: add(r, scale(add(add(v, scale(v2, 2)), add(scale(v3, 2), v4)), dt / 6)),
-    v: add(v, scale(add(add(k1v, scale(k2v, 2)), add(scale(k3v, 2), k4v)), dt / 6)),
-  };
-}
-
-// Step the two-body motion forward (vacuum, Earth only).
-export function stateAt(r, v, dt, maxStep = 5) {
+// Step the motion forward (vacuum). Without ctx: Earth with J2, fixed steps. With ctx {t0, eph}: patched-conic Earth/Moon, adaptive steps.
+export function stateAt(r, v, dt, maxStep = 5, ctx = null) {
   if (dt <= 0) return { r, v };
+  if (ctx && ctx.eph) return propagate(r, v, ctx.t0 || 0, dt, { eph: ctx.eph, j2: ctx.j2 ?? true, k: 2e-3, lo: 0.5, hi: maxStep * 60 });
   const n = Math.ceil(dt / maxStep);
   const h = dt / n;
+  const t0 = ctx?.t0 || 0;
   let s = { r, v };
-  for (let i = 0; i < n; i++) s = rk4(s.r, s.v, h);
+  for (let i = 0; i < n; i++) s = rk4(s.r, s.v, t0 + i * h, h, null, ctx?.j2 ?? true);
   return s;
 }
 
-// Predicted path by numerical propagation; stops at the surface.
-export function predictPath(r, v, { points = 240 } = {}) {
-  const el = orbitalElements(r, v, EARTH.mu, EARTH.radius);
-  const span = el.period && el.period < 2e5 ? el.period : 6 * 3600;
-  const h = span / points;
-  const pts = [r];
-  let s = { r, v };
-  let impact = false;
-  for (let i = 0; i < points; i++) {
-    s = stateAt(s.r, s.v, h, 10);
-    pts.push(s.r);
-    if (len(s.r) < EARTH.radius) {
-      impact = true;
-      break;
+// Predicted path by numerical propagation, expressed in the frame of the body that governs the start point.
+export function predictPath(r, v, { points = 240, ctx = null } = {}) {
+  const t0 = ctx?.t0 || 0;
+  const eph = ctx?.eph || null;
+  const p0 = primaryOf(r, v, t0, eph);
+  const el = elementsOf(p0);
+  const toFrame = (x, t) => (p0.body === "moon" ? sub(x, moonState(t, eph).r) : x);
+  if (!eph) {
+    const span = el.period && el.period < 2e5 ? el.period : 6 * 3600;
+    const h = span / points;
+    const pts = [r];
+    let s = { r, v };
+    let impact = false;
+    for (let i = 0; i < points; i++) {
+      s = stateAt(s.r, s.v, h, 10, { t0: t0 + i * h, j2: ctx?.j2 });
+      pts.push(s.r);
+      if (len(s.r) < EARTH.radius) {
+        impact = true;
+        break;
+      }
     }
+    return { pts, impact, el, body: "earth" };
   }
-  return { pts, impact, el };
+  const span = el.period && el.period < 12 * 86400 ? el.period : 12 * 86400;
+  const pts = [toFrame(r, t0)];
+  let impact = false;
+  let n = 0;
+  const soi = [];
+  let reg = p0.body;
+  propagate(r, v, t0, span, {
+    eph, k: 0.02, lo: 2, hi: 1800,
+    onStep: (s, t) => {
+      const q = primaryOf(s.r, s.v, t, eph);
+      if (q.body !== reg) {
+        soi.push({ t, body: q.body, r: toFrame(s.r, t) });
+        reg = q.body;
+      }
+      if (++n % 2 === 0 || q.body === "moon") pts.push(toFrame(s.r, t));
+      if (len(q.r) < q.R) {
+        impact = q.body;
+        return false;
+      }
+      return pts.length < 3000;
+    },
+  });
+  return { pts, impact, el, body: p0.body, soi };
 }
 
 export function nodeFrame(r, v) {
@@ -61,12 +73,12 @@ export function nodeFrame(r, v) {
 export const nodeDvEci = (dv, f) => add(add(scale(f.pro, dv[0]), scale(f.nrm, dv[1])), scale(f.rad, dv[2]));
 
 export function nodePrediction(sim, node) {
-  const at = stateAt(sim.r, sim.v, node.t - sim.t);
-  const f = nodeFrame(at.r, at.v);
-  const dvVec = nodeDvEci(node.dv, f);
+  const at = stateAt(sim.r, sim.v, node.t - sim.t, 5, sim.ctx());
+  const p = primaryOf(at.r, at.v, node.t, sim.eph);
+  const dvVec = nodeDvEci(node.dv, nodeFrame(p.r, p.v));
   const v2 = add(at.v, dvVec);
-  const after = orbitalElements(at.r, v2, EARTH.mu, EARTH.radius);
-  return { at, dvVec, v2, after, dv: len(dvVec) };
+  const after = elementsOf({ ...p, v: add(p.v, dvVec) });
+  return { at, dvVec, v2, after, dv: len(dvVec), body: p.body };
 }
 
 // Burn time from the rocket equation using the currently active (or next) engines.
@@ -99,6 +111,7 @@ export class ManeuverExec {
     this.delivered = [0, 0, 0];
     this.phase = "align";
     this.done = false;
+    this.pulse = 1;
   }
 
   remaining() {
@@ -110,7 +123,7 @@ export class ManeuverExec {
     return len(rem) > 1e-6 ? norm(rem) : norm(this.dvVec);
   }
 
-  update(sim, nav) {
+  update(sim, nav, dt = 0.02) {
     const rem = this.remaining();
     const remM = len(rem);
     if (this.phase !== "burn") {
@@ -132,7 +145,11 @@ export class ManeuverExec {
     }
     const a = nav.Fmax > 0 ? nav.Fmax / nav.mass : 0;
     const align = Math.max(0, dot(sim.dir, norm(rem)));
-    sim.throttle = a > 0 ? clamp(remM / (a * 1.5), 0.01, 1) * align ** 6 : 0;
+    sim.throttle = a > 0 && align > 0.996 ? clamp(remM / (a * 1.5), 0.01, 1) * align ** 6 : 0;
+    if (sim.aero && sim.aero.crew && a > 0) sim.throttle = Math.min(sim.throttle, (4 * G0) / a);
+    // Engines with a minimum throttle fire a partial-step pulse for the last fraction of a m/s.
+    const aThr = sim.throttle > 0 ? thrustState(sim.rt, sim.throttle, nav.pRatio).F / nav.mass : 0;
+    this.pulse = aThr > 0 ? Math.min(1, remM / (aThr * dt)) : 1;
   }
 
   record(dir, F, m, dt) {

@@ -51,11 +51,12 @@ function anyPerp(d) {
 
 // Gravity-gradient and aerodynamic (weathervane) disturbance torques.
 export function disturbance(sim, m, c, vRel, q, area) {
-  const rm = len(sim.r);
-  const rh = scale(sim.r, 1 / rm);
+  const pr = sim.prim || { r: sim.r, mu: EARTH.mu };
+  const rm = len(pr.r);
+  const rh = scale(pr.r, 1 / rm);
   const It = inertiaT(m, c);
   const Ia = (m * c.R * c.R) / 2;
-  let tau = scale(cross(sim.dir, rh), ((3 * EARTH.mu) / (rm * rm * rm)) * (It - Ia) * dot(sim.dir, rh));
+  let tau = scale(cross(sim.dir, rh), ((3 * pr.mu) / (rm * rm * rm)) * (It - Ia) * dot(sim.dir, rh));
   if (q > 0) {
     const vh = norm(vRel);
     tau = add(tau, scale(cross(sim.dir, vh), q * area * 0.5 * 0.1 * c.L));
@@ -134,6 +135,40 @@ export function attitudeStep(sim, dt, { F, m, target, rateCmd, vRel = [0, 0, 0],
     sim.dir = norm(add(scale(sim.dir, Math.cos(a)), scale(cross(k, sim.dir), Math.sin(a))));
   }
   sim.attStatus = { torqueAvail: tAvail, gimbal: tg, wheels: tw, rcs: tr, required: wDes ? I * MAX_RATE / 10 : 0, wheelPct: c.wheelMomentum ? (100 * len(sim.wheelH)) / c.wheelMomentum : 0, rcsFuel: rcsFuel(sim.rt), rate: (wm * 180) / Math.PI, inertia: I };
+}
+
+const FINE = 0.1;
+
+// Long coast steps (> 0.1 s, high orbits): a settled vehicle holds its target exactly while the wheels absorb
+// the disturbance momentum (RCS unloads / takes over); otherwise the full dynamics are sub-stepped at 0.1 s.
+export function attitudeCoarse(sim, dt, m, target) {
+  const c = sim.config;
+  const settled = target && dot(sim.dir, target) > Math.cos(Math.PI / 180) && len(sim.omega) < 0.05 * (Math.PI / 180);
+  if (settled) {
+    const dist = disturbance(sim, m, c, [0, 0, 0], 0, 0);
+    const fuel = rcsFuel(sim.rt);
+    const rcsOk = sim.rcsEnabled && fuel > 0 && c.rcsThrust > 0;
+    let H = add(sim.wheelH, scale(dist, c.wheelTorque >= len(dist) ? dt : 0));
+    let rcsImpulse = c.wheelTorque >= len(dist) ? 0 : len(dist) * dt;
+    if (c.wheelTorque >= len(dist) && len(H) > c.wheelMomentum * 0.7 && rcsOk) {
+      const dH = len(H) - c.wheelMomentum * 0.3;
+      H = scale(norm(H), c.wheelMomentum * 0.3);
+      rcsImpulse += dH;
+    }
+    const canHold = len(H) <= c.wheelMomentum && (rcsImpulse === 0 || rcsOk);
+    if (canHold) {
+      sim.wheelH = H;
+      if (rcsImpulse > 0) burnRcs(sim.rt, rcsImpulse / (0.9 * c.L) / (RCS_ISP * G0));
+      sim.dir = target;
+      sim.omega = [0, 0, 0];
+      const I = inertiaT(m, c);
+      sim.attStatus = { ...(sim.attStatus || {}), wheelPct: c.wheelMomentum ? (100 * len(H)) / c.wheelMomentum : 0, rcsFuel: rcsFuel(sim.rt), rate: 0, inertia: I, torqueAvail: c.wheelTorque + (rcsOk ? rcsTorque(c) : 0) };
+      return;
+    }
+  }
+  if (!target && !(len(sim.omega) > 0)) return;
+  const n = Math.ceil(dt / FINE - 1e-9);
+  for (let i = 0; i < n; i++) attitudeStep(sim, dt / n, { F: 0, m, target: target && sim.targetDir() });
 }
 
 export function attitudeRequirement(mass, cfg, slewDeg = 90, slewTime = 60) {

@@ -10,7 +10,7 @@ const mmss = (s) => {
 const Row = ({ label, value, unit, testId, tone }) => (
   <div className="flex items-baseline justify-between border-b border-slate-800/60 py-1">
     <span className="eyebrow !text-[9px]">{label}</span>
-    <span data-testid={testId} className={`font-mono text-sm font-bold ${tone || "text-sky-300"}`}>
+    <span data-testid={testId} className={`whitespace-nowrap font-mono text-sm font-bold ${tone || "text-sky-300"}`}>
       {value}
       <span className="ml-1 text-[9px] font-normal text-slate-500">{unit}</span>
     </span>
@@ -36,11 +36,15 @@ export const TelemetryPanel = ({ s }) => (
 export const OrbitPanel = ({ s }) => (
   <div className="panel w-60 rounded-sm p-3" data-testid="hud-orbit">
     <div className="eyebrow mb-1 text-cyan-400">Orbit</div>
-    <Row label="Apoapsis" value={s.apo > 1e8 ? "ESCAPE" : fmt(s.apo / 1000, 1)} unit="km" testId="telemetry-apoapsis-value" />
-    <Row label="Periapsis" value={s.peri < -6e6 ? "—" : fmt(s.peri / 1000, 1)} unit="km" testId="telemetry-periapsis-value" tone={s.peri >= 140000 ? "text-emerald-400" : s.peri > 0 ? "text-amber-400" : "text-sky-300"} />
+    <Row label="Region" value={s.body === "moon" ? "Moon SOI" : "Earth"} testId="telemetry-region-value" tone={s.body === "moon" ? "text-amber-300" : undefined} />
+    <Row label={s.body === "moon" ? "Aposelene" : "Apoapsis"} value={!Number.isFinite(s.apo) || s.apo > 1e9 ? "ESCAPE" : fmt(s.apo / 1000, 1)} unit="km" testId="telemetry-apoapsis-value" />
+    <Row label={s.body === "moon" ? "Periselene" : "Periapsis"} value={s.peri < -6e6 ? "—" : fmt(s.peri / 1000, 1)} unit="km" testId="telemetry-periapsis-value" tone={s.peri >= 140000 ? "text-emerald-400" : s.peri > 0 ? "text-amber-400" : "text-sky-300"} />
     <Row label="Inclination" value={fmt(s.inc, 2)} unit="°" testId="telemetry-inclination-value" />
     <Row label="Time to apo" value={mmss(s.tApo)} testId="telemetry-time-to-apo-value" />
     <Row label="Period" value={mmss(s.period)} testId="telemetry-period-value" />
+    {s.moonDist !== null && <Row label="Moon alt." value={fmt(s.moonDist / 1000)} unit="km" testId="telemetry-moon-distance-value" />}
+    {s.nodeDrift !== null && s.status === "orbit" && s.apo < 1e8 && <Row label="Node drift (J2)" value={fmt(s.nodeDrift, 3)} unit="°/d" testId="telemetry-node-drift-value" />}
+    <Row label="Sun β angle" value={fmt(s.beta, 1)} unit="°" testId="telemetry-beta-value" />
     <div className="eyebrow mb-1 mt-3 text-cyan-400">Guidance</div>
     <div className="font-mono text-xs" data-testid="guidance-status">
       {s.guidance ? <span className="text-emerald-400">AUTO · {s.guidancePhase.toUpperCase()}</span> : <span className="text-amber-400">MANUAL</span>}

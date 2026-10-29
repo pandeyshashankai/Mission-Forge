@@ -17,7 +17,7 @@ export default function MissionPlanner() {
   const g = useGame();
   const [sel, setSel] = useState(g.missionId);
   const m = getMission(sel);
-  const [preset, setPreset] = useState(m.payload ? "orbiter9eo" : "orbiter9");
+  const [preset, setPreset] = useState(m.preset || (m.payload ? "orbiter9eo" : "orbiter9"));
   const req = m.available ? requiredDeltaV(m) : null;
 
   const start = () => {
@@ -38,7 +38,7 @@ export default function MissionPlanner() {
         <div className="space-y-2 overflow-y-auto scroll-thin pr-1">
           <div className="eyebrow mb-2">Mission templates</div>
           {MISSIONS.map((x, i) => (
-            <button key={x.id} data-testid={`mission-card-${x.id}`} disabled={!x.available} onClick={() => { setSel(x.id); setPreset(x.payload ? "orbiter9eo" : "orbiter9"); }} style={{ animationDelay: `${i * 60}ms` }}
+            <button key={x.id} data-testid={`mission-card-${x.id}`} disabled={!x.available} onClick={() => { setSel(x.id); setPreset(x.preset || (x.payload ? "orbiter9eo" : "orbiter9")); }} style={{ animationDelay: `${i * 60}ms` }}
               className={`rise relative w-full border p-4 text-left transition-colors ${sel === x.id ? "border-cyan-400 bg-cyan-500/10" : "border-slate-800 bg-slate-950/60 hover:border-slate-600"} ${!x.available ? "cursor-not-allowed opacity-50" : ""}`}>
               <div className="flex items-center justify-between">
                 <div className="font-display text-xl font-semibold uppercase tracking-wider">{x.name}</div>

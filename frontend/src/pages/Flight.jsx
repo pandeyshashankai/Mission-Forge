@@ -15,9 +15,13 @@ import { GuidancePanel } from "../components/game/GuidancePanel";
 import { TelemetryPanel, OrbitPanel, PropulsionPanel, EventLog } from "../components/game/FlightHud";
 import { GoNoGo } from "../components/game/Status";
 import { AttitudePanel, ManeuverPanel, CheckpointList } from "../components/game/FlightPanels";
+import { CrewPanel } from "../components/game/CrewPanel";
+import { isLunar } from "../sim/missions";
+import { moonState, j2NodeRate, sunBeta, MOON } from "../sim/bodies";
+import { lifeSupportStatus } from "../sim/crew";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../components/ui/dialog";
 
-const WARPS = [1, 2, 5, 10, 50, 100, 1000];
+const WARPS = [1, 2, 5, 10, 50, 100, 1000, 5000, 20000];
 const CAMS = ["chase", "cinematic", "free", "map"];
 const fmtT = (n) => `T${n <= 0 ? "-" : "+"}${String(Math.abs(n)).padStart(2, "0")}`;
 
@@ -39,7 +43,15 @@ function snapshot(sim, warp) {
     status: sim.status, guidance: !!sim.guidance && !sim.guidance.disengaged, guidancePhase: sim.guidance ? sim.guidance.phase : "", guidanceDone: sim.guidance?.done,
     log: [...sim.log], warp, orbitAt: sim.orbitAt, clamped: sim.clamped,
     attStatus: sim.attStatus, attMode: sim.attMode, rcsEnabled: sim.rcsEnabled, hasNode: !!sim.node,
+    body: n.body, moonDist: sim.eph ? Math.hypot(...sim.r.map((x, i) => x - moonState(sim.t, sim.eph).r[i])) - MOON.radius : null,
+    beta: (sunBeta(sim.sunDir, n.el.h) * 180) / Math.PI, nodeDrift: n.body === "earth" ? (j2NodeRate(n.el) * 86400 * 180) / Math.PI : null,
+    lunarOrbitAt: sim.lunarOrbitAt, crew: sim.aero.crew, ls: sim.aero.crew ? lifeSupportStatus(sim) : null, entry: { ...sim.entry }, blunt: sim.aero.blunt, hasChute: !!sim.aero.chute,
   };
+}
+
+// Highest warp that keeps the fixed-step integrator real-time: ~1000x per 0.1 s of coast step.
+function coastWarpCap(sim) {
+  return Math.min(20000, Math.max(1000, Math.round((1000 * sim.coastDt()) / 0.1)));
 }
 
 function maneuverWarpCap(sim) {
@@ -89,17 +101,19 @@ export default function Flight() {
     if (phase === "checklist") rebuildSim(guidanceOn);
   }, [phase, guidanceOn, rebuildSim]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const saveCheckpoint = useCallback((label, auto) => {
+  const saveCheckpoint = useCallback((label, auto, state) => {
     const sim = simRef.current;
-    const ck = { id: `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`, label, auto, at: new Date().toISOString(), missionId: mission.id, missionName: mission.name, difficulty: g.difficulty, design: g.design, designName: g.design.name, profile: g.profile, simT: sim.t, state: sim.serialize() };
+    const ck = { id: `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`, label, auto, at: new Date().toISOString(), missionId: mission.id, missionName: mission.name, difficulty: g.difficulty, design: sim.design, designName: sim.design.name, profile: g.profile, simT: state ? state.t : sim.t, state: state || sim.serialize() };
     if (storage.saveCheckpoint(ck)) toast.success(`Checkpoint saved — ${label}`);
     else toast.error("Browser storage is full — delete old checkpoints");
-  }, [g.design, g.profile, g.difficulty, mission]);
+  }, [g.profile, g.difficulty, mission]);
 
   const restoreCheckpoint = (ck) => {
     const sim = new FlightSim({ design: ck.design, mission, profile: ck.profile, guidanceOn: true });
     sim.restore(ck.state);
     simRef.current = sim;
+    g.loadDesign(ck.design);
+    if (ck.profile) g.setProfile(ck.profile);
     warpRef.current = 1;
     endedRef.current = false;
     setCkOpen(false);
@@ -119,8 +133,8 @@ export default function Flight() {
 
   const setWarp = (w) => {
     const sim = simRef.current;
-    const limited = sim.nav.F > 0 || sim.nav.alt < ATMOS_TOP;
-    const max = Math.min(limited ? 10 : 1000, maneuverWarpCap(sim));
+    const limited = sim.nav.F > 0 || (sim.nav.body === "earth" && sim.nav.alt < ATMOS_TOP);
+    const max = Math.min(limited ? 10 : coastWarpCap(sim), maneuverWarpCap(sim));
     warpRef.current = Math.min(w, max);
     if (w > max) toast.message(`Warp limited to ×${max} while ${sim.nav.F > 0 ? "engines are firing" : "inside the atmosphere"}`);
   };
@@ -130,7 +144,7 @@ export default function Flight() {
     endedRef.current = true;
     const sim = simRef.current;
     if (!sim.isEnded()) sim.end("ended", sim.orbitAt ? "Mission completed — flight director closed the flight" : "Flight ended by the flight director");
-    const res = evaluateFlight(sim, g.design, mission, g.difficulty);
+    const res = evaluateFlight(sim, sim.design, mission, g.difficulty);
     storage.addAttempt(res);
     g.setResult(res);
     g.go("results");
@@ -181,7 +195,8 @@ export default function Flight() {
       sim.input = { pitch: (k.has("s") ? 1 : 0) - (k.has("w") ? 1 : 0), yaw: (k.has("d") ? 1 : 0) - (k.has("a") ? 1 : 0) };
       if (k.has("shift")) sim.throttle = Math.min(1, sim.throttle + dtReal * 0.6);
       if (k.has("control")) sim.throttle = Math.max(0, sim.throttle - dtReal * 0.6);
-      if ((sim.nav.F > 0 || sim.nav.alt < ATMOS_TOP) && warpRef.current > 10) warpRef.current = 10;
+      if ((sim.nav.F > 0 || (sim.nav.body === "earth" && sim.nav.alt < ATMOS_TOP)) && warpRef.current > 10) warpRef.current = 10;
+      warpRef.current = Math.min(warpRef.current, coastWarpCap(sim));
       warpRef.current = Math.min(warpRef.current, maneuverWarpCap(sim));
       const t0 = sim.t;
       sim.advance(dtReal * warpRef.current);
@@ -189,7 +204,7 @@ export default function Flight() {
     }
     while (sim.checkpointQueue.length) {
       const c = sim.checkpointQueue.shift();
-      saveRef.current(c.label, true);
+      saveRef.current(c.label, true, c.state);
     }
     snapTimer.current -= dtReal;
     if (snapTimer.current <= 0) {
@@ -209,8 +224,8 @@ export default function Flight() {
       <div className="pointer-events-none absolute inset-x-0 top-0 flex items-center justify-between p-3">
         <div className="panel pointer-events-auto flex items-center gap-3 rounded-sm px-3 py-2">
           <span className="font-display text-base font-semibold uppercase tracking-wider">{mission.name}</span>
-          <span className="font-mono text-xs text-slate-500">{g.design.name}</span>
-          {s && <span data-testid="flight-status" className={`font-mono text-[10px] uppercase tracking-widest ${crashed ? "text-red-400" : s.status === "orbit" ? "text-emerald-400" : "text-cyan-300"}`}>{s.clamped && phase === "flight" ? "on pad" : s.status}</span>}
+          <span className="font-mono text-xs text-slate-500" data-testid="flight-design-name">{simRef.current.design.name}</span>
+          {s && <span data-testid="flight-status" className={`font-mono text-[10px] uppercase tracking-widest ${crashed ? "text-red-400" : s.status === "orbit" ? "text-emerald-400" : "text-cyan-300"}`}>{s.clamped && phase === "flight" ? "on pad" : s.status === "orbit" || s.status === "flight" ? (s.body === "moon" ? (s.lunarOrbitAt ? "lunar orbit" : "lunar SOI") : s.status === "orbit" && s.apo > 1e8 ? "cislunar" : s.status) : s.status}</span>}
         </div>
         {phase === "flight" && s && (
           <div className="panel pointer-events-auto flex items-center gap-1 rounded-sm p-1">
@@ -220,7 +235,7 @@ export default function Flight() {
             ))}
             <span className="mx-1 h-4 w-px bg-slate-700" />
             {CAMS.map((c) => (
-              <button key={c} data-testid={`camera-${c}-btn`} onClick={() => setCam(c)} className={`flex items-center gap-1 px-2 py-0.5 font-mono text-[11px] uppercase focus:outline-none ${cam === c ? "bg-cyan-500/20 text-cyan-200" : "text-slate-400 hover:text-white"}`}><Camera size={11} />{c}</button>
+              <button key={c} data-testid={`camera-${c}-btn`} onClick={(e) => { setCam(c); e.currentTarget.blur(); }} className={`flex items-center gap-1 px-2 py-0.5 font-mono text-[11px] uppercase focus:outline-none ${cam === c ? "bg-cyan-500/20 text-cyan-200" : "text-slate-400 hover:text-white"}`}><Camera size={11} />{c}</button>
             ))}
             <span className="mx-1 h-4 w-px bg-slate-700" />
             {s.guidance !== undefined && simRef.current.guidance && (
@@ -235,20 +250,29 @@ export default function Flight() {
       {phase === "flight" && s && (
         <>
           <div className="absolute left-3 top-20"><TelemetryPanel s={s} /></div>
-          <div className="absolute right-3 top-20 flex max-h-[calc(100%-160px)] flex-col gap-2 overflow-y-auto scroll-thin"><OrbitPanel s={s} /><AttitudePanel s={s} sim={simRef.current} /></div>
+          <div className="absolute right-3 top-20 flex max-h-[calc(100%-160px)] flex-col gap-2 overflow-y-auto scroll-thin"><OrbitPanel s={s} />{s.crew > 0 && <CrewPanel s={s} sim={simRef.current} />}<AttitudePanel s={s} sim={simRef.current} /></div>
           {(cam === "map" || s.hasNode) && s.status !== "prelaunch" && !s.clamped && (
-            <div className="absolute right-[264px] top-20"><ManeuverPanel s={s} sim={simRef.current} targetAlt={mission.target.altitude} onWarpTo={() => setWarp(1000)} /></div>
+            <div className="absolute right-[264px] top-20"><ManeuverPanel s={s} sim={simRef.current} mission={mission} targetAlt={mission.target.altitude} onWarpTo={() => setWarp(20000)} /></div>
           )}
           <div className="absolute bottom-3 left-1/2 -translate-x-1/2"><PropulsionPanel s={s} onStage={stage} /></div>
           <div className="absolute bottom-3 left-3"><EventLog log={s.log} /></div>
           <div className="pointer-events-none absolute bottom-3 right-3 text-right font-mono text-[10px] leading-relaxed text-slate-500">
             SPACE stage · SHIFT/CTRL throttle · Z full · X cut · R RCS<br />W/S pitch · A/D heading · G guidance · C camera · M map · , . warp
           </div>
-          {s.status === "orbit" && !crashed && (
+          {((s.status === "orbit" && !isLunar(mission)) || (mission.kind === "lunar_orbit" && s.lunarOrbitAt && s.body === "moon")) && !crashed && (
             <div className="panel absolute left-1/2 top-20 -translate-x-1/2 rounded-sm border-emerald-500/50 px-5 py-3 text-center rise" data-testid="orbit-achieved-banner">
-              <div className="flex items-center justify-center gap-2 font-display text-xl font-bold uppercase tracking-widest text-emerald-400"><CheckCircle2 size={18} /> Stable orbit</div>
+              <div className="flex items-center justify-center gap-2 font-display text-xl font-bold uppercase tracking-widest text-emerald-400"><CheckCircle2 size={18} /> {s.body === "moon" ? "Lunar orbit" : "Stable orbit"}</div>
               <div className="font-mono text-xs text-slate-300">{(s.apo / 1000).toFixed(1)} × {(s.peri / 1000).toFixed(1)} km · i {s.inc.toFixed(2)}°</div>
               <button data-testid="complete-mission-btn" onClick={finish} className="mt-2 border border-emerald-500/60 px-4 py-1 font-mono text-xs uppercase tracking-widest text-emerald-300 hover:bg-emerald-500/10">Complete mission → report</button>
+            </div>
+          )}
+          {s.status === "splashdown" && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/40" data-testid="splashdown-overlay">
+              <div className="panel rounded-sm border-emerald-500/60 p-6 text-center">
+                <div className="flex items-center justify-center gap-2 font-display text-3xl font-bold uppercase tracking-widest text-emerald-400"><CheckCircle2 /> Splashdown</div>
+                <div className="mt-1 font-mono text-xs text-slate-400">{simRef.current.endReason}</div>
+                <button data-testid="splashdown-report-btn" onClick={finish} className="mt-4 border border-emerald-500/60 px-4 py-1.5 font-mono text-xs uppercase tracking-widest text-emerald-300 hover:bg-emerald-500/10">View mission report</button>
+              </div>
             </div>
           )}
           {crashed && (

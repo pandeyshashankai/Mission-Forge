@@ -197,6 +197,17 @@ export function buildPartMesh(part, height = part.height) {
       g.add(cyl(r, r, h, M.gray()));
       g.add(ring(r, 0, 0.08), ring(r, h - 0.08, 0.08));
       break;
+    case "heatshield":
+      g.add(cyl(r, r * 0.97, h, new THREE.MeshStandardMaterial({ color: "#5a3a22", roughness: 0.95 })));
+      break;
+    case "chute":
+      g.add(cyl(r * 0.45, r, h, M.white(), 32));
+      g.add(cyl(r * 0.2, r * 0.45, h * 0.4, M.orange(), 24, h));
+      break;
+    case "pallet":
+      g.add(cyl(r, r, h, M.white()));
+      g.add(cyl(r * 1.01, r * 1.01, h * 0.25, M.gold(), 48, h * 0.38));
+      break;
     default:
       g.add(cyl(r, r, h, M.gray()));
   }

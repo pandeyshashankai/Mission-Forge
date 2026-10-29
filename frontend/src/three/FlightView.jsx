@@ -5,6 +5,7 @@ import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment
 import { buildRocket, disposeObject } from "./partMeshes";
 import { EARTH, DEG } from "../sim/constants";
 import { predictPath, nodePrediction } from "../sim/maneuver";
+import { moonState, MOON } from "../sim/bodies";
 
 const R = EARTH.radius;
 const QUALITY = { low: { px: 0.75, seg: 96, cap: 96 }, medium: { px: 1, seg: 160, cap: 160 }, high: { px: 1.5, seg: 256, cap: 256 } };
@@ -138,10 +139,8 @@ export const FlightView = ({ simRef, cameraMode, quality = "medium", onFrame }) 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.enabled = false;
-    controls.maxDistance = 5e7;
-    const pu = simRef.current.padUnit;
-    const pe = [-pu[1], pu[0], 0];
-    const sunDir = toThree([pu[0] + 0.7 * pe[0] - 0.2, pu[1] + 0.7 * pe[1], pu[2] - 0.25]).normalize();
+    controls.maxDistance = 2e9;
+    const sunDir = new THREE.Vector3();
     const sun = new THREE.DirectionalLight("#fff6e8", 3.0);
     scene.add(sun, sun.target);
     scene.add(new THREE.AmbientLight("#334155", 0.25));
@@ -160,6 +159,13 @@ export const FlightView = ({ simRef, cameraMode, quality = "medium", onFrame }) 
     earthSpin.add(clouds);
     const atmo = atmosphereShell();
     earthCenter.add(atmo);
+    const moonCenter = new THREE.Group();
+    scene.add(moonCenter);
+    const moonTex = loader.load("/textures/moon_1024.jpg");
+    moonTex.colorSpace = THREE.SRGBColorSpace;
+    const moonMesh = new THREE.Mesh(new THREE.SphereGeometry(MOON.radius, q.seg, q.seg / 2), new THREE.MeshStandardMaterial({ map: moonTex, roughness: 1, metalness: 0 }));
+    moonCenter.add(moonMesh);
+    moonCenter.visible = !!simRef.current.eph;
     const sim0 = simRef.current;
     const { lat, lon } = sim0.site;
     const cap = groundCap(earthTex, lat, lon, 5, q.cap);
@@ -219,6 +225,8 @@ export const FlightView = ({ simRef, cameraMode, quality = "medium", onFrame }) 
     let orbitTimer = 0;
     let chaseDist = 0;
     let lastMode = null;
+    let lastBody = "earth";
+    const frameOf = (body) => (body === "moon" ? moonCenter : earthCenter);
     const onWheel = (e) => {
       if (camModeRef.current === "chase") chaseDist = Math.max(0.5, Math.min(40, (chaseDist || 1) * (e.deltaY > 0 ? 1.1 : 0.9)));
     };
@@ -262,6 +270,12 @@ export const FlightView = ({ simRef, cameraMode, quality = "medium", onFrame }) 
       }
       const rPos = toThree(sim.r);
       earthCenter.position.copy(rPos).multiplyScalar(-1);
+      if (sim.eph) {
+        moonCenter.visible = true;
+        moonCenter.position.copy(toThree(moonState(sim.t, sim.eph).r)).sub(rPos);
+        moonMesh.rotation.y = MOON.n * sim.t;
+      }
+      sunDir.copy(toThree(sim.sunDir)).normalize();
       earthSpin.rotation.y = EARTH.rotationRate * sim.t;
       clouds.rotation.y = sim.t * 1e-6;
       const nav = sim.nav;
@@ -293,7 +307,7 @@ export const FlightView = ({ simRef, cameraMode, quality = "medium", onFrame }) 
           debris.splice(i, 1);
         }
       }
-      const alt = nav.alt;
+      const alt = Math.hypot(...sim.r) - R;
       sky.copy(skyLow).lerp(skyHigh, Math.min(1, Math.max(0, alt / 60000)));
       scene.background = sky;
       cap.visible = alt < 200000;
@@ -306,28 +320,34 @@ export const FlightView = ({ simRef, cameraMode, quality = "medium", onFrame }) 
       atmo.material.uniforms.sunDir.value.copy(sunDir);
       orbitTimer -= dtReal;
       if (orbitTimer <= 0) {
-        orbitTimer = 0.25;
+        orbitTimer = sim.eph ? 1 : 0.25;
         const show = alt > 25000 || mode0() === "map";
         orbitLine.visible = show;
         apoM.visible = periM.visible = false;
         if (show) {
-          const pred = predictPath(sim.r, sim.v, { points: 240 });
+          const pred = predictPath(sim.r, sim.v, { points: 240, ctx: sim.ctx() });
+          const grp = frameOf(pred.body);
+          grp.add(orbitLine, apoM, periM);
           setLine(orbitLine, pred.pts);
           if (pred.el.e < 1) {
             const ap = scaleV(norm3(pred.el.eVec), -pred.el.ra);
             const pe = scaleV(norm3(pred.el.eVec), pred.el.rp);
             apoM.position.copy(toThree(ap));
             periM.position.copy(toThree(pe));
-            apoM.visible = pred.el.ra < 4e8;
-            periM.visible = pred.el.rp > R;
+            apoM.visible = pred.el.ra < (pred.body === "moon" ? MOON.soi : 4e8);
+            periM.visible = pred.el.rp > (pred.body === "moon" ? MOON.radius : R);
           }
         }
         const node = sim.node;
         nodeLine.visible = nodeM.visible = !!node && show;
         if (node && show) {
           const np = nodePrediction(sim, node);
-          nodeM.position.copy(toThree(np.at.r));
-          setLine(nodeLine, predictPath(np.at.r, np.v2, { points: 240 }).pts);
+          const ctx = { t0: node.t, eph: sim.eph };
+          const pp = predictPath(np.at.r, np.v2, { points: 240, ctx });
+          frameOf(np.body).add(nodeM);
+          frameOf(pp.body).add(nodeLine);
+          nodeM.position.copy(toThree(np.body === "moon" ? np.at.r.map((x, i) => x - moonState(node.t, sim.eph).r[i]) : np.at.r));
+          setLine(nodeLine, pp.pts);
         }
       }
       vesselM.visible = mode0() === "map";
@@ -339,6 +359,9 @@ export const FlightView = ({ simRef, cameraMode, quality = "medium", onFrame }) 
       let side = new THREE.Vector3().crossVectors(up, dir);
       if (side.lengthSq() < 1e-4) side = east.clone();
       side.normalize();
+      if (mode === "map" && nav.body !== lastBody) lastMode = null;
+      lastBody = nav.body;
+      const mapTarget = frameOf(nav.body);
       if (mode !== lastMode) {
         controls.enabled = mode === "free" || mode === "map";
         if (mode === "free") {
@@ -348,9 +371,12 @@ export const FlightView = ({ simRef, cameraMode, quality = "medium", onFrame }) 
         }
         if (mode === "map") {
           camera.up.set(0, 1, 0);
-          controls.target.copy(earthCenter.position);
-          camera.position.copy(earthCenter.position).addScaledVector(rPos.clone().normalize(), R * 3.2).add(new THREE.Vector3(0, R * 1.2, 0));
-          mapPrev.copy(earthCenter.position);
+          const el0 = nav.el;
+          const D = nav.body === "moon" ? MOON.radius * 7 : el0.ra && el0.ra < 1e9 && el0.e < 1 ? Math.max(R * 3.2, el0.ra * 1.8) : R * 3.2;
+          const off = toThree(nav.body === "moon" ? sim.prim.r : sim.r).normalize();
+          controls.target.copy(mapTarget.position);
+          camera.position.copy(mapTarget.position).addScaledVector(off, D).add(new THREE.Vector3(0, D * 0.38, 0));
+          mapPrev.copy(mapTarget.position);
         }
         lastMode = mode;
       }
@@ -390,10 +416,10 @@ export const FlightView = ({ simRef, cameraMode, quality = "medium", onFrame }) 
           camera.lookAt(center);
         }
       } else if (mode === "map") {
-        const delta = earthCenter.position.clone().sub(mapPrev);
+        const delta = mapTarget.position.clone().sub(mapPrev);
         camera.position.add(delta);
-        mapPrev.copy(earthCenter.position);
-        controls.target.copy(earthCenter.position);
+        mapPrev.copy(mapTarget.position);
+        controls.target.copy(mapTarget.position);
         controls.update();
       } else {
         controls.target.copy(center);
@@ -412,6 +438,7 @@ export const FlightView = ({ simRef, cameraMode, quality = "medium", onFrame }) 
         if (o.material) (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => m.dispose());
       });
       earthTex.dispose();
+      moonTex.dispose();
       cloudTex.dispose();
       renderer.dispose();
       el.removeChild(renderer.domElement);

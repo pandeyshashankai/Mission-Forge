@@ -25,7 +25,15 @@ export function orbitalElements(r, v, mu, R) {
       timeToApo = (((Math.PI - M) / n) % period + period) % period;
     }
   }
-  return { a, e, eVec, h, inc, energy, periapsis: rp - R, apoapsis: ra - R, rp, ra, period, timeToApo };
+  const raan = Math.atan2(h[0], -h[1]);
+  let timeToPeri = null;
+  if (e > 1e-6 && a < 0) {
+    const coshF = Math.max(1, (1 + rm / -a) / e);
+    const F = Math.log(coshF + Math.sqrt(coshF * coshF - 1));
+    const M = e * Math.sinh(F) - F;
+    timeToPeri = dot(r, v) < 0 ? M / Math.sqrt(mu / (-a) ** 3) : null;
+  } else if (period && timeToApo !== null) timeToPeri = (timeToApo + period / 2) % period;
+  return { a, e, eVec, h, inc, raan, energy, periapsis: rp - R, apoapsis: ra - R, rp, ra, period, timeToApo, timeToPeri };
 }
 
 export function orbitPoints(el, mu, count = 256) {

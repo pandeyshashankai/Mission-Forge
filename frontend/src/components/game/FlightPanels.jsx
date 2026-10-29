@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import { Trash2, Save, RotateCcw } from "lucide-react";
 import { nodePrediction, burnTime, raiseApoDv, stateAt } from "../../sim/maneuver";
+import { planTLI, planMCC, planLOI, planCorridor } from "../../sim/transfer";
+import { toast } from "sonner";
 import { EARTH } from "../../sim/constants";
 import { mmss, fmt } from "./FlightHud";
 
@@ -41,15 +43,47 @@ const Adj = ({ label, value, onChange, testId }) => (
   </div>
 );
 
-export const ManeuverPanel = ({ s, sim, targetAlt, onWarpTo }) => {
+const LunarPlanner = ({ sim, mission, set, busy, setBusy }) => {
+  const flyby = mission.kind === "lunar_flyby";
+  const periAlt = flyby ? mission.flyby.periAlt : mission.lunar.altitude;
+  const run = (label, fn) => {
+    setBusy(label);
+    setTimeout(() => {
+      try {
+        const r = fn();
+        if (r && r.t) set(r);
+        else toast.error(`${label}: no solution from the current state`);
+      } finally {
+        setBusy(null);
+      }
+    }, 30);
+  };
+  const body = sim.nav.body;
+  const B = ({ id, label, fn, disabled }) => (
+    <button data-testid={id} disabled={!!busy || disabled} onClick={() => run(label, fn)} className="border border-amber-500/40 py-1 text-[11px] text-amber-200 hover:border-amber-400 disabled:opacity-30">{busy === label ? "Computing…" : label}</button>
+  );
+  return (
+    <div className="mt-1 grid grid-cols-2 gap-1" data-testid="lunar-planner">
+      <B id="node-tli-btn" label="Trans-lunar injection" disabled={body !== "earth" || !(sim.nav.el.apoapsis < 2e6)} fn={() => planTLI(sim, { periAlt, apogeeFactor: flyby ? mission.flyby.apogeeFactor : 1 }).node} />
+      <B id="node-mcc-btn" label={flyby ? "Mid-course (free return)" : "Mid-course correction"} disabled={body !== "earth" || sim.nav.el.apoapsis < 2e7 || (sim.moonClosest && sim.moonClosest.d < 66e6)} fn={() => planMCC(sim, { periAlt, freeReturn: flyby })?.node} />
+      {!flyby && <B id="node-loi-btn" label="Lunar orbit insertion" disabled={body !== "moon"} fn={() => planLOI(sim)} />}
+      {flyby && <B id="node-corridor-btn" label="Return corridor (40 km)" disabled={body !== "earth" || !sim.moonClosest} fn={() => planCorridor(sim, 40000, 600)} />}
+    </div>
+  );
+};
+
+export const ManeuverPanel = ({ s, sim, mission, targetAlt, onWarpTo }) => {
   const [, force] = useState(0);
+  const [busy, setBusy] = useState(null);
+  const lunar = mission && mission.kind && mission.kind.startsWith("lunar");
   const node = sim.node;
   const set = (n) => {
     sim.node = n;
     sim.maneuver = null;
     force((x) => x + 1);
   };
-  const pred = useMemo(() => (node ? nodePrediction(sim, node) : null), [node, sim, s.t]); // eslint-disable-line react-hooks/exhaustive-deps
+  const tKey = Math.floor(s.t / (lunar ? 5 : 1));
+  const pred = useMemo(() => (node ? nodePrediction(sim, node) : null), [node, sim, tKey]); // eslint-disable-line react-hooks/exhaustive-deps
   const bt = pred ? burnTime(sim, pred.dv) : null;
   const el = sim.nav.el;
   const add = (t) => set({ t, dv: [0, 0, 0] });
@@ -76,6 +110,7 @@ export const ManeuverPanel = ({ s, sim, targetAlt, onWarpTo }) => {
             <button data-testid="node-suggest-raise-btn" onClick={suggestRaise} className="border border-slate-700 py-1 text-[11px] hover:border-amber-500/60">Raise Ap to {fmt(targetAlt / 1000)} km</button>
           </div>
           <button data-testid="node-suggest-circ-btn" disabled={!el.timeToApo} onClick={suggestCirc} className="w-full border border-slate-700 py-1 text-[11px] hover:border-amber-500/60 disabled:opacity-30">Circularize at apoapsis (vis-viva)</button>
+          {lunar && <LunarPlanner sim={sim} mission={mission} set={set} busy={busy} setBusy={setBusy} />}
         </div>
       )}
       {node && pred && (
@@ -92,7 +127,7 @@ export const ManeuverPanel = ({ s, sim, targetAlt, onWarpTo }) => {
           <div className="grid grid-cols-2 gap-x-3 border-t border-slate-800 pt-1.5 font-mono text-[10px]">
             <span className="text-slate-500">Δv total</span><span className="text-right text-amber-300" data-testid="node-dv-total">{fmt(pred.dv, 1)} m/s</span>
             <span className="text-slate-500">Burn time</span><span className="text-right text-sky-300">{bt ? `${fmt(bt, 1)} s` : "no engine"}</span>
-            <span className="text-slate-500">After: Ap × Pe</span><span className="text-right text-sky-300" data-testid="node-after-orbit">{pred.after.e < 1 ? `${fmt(pred.after.apoapsis / 1000, 1)} × ${fmt(pred.after.periapsis / 1000, 1)} km` : "escape"}</span>
+            <span className="text-slate-500">After: Ap × Pe{pred.body === "moon" ? " (Moon)" : ""}</span><span className="text-right text-sky-300" data-testid="node-after-orbit">{pred.after.e < 1 ? `${fmt(pred.after.apoapsis / 1000, 1)} × ${fmt(pred.after.periapsis / 1000, 1)} km` : `hyperbolic · Pe ${fmt(pred.after.periapsis / 1000, 1)} km`}</span>
             <span className="text-slate-500">After: incl.</span><span className="text-right text-sky-300">{fmt((pred.after.inc * 180) / Math.PI, 2)}°</span>
           </div>
           <div className="flex gap-1 pt-1">
@@ -104,7 +139,7 @@ export const ManeuverPanel = ({ s, sim, targetAlt, onWarpTo }) => {
         </div>
       )}
       {m && m.done && <div className="mt-1 font-mono text-[10px] text-emerald-400">Last maneuver complete.</div>}
-      <p className="mt-2 text-[10px] leading-snug text-slate-600">Model limits: Earth-only two-body gravity, no drag above 160 km. Paths are predicted by stepping the motion forward (RK4). Burn time from the rocket equation with the current stage.</p>
+      <p className="mt-2 text-[10px] leading-snug text-slate-600">Model limits: {lunar ? "patched conics — Earth (with J2) outside, Moon inside its 66,000 km sphere of influence; no Sun perturbation" : "Earth gravity with J2 oblateness, no drag above 160 km"}. Paths are predicted by stepping the motion forward (RK4). Burn time from the rocket equation with the current stage.</p>
     </div>
   );
 };
