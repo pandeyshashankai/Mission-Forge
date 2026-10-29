@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
-import { Rocket, Play, FolderOpen, Upload, Settings, ListChecks, Trash2 } from "lucide-react";
+import { Rocket, Play, FolderOpen, Upload, Settings, ListChecks, Trash2, History } from "lucide-react";
+import { CheckpointList } from "../components/game/FlightPanels";
 import { toast } from "sonner";
 import { useGame } from "../game/GameContext";
 import { DIFFICULTIES } from "../sim/missions";
@@ -29,6 +30,15 @@ export default function MainMenu() {
   const fileRef = useRef(null);
   const [dlg, setDlg] = useState(null);
   const [designs, setDesigns] = useState(storage.designs());
+  const [cks, setCks] = useState(storage.checkpoints());
+  const resume = (ck) => {
+    g.loadDesign(ck.design);
+    g.setMissionId(ck.missionId);
+    g.setDifficulty(ck.difficulty);
+    g.setProfile(ck.profile);
+    g.setPendingCheckpoint(ck);
+    g.go("flight");
+  };
 
   const onImport = async (e) => {
     const f = e.target.files[0];
@@ -63,6 +73,7 @@ export default function MainMenu() {
           <div className="space-y-2 rise" style={{ animationDelay: "120ms" }}>
             <MenuButton primary icon={Rocket} label="New Mission" sub="Choose a mission template" testId="menu-new-mission-btn" onClick={() => g.go("planner")} />
             <MenuButton icon={Play} label="Continue" sub={g.hasAutosave ? `Autosave · ${g.design.name}` : "No autosave yet"} testId="menu-continue-btn" disabled={!g.hasAutosave} onClick={() => g.go("hangar")} />
+            <MenuButton icon={History} label="Resume Flight" sub={`${cks.length} flight checkpoints`} testId="menu-resume-flight-btn" disabled={!cks.length} onClick={() => { setCks(storage.checkpoints()); setDlg("resume"); }} />
             <MenuButton icon={FolderOpen} label="Load Design" sub={`${designs.length} saved in this browser`} testId="menu-load-btn" onClick={() => { setDesigns(storage.designs()); setDlg("load"); }} />
             <MenuButton icon={Upload} label="Import Design" sub="From a .json file" testId="menu-import-btn" onClick={() => fileRef.current.click()} />
             <MenuButton icon={Settings} label="Settings" testId="menu-settings-btn" onClick={() => setDlg("settings")} />
@@ -86,7 +97,7 @@ export default function MainMenu() {
         </div>
 
         <div className="flex justify-between font-mono text-[10px] uppercase tracking-widest text-slate-600">
-          <span>Phase 1 · Milestone 1 — First Orbit vertical slice</span>
+          <span>Phase 1 · Milestones 1–2 — First Orbit & orbital operations</span>
           <span>Saves stay in this browser · export to keep them</span>
         </div>
       </div>
@@ -106,6 +117,13 @@ export default function MainMenu() {
               </div>
             ))}
           </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={dlg === "resume"} onOpenChange={(o) => !o && setDlg(null)}>
+        <DialogContent className="dark max-w-xl border-slate-800 bg-slate-950 text-slate-100" data-testid="resume-dialog">
+          <DialogHeader><DialogTitle className="font-display uppercase tracking-wider">Resume a flight</DialogTitle></DialogHeader>
+          <CheckpointList list={cks} onRestore={resume} onDelete={(id) => { storage.deleteCheckpoint(id); setCks(storage.checkpoints()); }} />
         </DialogContent>
       </Dialog>
 

@@ -35,6 +35,15 @@ export class AscentGuidance {
     return clamp(Math.min(thr, accelLimit, qLimit), 0, 1);
   }
 
+  // Inertial heading that keeps the trajectory in the target orbital plane at the current latitude.
+  planeHeading(sim, nav) {
+    const lat = Math.asin(clamp(nav.up[2], -1, 1));
+    const inc = Math.max(this.p.targetInclination, Math.abs(lat * RAD)) / RAD;
+    let b = Math.asin(clamp(Math.cos(inc) / Math.cos(lat), -1, 1));
+    if (Math.cos(sim.azimuth / RAD) < 0) b = Math.PI - b;
+    return b * RAD;
+  }
+
   update(sim, nav, dt) {
     const p = this.p;
     this.phaseT += dt;
@@ -62,13 +71,15 @@ export class AscentGuidance {
         const vrDes = clamp((2 * dh) / tgo, -100, 2500);
         const ar = gEff - vr / tgo + (vrDes - vr) / 20;
         const s = clamp(ar / a, -0.5, 1);
-        att = { pitch: Math.asin(s) * RAD, heading: nav.orbHeading };
+        att = { pitch: Math.asin(s) * RAD, heading: this.planeHeading(sim, nav) };
         if (vc - vh < a * 8 && Math.abs(dh) < 15000) this.setPhase("insert");
         break;
       }
       case "insert": {
         const dh = p.targetAltitude - nav.alt;
-        const vDes = add(scale(nav.hdir, nav.vc), scale(nav.up, clamp(dh / 60, -15, 15)));
+        const h = this.planeHeading(sim, nav) / RAD;
+        const hdir = add(scale(nav.north, Math.cos(h)), scale(nav.east, Math.sin(h)));
+        const vDes = add(scale(hdir, nav.vc), scale(nav.up, clamp(dh / 60, -15, 15)));
         const dv = sub(vDes, sim.v);
         const dvm = len(dv);
         if (dvm < 0.5 || nav.Fmax <= 0) {
@@ -79,7 +90,7 @@ export class AscentGuidance {
         }
         if (dvm > 4 || !this.frozenDir) this.frozenDir = norm(dv);
         att = sim.attFromDir(this.frozenDir, nav);
-        const align = Math.max(0, dot(sim.dirFromAtt(sim.att, nav), this.frozenDir));
+        const align = Math.max(0, dot(sim.dir, this.frozenDir));
         thr = clamp(dvm / (Math.max(a, 0.01) * 2), 0.001, 1) * align ** 4;
         if (thr < 0.002) thr = 0;
         break;
@@ -96,7 +107,8 @@ export class AscentGuidance {
 export function launchAzimuth(site, inclination) {
   const lat = site.lat * (Math.PI / 180);
   const i = Math.max(inclination, site.lat) * (Math.PI / 180);
-  const beta = Math.asin(clamp(Math.cos(i) / Math.cos(lat), -1, 1));
+  let beta = Math.asin(clamp(Math.cos(i) / Math.cos(lat), -1, 1));
+  if (inclination > 90) beta = Math.PI - beta;
   const vOrb = 7790;
   const vEq = EARTH.rotationRate * EARTH.radius * Math.cos(lat);
   return Math.atan2(vOrb * Math.sin(beta) - vEq, vOrb * Math.cos(beta)) * RAD;

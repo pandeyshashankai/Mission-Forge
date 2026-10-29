@@ -4,11 +4,12 @@ import { atmosphere, dragCoefficient, ATMOS_TOP } from "./atmosphere";
 import { applyEvent, createRuntime, describeEvent, buildSections, frontalArea, runtimeMass, thrustState, consume, activeSources, dropsOf, deltaVFromRuntime } from "./design";
 import { orbitalElements } from "./orbit";
 import { AscentGuidance, launchAzimuth } from "./guidance";
+import { vehicleConfig, attitudeStep, MAX_RATE } from "./attitude";
+import { ManeuverExec } from "./maneuver";
 
 const OMEGA = [0, 0, EARTH.rotationRate];
 export const DT_FAST = 0.02;
 export const DT_COAST = 0.1;
-const SLEW = 10;
 const RAD = 180 / Math.PI;
 const srcKey = (s) => (s.kind === "section" ? `S${s.s}-${s.prop}` : `R-${s.uid}`);
 
@@ -49,7 +50,69 @@ export class FlightSim {
     this.propFull = this.totalProp();
     this.orbitAt = null;
     this.endReason = null;
+    this.dir = this.dirFromAtt(this.att);
+    this.omega = [0, 0, 0];
+    this.wheelH = [0, 0, 0];
+    this.rcsEnabled = true;
+    this.attMode = "auto";
+    this.holdDir = null;
+    this.inputActive = false;
+    this.maneuver = null;
+    this.node = null;
+    this.checkpointQueue = [];
+    this.lastAutoCkpt = 0;
+    const pe = [-this.padUnit[1], this.padUnit[0], 0];
+    this.sunDir = norm([this.padUnit[0] + 0.7 * pe[0] - 0.2, this.padUnit[1] + 0.7 * pe[1], this.padUnit[2] - 0.25]);
+    this.config = vehicleConfig(this);
     this.nav = this.computeNav();
+  }
+
+  requestCheckpoint(label) {
+    this.checkpointQueue.push({ label, auto: true, t: this.t });
+  }
+
+  setAttMode(mode) {
+    this.attMode = mode;
+    if (mode === "hold") this.holdDir = [...this.dir];
+    if (this.guidance && mode !== "auto") this.guidance.disengaged = true;
+    if (mode === "auto" && this.guidance) this.guidance.disengaged = false;
+  }
+
+  planManeuver(node) {
+    this.node = node;
+    this.maneuver = node ? new ManeuverExec(this, node) : null;
+    if (node) this.addLog("info", `Guidance armed for maneuver at T+${node.t.toFixed(0)} s — ${this.maneuver.dvTot.toFixed(1)} m/s, burn ≈ ${this.maneuver.burnTime.toFixed(0)} s`);
+  }
+
+  targetDir() {
+    if (this.maneuver && !this.maneuver.done) return this.maneuver.target();
+    if (this.attMode === "auto" && this.guidance && !this.guidance.disengaged && !this.guidance.done) return this.dirFromAtt(this.cmd);
+    const r = this.r, v = this.v;
+    switch (this.attMode === "auto" ? "prograde" : this.attMode) {
+      case "hold": return this.holdDir;
+      case "prograde": return norm(v);
+      case "retrograde": return scale(norm(v), -1);
+      case "normal": return norm(cross(r, v));
+      case "antinormal": return scale(norm(cross(r, v)), -1);
+      case "radialOut": return norm(r);
+      case "radialIn": return scale(norm(r), -1);
+      case "sun": return this.sunDir;
+      default: return null;
+    }
+  }
+
+  controlAttitude(dt, F, m, vRel, q, area) {
+    const active = this.input.pitch !== 0 || this.input.yaw !== 0;
+    let rateCmd = null;
+    if (active) {
+      const up = norm(this.r);
+      let a = cross(this.dir, up);
+      a = len(a) < 1e-6 ? norm(cross([0, 0, 1], up)) : norm(a);
+      rateCmd = add(scale(a, this.input.pitch * MAX_RATE * 0.5), scale(up, -this.input.yaw * MAX_RATE * 0.5));
+      this.attMode = "hold";
+    } else if (this.inputActive) this.holdDir = [...this.dir];
+    this.inputActive = active;
+    attitudeStep(this, dt, { F, m, target: active ? null : this.targetDir(), rateCmd, vRel, q, area });
   }
 
   totalProp() {
@@ -146,6 +209,7 @@ export class FlightSim {
     }
     applyEvent(this.rt, id);
     this.rt.eventIndex++;
+    this.config = vehicleConfig(this);
     if (id !== "ignite-0") {
       this.addLog("stage", describeEvent(id, this.sections).label);
       this.stagedAt.push({ t: this.t, id });
@@ -175,13 +239,15 @@ export class FlightSim {
     while (steps < maxSteps && !this.isEnded()) {
       const dt = this.stepSize();
       if (this.acc < dt) break;
-      if (dt === DT_COAST) {
-        while (this.acc >= DT_COAST && steps < maxSteps * 20 && len(this.r) - EARTH.radius >= ATMOS_TOP) {
+      const stopAt = this.maneuver && !this.maneuver.done ? this.maneuver.tStart - 10 : Infinity;
+      if (dt === DT_COAST && this.t < stopAt) {
+        while (this.acc >= DT_COAST && steps < maxSteps * 20 && len(this.r) - EARTH.radius >= ATMOS_TOP && this.t < stopAt) {
           this.coastStep(DT_COAST);
           this.acc -= DT_COAST;
           steps++;
         }
         this.nav = this.computeNav();
+        this.att = this.attFromDir(this.dir, this.nav);
         this.postStep(this.nav);
         continue;
       }
@@ -210,15 +276,7 @@ export class FlightSim {
     this.r = add(r0, scale(add(add(v0, scale(v2, 2)), add(scale(v3, 2), v4)), dt / 6));
     this.v = add(v0, scale(add(add(k1v, scale(k2v, 2)), add(scale(k3v, 2), k4v)), dt / 6));
     this.t += dt;
-  }
-
-  slewAttitude(dt) {
-    const max = SLEW * dt;
-    const dp = clamp(this.cmd.pitch - this.att.pitch, -max, max);
-    let dh = ((this.cmd.heading - this.att.heading + 540) % 360) - 180;
-    const hmax = Math.abs(this.att.pitch) > 89.5 ? 360 : max / Math.max(0.05, Math.cos(this.att.pitch * DEG));
-    dh = clamp(dh, -hmax, hmax);
-    this.att = { pitch: clamp(this.att.pitch + dp, -90, 90), heading: (this.att.heading + dh + 360) % 360 };
+    this.controlAttitude(dt, 0, this.nav.mass, [0, 0, 0], 0, 0);
   }
 
   accel(r, v, dir, F, m, area) {
@@ -242,11 +300,8 @@ export class FlightSim {
     if (this.isEnded()) return;
     let nav = (this.nav = this.computeNav());
     if (this.status !== "prelaunch") {
-      if (this.guidance && !this.guidance.disengaged) this.guidance.update(this, nav, dt);
-      else {
-        this.cmd = { pitch: clamp(this.cmd.pitch + this.input.pitch * SLEW * dt, -90, 90), heading: (this.cmd.heading + this.input.yaw * SLEW * dt + 360) % 360 };
-      }
-      this.slewAttitude(dt);
+      if (this.maneuver && !this.maneuver.done) this.maneuver.update(this, nav);
+      else if (this.guidance && !this.guidance.disengaged) this.guidance.update(this, nav, dt);
       this.autoStageCheck(nav, dt);
     }
     const ts = this.status === "prelaunch" ? { F: 0, flows: [] } : thrustState(this.rt, this.throttle, nav.pRatio);
@@ -265,11 +320,14 @@ export class FlightSim {
         this.v = cross(OMEGA, this.r);
         if (this.status === "flight" && this.t > 10 && activeSources(this.rt).length === 0) this.end("crashed", "Engines could not lift the vehicle off the pad");
       }
+      this.dir = norm(this.r);
       this.nav = this.computeNav();
       return;
     }
-    const dir = this.dirFromAtt(this.att, nav);
     const area = frontalArea(this.rt);
+    this.controlAttitude(dt, ts.F, m, sub(this.v, cross(OMEGA, this.r)), nav.q, area);
+    const dir = this.dir;
+    this.att = this.attFromDir(dir, nav);
     const F = ts.F;
     const r0 = this.r;
     const v0 = this.v;
@@ -284,6 +342,7 @@ export class FlightSim {
     this.r = add(r0, scale(add(add(v0, scale(v2, 2)), add(scale(v3, 2), v4)), dt / 6));
     this.v = add(v0, scale(add(add(k1v, scale(k2v, 2)), add(scale(k3v, 2), k4v)), dt / 6));
     consume(this.rt, ts.flows, dt);
+    if (this.maneuver) this.maneuver.record(dir, F, m, dt);
     this.t += dt;
     nav = this.nav = this.computeNav();
     this.postStep(nav);
@@ -333,6 +392,10 @@ export class FlightSim {
         mass: nav.mass / 1000,
       });
     }
+    if (this.status === "orbit" && this.t - this.lastAutoCkpt > 86400) {
+      this.lastAutoCkpt = this.t;
+      this.requestCheckpoint("Long coast (24 h)");
+    }
     if (nav.alt < 0) {
       this.end("crashed", `Vehicle impacted the surface at ${nav.surfSpeed.toFixed(0)} m/s`);
       return;
@@ -340,8 +403,43 @@ export class FlightSim {
     if (nav.el.periapsis >= STABLE_PERIAPSIS && nav.F === 0 && !this.orbitAt) {
       this.orbitAt = this.t;
       this.status = "orbit";
+      this.requestCheckpoint("Orbit reached");
       this.addLog("success", `Stable orbit achieved — ${(nav.el.apoapsis / 1000).toFixed(1)} × ${(nav.el.periapsis / 1000).toFixed(1)} km, i = ${(nav.el.inc / DEG).toFixed(2)}°`);
     }
+  }
+
+  serialize() {
+    const g = this.guidance;
+    const mv = this.maneuver;
+    return JSON.parse(JSON.stringify({
+      t: this.t, r: this.r, v: this.v, dir: this.dir, omega: this.omega, wheelH: this.wheelH, rt: this.rt, status: this.status, clamped: this.clamped,
+      att: this.att, cmd: this.cmd, throttle: this.throttle, attMode: this.attMode, holdDir: this.holdDir, rcsEnabled: this.rcsEnabled, autoStage: this.autoStage,
+      log: this.log, telemetry: this.telemetry, flameouts: this.flameouts, prematureStaging: this.prematureStaging, stagedAt: this.stagedAt,
+      maxQ: this.maxQ, maxApo: this.maxApo, maxAlt: this.maxAlt, lastSample: this.lastSample, orbitAt: this.orbitAt, lastAutoCkpt: this.lastAutoCkpt,
+      lastBurnEnergy: this.lastBurnEnergy ?? null, stageDelay: this.stageDelay, acc: this.acc || 0, node: this.node, wheelsSaturated: !!this.wheelsSaturated, rcsEmptyLogged: !!this.rcsEmptyLogged,
+      guidance: g ? { p: g.p, phase: g.phase, phaseT: g.phaseT, done: g.done, frozenDir: g.frozenDir, disengaged: !!g.disengaged } : null,
+      maneuver: mv ? { node: mv.node, dvVec: mv.dvVec, dvTot: mv.dvTot, burnTime: mv.burnTime, tStart: mv.tStart, delivered: mv.delivered, phase: mv.phase, done: mv.done } : null,
+    }));
+  }
+
+  restore(st) {
+    const { guidance, maneuver, ...rest } = JSON.parse(JSON.stringify(st));
+    Object.assign(this, rest);
+    if (this.maxApo === null) this.maxApo = -Infinity;
+    if (this.lastSample === null) this.lastSample = -Infinity;
+    if (guidance) {
+      this.guidance = new AscentGuidance(guidance.p);
+      Object.assign(this.guidance, guidance);
+    } else this.guidance = null;
+    if (maneuver) {
+      this.maneuver = Object.create(ManeuverExec.prototype);
+      Object.assign(this.maneuver, { type: "maneuver", ...maneuver });
+    } else this.maneuver = null;
+    this.checkpointQueue = [];
+    this.config = vehicleConfig(this);
+    this.propFull = this.propFull || this.totalProp();
+    this.nav = this.computeNav();
+    this.prevSources = new Set(activeSources(this.rt).map(srcKey));
   }
 
   end(status, reason) {

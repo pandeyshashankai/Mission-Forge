@@ -7,6 +7,7 @@ export const CATEGORIES = [
   { id: "tank", label: "Fuel Tanks" },
   { id: "engine", label: "Engines" },
   { id: "booster", label: "Solid Boosters" },
+  { id: "control", label: "Attitude Control" },
   { id: "structure", label: "Structure" },
 ];
 
@@ -14,14 +15,15 @@ export const PROPELLANTS = {
   kerolox: { label: "Kerosene / Oxygen", short: "RP-1/LOX" },
   hydrolox: { label: "Hydrogen / Oxygen", short: "LH2/LOX" },
   solid: { label: "Solid (APCP)", short: "Solid" },
+  monoprop: { label: "Hydrazine (RCS)", short: "N2H4" },
 };
 
 const list = [
-  P({ id: "probe_core", name: "PC-1 Probe Core", category: "command", diameter: 1.8, height: 0.6, dryMass: 120, cost: 2.0, control: true, crew: 0, look: "probe", desc: "Flight computer, guidance and telemetry for uncrewed vehicles.", source: "Approx. small-avionics-bay class" }),
-  P({ id: "capsule_1", name: "Solo Capsule (1 crew)", category: "command", diameter: 1.9, height: 2.4, dryMass: 1350, cost: 15, control: true, crew: 1, look: "capsule", desc: "Single-seat capsule. Crew systems are evaluated from Milestone 3.", source: "Approx. Mercury-class capsule (~1.35 t)" }),
-  P({ id: "capsule_3", name: "Tri Capsule (3 crew)", category: "command", diameter: 3.7, height: 3.5, dryMass: 5800, cost: 60, control: true, crew: 3, look: "capsule", desc: "Three-seat capsule. Crew systems are evaluated from Milestone 3.", source: "Approx. Apollo CM-class capsule (~5.8 t)" }),
-  P({ id: "sat_small", name: "Smallsat Bus 500 kg", category: "payload", diameter: 1.8, height: 1.2, dryMass: 500, cost: 8, control: true, payload: true, look: "satellite", desc: "Small satellite with its own avionics.", source: "Approx. ESPA-class smallsat" }),
-  P({ id: "sat_medium", name: "Observation Bus 2.5 t", category: "payload", diameter: 3.0, height: 2.8, dryMass: 2500, cost: 40, control: true, payload: true, look: "satellite", desc: "Medium satellite bus with avionics.", source: "Approx. medium EO satellite class" }),
+  P({ id: "probe_core", name: "PC-1 Probe Core", category: "command", diameter: 1.8, height: 0.6, dryMass: 120, cost: 2.0, control: true, crew: 0, attitude: { wheelTorque: 30, wheelMomentum: 200 }, look: "probe", desc: "Flight computer, guidance and telemetry for uncrewed vehicles.", source: "Approx. small-avionics-bay class" }),
+  P({ id: "capsule_1", name: "Solo Capsule (1 crew)", category: "command", diameter: 1.9, height: 2.4, dryMass: 1350, cost: 15, control: true, crew: 1, attitude: { wheelTorque: 100, wheelMomentum: 600 }, look: "capsule", desc: "Single-seat capsule. Crew systems are evaluated from Milestone 3.", source: "Approx. Mercury-class capsule (~1.35 t)" }),
+  P({ id: "capsule_3", name: "Tri Capsule (3 crew)", category: "command", diameter: 3.7, height: 3.5, dryMass: 5800, cost: 60, control: true, crew: 3, attitude: { wheelTorque: 300, wheelMomentum: 2000 }, look: "capsule", desc: "Three-seat capsule. Crew systems are evaluated from Milestone 3.", source: "Approx. Apollo CM-class capsule (~5.8 t)" }),
+  P({ id: "sat_small", name: "Smallsat Bus 500 kg", category: "payload", diameter: 1.8, height: 1.2, dryMass: 500, cost: 8, control: true, payload: true, attitude: { wheelTorque: 5, wheelMomentum: 20 }, look: "satellite", desc: "Small satellite with its own avionics.", source: "Approx. ESPA-class smallsat" }),
+  P({ id: "sat_medium", name: "Observation Bus 2.5 t", category: "payload", diameter: 3.0, height: 2.8, dryMass: 2500, cost: 40, control: true, payload: true, attitude: { wheelTorque: 20, wheelMomentum: 150 }, look: "satellite", desc: "Medium satellite bus with avionics.", source: "Approx. medium EO satellite class" }),
   P({ id: "tank_k_37_s", name: "Kerolox Tank 3.7 m — Short", category: "tank", diameter: 3.7, height: 6, dryMass: 2600, cost: 1.2, propellant: { type: "kerolox", mass: 40000 }, look: "tank_white", source: "Approx. aluminium-lithium stage tank, ~6.5% structure" }),
   P({ id: "tank_k_37_m", name: "Kerolox Tank 3.7 m — Medium", category: "tank", diameter: 3.7, height: 12, dryMass: 5400, cost: 2.2, propellant: { type: "kerolox", mass: 90000 }, look: "tank_white", source: "Approx. aluminium-lithium stage tank, ~6% structure" }),
   P({ id: "tank_k_37_l", name: "Kerolox Tank 3.7 m — Long", category: "tank", diameter: 3.7, height: 22, dryMass: 10000, cost: 4.0, propellant: { type: "kerolox", mass: 180000 }, look: "tank_white", source: "Approx. aluminium-lithium stage tank, ~5.5% structure" }),
@@ -33,6 +35,9 @@ const list = [
   P({ id: "eng_h10", name: "H-10 Hydrolox Upper Engine", category: "engine", diameter: 1.8, height: 2.3, dryMass: 300, cost: 9.0, look: "engine_vac", engine: { propellant: "hydrolox", thrustVac: 110000, ispVac: 465, ispSL: 200, minThrottle: 0.3, gimbal: 4 }, source: "Approx. RL10 class" }),
   P({ id: "eng_hm", name: "H-1M Hydrolox Main Engine", category: "engine", diameter: 3.0, height: 3.4, dryMass: 3200, cost: 25, look: "engine", engine: { propellant: "hydrolox", thrustVac: 2280000, ispVac: 452, ispSL: 366, minThrottle: 0.67, gimbal: 8 }, source: "Approx. RS-25 class" }),
   P({ id: "srb_63", name: "SRB-63 Solid Booster", category: "booster", diameter: 1.6, height: 20, dryMass: 5150, cost: 6.0, look: "srb", propellant: { type: "solid", mass: 44000 }, engine: { propellant: "solid", thrustVac: 1320000, ispVac: 279, ispSL: 245, solid: true, minThrottle: 1, gimbal: 0 }, radialOnly: true, desc: "Radial booster with built-in nose cone and radial decoupler. Cannot throttle or shut down.", source: "Approx. GEM-63 class (inert mass incl. radial decoupler)" }),
+  P({ id: "rw_4", name: "RW-4 Reaction Wheel Assembly", category: "control", diameter: 1.8, height: 0.5, dryMass: 120, cost: 1.5, attitude: { wheelTorque: 400, wheelMomentum: 4000 }, look: "wheel", desc: "Electric momentum wheels: smooth torque, no propellant, but they saturate under steady disturbance torques.", source: "Approx. large spacecraft RWA cluster" }),
+  P({ id: "rcs_ring", name: "RCS Thruster Ring (8× 445 N)", category: "control", diameter: 3.7, height: 0.4, dryMass: 160, cost: 1.2, attitude: { rcsThrust: 890 }, look: "rcs", desc: "Hydrazine thrusters fired in couples. Torque = 890 N × 0.9 × vehicle length. Needs monopropellant on board.", source: "Approx. MR-106 class thrusters" }),
+  P({ id: "tank_mono", name: "Monopropellant Tank 3.7 m", category: "control", diameter: 3.7, height: 0.8, dryMass: 90, cost: 0.4, propellant: { type: "monoprop", mass: 600 }, look: "tank_mono", desc: "Hydrazine for RCS (Isp 220 s). Shared by all RCS on the attached vehicle.", source: "Approx. titanium diaphragm tank" }),
   P({ id: "decoupler_37", name: "Stage Decoupler 3.7 m", category: "structure", diameter: 3.7, height: 0.6, dryMass: 420, cost: 0.3, decoupler: true, look: "decoupler", desc: "Separates stages. Stays with the stage below.", source: "Approx. interstage ring" }),
   P({ id: "decoupler_18", name: "Stage Decoupler 1.8 m", category: "structure", diameter: 1.8, height: 0.35, dryMass: 120, cost: 0.15, decoupler: true, look: "decoupler", source: "Approx. small separation ring" }),
   P({ id: "adapter_37_18", name: "Adapter 3.7 → 1.8 m", category: "structure", diameter: 3.7, diameterTop: 1.8, height: 1.4, dryMass: 300, cost: 0.2, look: "adapter", source: "Approx. conical adapter" }),

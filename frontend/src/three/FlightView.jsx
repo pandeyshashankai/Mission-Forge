@@ -4,7 +4,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { buildRocket, disposeObject } from "./partMeshes";
 import { EARTH, DEG } from "../sim/constants";
-import { orbitPoints } from "../sim/orbit";
+import { predictPath, nodePrediction } from "../sim/maneuver";
 
 const R = EARTH.radius;
 const QUALITY = { low: { px: 0.75, seg: 96, cap: 96 }, medium: { px: 1, seg: 160, cap: 160 }, high: { px: 1.5, seg: 256, cap: 256 } };
@@ -72,6 +72,35 @@ function atmosphereShell() {
     fragmentShader: `uniform vec3 sunDir; varying vec3 vN; varying vec3 vW; void main(){ vec3 V = normalize(cameraPosition - vW); float rim = pow(1.0 - abs(dot(V, vN)), 3.0); float day = clamp(dot(vN, sunDir)*0.8+0.4, 0.05, 1.0); gl_FragColor = vec4(vec3(0.3,0.6,1.0)*rim*1.6*day, rim*day); }`,
   });
   return new THREE.Mesh(new THREE.SphereGeometry(R * 1.022, 96, 48), mat);
+}
+
+const norm3 = (a) => { const l = Math.hypot(...a); return a.map((x) => x / l); };
+const scaleV = (a, k) => a.map((x) => x * k);
+
+function setLine(line, pts) {
+  line.geometry.dispose();
+  line.geometry = new THREE.BufferGeometry().setFromPoints(pts.map(toThree));
+  if (line.material.isLineDashedMaterial) line.computeLineDistances();
+}
+
+function marker(text, color) {
+  const c = document.createElement("canvas");
+  c.width = 128;
+  c.height = 64;
+  const g = c.getContext("2d");
+  g.fillStyle = color;
+  g.font = "bold 30px JetBrains Mono, monospace";
+  g.textAlign = "center";
+  g.fillText(text, 64, 30);
+  g.beginPath();
+  g.arc(64, 48, 7, 0, Math.PI * 2);
+  g.fill();
+  const tex = new THREE.CanvasTexture(c);
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, depthTest: false, sizeAttenuation: false, transparent: true }));
+  sp.scale.set(0.07, 0.035, 1);
+  sp.center.set(0.5, 0.25);
+  sp.renderOrder = 10;
+  return sp;
 }
 
 function makePlume() {
@@ -162,6 +191,16 @@ export const FlightView = ({ simRef, cameraMode, quality = "medium", onFrame }) 
     const orbitLine = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: "#38bdf8", transparent: true, opacity: 0.8 }));
     orbitLine.frustumCulled = false;
     earthCenter.add(orbitLine);
+    const nodeLine = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineDashedMaterial({ color: "#f59e0b", dashSize: 2e5, gapSize: 1.2e5 }));
+    nodeLine.frustumCulled = false;
+    earthCenter.add(nodeLine);
+    const apoM = marker("Ap", "#38bdf8"), periM = marker("Pe", "#10b981"), nodeM = marker("Node", "#f59e0b"), vesselM = marker("◆", "#e2e8f0");
+    earthCenter.add(apoM, periM, nodeM);
+    scene.add(vesselM);
+    const mapPrev = new THREE.Vector3();
+    let logSeen = 0;
+    let shot = null;
+    const mode0 = () => camModeRef.current;
     const rocketHolder = new THREE.Group();
     scene.add(rocketHolder);
     const plume = makePlume();
@@ -268,42 +307,94 @@ export const FlightView = ({ simRef, cameraMode, quality = "medium", onFrame }) 
       orbitTimer -= dtReal;
       if (orbitTimer <= 0) {
         orbitTimer = 0.25;
-        const show = alt > 25000 && nav.el.e < 1;
+        const show = alt > 25000 || mode0() === "map";
         orbitLine.visible = show;
+        apoM.visible = periM.visible = false;
         if (show) {
-          const pts = orbitPoints(nav.el, EARTH.mu, 256).map(toThree);
-          orbitLine.geometry.dispose();
-          orbitLine.geometry = new THREE.BufferGeometry().setFromPoints(pts);
+          const pred = predictPath(sim.r, sim.v, { points: 240 });
+          setLine(orbitLine, pred.pts);
+          if (pred.el.e < 1) {
+            const ap = scaleV(norm3(pred.el.eVec), -pred.el.ra);
+            const pe = scaleV(norm3(pred.el.eVec), pred.el.rp);
+            apoM.position.copy(toThree(ap));
+            periM.position.copy(toThree(pe));
+            apoM.visible = pred.el.ra < 4e8;
+            periM.visible = pred.el.rp > R;
+          }
+        }
+        const node = sim.node;
+        nodeLine.visible = nodeM.visible = !!node && show;
+        if (node && show) {
+          const np = nodePrediction(sim, node);
+          nodeM.position.copy(toThree(np.at.r));
+          setLine(nodeLine, predictPath(np.at.r, np.v2, { points: 240 }).pts);
         }
       }
+      vesselM.visible = mode0() === "map";
       const h = rocket ? rocket.userData.height : 30;
       const center = dir.clone().multiplyScalar((rocket ? rocket.position.y : 0) + h / 2);
       const mode = camModeRef.current;
       const east = new THREE.Vector3(0, 1, 0).cross(up).normalize();
       const north = up.clone().cross(east);
+      let side = new THREE.Vector3().crossVectors(up, dir);
+      if (side.lengthSq() < 1e-4) side = east.clone();
+      side.normalize();
       if (mode !== lastMode) {
-        controls.enabled = mode === "free";
+        controls.enabled = mode === "free" || mode === "map";
         if (mode === "free") {
           camera.up.copy(up);
           controls.target.copy(center);
           camera.position.copy(center).add(up.clone().multiplyScalar(h * 0.3)).add(east.clone().multiplyScalar(h * 2.2 + 10));
         }
+        if (mode === "map") {
+          camera.up.set(0, 1, 0);
+          controls.target.copy(earthCenter.position);
+          camera.position.copy(earthCenter.position).addScaledVector(rPos.clone().normalize(), R * 3.2).add(new THREE.Vector3(0, R * 1.2, 0));
+          mapPrev.copy(earthCenter.position);
+        }
         lastMode = mode;
       }
+      scene.background = mode === "map" ? skyHigh : sky;
       if (mode === "chase") {
         if (!chaseDist) chaseDist = 1;
         const d = (h * 1.6 + 12) * chaseDist;
         const off = new THREE.Vector3();
         if (alt < 3000) off.addScaledVector(east, -0.8).addScaledVector(north, -0.45).addScaledVector(up, 0.08);
-        else {
-          let side = new THREE.Vector3().crossVectors(up, dir);
-          if (side.lengthSq() < 1e-4) side = east.clone();
-          side.normalize();
-          off.addScaledVector(dir, -0.6).addScaledVector(side, 0.6).addScaledVector(up, 0.3);
-        }
+        else off.addScaledVector(dir, -0.6).addScaledVector(side, 0.6).addScaledVector(up, 0.3);
         camera.up.copy(up);
         camera.position.copy(center).addScaledVector(off.normalize(), d);
         camera.lookAt(center);
+      } else if (mode === "cinematic") {
+        const log = sim.log;
+        for (; logSeen < log.length; logSeen++) {
+          const e = log[logSeen];
+          const kind = /Liftoff/.test(e.text) ? "pad" : /fairing/i.test(e.text) ? "fairing" : e.type === "stage" && /Separate|Jettison/.test(e.text) ? "sep" : /burn start/.test(e.text) ? "burn" : null;
+          if (kind) shot = { kind, t0: now, simT0: sim.t, r0: [...sim.r], v0: [...sim.v], w0: side.clone().multiplyScalar(kind === "fairing" ? h * 0.5 + 8 : h * 0.6 + 15).addScaledVector(dir, kind === "fairing" ? h * 0.9 : -h * 0.1).addScaledVector(up, 4) };
+        }
+        const el = shot ? (now - shot.t0) / 1000 : 99;
+        const dur = shot ? { pad: 9, sep: 8, fairing: 7, burn: 10 }[shot.kind] : 0;
+        camera.up.copy(up);
+        if (shot && el < dur && shot.kind === "pad" && alt < 20000) {
+          camera.position.copy(padSite.localToWorld(new THREE.Vector3(-220, 14, 300)));
+          camera.lookAt(center);
+        } else if (shot && el < dur && (shot.kind === "sep" || shot.kind === "fairing")) {
+          const dt = sim.t - shot.simT0;
+          const p = toThree([shot.r0[0] + shot.v0[0] * dt, shot.r0[1] + shot.v0[1] * dt, shot.r0[2] + shot.v0[2] * dt]).sub(rPos).add(shot.w0);
+          camera.position.copy(p);
+          camera.lookAt(center);
+        } else {
+          const a = (shot && el < dur && shot.kind === "burn" ? 0.35 : 0.06) * (now / 1000);
+          const d = h * 2.2 + 25;
+          const back = dir.clone().multiplyScalar(-1);
+          camera.position.copy(center).addScaledVector(side, Math.cos(a) * d).addScaledVector(back, Math.sin(a) * d * 0.7).addScaledVector(alt < 3000 ? north : up, d * 0.25);
+          camera.lookAt(center);
+        }
+      } else if (mode === "map") {
+        const delta = earthCenter.position.clone().sub(mapPrev);
+        camera.position.add(delta);
+        mapPrev.copy(earthCenter.position);
+        controls.target.copy(earthCenter.position);
+        controls.update();
       } else {
         controls.target.copy(center);
         controls.update();

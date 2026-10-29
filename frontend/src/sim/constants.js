@@ -11,6 +11,7 @@ export const EARTH = {
 
 export const LAUNCH_SITES = {
   cape: { id: "cape", name: "Cape Canaveral LC-39A (approx.)", lat: 28.6082, lon: -80.6041 },
+  vandenberg: { id: "vandenberg", name: "Vandenberg SLC-4E (approx.)", lat: 34.632, lon: -120.611 },
 };
 
 export const STABLE_PERIAPSIS = 140000;

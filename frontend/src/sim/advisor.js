@@ -73,6 +73,15 @@ export function adviseDesign(design, review) {
   const up = byId.upper_twr;
   if (up && up.status !== "pass")
     items.push({ id: "adv-up", severity: up.status, ref: "upper_twr", title: "An upper stage has very low thrust for its mass.", problems: [up.summary], fixes: ["Add a second upper-stage engine or choose a higher-thrust vacuum engine (e.g. K-1V, 981 kN).", "Or reduce upper-stage propellant/payload mass."] });
+  const att = byId.attitude;
+  if (att && att.status !== "pass") {
+    const v = att.values;
+    const fixes = [];
+    if (!v.hasMono && v.rcs === 0) fixes.push("Add an RCS Thruster Ring plus a Monopropellant Tank to the top stage — RCS torque scales with vehicle length (890 N × 0.9 L).");
+    fixes.push(`Add RW-4 Reaction Wheel Assemblies: each adds 400 N·m and 4,000 N·m·s; about ${Math.ceil(Math.max(0, v.req - v.avail) / 400)} needed for the reference slew.`);
+    if (!v.momentumOk) fixes.push("Wheel momentum is too small for the slew; RCS is needed to unload them.");
+    items.push({ id: "adv-att", severity: att.status, ref: "attitude", title: "The upper stage cannot turn quickly enough to point for burns.", problems: [att.summary], fixes });
+  }
   const feed = byId.feed;
   if (feed && feed.status !== "pass")
     items.push({ id: "adv-feed", severity: "fail", ref: "feed", title: "An engine cannot be fed.", problems: [feed.summary], fixes: ["Add a tank of the matching propellant to the same stage (between the engine and the decoupler above it)."] });

@@ -21,15 +21,20 @@ export function evaluateFlight(sim, design, mission, difficulty) {
     { id: "inc", label: mission.objectives[2], met: inOrbit && Math.abs(incDeg - tgt.inclination) <= tgt.incTolerance, detail: inOrbit ? `i = ${fmt(incDeg, 2)}°` : "No orbit" },
     { id: "budget", label: mission.objectives[3], met: stats.cost <= budget, detail: `$${fmt(stats.cost, 1)}M of $${fmt(budget, 1)}M` },
   ];
+  if (mission.payload) {
+    const has = design.stack.some((n) => n.partId === mission.payload && sim.sections.some((s, i) => sim.rt.sections[i].attached && s.uids.has(n.uid)));
+    objectives.push({ id: "payload", label: mission.objectives[4], met: has && inOrbit, detail: has ? "Payload on board" : "Payload missing" });
+  }
   const metCount = objectives.filter((o) => o.met).length;
   const margin = inOrbit ? remDv / req : 0;
-  const tOrbit = sim.orbitAt || 0;
+  const ts = mission.timeScore;
+  const tOrbit = ts.basis === "orbit" ? sim.orbitAt || 0 : sim.t;
   const score = [
-    { name: "Objectives", points: 50 * (metCount / objectives.length), max: 50, basis: `${metCount} of ${objectives.length} objectives met × 12.5` },
+    { name: "Objectives", points: 50 * (metCount / objectives.length), max: 50, basis: `${metCount} of ${objectives.length} objectives met × ${fmt(50 / objectives.length, 1)}` },
     { name: "Cost efficiency", points: stats.cost <= budget ? 20 * clamp01(1.5 - stats.cost / budget) : 0, max: 20, basis: stats.cost <= budget ? `20 × clamp(1.5 − ${fmt(stats.cost, 1)}/${fmt(budget, 1)})` : "Over budget → 0" },
     { name: "Fuel margin", points: inOrbit ? 15 * clamp01(margin / 0.1) : 0, max: 15, basis: inOrbit ? `${fmt(remDv)} m/s left = ${fmt(margin * 100, 1)}% of ${fmt(req)} m/s; full points at ≥ 10%` : "No orbit → 0" },
     { name: "Crew safety", points: 0, max: 0, basis: "Not applicable — uncrewed mission" },
-    { name: "Time", points: inOrbit ? 15 * clamp01((1500 - tOrbit) / 900) : 0, max: 15, basis: inOrbit ? `Orbit at T+${fmt(tOrbit)} s; full points ≤ 600 s, zero at 1,500 s` : "No orbit → 0" },
+    { name: "Time", points: inOrbit ? 15 * clamp01((ts.zero - tOrbit) / (ts.zero - ts.full)) : 0, max: 15, basis: inOrbit ? `${ts.basis === "orbit" ? "Orbit" : "Mission complete"} at T+${fmt(tOrbit)} s; full points ≤ ${fmt(ts.full)} s, zero at ${fmt(ts.zero)} s` : "No orbit → 0" },
   ];
   const total = score.reduce((a, s) => a + s.points, 0);
   const outcome = metCount === objectives.length ? "success" : inOrbit ? "partial" : "failed";
@@ -68,7 +73,7 @@ function buildCauseChain(sim, inOrbit, el, tgt) {
     else chain.push("Flight ended before a stable orbit was reached");
   } else {
     chain.push(`Orbit inserted: ${km(el.apoapsis)} × ${km(el.periapsis)}`);
-    if (Math.abs(el.apoapsis - tgt.altitude) > tgt.tolerance || Math.abs(el.periapsis - tgt.altitude) > tgt.tolerance) chain.push("Orbit lies outside the 175–225 km target band");
+    if (Math.abs(el.apoapsis - tgt.altitude) > tgt.tolerance || Math.abs(el.periapsis - tgt.altitude) > tgt.tolerance) chain.push(`Orbit lies outside the ${fmt((tgt.altitude - tgt.tolerance) / 1000)}–${fmt((tgt.altitude + tgt.tolerance) / 1000)} km target band`);
   }
   return chain;
 }

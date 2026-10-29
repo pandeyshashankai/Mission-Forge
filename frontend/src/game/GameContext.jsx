@@ -15,6 +15,7 @@ export function GameProvider({ children }) {
   const [profile, setProfile] = useState(auto?.profile || DEFAULT_PROFILE);
   const [settings, setSettingsState] = useState(storage.settings());
   const [result, setResult] = useState(null);
+  const [pendingCheckpoint, setPendingCheckpoint] = useState(null);
   const [hasAutosave, setHasAutosave] = useState(!!auto);
   const past = useRef([]);
   const future = useRef([]);
@@ -76,7 +77,7 @@ export function GameProvider({ children }) {
   const value = {
     screen, go: setScreen, difficulty, setDifficulty, missionId, setMissionId,
     design, setDesign, loadDesign, undo, redo, canUndo: past.current.length > 0, canRedo: future.current.length > 0,
-    profile, setProfile, settings, setSettings, result, setResult, hasAutosave,
+    profile, setProfile, settings, setSettings, result, setResult, hasAutosave, pendingCheckpoint, setPendingCheckpoint,
   };
   return <GameCtx.Provider value={value}>{children}</GameCtx.Provider>;
 }

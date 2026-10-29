@@ -180,6 +180,23 @@ export function buildPartMesh(part, height = part.height) {
       g.add(bell(r * 0.3, r * 0.75, h * 0.05, M.bell()));
       break;
     }
+    case "wheel":
+      g.add(cyl(r * 0.9, r * 0.9, h, M.dark(), 8));
+      g.add(cyl(r * 0.92, r * 0.92, h * 0.3, M.gold(), 8, h * 0.35));
+      break;
+    case "rcs":
+      g.add(cyl(r, r, h, M.gray()));
+      for (let i = 0; i < 4; i++) {
+        const b = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.3, 0.35), M.dark());
+        const a = (i / 4) * Math.PI * 2 + Math.PI / 4;
+        b.position.set(Math.cos(a) * (r + 0.1), h / 2, Math.sin(a) * (r + 0.1));
+        g.add(b);
+      }
+      break;
+    case "tank_mono":
+      g.add(cyl(r, r, h, M.gray()));
+      g.add(ring(r, 0, 0.08), ring(r, h - 0.08, 0.08));
+      break;
     default:
       g.add(cyl(r, r, h, M.gray()));
   }

@@ -24,7 +24,7 @@ export const GuidancePanel = ({ profile, setProfile, enabled, setEnabled }) => {
       </div>
       <div className={`mt-4 grid grid-cols-2 gap-3 ${enabled ? "" : "pointer-events-none opacity-40"}`}>
         <Field label="Target orbit altitude" unit="km" value={profile.targetAltitude / 1000} onChange={set("targetAltitude", 1000)} min={150} max={2000} testId="guidance-target-alt-input" />
-        <Field label="Target inclination" unit="°" value={profile.targetInclination} step={0.1} onChange={set("targetInclination")} min={28.6} max={90} testId="guidance-target-inc-input" hint="≥ launch-site latitude 28.6°" />
+        <Field label="Target inclination" unit="°" value={profile.targetInclination} step={0.1} onChange={set("targetInclination")} min={0} max={180} testId="guidance-target-inc-input" hint="≥ launch-site latitude; > 90° = retrograde" />
         <Field label="Gravity-turn start speed" unit="m/s" value={profile.turnStartSpeed} onChange={set("turnStartSpeed")} min={10} max={300} testId="guidance-turn-speed-input" />
         <Field label="Pitch-over angle" unit="°" value={profile.pitchKick} step={0.5} onChange={set("pitchKick")} min={0.5} max={20} testId="guidance-pitch-kick-input" />
         <Field label="Max acceleration" unit="g" value={profile.maxAccelG} step={0.1} onChange={set("maxAccelG")} min={1.5} max={8} testId="guidance-max-accel-input" />

@@ -14,8 +14,11 @@ import { DEG } from "../sim/constants";
 import { GuidancePanel } from "../components/game/GuidancePanel";
 import { TelemetryPanel, OrbitPanel, PropulsionPanel, EventLog } from "../components/game/FlightHud";
 import { GoNoGo } from "../components/game/Status";
+import { AttitudePanel, ManeuverPanel, CheckpointList } from "../components/game/FlightPanels";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../components/ui/dialog";
 
 const WARPS = [1, 2, 5, 10, 50, 100, 1000];
+const CAMS = ["chase", "cinematic", "free", "map"];
 const fmtT = (n) => `T${n <= 0 ? "-" : "+"}${String(Math.abs(n)).padStart(2, "0")}`;
 
 function snapshot(sim, warp) {
@@ -35,21 +38,36 @@ function snapshot(sim, warp) {
     throttle: n.Fmax > 0 ? n.F / n.Fmax : 0, thrust: n.F, fuel, nextEvent: next && next !== "ignite-0" ? describeEvent(next, sim.sections).label : null,
     status: sim.status, guidance: !!sim.guidance && !sim.guidance.disengaged, guidancePhase: sim.guidance ? sim.guidance.phase : "", guidanceDone: sim.guidance?.done,
     log: [...sim.log], warp, orbitAt: sim.orbitAt, clamped: sim.clamped,
+    attStatus: sim.attStatus, attMode: sim.attMode, rcsEnabled: sim.rcsEnabled, hasNode: !!sim.node,
   };
+}
+
+function maneuverWarpCap(sim) {
+  const m = sim.maneuver;
+  if (!m || m.done) return 1000;
+  if (m.phase === "burn") return 1;
+  const rem = m.tStart - sim.t;
+  return rem > 3000 ? 1000 : rem > 400 ? 100 : rem > 45 ? 10 : 1;
 }
 
 export default function Flight() {
   const g = useGame();
   const mission = getMission(g.missionId);
   const review = useMemo(() => runReadiness(g.design, mission, g.difficulty), [g.design, mission, g.difficulty]);
-  const [phase, setPhase] = useState("checklist");
+  const pending = useRef(g.pendingCheckpoint);
+  const [phase, setPhase] = useState(pending.current ? "flight" : "checklist");
+  const [ckOpen, setCkOpen] = useState(false);
+  const [cks, setCks] = useState([]);
   const [guidanceOn, setGuidanceOn] = useState(true);
   const [count, setCount] = useState(10);
   const [hold, setHold] = useState(false);
   const [cam, setCam] = useState(g.settings.camera || "chase");
   const [snap, setSnap] = useState(null);
   const simRef = useRef(null);
-  if (!simRef.current) simRef.current = new FlightSim({ design: g.design, mission, profile: g.profile, guidanceOn: true });
+  if (!simRef.current) {
+    simRef.current = new FlightSim({ design: g.design, mission, profile: g.profile, guidanceOn: true });
+    if (pending.current) simRef.current.restore(pending.current.state);
+  }
   const phaseRef = useRef(phase);
   phaseRef.current = phase;
   const warpRef = useRef(1);
@@ -62,8 +80,31 @@ export default function Flight() {
   }, [g.design, mission, g.profile]);
 
   useEffect(() => {
+    if (pending.current) {
+      g.setPendingCheckpoint(null);
+      pending.current = null;
+      toast.success("Flight resumed from checkpoint");
+      return;
+    }
     if (phase === "checklist") rebuildSim(guidanceOn);
-  }, [phase, guidanceOn, rebuildSim]);
+  }, [phase, guidanceOn, rebuildSim]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const saveCheckpoint = useCallback((label, auto) => {
+    const sim = simRef.current;
+    const ck = { id: `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`, label, auto, at: new Date().toISOString(), missionId: mission.id, missionName: mission.name, difficulty: g.difficulty, design: g.design, designName: g.design.name, profile: g.profile, simT: sim.t, state: sim.serialize() };
+    if (storage.saveCheckpoint(ck)) toast.success(`Checkpoint saved — ${label}`);
+    else toast.error("Browser storage is full — delete old checkpoints");
+  }, [g.design, g.profile, g.difficulty, mission]);
+
+  const restoreCheckpoint = (ck) => {
+    const sim = new FlightSim({ design: ck.design, mission, profile: ck.profile, guidanceOn: true });
+    sim.restore(ck.state);
+    simRef.current = sim;
+    warpRef.current = 1;
+    endedRef.current = false;
+    setCkOpen(false);
+    toast.success(`Restored "${ck.label}"`);
+  };
 
   useEffect(() => {
     if (phase !== "countdown" || hold) return;
@@ -79,7 +120,7 @@ export default function Flight() {
   const setWarp = (w) => {
     const sim = simRef.current;
     const limited = sim.nav.F > 0 || sim.nav.alt < ATMOS_TOP;
-    const max = limited ? 10 : 1000;
+    const max = Math.min(limited ? 10 : 1000, maneuverWarpCap(sim));
     warpRef.current = Math.min(w, max);
     if (w > max) toast.message(`Warp limited to ×${max} while ${sim.nav.F > 0 ? "engines are firing" : "inside the atmosphere"}`);
   };
@@ -115,7 +156,9 @@ export default function Flight() {
       const k = e.key.toLowerCase();
       const sim = simRef.current;
       if (k === " ") { e.preventDefault(); stage(); return; }
-      if (k === "c") { setCam((c) => (c === "chase" ? "free" : "chase")); return; }
+      if (k === "c") { setCam((c) => CAMS[(CAMS.indexOf(c) + 1) % CAMS.length]); return; }
+      if (k === "m") { setCam((c) => (c === "map" ? "chase" : "map")); return; }
+      if (k === "r") { sim.rcsEnabled = !sim.rcsEnabled; return; }
       if (k === "." || k === ",") { const i = WARPS.indexOf(warpRef.current); setWarp(WARPS[Math.max(0, Math.min(WARPS.length - 1, i + (k === "." ? 1 : -1)))]); return; }
       if (k === "g" && sim.guidance) { sim.guidance.disengaged = !sim.guidance.disengaged; toast.message(sim.guidance.disengaged ? "Guidance disengaged" : "Guidance engaged"); return; }
       if (k === "z") { disengage(); sim.throttle = 1; return; }
@@ -128,6 +171,8 @@ export default function Flight() {
     return () => { window.removeEventListener("keydown", down); window.removeEventListener("keyup", up); };
   }, [stage]);
 
+  const saveRef = useRef(saveCheckpoint);
+  saveRef.current = saveCheckpoint;
   const onFrame = useCallback((dtReal) => {
     const sim = simRef.current;
     let simDt = 0;
@@ -137,9 +182,14 @@ export default function Flight() {
       if (k.has("shift")) sim.throttle = Math.min(1, sim.throttle + dtReal * 0.6);
       if (k.has("control")) sim.throttle = Math.max(0, sim.throttle - dtReal * 0.6);
       if ((sim.nav.F > 0 || sim.nav.alt < ATMOS_TOP) && warpRef.current > 10) warpRef.current = 10;
+      warpRef.current = Math.min(warpRef.current, maneuverWarpCap(sim));
       const t0 = sim.t;
       sim.advance(dtReal * warpRef.current);
       simDt = sim.t - t0;
+    }
+    while (sim.checkpointQueue.length) {
+      const c = sim.checkpointQueue.shift();
+      saveRef.current(c.label, true);
     }
     snapTimer.current -= dtReal;
     if (snapTimer.current <= 0) {
@@ -169,13 +219,14 @@ export default function Flight() {
               <button key={w} data-testid={`time-warp-${w}`} onClick={() => setWarp(w)} className={`px-1.5 py-0.5 font-mono text-[11px] ${s.warp === w ? "bg-cyan-500/20 text-cyan-200" : "text-slate-400 hover:text-white"}`}>×{w}</button>
             ))}
             <span className="mx-1 h-4 w-px bg-slate-700" />
-            {["chase", "free"].map((c) => (
+            {CAMS.map((c) => (
               <button key={c} data-testid={`camera-${c}-btn`} onClick={() => setCam(c)} className={`flex items-center gap-1 px-2 py-0.5 font-mono text-[11px] uppercase ${cam === c ? "bg-cyan-500/20 text-cyan-200" : "text-slate-400 hover:text-white"}`}><Camera size={11} />{c}</button>
             ))}
             <span className="mx-1 h-4 w-px bg-slate-700" />
             {s.guidance !== undefined && simRef.current.guidance && (
               <button data-testid="guidance-toggle-btn" onClick={() => { const gd = simRef.current.guidance; gd.disengaged = !gd.disengaged; }} className={`px-2 py-0.5 font-mono text-[11px] uppercase ${s.guidance ? "text-emerald-400" : "text-amber-400"}`}>{s.guidance ? "Auto" : "Manual"} [G]</button>
             )}
+            <button data-testid="checkpoints-btn" onClick={() => { setCks(storage.checkpoints().filter((c) => c.missionId === mission.id)); setCkOpen(true); }} className="px-2 py-0.5 font-mono text-[11px] uppercase text-slate-300 hover:text-white">Checkpoints</button>
             <button data-testid="end-flight-btn" onClick={finish} className="flex items-center gap-1 px-2 py-0.5 font-mono text-[11px] uppercase text-red-300 hover:text-red-200"><Flag size={11} /> End flight</button>
           </div>
         )}
@@ -184,11 +235,14 @@ export default function Flight() {
       {phase === "flight" && s && (
         <>
           <div className="absolute left-3 top-20"><TelemetryPanel s={s} /></div>
-          <div className="absolute right-3 top-20"><OrbitPanel s={s} /></div>
+          <div className="absolute right-3 top-20 flex max-h-[calc(100%-160px)] flex-col gap-2 overflow-y-auto scroll-thin"><OrbitPanel s={s} /><AttitudePanel s={s} sim={simRef.current} /></div>
+          {(cam === "map" || s.hasNode) && s.status !== "prelaunch" && !s.clamped && (
+            <div className="absolute right-[264px] top-20"><ManeuverPanel s={s} sim={simRef.current} targetAlt={mission.target.altitude} onWarpTo={() => setWarp(1000)} /></div>
+          )}
           <div className="absolute bottom-3 left-1/2 -translate-x-1/2"><PropulsionPanel s={s} onStage={stage} /></div>
           <div className="absolute bottom-3 left-3"><EventLog log={s.log} /></div>
           <div className="pointer-events-none absolute bottom-3 right-3 text-right font-mono text-[10px] leading-relaxed text-slate-500">
-            SPACE stage · SHIFT/CTRL throttle · Z full · X cut<br />W/S pitch · A/D heading · G guidance · C camera · , . warp
+            SPACE stage · SHIFT/CTRL throttle · Z full · X cut · R RCS<br />W/S pitch · A/D heading · G guidance · C camera · M map · , . warp
           </div>
           {s.status === "orbit" && !crashed && (
             <div className="panel absolute left-1/2 top-20 -translate-x-1/2 rounded-sm border-emerald-500/50 px-5 py-3 text-center rise" data-testid="orbit-achieved-banner">
@@ -208,6 +262,13 @@ export default function Flight() {
           )}
         </>
       )}
+
+      <Dialog open={ckOpen} onOpenChange={setCkOpen}>
+        <DialogContent className="dark max-w-xl border-slate-800 bg-slate-950 text-slate-100" data-testid="checkpoint-dialog">
+          <DialogHeader><DialogTitle className="font-display uppercase tracking-wider">Flight checkpoints</DialogTitle></DialogHeader>
+          <CheckpointList list={cks} onSave={phase === "flight" ? () => { saveCheckpoint("Manual", false); setCks(storage.checkpoints().filter((c) => c.missionId === mission.id)); } : null} onRestore={restoreCheckpoint} onDelete={(id) => { storage.deleteCheckpoint(id); setCks(storage.checkpoints().filter((c) => c.missionId === mission.id)); }} />
+        </DialogContent>
+      </Dialog>
 
       {phase === "checklist" && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/40 p-6">

@@ -2,6 +2,7 @@ import { G0 } from "./constants";
 import { designStats, engineIssues, describeEvent } from "./design";
 import { engineSL, PARTS } from "./parts";
 import { missionBudget, requiredDeltaV } from "./missions";
+import { attitudeRequirement, rcsTorque } from "./attitude";
 
 const fmt = (x, d = 0) => Number(x).toLocaleString("en-US", { maximumFractionDigits: d, minimumFractionDigits: d });
 const t = (kg) => `${fmt(kg / 1000, 1)} t`;
@@ -85,6 +86,59 @@ function upperTwrCheck(stats) {
   };
 }
 
+export function upperAttitude(stats) {
+  const top = stats.sections[stats.sections.length - 1];
+  let L = 0, maxD = 0, wheelTorque = 0, wheelMomentum = 0, rcsThrust = 0, mass = 0;
+  for (const n of top.parts) {
+    const p = PARTS[n.partId];
+    L += p.height;
+    maxD = Math.max(maxD, p.diameter);
+    mass += p.dryMass + (p.propellant ? p.propellant.mass : 0);
+    if (p.attitude) {
+      wheelTorque += p.attitude.wheelTorque || 0;
+      wheelMomentum += p.attitude.wheelMomentum || 0;
+      rcsThrust += p.attitude.rcsThrust || 0;
+    }
+  }
+  const cfg = { L: Math.max(1, L), R: maxD / 2, wheelTorque, wheelMomentum, rcsThrust };
+  const hasMono = (top.tanks.monoprop || 0) > 0;
+  const rcs = hasMono ? rcsTorque(cfg) : 0;
+  return { cfg, mass, rcs, hasMono, avail: wheelTorque + rcs, req: attitudeRequirement(mass, cfg, 90, 60) };
+}
+
+function attitudeCheck(stats) {
+  const a = upperAttitude(stats);
+  const { req, cfg } = a;
+  const momentumOk = cfg.wheelMomentum >= req.momentum || a.rcs > 0;
+  const status = a.avail >= req.torque && momentumOk ? "pass" : a.avail >= req.torque / 4 && a.avail > 0 ? "warn" : "fail";
+  const t90 = a.avail > 0 ? Math.sqrt((4 * req.theta * req.I) / a.avail) : Infinity;
+  return {
+    id: "attitude",
+    subsystem: "Attitude control",
+    status,
+    summary: `Top stage control torque ${fmt(a.avail)} N·m vs ${fmt(req.torque)} N·m needed for a 90° turn in 60 s (best 90° turn ≈ ${Number.isFinite(t90) ? fmt(t90) + " s" : "never"})`,
+    values: { avail: a.avail, req: req.torque, wheels: cfg.wheelTorque, rcs: a.rcs, momentumOk, hasMono: a.hasMono, I: req.I },
+    calc: {
+      formula: "τ_req = I · 4θ / T²,  I = m (L²/12 + R²/4),  τ_RCS = F_couple · 0.9 L",
+      inputs: [
+        { name: "m (top stage, fuelled)", value: fmt(a.mass), unit: "kg", source: "Part catalog" },
+        { name: "L (top stage length)", value: fmt(cfg.L, 1), unit: "m", source: "Sum of part heights" },
+        { name: "R (max radius)", value: fmt(cfg.R, 2), unit: "m", source: "Part catalog" },
+        { name: "θ, T (reference slew)", value: "90°, 60 s", unit: "", source: "Assumed pointing requirement (bang-bang slew)" },
+        { name: "Reaction wheel torque / momentum", value: `${fmt(cfg.wheelTorque)} / ${fmt(cfg.wheelMomentum)}`, unit: "N·m / N·m·s", source: "Part catalog" },
+        { name: "RCS couple thrust", value: a.hasMono ? fmt(cfg.rcsThrust) : `${fmt(cfg.rcsThrust)} (no monopropellant)`, unit: "N", source: "Part catalog" },
+      ],
+      steps: [
+        `I = ${fmt(a.mass)} × (${fmt(cfg.L, 1)}²/12 + ${fmt(cfg.R, 2)}²/4) = ${fmt(req.I)} kg·m²`,
+        `τ_req = ${fmt(req.I)} × 4 × ${req.theta.toFixed(3)} / 60² = ${fmt(req.torque)} N·m`,
+        `τ_avail = wheels ${fmt(cfg.wheelTorque)} + RCS ${fmt(a.rcs)} = ${fmt(a.avail)} N·m`,
+        `Peak momentum for the slew = I · 2θ/T = ${fmt(req.momentum)} N·m·s vs wheel capacity ${fmt(cfg.wheelMomentum)} N·m·s${a.rcs > 0 ? " (RCS can unload)" : ""}`,
+      ],
+      assumptions: ["Uniform-cylinder inertia; roll is not modelled.", "Engine gimbal adds torque only while the engine fires and is not counted here.", "Gravity-gradient and aerodynamic disturbance torques act in flight and slowly fill the wheels."],
+    },
+  };
+}
+
 const simple = (id, subsystem, ok, summary, formula, inputs, steps, warn = false) => ({
   id,
   subsystem,
@@ -96,7 +150,6 @@ const simple = (id, subsystem, ok, summary, formula, inputs, steps, warn = false
 const PENDING = [
   ["power", "Electrical power", 4],
   ["comms", "Communication link", 4],
-  ["attitude", "Attitude control", 2],
   ["thermal", "Thermal", 4],
   ["structure", "Structure & loads", 4],
   ["crew", "Crew safety", 3],
@@ -107,6 +160,7 @@ export function runReadiness(design, mission, difficulty) {
   const req = requiredDeltaV(mission);
   const budget = missionBudget(mission, difficulty);
   const checks = [propulsionCheck(stats, mission, req), twrCheck(stats)];
+  checks.push(attitudeCheck(stats));
   const up = upperTwrCheck(stats);
   if (up) checks.push(up);
   const feed = engineIssues(design);

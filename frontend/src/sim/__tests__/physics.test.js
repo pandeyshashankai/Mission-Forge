@@ -98,3 +98,99 @@ describe("End-to-end ascent with the guidance computer", () => {
     expect(sim.nav.alt).toBeLessThan(10);
   });
 });
+
+import { stateAt, predictPath, raiseApoDv, nodePrediction } from "../maneuver";
+import { presetFalconLike as pf } from "../presets";
+
+const orbitSim = () => {
+  const s = runAutopilotFlight(pf(), mission, DEFAULT_PROFILE);
+  s.attMode = "prograde";
+  return s;
+};
+const runUntil = (sim, cond, max = 20000) => {
+  const t0 = sim.t;
+  while (!cond() && sim.t - t0 < max && !sim.isEnded()) sim.advance(5, 100000);
+};
+
+describe("Milestone 2 — attitude, maneuvers, checkpoints, prediction", () => {
+  test("Torque-free rotation keeps a constant rate (angular momentum conserved)", () => {
+    const sim = orbitSim();
+    sim.attMode = "free";
+    sim.omega = scale3(norm3(cross3(sim.dir, [0, 0, 1])), 0.01);
+    const w0 = Math.hypot(...sim.omega);
+    for (let i = 0; i < 100; i++) sim.coastStep(0.1);
+    expect(rel(Math.hypot(...sim.omega), w0)).toBeLessThan(0.01);
+  });
+
+  test("Reaction wheels saturate under steady gravity-gradient torque; RCS unloads them", () => {
+    const sim = orbitSim();
+    sim.rcsEnabled = false;
+    const up = norm3(sim.r);
+    const pro = norm3(sim.v);
+    sim.holdDir = norm3([up[0] + pro[0], up[1] + pro[1], up[2] + pro[2]]);
+    sim.attMode = "hold";
+    for (let i = 0; i < 4000; i++) sim.coastStep(0.1);
+    expect(sim.wheelsSaturated).toBe(true);
+    const fuel0 = sim.attStatus.rcsFuel;
+    sim.rcsEnabled = true;
+    for (let i = 0; i < 300; i++) sim.coastStep(0.1);
+    expect(sim.attStatus.wheelPct).toBeLessThan(75);
+    expect(sim.attStatus.rcsFuel).toBeLessThan(fuel0);
+  });
+
+  test("Numerical trajectory prediction closes after one period (≤ 50 m)", () => {
+    const r = [EARTH.radius + 300000, 0, 0];
+    const v = [0, 7800, 300];
+    const el = orbitalElements(r, v, EARTH.mu, EARTH.radius);
+    const s = stateAt(r, v, el.period, 5);
+    expect(Math.hypot(s.r[0] - r[0], s.r[1] - r[1], s.r[2] - r[2])).toBeLessThan(50);
+    expect(predictPath(r, v).impact).toBe(false);
+  });
+
+  test("Checkpoint restore resumes exactly (bit-identical continuation)", () => {
+    const d = pf();
+    const a = new FlightSim({ design: d, mission, profile: DEFAULT_PROFILE });
+    a.launch();
+    a.advance(300, 1e6);
+    const ck = a.serialize();
+    a.advance(200, 1e6);
+    const b = new FlightSim({ design: d, mission, profile: DEFAULT_PROFILE });
+    b.restore(ck);
+    b.advance(200, 1e6);
+    expect(b.digest()).toBe(a.digest());
+  });
+
+  test("Guidance executes a two-burn Hohmann transfer 200 → 700 km", () => {
+    const sim = orbitSim();
+    const t1 = sim.t + 600;
+    const at = stateAt(sim.r, sim.v, 600);
+    sim.planManeuver({ t: t1, dv: [raiseApoDv(at.r, at.v, EARTH.radius + 700000), 0, 0] });
+    runUntil(sim, () => sim.maneuver.done);
+    expect(Math.abs(sim.nav.el.apoapsis - 700000)).toBeLessThan(10000);
+    const tApo = sim.t + sim.nav.el.timeToApo;
+    const pa = stateAt(sim.r, sim.v, sim.nav.el.timeToApo);
+    const vc = Math.sqrt(EARTH.mu / Math.hypot(...pa.r));
+    sim.planManeuver({ t: tApo, dv: [vc - Math.hypot(...pa.v), 0, 0] });
+    const pred = nodePrediction(sim, sim.node);
+    runUntil(sim, () => sim.maneuver.done);
+    const el = sim.nav.el;
+    // eslint-disable-next-line no-console
+    console.log("hohmann", (el.apoapsis / 1000).toFixed(1), (el.periapsis / 1000).toFixed(1), "pred peri", (pred.after.periapsis / 1000).toFixed(1));
+    expect(Math.abs(el.periapsis - 700000)).toBeLessThan(25000);
+    expect(Math.abs(el.apoapsis - 700000)).toBeLessThan(25000);
+  });
+
+  test("Earth Observer: retrograde ascent from Vandenberg reaches parking orbit near 98.2°", () => {
+    const eo = getMission("earth_observer");
+    const prof = { ...DEFAULT_PROFILE, targetAltitude: 200000, targetInclination: 98.2 };
+    const sim = runAutopilotFlight({ ...pf("sat_medium") }, eo, prof);
+    // eslint-disable-next-line no-console
+    console.log("EO", (sim.nav.el.apoapsis / 1000).toFixed(1), (sim.nav.el.periapsis / 1000).toFixed(1), ((sim.nav.el.inc * 180) / Math.PI).toFixed(2));
+    expect(sim.status).toBe("orbit");
+    expect(Math.abs((sim.nav.el.inc * 180) / Math.PI - 98.2)).toBeLessThan(0.5);
+  });
+});
+
+function cross3(a, b) { return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]; }
+function norm3(a) { const l = Math.hypot(...a); return a.map((x) => x / l); }
+function scale3(a, s) { return a.map((x) => x * s); }

@@ -22,6 +22,25 @@ export const storage = {
   deleteDesign(name) {
     write("mf.designs", read("mf.designs", []).filter((d) => d.name !== name));
   },
+  checkpoints: () => read("mf.checkpoints", []),
+  saveCheckpoint(ck) {
+    let list = [ck, ...read("mf.checkpoints", [])];
+    const autos = list.filter((c) => c.auto && c.missionId === ck.missionId);
+    if (autos.length > 6) list = list.filter((c) => c !== autos[autos.length - 1]);
+    list = list.slice(0, 16);
+    for (;;) {
+      try {
+        write("mf.checkpoints", list);
+        return true;
+      } catch {
+        if (list.length <= 1) return false;
+        list = list.slice(0, -1);
+      }
+    }
+  },
+  deleteCheckpoint(id) {
+    write("mf.checkpoints", read("mf.checkpoints", []).filter((c) => c.id !== id));
+  },
   attempts: (missionId, difficulty) => read(`mf.attempts.${missionId}.${difficulty}`, []),
   addAttempt(result) {
     const k = `mf.attempts.${result.missionId}.${result.difficulty}`;
