@@ -28,7 +28,21 @@ Build MissionForge 2026 from the uploaded "MissionForge_2026_Complete_Developmen
 - Cinematic camera: cuts at liftoff (pad cam), stage separation & fairing jettison (inertial drift cams), burns (orbiting cam).
 - Jest: 16 checks pass (adds torque-free rotation, wheel saturation/unloading, prediction closure, checkpoint determinism, Hohmann 200→700 km, EO ascent).
 
+## Milestone 2 verification + fixes (2026-06)
+- J2 oblateness in all Earth gravity; moving Sun (β angle, node-drift readouts); EO Sun-synchronous objective from simulated J2
+- Checkpoints serialize full state at request time; restore loads checkpoint design; telemetry decimation keeps saves small
+- Burn-time estimate steps through stages (and 4 g crew cap); partial-step pulses for tiny burns; burns wait for alignment
+- Report: /app/memory/VERIFICATION_M2_M3.md
+
+## Implemented (2026-06, Milestone 3 — Moon)
+- sim/bodies.js (Moon ephemeris, SOI 66,100 km, patched conics, adaptive steps), sim/transfer.js (TLI scan, B-plane MCC, free return, LOI, return corridor)
+- sim/entry.js (capsule drag+lift L/D 0.3, auto bank, Sutton-Graves heating, shield limits, crew g limits, reefed chutes, splashdown), sim/crew.js (BVAD life support), sim/crewReadiness.js
+- New parts: Lunar Orbiter Bus, storable tanks 1.8/3.7 m, S-27 storable engine, heat shield, parachute system, consumables pallet. Presets Selene-1, Odyssey Free-Return
+- Missions Lunar Orbiter & Crewed Lunar Flyby available; mission-specific scoring with crew safety
+- UI: Moon in 3D + map frame switching, lunar planner buttons, CrewPanel, region/Moon-alt/β/J2 rows, warps ×5000/×20000, splashdown overlay
+- Fixtures: public/ck_lunar.json, public/ck_test.json (generator: /app/memory/gen_checkpoints.test.js.bak)
+
 ## Backlog
-- P0 M3 Moon next. M2 leftover: target-pointing mode (needs comms, M4).
+- P0 M4 next (power/eclipses, comms delay, thermal, full 6-propulsion catalog, events & faults), then M5 Mars, M6 game layer. M2 leftover: target-pointing mode (needs comms, M4).
 - P1 M3 Moon; M4 power/comms/thermal/events/full catalog; M5 Mars.
 - P2 M6 game layer (custom difficulty, custom missions, tutorials, comparison, best scores, cinematic/cockpit cameras, dynamic quality). Phase 2/3 per plan.
