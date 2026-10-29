@@ -4,6 +4,7 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianG
 import { useGame } from "../game/GameContext";
 import { downloadJSON, storage } from "../sim/storage";
 import { mmss } from "../components/game/FlightHud";
+import { DesignCompare, ReentryReplay } from "../components/game/ResultsExtras";
 
 const fmt = (x, d = 0) => Number(x).toLocaleString("en-US", { maximumFractionDigits: d, minimumFractionDigits: d });
 const OUT = {
@@ -114,6 +115,7 @@ export default function Results() {
           </div>
         </div>
 
+        <ReentryReplay r={r} />
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           <Chart data={data} k="alt" label="Altitude" unit="km" color="#38bdf8" testId="chart-altitude" />
           <Chart data={data} k="speed" label="Orbital speed" unit="m/s" color="#10b981" testId="chart-speed" />
@@ -151,7 +153,8 @@ export default function Results() {
                 ))}
               </tbody>
             </table>
-            <p className="mt-2 text-[10px] text-slate-600">Full side-by-side design comparison arrives in Milestone 6.</p>
+            <div className="eyebrow mb-2 mt-4">Side-by-side design comparison</div>
+            <DesignCompare current={r} attempts={attempts} />
           </div>
         </div>
       </div>

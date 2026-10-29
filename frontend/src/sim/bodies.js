@@ -28,7 +28,10 @@ export function sunDirAt(t, lon0) {
 
 // Moon on a fixed Keplerian ellipse (no nodal precession / solar perturbation).
 let cache = { t: NaN, eph: null, s: null };
+const FAR = { r: [1e15, 0, 0], v: [0, 0, 0] };
+const MARS_MU = 4.282837e13, MARS_R = 3389500;
 export function moonState(t, eph) {
+  if (eph.central) return FAR;
   if (cache.t === t && cache.eph === eph) return cache.s;
   const M = eph.M0 + MOON.n * t;
   const e = MOON.e;
@@ -66,11 +69,13 @@ export function earthGravity(r, j2 = true) {
 // Patched-conic region: Moon gravity only inside its sphere of influence, Earth (with J2) elsewhere.
 export function regionOf(r, t, eph) {
   if (!eph) return "earth";
+  if (eph.central) return eph.central;
   const m = moonState(t, eph);
   return len(sub(r, m.r)) < MOON.soi ? "moon" : "earth";
 }
 
 export function gravity(r, t, eph, j2 = true) {
+  if (eph && eph.central) return scale(r, -MARS_MU / len(r) ** 3);
   if (eph) {
     const m = moonState(t, eph);
     const d = sub(r, m.r);
@@ -85,6 +90,7 @@ export function gravity(r, t, eph, j2 = true) {
 
 // State relative to the body whose gravity currently applies.
 export function primaryOf(r, v, t, eph) {
+  if (eph && eph.central) return { body: "mars", mu: MARS_MU, R: MARS_R, r, v, center: [0, 0, 0], cv: [0, 0, 0] };
   if (regionOf(r, t, eph) === "moon") {
     const m = moonState(t, eph);
     return { body: "moon", mu: MOON.mu, R: MOON.radius, r: sub(r, m.r), v: sub(v, m.v), center: m.r, cv: m.v };
@@ -96,8 +102,8 @@ export const elementsOf = (p) => orbitalElements(p.r, p.v, p.mu, p.R);
 
 // Integration step from the local dynamical time sqrt(d³/μ); 0.1 s in low orbit, up to 30 s in cislunar space.
 export function dynStep(r, t, eph, k, lo, hi) {
-  let d = len(r), mu = EARTH.mu;
-  if (eph) {
+  let d = len(r), mu = eph && eph.central ? MARS_MU : EARTH.mu;
+  if (eph && !eph.central) {
     const dmoon = len(sub(r, moonState(t, eph).r));
     if (dmoon < MOON.soi) {
       d = dmoon;

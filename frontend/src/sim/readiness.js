@@ -1,9 +1,10 @@
 import { G0 } from "./constants";
-import { designStats, engineIssues, describeEvent } from "./design";
+import { designStats, engineIssues, describeEvent, buildSections } from "./design";
 import { engineSL, PARTS } from "./parts";
 import { missionBudget, requiredDeltaV } from "./missions";
 import { attitudeRequirement, rcsTorque } from "./attitude";
 import { crewChecks } from "./crewReadiness";
+import { systemsChecks } from "./systems";
 
 const fmt = (x, d = 0) => Number(x).toLocaleString("en-US", { maximumFractionDigits: d, minimumFractionDigits: d });
 const t = (kg) => `${fmt(kg / 1000, 1)} t`;
@@ -149,9 +150,6 @@ const simple = (id, subsystem, ok, summary, formula, inputs, steps, warn = false
 });
 
 const PENDING = [
-  ["power", "Electrical power", 4],
-  ["comms", "Communication link", 4],
-  ["thermal", "Thermal", 4],
   ["structure", "Structure & loads", 4],
 ];
 
@@ -190,6 +188,7 @@ export function runReadiness(design, mission, difficulty) {
       design.stack.filter((n) => PARTS[n.partId].control).map((n) => ({ name: PARTS[n.partId].name, value: "control", unit: "", source: "Part catalog" })), [])
   );
   checks.push(...crewChecks(design, mission, stats));
+  checks.push(...systemsChecks(buildSections(design), mission));
   for (const [id, subsystem, ms] of PENDING)
     checks.push({ id, subsystem, status: "pending", summary: `Not evaluated yet — scheduled for Milestone ${ms}. Not counted toward Go/No-Go.`, calc: null });
   const active = checks.filter((c) => c.status !== "pending");

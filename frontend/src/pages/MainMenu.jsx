@@ -3,7 +3,8 @@ import { Rocket, Play, FolderOpen, Upload, Settings, ListChecks, Trash2, History
 import { CheckpointList } from "../components/game/FlightPanels";
 import { toast } from "sonner";
 import { useGame } from "../game/GameContext";
-import { DIFFICULTIES } from "../sim/missions";
+import { DIFFICULTIES, setCustomDifficulty } from "../sim/missions";
+import { startTutorial, TUTORIALS } from "../components/game/Tutorial";
 import { storage, readJSONFile, isValidDesign } from "../sim/storage";
 import { STATUS } from "../sim/status";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../components/ui/dialog";
@@ -26,6 +27,7 @@ const MenuButton = ({ icon: Icon, label, sub, onClick, testId, disabled, primary
 const STATUS_TONE = { implemented: "text-cyan-300", tested: "text-emerald-400", partial: "text-amber-400", pending: "text-slate-500" };
 
 export default function MainMenu() {
+  const [, setTick] = useState(0);
   const g = useGame();
   const fileRef = useRef(null);
   const [dlg, setDlg] = useState(null);
@@ -83,7 +85,7 @@ export default function MainMenu() {
 
           <div className="panel self-end rounded-sm p-5 rise" style={{ animationDelay: "220ms" }}>
             <div className="eyebrow mb-3">Difficulty — physics is identical in every mode</div>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-4 gap-2">
               {Object.values(DIFFICULTIES).map((d) => (
                 <button key={d.id} data-testid={`difficulty-${d.id}-btn`} onClick={() => g.setDifficulty(d.id)} className={`border px-3 py-2 text-left transition-colors ${g.difficulty === d.id ? "border-cyan-400 bg-cyan-500/10" : "border-slate-800 hover:border-slate-600"}`}>
                   <div className="font-display text-base font-semibold uppercase tracking-wider">{d.label}</div>
@@ -92,7 +94,17 @@ export default function MainMenu() {
               ))}
             </div>
             <p className="mt-3 text-xs text-slate-400" data-testid="difficulty-description">{DIFFICULTIES[g.difficulty].desc}</p>
-            <p className="mt-1 text-[11px] text-slate-600">Custom Difficulty arrives in Milestone 6.</p>
+            {g.difficulty === "custom" && (
+              <div className="mt-3 grid grid-cols-2 gap-3 font-mono text-[11px] text-slate-400" data-testid="custom-difficulty">
+                <label>Budget ×{DIFFICULTIES.custom.budgetMult}<input data-testid="custom-budget-slider" type="range" min={0.5} max={2.5} step={0.1} value={DIFFICULTIES.custom.budgetMult} onChange={(e) => { setCustomDifficulty({ budgetMult: +e.target.value }); g.setDifficulty("custom"); setTick((n) => n + 1); }} className="w-full accent-cyan-500" /></label>
+                <label>Faults {DIFFICULTIES.custom.faultRate}/day<input data-testid="custom-fault-slider" type="range" min={0} max={1} step={0.05} value={DIFFICULTIES.custom.faultRate} onChange={(e) => { setCustomDifficulty({ faultRate: +e.target.value }); setTick((n) => n + 1); }} className="w-full accent-cyan-500" /></label>
+              </div>
+            )}
+            <div className="mt-3 flex flex-wrap gap-2" data-testid="tutorial-list">
+              {Object.entries(TUTORIALS).map(([id, t]) => (
+                <button key={id} data-testid={`tutorial-start-${id}`} onClick={() => startTutorial(id)} className="border border-amber-500/40 px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-amber-200 hover:bg-amber-500/10">Tutorial: {t.title}</button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -132,7 +144,7 @@ export default function MainMenu() {
           <DialogHeader><DialogTitle className="font-display uppercase tracking-wider">Settings</DialogTitle></DialogHeader>
           <div className="eyebrow">Graphics preset</div>
           <div className="grid grid-cols-3 gap-2">
-            {["low", "medium", "high"].map((q) => (
+            {["auto", "low", "medium", "high"].map((q) => (
               <button key={q} data-testid={`graphics-${q}-btn`} onClick={() => g.setSettings({ ...g.settings, graphics: q })} className={`border px-3 py-2 font-mono text-xs uppercase ${g.settings.graphics === q ? "border-cyan-400 text-cyan-300" : "border-slate-800 text-slate-400"}`}>{q}</button>
             ))}
           </div>

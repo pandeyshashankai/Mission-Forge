@@ -16,6 +16,7 @@ import { TelemetryPanel, OrbitPanel, PropulsionPanel, EventLog } from "../compon
 import { GoNoGo } from "../components/game/Status";
 import { AttitudePanel, ManeuverPanel, CheckpointList } from "../components/game/FlightPanels";
 import { CrewPanel } from "../components/game/CrewPanel";
+import { SystemsPanel, AlarmPanel } from "../components/game/SystemsPanel";
 import { isLunar } from "../sim/missions";
 import { moonState, j2NodeRate, sunBeta, MOON } from "../sim/bodies";
 import { lifeSupportStatus } from "../sim/crew";
@@ -43,7 +44,8 @@ function snapshot(sim, warp) {
     status: sim.status, guidance: !!sim.guidance && !sim.guidance.disengaged, guidancePhase: sim.guidance ? sim.guidance.phase : "", guidanceDone: sim.guidance?.done,
     log: [...sim.log], warp, orbitAt: sim.orbitAt, clamped: sim.clamped,
     attStatus: sim.attStatus, attMode: sim.attMode, rcsEnabled: sim.rcsEnabled, hasNode: !!sim.node,
-    body: n.body, moonDist: sim.eph ? Math.hypot(...sim.r.map((x, i) => x - moonState(sim.t, sim.eph).r[i])) - MOON.radius : null,
+    sys: { ...sim.sys, alarms: sim.sys.alarms.map((a) => ({ ...a })) }, marsOrbitAt: sim.marsOrbitAt, cruise: sim.mars && sim.mars.arrival,
+    body: n.body, moonDist: sim.eph && !sim.eph.central ? Math.hypot(...sim.r.map((x, i) => x - moonState(sim.t, sim.eph).r[i])) - MOON.radius : null,
     beta: (sunBeta(sim.sunDir, n.el.h) * 180) / Math.PI, nodeDrift: n.body === "earth" ? (j2NodeRate(n.el) * 86400 * 180) / Math.PI : null,
     lunarOrbitAt: sim.lunarOrbitAt, crew: sim.aero.crew, ls: sim.aero.crew ? lifeSupportStatus(sim) : null, entry: { ...sim.entry }, blunt: sim.aero.blunt, hasChute: !!sim.aero.chute,
   };
@@ -78,7 +80,7 @@ export default function Flight() {
   const [snap, setSnap] = useState(null);
   const simRef = useRef(null);
   if (!simRef.current) {
-    simRef.current = new FlightSim({ design: g.design, mission, profile: g.profile, guidanceOn: true });
+    simRef.current = new FlightSim({ design: g.design, mission, profile: g.profile, guidanceOn: true, difficulty: g.difficulty });
     if (pending.current) simRef.current.restore(pending.current.state);
   }
   const phaseRef = useRef(phase);
@@ -89,8 +91,8 @@ export default function Flight() {
   const endedRef = useRef(false);
 
   const rebuildSim = useCallback((on) => {
-    simRef.current = new FlightSim({ design: g.design, mission, profile: g.profile, guidanceOn: on });
-  }, [g.design, mission, g.profile]);
+    simRef.current = new FlightSim({ design: g.design, mission, profile: g.profile, guidanceOn: on, difficulty: g.difficulty });
+  }, [g.design, mission, g.profile, g.difficulty]);
 
   useEffect(() => {
     if (pending.current) {
@@ -110,7 +112,7 @@ export default function Flight() {
   }, [g.profile, g.difficulty, mission]);
 
   const restoreCheckpoint = (ck) => {
-    const sim = new FlightSim({ design: ck.design, mission, profile: ck.profile, guidanceOn: true });
+    const sim = new FlightSim({ design: ck.design, mission, profile: ck.profile, guidanceOn: true, difficulty: ck.difficulty });
     sim.restore(ck.state);
     simRef.current = sim;
     g.loadDesign(ck.design);
@@ -227,7 +229,7 @@ export default function Flight() {
         <div className="panel pointer-events-auto flex items-center gap-3 rounded-sm px-3 py-2">
           <span className="font-display text-base font-semibold uppercase tracking-wider">{mission.name}</span>
           <span className="font-mono text-xs text-slate-500" data-testid="flight-design-name">{simRef.current.design.name}</span>
-          {s && <span data-testid="flight-status" className={`font-mono text-[10px] uppercase tracking-widest ${crashed ? "text-red-400" : s.status === "orbit" ? "text-emerald-400" : "text-cyan-300"}`}>{s.clamped && phase === "flight" ? "on pad" : s.status === "orbit" || s.status === "flight" ? (s.body === "earth" && s.orbitAt && s.alt < 160000 && (s.vr < 0 || s.entry.ei) ? (s.entry.chute === "drogue" || s.entry.chute === "main" ? "descent" : "entry") : s.body === "moon" ? (s.lunarOrbitAt ? "lunar orbit" : "lunar SOI") : s.status === "orbit" && s.apo > 1e8 ? "cislunar" : s.status) : s.status}</span>}
+          {s && <span data-testid="flight-status" className={`font-mono text-[10px] uppercase tracking-widest ${crashed ? "text-red-400" : s.status === "orbit" ? "text-emerald-400" : "text-cyan-300"}`}>{s.clamped && phase === "flight" ? "on pad" : s.status === "orbit" || s.status === "flight" ? (s.body === "earth" && s.orbitAt && s.alt < 160000 && (s.vr < 0 || s.entry.ei) ? (s.entry.chute === "drogue" || s.entry.chute === "main" ? "descent" : "entry") : s.body === "mars" ? (s.marsOrbitAt ? "mars orbit" : "mars SOI") : s.body === "moon" ? (s.lunarOrbitAt ? "lunar orbit" : "lunar SOI") : s.status === "orbit" && s.apo > 1e8 ? "cislunar" : s.status) : s.status}</span>}
         </div>
         {phase === "flight" && s && (
           <div className="panel pointer-events-auto flex items-center gap-1 rounded-sm p-1">
@@ -252,18 +254,19 @@ export default function Flight() {
       {phase === "flight" && s && (
         <>
           <div className="absolute left-3 top-20"><TelemetryPanel s={s} /></div>
-          <div className="absolute right-3 top-20 flex max-h-[calc(100%-160px)] flex-col gap-2 overflow-y-auto scroll-thin"><OrbitPanel s={s} />{s.crew > 0 && <CrewPanel s={s} sim={simRef.current} />}<AttitudePanel s={s} sim={simRef.current} /></div>
+          <div className="absolute right-3 top-20 flex max-h-[calc(100%-160px)] flex-col gap-2 overflow-y-auto scroll-thin"><OrbitPanel s={s} /><SystemsPanel s={s} sim={simRef.current} />{s.crew > 0 && <CrewPanel s={s} sim={simRef.current} />}<AttitudePanel s={s} sim={simRef.current} /></div>
           {(cam === "map" || s.hasNode) && s.status !== "prelaunch" && !s.clamped && (
             <div className="absolute right-[264px] top-20"><ManeuverPanel s={s} sim={simRef.current} mission={mission} targetAlt={mission.target.altitude} onWarpTo={() => setWarp(20000)} /></div>
           )}
           <div className="absolute bottom-3 left-1/2 -translate-x-1/2"><PropulsionPanel s={s} onStage={stage} /></div>
           <div className="absolute bottom-3 left-3"><EventLog log={s.log} /></div>
+          <div className="absolute left-1/2 top-16 -translate-x-1/2"><AlarmPanel s={s} sim={simRef.current} onChange={() => setSnap(snapshot(simRef.current, warpRef.current))} /></div>
           <div className="pointer-events-none absolute bottom-3 right-3 text-right font-mono text-[10px] leading-relaxed text-slate-500">
             SPACE stage · SHIFT/CTRL throttle · Z full · X cut · R RCS<br />W/S pitch · A/D heading · G guidance · C camera · M map · , . warp
           </div>
-          {((s.status === "orbit" && !isLunar(mission)) || (mission.kind === "lunar_orbit" && s.lunarOrbitAt && s.body === "moon")) && !crashed && (
+          {((s.status === "orbit" && !isLunar(mission) && mission.kind !== "mars") || (mission.kind === "lunar_orbit" && s.lunarOrbitAt && s.body === "moon") || (mission.kind === "mars" && s.marsOrbitAt && s.body === "mars")) && !crashed && (
             <div className="panel absolute left-1/2 top-20 -translate-x-1/2 rounded-sm border-emerald-500/50 px-5 py-3 text-center rise" data-testid="orbit-achieved-banner">
-              <div className="flex items-center justify-center gap-2 font-display text-xl font-bold uppercase tracking-widest text-emerald-400"><CheckCircle2 size={18} /> {s.body === "moon" ? "Lunar orbit" : "Stable orbit"}</div>
+              <div className="flex items-center justify-center gap-2 font-display text-xl font-bold uppercase tracking-widest text-emerald-400"><CheckCircle2 size={18} /> {s.body === "moon" ? "Lunar orbit" : s.body === "mars" ? "Mars orbit" : "Stable orbit"}</div>
               <div className="font-mono text-xs text-slate-300">{(s.apo / 1000).toFixed(1)} × {(s.peri / 1000).toFixed(1)} km · i {s.inc.toFixed(2)}°</div>
               <button data-testid="complete-mission-btn" onClick={finish} className="mt-2 border border-emerald-500/60 px-4 py-1 font-mono text-xs uppercase tracking-widest text-emerald-300 hover:bg-emerald-500/10">Complete mission → report</button>
             </div>

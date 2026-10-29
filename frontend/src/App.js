@@ -6,6 +6,7 @@ import Hangar from "./pages/Hangar";
 import Readiness from "./pages/Readiness";
 import Flight from "./pages/Flight";
 import Results from "./pages/Results";
+import { TutorialOverlay } from "./components/game/Tutorial";
 
 const SCREENS = { menu: MainMenu, planner: MissionPlanner, hangar: Hangar, review: Readiness, flight: Flight, results: Results };
 
@@ -21,6 +22,7 @@ export default function App() {
       <div className="dark h-screen w-screen overflow-hidden bg-[#07090e] text-slate-100">
         <Router />
       </div>
+      <TutorialOverlay />
       <Toaster theme="dark" position="bottom-right" />
     </GameProvider>
   );

@@ -9,6 +9,7 @@ export const CATEGORIES = [
   { id: "booster", label: "Solid Boosters" },
   { id: "control", label: "Attitude Control" },
   { id: "recovery", label: "Crew & Recovery" },
+  { id: "power", label: "Power & Thermal" },
   { id: "structure", label: "Structure" },
 ];
 
@@ -18,6 +19,8 @@ export const PROPELLANTS = {
   solid: { label: "Solid (APCP)", short: "Solid" },
   monoprop: { label: "Hydrazine (RCS)", short: "N2H4" },
   hypergolic: { label: "MMH / N2O4 (storable)", short: "MMH/NTO" },
+  methalox: { label: "Liquid methane / LOX", short: "CH4/LOX" },
+  xenon: { label: "Xenon (electric propulsion)", short: "Xe" },
 };
 
 const list = [
@@ -47,6 +50,13 @@ const list = [
   P({ id: "heat_shield_37", name: "Ablative Heat Shield 3.7 m", category: "recovery", diameter: 3.7, height: 0.35, dryMass: 850, cost: 6, heatShield: { maxFlux: 7e6, capacity: 4e8, noseRadius: 4.6 }, look: "heatshield", desc: "Goes directly below a capsule. Limits: peak heat flux 7 MW/m², total heat load 40 kJ/cm². Gives the capsule a lift-to-drag ratio of ~0.3.", source: "Approx. Apollo/Orion Avcoat-class shield; Sutton-Graves stagnation heating" }),
   P({ id: "chute_pack", name: "Parachute System (2 drogues + 3 mains)", category: "recovery", diameter: 1.4, height: 0.7, dryMass: 250, cost: 2.5, parachute: { drogueCdA: 22, mainCdA: 1200, drogueMaxQ: 10000, mainMaxSpeed: 100, drogueAlt: 7300, mainAlt: 3000 }, look: "chute", desc: "Goes on top of the capsule. Drogues open below 7.3 km if dynamic pressure ≤ 10 kPa, mains below 3 km if slower than 100 m/s.", source: "Approx. Apollo ELS (5 m drogues, 25 m mains)" }),
   P({ id: "ls_pallet", name: "Crew Consumables Pallet", category: "recovery", diameter: 3.7, height: 0.9, dryMass: 560, cost: 3, lifeSupport: { o2: 40, water: 140, food: 90 }, look: "pallet", desc: "O2, water and food for longer missions (≈ 16 days for 3 crew). Mass includes full consumables.", source: "Rates: NASA BVAD (O2 0.84, water 2.5, food 1.8 kg per crew-day, no recycling)" }),
+  P({ id: "solar_array", name: "Solar Array Wings 4 kW", category: "power", diameter: 2.5, height: 0.6, dryMass: 220, cost: 4, systems: { gen: 4000 }, look: "solar", desc: "Deployable arrays: 4 kW at 1 AU in sunlight, nothing in eclipse. Output scales with 1/r² from the Sun.", source: "Approx. 30% GaAs cells, ~18 W/kg wing" }),
+  P({ id: "battery_pack", name: "Li-ion Battery 6 kWh", category: "power", diameter: 1.8, height: 0.4, dryMass: 45, cost: 0.8, systems: { battery: 6000 }, look: "pallet", desc: "Carries the vehicle through eclipses (~36 min per LEO orbit).", source: "Approx. 150 Wh/kg space Li-ion" }),
+  P({ id: "radiator_panel", name: "Radiator Panels 6 m²", category: "power", diameter: 2.5, height: 0.5, dryMass: 70, cost: 1.2, systems: { rad: 6 }, look: "pallet", desc: "Rejects heat: εσAT⁴ with ε = 0.85 (~2.1 kW at 20 °C).", source: "Approx. body-mounted loop radiator" }),
+  P({ id: "tank_m_37", name: "Methalox Tank 3.7 m", category: "tank", diameter: 3.7, height: 14, dryMass: 9500, cost: 3.5, propellant: { type: "methalox", mass: 160000 }, look: "tank_white", desc: "CH4/LOX — lower density than kerosene, cleaner and reusable-friendly.", source: "Approx. stainless methalox tank set" }),
+  P({ id: "eng_m2", name: "M-2 Methalox Engine (full-flow)", category: "engine", diameter: 1.8, height: 3.1, dryMass: 1600, cost: 9, look: "engine_sl", engine: { propellant: "methalox", thrustVac: 2450000, ispVac: 363, ispSL: 327, minThrottle: 0.4, gimbal: 15 }, desc: "High-pressure full-flow staged combustion.", source: "Approx. Raptor 2 class" }),
+  P({ id: "tank_xe", name: "Xenon Tank 450 kg", category: "tank", diameter: 1.8, height: 0.9, dryMass: 45, cost: 1.5, propellant: { type: "xenon", mass: 450 }, look: "tank_mono", desc: "High-pressure composite xenon tank for ion engines.", source: "Approx. Dawn xenon tank" }),
+  P({ id: "eng_ion", name: "Ion Thruster Pair (gridded, 2 × 0.09 N)", category: "engine", diameter: 1.8, height: 0.6, dryMass: 60, cost: 6, look: "engine_vac", engine: { propellant: "xenon", thrustVac: 0.18, ispVac: 3100, ispSL: 1, minThrottle: 1, gimbal: 0, powerW: 4600 }, desc: "Very high efficiency, tiny thrust. Draws 4.6 kW while firing — no power, no thrust.", source: "Approx. NSTAR / NEXT gridded ion thrusters" }),
   P({ id: "decoupler_37", name: "Stage Decoupler 3.7 m", category: "structure", diameter: 3.7, height: 0.6, dryMass: 420, cost: 0.3, decoupler: true, look: "decoupler", desc: "Separates stages. Stays with the stage below.", source: "Approx. interstage ring" }),
   P({ id: "decoupler_18", name: "Stage Decoupler 1.8 m", category: "structure", diameter: 1.8, height: 0.35, dryMass: 120, cost: 0.15, decoupler: true, look: "decoupler", source: "Approx. small separation ring" }),
   P({ id: "adapter_37_18", name: "Adapter 3.7 → 1.8 m", category: "structure", diameter: 3.7, diameterTop: 1.8, height: 1.4, dryMass: 300, cost: 0.2, look: "adapter", source: "Approx. conical adapter" }),

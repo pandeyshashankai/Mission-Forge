@@ -8,7 +8,7 @@ import { predictPath, nodePrediction } from "../sim/maneuver";
 import { moonState, MOON } from "../sim/bodies";
 
 const R = EARTH.radius;
-const QUALITY = { low: { px: 0.75, seg: 96, cap: 96 }, medium: { px: 1, seg: 160, cap: 160 }, high: { px: 1.5, seg: 256, cap: 256 } };
+const QUALITY = { auto: { px: 1, seg: 160, cap: 160 }, low: { px: 0.75, seg: 96, cap: 96 }, medium: { px: 1, seg: 160, cap: 160 }, high: { px: 1.5, seg: 256, cap: 256 } };
 const toThree = (v) => new THREE.Vector3(v[0], v[2], -v[1]);
 
 function visibleDesign(sim) {
@@ -166,6 +166,12 @@ export const FlightView = ({ simRef, cameraMode, quality = "medium", onFrame }) 
     const moonMesh = new THREE.Mesh(new THREE.SphereGeometry(MOON.radius, q.seg, q.seg / 2), new THREE.MeshStandardMaterial({ map: moonTex, roughness: 1, metalness: 0 }));
     moonCenter.add(moonMesh);
     moonCenter.visible = !!simRef.current.eph;
+    const marsCenter = new THREE.Group();
+    scene.add(marsCenter);
+    const marsMesh = new THREE.Mesh(new THREE.SphereGeometry(3389500, q.seg, q.seg / 2), new THREE.MeshStandardMaterial({ map: moonTex, color: "#e0764a", roughness: 1 }));
+    marsCenter.add(marsMesh);
+    marsCenter.visible = false;
+    let fpsAcc = 0, fpsN = 0, px = Math.min(window.devicePixelRatio, q.px);
     const sim0 = simRef.current;
     const { lat, lon } = sim0.site;
     const cap = groundCap(earthTex, lat, lon, 5, q.cap);
@@ -226,7 +232,7 @@ export const FlightView = ({ simRef, cameraMode, quality = "medium", onFrame }) 
     let chaseDist = 0;
     let lastMode = null;
     let lastBody = "earth";
-    const frameOf = (body) => (body === "moon" ? moonCenter : earthCenter);
+    const frameOf = (body) => (body === "moon" ? moonCenter : body === "mars" ? marsCenter : earthCenter);
     const onWheel = (e) => {
       if (camModeRef.current === "chase") chaseDist = Math.max(0.5, Math.min(40, (chaseDist || 1) * (e.deltaY > 0 ? 1.1 : 0.9)));
     };
@@ -236,6 +242,17 @@ export const FlightView = ({ simRef, cameraMode, quality = "medium", onFrame }) 
       raf = requestAnimationFrame(loop);
       const now = performance.now();
       const dtReal = Math.min(0.1, (now - last) / 1000);
+      // Dynamic quality: adapt the render resolution to hold ~40-55 fps.
+      if (quality === "auto") {
+        fpsAcc += dtReal;
+        fpsN++;
+        if (fpsAcc > 2) {
+          const fps = fpsN / fpsAcc;
+          const np = fps < 40 ? Math.max(0.5, px - 0.15) : fps > 55 ? Math.min(window.devicePixelRatio, 1.5, px + 0.1) : px;
+          if (np !== px) renderer.setPixelRatio((px = np));
+          fpsAcc = fpsN = 0;
+        }
+      }
       last = now;
       const sim = simRef.current;
       const simDt = frameRef.current ? frameRef.current(dtReal) : 0;
@@ -270,7 +287,13 @@ export const FlightView = ({ simRef, cameraMode, quality = "medium", onFrame }) 
       }
       const rPos = toThree(sim.r);
       earthCenter.position.copy(rPos).multiplyScalar(-1);
-      if (sim.eph) {
+      const atMars = !!(sim.eph && sim.eph.central);
+      earthCenter.visible = !atMars;
+      marsCenter.visible = atMars;
+      if (atMars) {
+        moonCenter.visible = false;
+        marsCenter.position.copy(rPos).multiplyScalar(-1);
+      } else if (sim.eph) {
         moonCenter.visible = true;
         moonCenter.position.copy(toThree(moonState(sim.t, sim.eph).r)).sub(rPos);
         moonMesh.rotation.y = MOON.n * sim.t;

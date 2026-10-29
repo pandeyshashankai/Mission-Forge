@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { ArrowLeft, Lock, Rocket, MapPin, Target, Users, Wallet, Clock } from "lucide-react";
 import { useGame } from "../game/GameContext";
-import { MISSIONS, getMission, missionBudget, requiredDeltaV, DIFFICULTIES } from "../sim/missions";
+import { allMissions, getMission, missionBudget, requiredDeltaV, DIFFICULTIES, deleteCustomMission } from "../sim/missions";
+import { MarsWindow, MissionCreator } from "../components/game/PlannerExtras";
 import { LAUNCH_SITES } from "../sim/constants";
 import { PRESETS } from "../sim/presets";
 
@@ -16,7 +17,9 @@ const Row = ({ icon: Icon, label, value, testId }) => (
 export default function MissionPlanner() {
   const g = useGame();
   const [sel, setSel] = useState(g.missionId);
-  const m = getMission(sel);
+  const [creating, setCreating] = useState(false);
+  const [, bump] = useState(0);
+  const m = getMission(sel) || getMission("first_orbit");
   const [preset, setPreset] = useState(m.preset || (m.payload ? "orbiter9eo" : "orbiter9"));
   const req = m.available ? requiredDeltaV(m) : null;
 
@@ -37,7 +40,7 @@ export default function MissionPlanner() {
       <div className="grid flex-1 grid-cols-1 gap-6 overflow-hidden p-6 lg:grid-cols-[380px_1fr]">
         <div className="space-y-2 overflow-y-auto scroll-thin pr-1">
           <div className="eyebrow mb-2">Mission templates</div>
-          {MISSIONS.map((x, i) => (
+          {allMissions().map((x, i) => (
             <button key={x.id} data-testid={`mission-card-${x.id}`} disabled={!x.available} onClick={() => { setSel(x.id); setPreset(x.preset || (x.payload ? "orbiter9eo" : "orbiter9")); }} style={{ animationDelay: `${i * 60}ms` }}
               className={`rise relative w-full border p-4 text-left transition-colors ${sel === x.id ? "border-cyan-400 bg-cyan-500/10" : "border-slate-800 bg-slate-950/60 hover:border-slate-600"} ${!x.available ? "cursor-not-allowed opacity-50" : ""}`}>
               <div className="flex items-center justify-between">
@@ -46,18 +49,21 @@ export default function MissionPlanner() {
               </div>
               <div className="mt-1 text-xs text-slate-400">{x.destination} · {x.crewed ? "Crewed" : "Uncrewed"}</div>
               <div className="mt-1 text-[11px] italic text-slate-600">{x.inspiredBy}</div>
+              {x.custom && <span role="button" data-testid={`mission-delete-${x.id}`} onClick={(e) => { e.stopPropagation(); deleteCustomMission(x.id); if (sel === x.id) setSel("first_orbit"); bump((n) => n + 1); }} className="absolute bottom-2 right-3 font-mono text-[10px] text-red-400 hover:text-red-300">delete</span>}
             </button>
           ))}
-          <div className="border border-dashed border-slate-800 p-4 text-xs text-slate-500" data-testid="custom-mission-locked">
-            <div className="flex items-center gap-2 font-display text-base uppercase tracking-wider text-slate-400"><Lock size={12} /> Custom Mission Creator</div>
-            Pending — Milestone 6.
-          </div>
+          <button data-testid="open-mission-creator-btn" onClick={() => setCreating(true)} className="w-full border border-dashed border-cyan-500/50 p-4 text-left text-xs text-cyan-300 hover:bg-cyan-500/5">
+            <div className="font-display text-base uppercase tracking-wider">+ Custom Mission Creator</div>
+            Define your own Earth-orbit target, site, payload and budget.
+          </button>
+          {creating && <MissionCreator onClose={() => setCreating(false)} onCreated={(x) => { setCreating(false); setSel(x.id); setPreset("orbiter9"); }} />}
         </div>
 
         <div className="panel overflow-y-auto rounded-sm p-8 scroll-thin" data-testid="mission-details-panel">
           <div className="eyebrow text-cyan-400">Mission brief</div>
           <h2 className="mt-2 font-display text-4xl font-bold uppercase tracking-tight">{m.name}</h2>
           <p className="mt-1 text-xs italic text-slate-500">{m.inspiredBy}. Not affiliated with or endorsed by NASA.</p>
+          {m.kind === "mars" && <MarsWindow profile={g.profile} setProfile={g.setProfile} />}
           <div className="mt-6 grid grid-cols-1 gap-x-10 xl:grid-cols-2">
             <div>
               <Row icon={Target} label="Destination" value={m.destination} />

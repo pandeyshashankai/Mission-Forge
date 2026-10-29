@@ -197,6 +197,13 @@ export function buildPartMesh(part, height = part.height) {
       g.add(cyl(r, r, h, M.gray()));
       g.add(ring(r, 0, 0.08), ring(r, h - 0.08, 0.08));
       break;
+    case "solar": {
+      g.add(cyl(r * 0.6, r * 0.6, h, M.gray()));
+      const wing = new THREE.Mesh(new THREE.BoxGeometry(r * 7, h * 0.7, 0.05), new THREE.MeshStandardMaterial({ color: "#1e3a8a", metalness: 0.4, roughness: 0.4 }));
+      wing.position.y = h / 2;
+      g.add(wing);
+      break;
+    }
     case "heatshield":
       g.add(cyl(r, r * 0.97, h, new THREE.MeshStandardMaterial({ color: "#5a3a22", roughness: 0.95 })));
       break;

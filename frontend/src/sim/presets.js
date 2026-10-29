@@ -23,9 +23,14 @@ export function presetLunarOrbiter() {
 }
 
 export function presetCrewedFlyby() {
-  const stack = [n("chute_pack"), n("capsule_3"), n("heat_shield_37"), n("decoupler_37"), n("ls_pallet"), n("rcs_ring"), n("tank_mono"), n("tank_hyp_18"), n("eng_oms"), n("decoupler_37"), n("tank_h_37"), n("tank_h_37"), n("eng_hm"), n("decoupler_37"), n("tank_k_37_l"), n("tank_k_37_l"), n("tank_k_37_l"), n("tank_k_37_l"), n("tank_k_37_l"), n("eng_k9"), n("eng_k9")];
+  const stack = [n("chute_pack"), n("capsule_3"), n("heat_shield_37"), n("decoupler_37"), n("ls_pallet"), n("solar_array"), n("rcs_ring"), n("tank_mono"), n("tank_hyp_18"), n("eng_oms"), n("decoupler_37"), n("tank_h_37"), n("tank_h_37"), n("eng_hm"), n("decoupler_37"), n("tank_k_37_l"), n("tank_k_37_l"), n("tank_k_37_l"), n("tank_k_37_l"), n("tank_k_37_l"), n("eng_k9"), n("eng_k9")];
   const parent = stack[14].uid;
   return { name: "Odyssey Free-Return (preset)", stack, radials: [{ uid: newUid(), parentUid: parent, partId: "srb_63", symmetry: 4 }], events: null };
+}
+
+export function presetMarsOrbiter() {
+  const stack = [n("fairing_37"), n("sat_lunar"), n("rcs_ring"), n("tank_mono"), n("tank_hyp_18"), n("tank_hyp_18"), n("eng_oms"), n("decoupler_37"), n("tank_h_37"), n("tank_h_37"), n("eng_hm"), n("decoupler_37"), n("tank_k_37_l"), n("tank_k_37_l"), n("tank_k_37_l"), n("tank_k_37_l"), n("tank_k_37_l"), n("eng_k9"), n("eng_k9")];
+  return { name: "Ares Pathfinder (preset)", stack, radials: [{ uid: newUid(), parentUid: stack[12].uid, partId: "srb_63", symmetry: 4 }], events: null };
 }
 
 export const PRESETS = [
@@ -34,5 +39,6 @@ export const PRESETS = [
   { id: "hydroboost", label: "Hydro-Boost — kerolox + hydrolox + 2 SRBs", make: presetBoosted },
   { id: "lunar_orbiter", label: "Selene-1 — kerolox + hydrolox TLI stage + storable orbiter", make: presetLunarOrbiter },
   { id: "crewed_flyby", label: "Odyssey — super-heavy, hydrolox TLI, capsule + service module", make: presetCrewedFlyby },
+  { id: "mars_orbiter", label: "Ares Pathfinder — super-heavy, hydrolox escape stage, storable orbiter", make: presetMarsOrbiter },
   { id: "empty", label: "Empty — probe core only", make: presetEmpty },
 ];
