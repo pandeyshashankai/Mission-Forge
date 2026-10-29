@@ -69,6 +69,7 @@ export function entryUpdate(sim, nav, dt, sensedG) {
   const a = sim.aero;
   e.g = sensedG;
   e.maxG = Math.max(e.maxG, sensedG);
+  if (e.ei) e.maxGEntry = Math.max(e.maxGEntry || 0, sensedG);
   if (a.crew && sensedG > CREW_G_FATAL) {
     e.gOverT += dt;
     if (e.gOverT > 1) return sim.loseCrew(`Crew lost — ${sensedG.toFixed(1)} g exceeded the survivable limit`);

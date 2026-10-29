@@ -51,7 +51,8 @@ function snapshot(sim, warp) {
 
 // Highest warp that keeps the fixed-step integrator real-time: ~1000x per 0.1 s of coast step.
 function coastWarpCap(sim) {
-  return Math.min(20000, Math.max(1000, Math.round((1000 * sim.coastDt()) / 0.1)));
+  const raw = Math.min(20000, Math.max(1000, (1000 * sim.coastDt()) / 0.1));
+  return WARPS.filter((w) => w <= raw).pop();
 }
 
 function maneuverWarpCap(sim) {
@@ -136,7 +137,7 @@ export default function Flight() {
     const limited = sim.nav.F > 0 || (sim.nav.body === "earth" && sim.nav.alt < ATMOS_TOP);
     const max = Math.min(limited ? 10 : coastWarpCap(sim), maneuverWarpCap(sim));
     warpRef.current = Math.min(w, max);
-    const why = sim.nav.F > 0 ? "engines are firing" : limited ? "inside the atmosphere" : max === maneuverWarpCap(sim) && max < coastWarpCap(sim) ? "approaching a maneuver node" : "in a low orbit (integrator step 0.1 s)";
+    const why = sim.nav.F > 0 ? "engines are firing" : limited ? "inside the atmosphere" : max === maneuverWarpCap(sim) && max < coastWarpCap(sim) ? "approaching a maneuver node" : `the integrator step is ${sim.coastDt().toFixed(2)} s this close to ${sim.nav.body === "moon" ? "the Moon" : "Earth"}`;
     if (w > max) toast.message(`Warp limited to ×${max} while ${why}`);
   };
 
@@ -226,7 +227,7 @@ export default function Flight() {
         <div className="panel pointer-events-auto flex items-center gap-3 rounded-sm px-3 py-2">
           <span className="font-display text-base font-semibold uppercase tracking-wider">{mission.name}</span>
           <span className="font-mono text-xs text-slate-500" data-testid="flight-design-name">{simRef.current.design.name}</span>
-          {s && <span data-testid="flight-status" className={`font-mono text-[10px] uppercase tracking-widest ${crashed ? "text-red-400" : s.status === "orbit" ? "text-emerald-400" : "text-cyan-300"}`}>{s.clamped && phase === "flight" ? "on pad" : s.status === "orbit" || s.status === "flight" ? (s.body === "moon" ? (s.lunarOrbitAt ? "lunar orbit" : "lunar SOI") : s.status === "orbit" && s.apo > 1e8 ? "cislunar" : s.status) : s.status}</span>}
+          {s && <span data-testid="flight-status" className={`font-mono text-[10px] uppercase tracking-widest ${crashed ? "text-red-400" : s.status === "orbit" ? "text-emerald-400" : "text-cyan-300"}`}>{s.clamped && phase === "flight" ? "on pad" : s.status === "orbit" || s.status === "flight" ? (s.body === "earth" && s.orbitAt && s.alt < 160000 && s.vr < 0 ? (s.entry.chute === "drogue" || s.entry.chute === "main" ? "descent" : "entry") : s.body === "moon" ? (s.lunarOrbitAt ? "lunar orbit" : "lunar SOI") : s.status === "orbit" && s.apo > 1e8 ? "cislunar" : s.status) : s.status}</span>}
         </div>
         {phase === "flight" && s && (
           <div className="panel pointer-events-auto flex items-center gap-1 rounded-sm p-1">

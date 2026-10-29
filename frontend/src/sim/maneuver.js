@@ -94,9 +94,12 @@ export function burnTime(sim, dv) {
       const m0 = runtimeMass(rt);
       const fuel = Math.min(...ts.flows.map((f) => (f.src.kind === "section" ? rt.sections[f.src.s].tanks[f.src.prop] : rt.radials.find((r) => r.uid === f.src.uid).fuel) / f.mdot)) * mdot;
       const need = m0 * (1 - Math.exp(-left / ve));
-      if (need <= fuel) return time + need / mdot;
-      time += fuel / mdot;
-      left -= ve * Math.log(m0 / (m0 - fuel));
+      // Crewed vehicles are throttled to 4 g, which stretches high-thrust burns.
+      const capped = (dvPart, tPart) => (sim.aero && sim.aero.crew ? Math.max(tPart, dvPart / (4 * G0)) : tPart);
+      if (need <= fuel) return time + capped(left, need / mdot);
+      const dvStage = ve * Math.log(m0 / (m0 - fuel));
+      time += capped(dvStage, fuel / mdot);
+      left -= dvStage;
       consume(rt, ts.flows, fuel / mdot);
     }
     const id = rt.events[rt.eventIndex];

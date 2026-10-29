@@ -66,7 +66,7 @@ const LunarPlanner = ({ sim, mission, set, busy, setBusy }) => {
     <div className="mt-1 grid grid-cols-2 gap-1" data-testid="lunar-planner">
       {B({ id: "node-tli-btn", label: "Trans-lunar injection", disabled: body !== "earth" || !(sim.nav.el.apoapsis < 2e6), fn: () => planTLI(sim, { periAlt, apogeeFactor: flyby ? mission.flyby.apogeeFactor : 1 }).node })}
       {B({ id: "node-mcc-btn", label: flyby ? "Mid-course (free return)" : "Mid-course correction", disabled: body !== "earth" || sim.nav.el.apoapsis < 2e7 || (sim.moonClosest && sim.moonClosest.d < 66e6), fn: () => planMCC(sim, { periAlt, freeReturn: flyby })?.node })}
-      {!flyby && B({ id: "node-loi-btn", label: "Lunar orbit insertion", disabled: body !== "moon", fn: () => planLOI(sim) })}
+      {!flyby && B({ id: "node-loi-btn", label: "Lunar orbit insertion", disabled: body !== "moon" || !!sim.lunarOrbitAt, fn: () => planLOI(sim) })}
       {flyby && B({ id: "node-corridor-btn", label: "Return corridor (40 km)", disabled: body !== "earth" || !sim.moonClosest, fn: () => planCorridor(sim, 40000, 600) })}
     </div>
   );
@@ -126,7 +126,7 @@ export const ManeuverPanel = ({ s, sim, mission, targetAlt, onWarpTo }) => {
           <Adj label="Radial" value={node.dv[2]} onChange={(v) => set({ ...node, dv: [node.dv[0], node.dv[1], v] })} testId="node-dv-radial" />
           <div className="grid grid-cols-2 gap-x-3 border-t border-slate-800 pt-1.5 font-mono text-[10px]">
             <span className="text-slate-500">Δv total</span><span className="text-right text-amber-300" data-testid="node-dv-total">{fmt(pred.dv, 1)} m/s</span>
-            <span className="text-slate-500">Burn time</span><span className="text-right text-sky-300">{bt ? `${fmt(bt, 1)} s` : "no engine"}</span>
+            <span className="text-slate-500">Burn time</span><span className="text-right text-sky-300" data-testid="node-burn-time">{bt ? `${fmt(bt, 1)} s` : "no engine"}</span>
             <span className="text-slate-500">After: Ap × Pe{pred.body === "moon" ? " (Moon)" : ""}</span><span className="text-right text-sky-300" data-testid="node-after-orbit">{pred.after.e < 1 ? `${fmt(pred.after.apoapsis / 1000, 1)} × ${fmt(pred.after.periapsis / 1000, 1)} km` : `hyperbolic · Pe ${fmt(pred.after.periapsis / 1000, 1)} km`}</span>
             <span className="text-slate-500">After: incl.</span><span className="text-right text-sky-300">{fmt((pred.after.inc * 180) / Math.PI, 2)}°</span>
           </div>

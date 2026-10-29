@@ -22,7 +22,8 @@ export const CrewPanel = ({ s, sim }) => {
       <Bar label="Food" days={ls.days.food} kg={ls.food} testId="ls-food" />
       <div className="eyebrow mb-1 mt-2 text-cyan-400">Re-entry</div>
       <div className="grid grid-cols-2 gap-x-2 font-mono text-[10px]">
-        <span className="text-slate-500">Load now / peak</span><span className="text-right text-sky-300" data-testid="entry-g">{fmt(e.g, 1)} / {fmt(e.maxG, 1)} g</span>
+        <span className="text-slate-500">Load now / mission pk</span><span className="text-right text-sky-300" data-testid="entry-g">{fmt(e.g, 1)} / {fmt(e.maxG, 1)} g</span>
+        <span className="text-slate-500">Entry peak</span><span className="text-right text-sky-300" data-testid="entry-g-peak">{e.ei ? `${fmt(e.maxGEntry || 0, 1)} g` : "—"}</span>
         <span className="text-slate-500">Heat flux</span><span className="text-right text-sky-300" data-testid="entry-flux">{fmt(e.flux / 1e6, 2)} MW/m²</span>
         <span className="text-slate-500">Ablator used</span><span className="text-right text-sky-300" data-testid="entry-ablator">{shield ? `${fmt((100 * e.heatLoad) / shield.capacity, 1)}%` : "no shield"}</span>
         <span className="text-slate-500">Parachutes</span><span className="text-right uppercase text-sky-300" data-testid="entry-chute">{s.hasChute ? e.chute : "none"}</span>

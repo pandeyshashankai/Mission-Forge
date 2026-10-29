@@ -40,8 +40,8 @@ export const OrbitPanel = ({ s }) => (
     <Row label={s.body === "moon" ? "Aposelene" : "Apoapsis"} value={!Number.isFinite(s.apo) || s.apo > 1e9 ? "ESCAPE" : fmt(s.apo / 1000, 1)} unit="km" testId="telemetry-apoapsis-value" />
     <Row label={s.body === "moon" ? "Periselene" : "Periapsis"} value={s.peri < -6e6 ? "—" : fmt(s.peri / 1000, 1)} unit="km" testId="telemetry-periapsis-value" tone={s.peri >= 140000 ? "text-emerald-400" : s.peri > 0 ? "text-amber-400" : "text-sky-300"} />
     <Row label="Inclination" value={fmt(s.inc, 2)} unit="°" testId="telemetry-inclination-value" />
-    <Row label="Time to apo" value={mmss(s.tApo)} testId="telemetry-time-to-apo-value" />
-    <Row label="Period" value={mmss(s.period)} testId="telemetry-period-value" />
+    <Row label="Time to apo" value={s.status === "splashdown" || s.status === "crashed" ? "—" : mmss(s.tApo)} testId="telemetry-time-to-apo-value" />
+    <Row label="Period" value={s.status === "splashdown" || s.status === "crashed" ? "—" : mmss(s.period)} testId="telemetry-period-value" />
     {s.moonDist !== null && <Row label="Moon alt." value={fmt(s.moonDist / 1000)} unit="km" testId="telemetry-moon-distance-value" />}
     {s.nodeDrift !== null && s.status === "orbit" && s.apo < 1e8 && <Row label="Node drift (J2)" value={fmt(s.nodeDrift, 3)} unit="°/d" testId="telemetry-node-drift-value" />}
     <Row label="Sun β angle" value={fmt(s.beta, 1)} unit="°" testId="telemetry-beta-value" />
