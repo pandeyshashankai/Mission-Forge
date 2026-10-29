@@ -56,10 +56,10 @@ function coastWarpCap(sim) {
 
 function maneuverWarpCap(sim) {
   const m = sim.maneuver;
-  if (!m || m.done) return 1000;
+  if (!m || m.done) return 20000;
   if (m.phase === "burn") return 1;
   const rem = m.tStart - sim.t;
-  return rem > 3000 ? 1000 : rem > 400 ? 100 : rem > 45 ? 10 : 1;
+  return rem > 30000 ? 20000 : rem > 600 ? 1000 : rem > 120 ? 100 : rem > 45 ? 10 : 1;
 }
 
 export default function Flight() {
@@ -136,7 +136,8 @@ export default function Flight() {
     const limited = sim.nav.F > 0 || (sim.nav.body === "earth" && sim.nav.alt < ATMOS_TOP);
     const max = Math.min(limited ? 10 : coastWarpCap(sim), maneuverWarpCap(sim));
     warpRef.current = Math.min(w, max);
-    if (w > max) toast.message(`Warp limited to ×${max} while ${sim.nav.F > 0 ? "engines are firing" : "inside the atmosphere"}`);
+    const why = sim.nav.F > 0 ? "engines are firing" : limited ? "inside the atmosphere" : max === maneuverWarpCap(sim) && max < coastWarpCap(sim) ? "approaching a maneuver node" : "in a low orbit (integrator step 0.1 s)";
+    if (w > max) toast.message(`Warp limited to ×${max} while ${why}`);
   };
 
   const finish = useCallback(() => {

@@ -60,14 +60,14 @@ const LunarPlanner = ({ sim, mission, set, busy, setBusy }) => {
   };
   const body = sim.nav.body;
   const B = ({ id, label, fn, disabled }) => (
-    <button data-testid={id} disabled={!!busy || disabled} onClick={() => run(label, fn)} className="border border-amber-500/40 py-1 text-[11px] text-amber-200 hover:border-amber-400 disabled:opacity-30">{busy === label ? "Computing…" : label}</button>
+    <button key={id} data-testid={id} disabled={!!busy || disabled} onClick={() => run(label, fn)} className="border border-amber-500/40 py-1 text-[11px] text-amber-200 hover:border-amber-400 disabled:opacity-30">{busy === label ? "Computing…" : label}</button>
   );
   return (
     <div className="mt-1 grid grid-cols-2 gap-1" data-testid="lunar-planner">
-      <B id="node-tli-btn" label="Trans-lunar injection" disabled={body !== "earth" || !(sim.nav.el.apoapsis < 2e6)} fn={() => planTLI(sim, { periAlt, apogeeFactor: flyby ? mission.flyby.apogeeFactor : 1 }).node} />
-      <B id="node-mcc-btn" label={flyby ? "Mid-course (free return)" : "Mid-course correction"} disabled={body !== "earth" || sim.nav.el.apoapsis < 2e7 || (sim.moonClosest && sim.moonClosest.d < 66e6)} fn={() => planMCC(sim, { periAlt, freeReturn: flyby })?.node} />
-      {!flyby && <B id="node-loi-btn" label="Lunar orbit insertion" disabled={body !== "moon"} fn={() => planLOI(sim)} />}
-      {flyby && <B id="node-corridor-btn" label="Return corridor (40 km)" disabled={body !== "earth" || !sim.moonClosest} fn={() => planCorridor(sim, 40000, 600)} />}
+      {B({ id: "node-tli-btn", label: "Trans-lunar injection", disabled: body !== "earth" || !(sim.nav.el.apoapsis < 2e6), fn: () => planTLI(sim, { periAlt, apogeeFactor: flyby ? mission.flyby.apogeeFactor : 1 }).node })}
+      {B({ id: "node-mcc-btn", label: flyby ? "Mid-course (free return)" : "Mid-course correction", disabled: body !== "earth" || sim.nav.el.apoapsis < 2e7 || (sim.moonClosest && sim.moonClosest.d < 66e6), fn: () => planMCC(sim, { periAlt, freeReturn: flyby })?.node })}
+      {!flyby && B({ id: "node-loi-btn", label: "Lunar orbit insertion", disabled: body !== "moon", fn: () => planLOI(sim) })}
+      {flyby && B({ id: "node-corridor-btn", label: "Return corridor (40 km)", disabled: body !== "earth" || !sim.moonClosest, fn: () => planCorridor(sim, 40000, 600) })}
     </div>
   );
 };

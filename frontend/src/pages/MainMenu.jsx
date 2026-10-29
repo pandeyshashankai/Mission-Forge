@@ -97,7 +97,7 @@ export default function MainMenu() {
         </div>
 
         <div className="flex justify-between font-mono text-[10px] uppercase tracking-widest text-slate-600">
-          <span>Phase 1 · Milestones 1–2 — First Orbit & orbital operations</span>
+          <span>Phase 1 · Milestones 1–3 — First Orbit, orbital operations & the Moon</span>
           <span>Saves stay in this browser · export to keep them</span>
         </div>
       </div>

@@ -34,7 +34,7 @@ export function evaluateFlight(sim, design, mission, difficulty) {
       { id: "lunar", label: mission.objectives[1], met: band, detail: inLunar ? `${km(el.apoapsis)} × ${km(el.periapsis)} (i ${fmt(incDeg, 1)}°)` : "Not in lunar orbit" },
       { id: "safe", label: mission.objectives[2], met: reachedMoon && sim.status !== "crashed", detail: sim.status === "crashed" ? sim.endReason : "No impact" },
       { id: "budget", label: mission.objectives[3], met: stats.cost <= budget, detail: `$${fmt(stats.cost, 1)}M of $${fmt(budget, 1)}M` },
-      { id: "payload", label: mission.objectives[4], met: has(mission.payload) && band, detail: has(mission.payload) ? "Payload on board" : "Payload missing" },
+      { id: "payload", label: mission.objectives[4], met: has(mission.payload) && band, detail: !has(mission.payload) ? "Payload missing" : band ? "Payload delivered to lunar orbit" : "Payload on board, but not in the target lunar orbit" },
     ];
   } else if (mission.kind === "lunar_flyby") {
     const e = sim.entry;
@@ -55,7 +55,7 @@ export function evaluateFlight(sim, design, mission, difficulty) {
       { id: "inc", label: mission.objectives[2], met: inOrbit && Math.abs(incDeg - tgt.inclination) <= tgt.incTolerance, detail: inOrbit ? `i = ${fmt(incDeg, 2)}°` : "No orbit" },
       { id: "budget", label: mission.objectives[3], met: stats.cost <= budget, detail: `$${fmt(stats.cost, 1)}M of $${fmt(budget, 1)}M` },
     ];
-    if (mission.payload) objectives.push({ id: "payload", label: mission.objectives[4], met: has(mission.payload) && inOrbit, detail: has(mission.payload) ? "Payload on board" : "Payload missing" });
+    if (mission.payload) objectives.push({ id: "payload", label: mission.objectives[4], met: has(mission.payload) && inOrbit, detail: !has(mission.payload) ? "Payload missing" : inOrbit ? "Payload on board in orbit" : "Payload on board, but no stable orbit" });
     if (mission.sso) {
       const rate = (j2NodeRate(el) * 86400) / DEG;
       objectives.push({ id: "sso", label: mission.objectives[5], met: inOrbit && Math.abs(rate - SUN_DEG_DAY) <= 0.05, detail: inOrbit ? `Node drift ${fmt(rate, 3)}°/day from simulated J2 (Sun ${SUN_DEG_DAY}°/day)` : "No orbit" });

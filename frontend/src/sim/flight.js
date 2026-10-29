@@ -252,7 +252,10 @@ export class FlightSim {
     }
     applyEvent(this.rt, id);
     this.rt.eventIndex++;
+    const cap0 = this.config ? this.config.wheelMomentum : 0;
     this.config = vehicleConfig(this);
+    // Momentum stored in jettisoned wheels leaves with them.
+    if (cap0 > 0 && this.config.wheelMomentum < cap0) this.wheelH = scale(this.wheelH, this.config.wheelMomentum / cap0);
     this.aero = aeroConfig(this);
     if (id !== "ignite-0") {
       this.addLog("stage", describeEvent(id, this.sections).label);

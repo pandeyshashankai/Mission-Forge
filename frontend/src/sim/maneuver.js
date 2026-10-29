@@ -1,6 +1,6 @@
 import { EARTH, G0 } from "./constants";
 import { add, cross, dot, len, norm, scale, sub, clamp } from "./vec";
-import { thrustState, runtimeMass } from "./design";
+import { thrustState, runtimeMass, cloneRuntime, consume, applyEvent } from "./design";
 import { rk4, propagate, primaryOf, elementsOf, moonState } from "./bodies";
 
 // Step the motion forward (vacuum). Without ctx: Earth with J2, fixed steps. With ctx {t0, eph}: patched-conic Earth/Moon, adaptive steps.
@@ -82,13 +82,29 @@ export function nodePrediction(sim, node) {
 }
 
 // Burn time from the rocket equation using the currently active (or next) engines.
+// Burn time from the rocket equation, continuing through later stages when the current one runs dry.
 export function burnTime(sim, dv) {
-  const ts = thrustState(sim.rt, 1, 0);
-  const mdot = ts.flows.reduce((a, f) => a + f.mdot, 0);
-  if (!(ts.F > 0)) return null;
-  const ve = ts.F / mdot;
-  const m0 = runtimeMass(sim.rt);
-  return (m0 * (1 - Math.exp(-dv / ve))) / mdot;
+  const rt = cloneRuntime(sim.rt);
+  let left = dv, time = 0;
+  for (let guard = 0; guard < 20 && left > 1e-6; guard++) {
+    const ts = thrustState(rt, 1, 0);
+    const mdot = ts.flows.reduce((a, f) => a + f.mdot, 0);
+    if (ts.F > 0) {
+      const ve = ts.F / mdot;
+      const m0 = runtimeMass(rt);
+      const fuel = Math.min(...ts.flows.map((f) => (f.src.kind === "section" ? rt.sections[f.src.s].tanks[f.src.prop] : rt.radials.find((r) => r.uid === f.src.uid).fuel) / f.mdot)) * mdot;
+      const need = m0 * (1 - Math.exp(-left / ve));
+      if (need <= fuel) return time + need / mdot;
+      time += fuel / mdot;
+      left -= ve * Math.log(m0 / (m0 - fuel));
+      consume(rt, ts.flows, fuel / mdot);
+    }
+    const id = rt.events[rt.eventIndex];
+    if (!id) return time > 0 ? time : null;
+    applyEvent(rt, id);
+    rt.eventIndex++;
+  }
+  return time;
 }
 
 // Vis-viva helpers for suggested nodes.

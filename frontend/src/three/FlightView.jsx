@@ -359,8 +359,9 @@ export const FlightView = ({ simRef, cameraMode, quality = "medium", onFrame }) 
       let side = new THREE.Vector3().crossVectors(up, dir);
       if (side.lengthSq() < 1e-4) side = east.clone();
       side.normalize();
-      if (mode === "map" && nav.body !== lastBody) lastMode = null;
-      lastBody = nav.body;
+      const scaleKey = `${nav.body}|${nav.el.e < 1 && nav.el.ra > 1e8 ? "far" : "near"}`;
+      if (mode === "map" && scaleKey !== lastBody) lastMode = null;
+      lastBody = scaleKey;
       const mapTarget = frameOf(nav.body);
       if (mode !== lastMode) {
         controls.enabled = mode === "free" || mode === "map";
