@@ -81,31 +81,27 @@ export function nodePrediction(sim, node) {
   return { at, dvVec, v2, after, dv: len(dvVec), body: p.body };
 }
 
-// Burn time from the rocket equation using the currently active (or next) engines.
-// Burn time from the rocket equation, continuing through later stages when the current one runs dry.
+// Burn time by stepping the burn (0.5 s) through later stages; crewed vehicles are throttled to 4 g.
 export function burnTime(sim, dv) {
   const rt = cloneRuntime(sim.rt);
+  const crew = sim.aero && sim.aero.crew;
   let left = dv, time = 0;
-  for (let guard = 0; guard < 20 && left > 1e-6; guard++) {
-    const ts = thrustState(rt, 1, 0);
-    const mdot = ts.flows.reduce((a, f) => a + f.mdot, 0);
-    if (ts.F > 0) {
-      const ve = ts.F / mdot;
-      const m0 = runtimeMass(rt);
-      const fuel = Math.min(...ts.flows.map((f) => (f.src.kind === "section" ? rt.sections[f.src.s].tanks[f.src.prop] : rt.radials.find((r) => r.uid === f.src.uid).fuel) / f.mdot)) * mdot;
-      const need = m0 * (1 - Math.exp(-left / ve));
-      // Crewed vehicles are throttled to 4 g, which stretches high-thrust burns.
-      const capped = (dvPart, tPart) => (sim.aero && sim.aero.crew ? Math.max(tPart, dvPart / (4 * G0)) : tPart);
-      if (need <= fuel) return time + capped(left, need / mdot);
-      const dvStage = ve * Math.log(m0 / (m0 - fuel));
-      time += capped(dvStage, fuel / mdot);
-      left -= dvStage;
-      consume(rt, ts.flows, fuel / mdot);
+  for (let guard = 0; guard < 40000 && left > 1e-6; guard++) {
+    const full = thrustState(rt, 1, 0);
+    if (!(full.F > 0)) {
+      const id = rt.events[rt.eventIndex];
+      if (!id) return time > 0 ? time : null;
+      applyEvent(rt, id);
+      rt.eventIndex++;
+      continue;
     }
-    const id = rt.events[rt.eventIndex];
-    if (!id) return time > 0 ? time : null;
-    applyEvent(rt, id);
-    rt.eventIndex++;
+    const m = runtimeMass(rt);
+    const ts = crew ? thrustState(rt, Math.min(1, (4 * G0 * m) / full.F), 0) : full;
+    const a = ts.F / m;
+    const h = Math.min(0.5, left / a);
+    consume(rt, ts.flows, h);
+    left -= a * h;
+    time += h;
   }
   return time;
 }

@@ -227,7 +227,7 @@ export default function Flight() {
         <div className="panel pointer-events-auto flex items-center gap-3 rounded-sm px-3 py-2">
           <span className="font-display text-base font-semibold uppercase tracking-wider">{mission.name}</span>
           <span className="font-mono text-xs text-slate-500" data-testid="flight-design-name">{simRef.current.design.name}</span>
-          {s && <span data-testid="flight-status" className={`font-mono text-[10px] uppercase tracking-widest ${crashed ? "text-red-400" : s.status === "orbit" ? "text-emerald-400" : "text-cyan-300"}`}>{s.clamped && phase === "flight" ? "on pad" : s.status === "orbit" || s.status === "flight" ? (s.body === "earth" && s.orbitAt && s.alt < 160000 && s.vr < 0 ? (s.entry.chute === "drogue" || s.entry.chute === "main" ? "descent" : "entry") : s.body === "moon" ? (s.lunarOrbitAt ? "lunar orbit" : "lunar SOI") : s.status === "orbit" && s.apo > 1e8 ? "cislunar" : s.status) : s.status}</span>}
+          {s && <span data-testid="flight-status" className={`font-mono text-[10px] uppercase tracking-widest ${crashed ? "text-red-400" : s.status === "orbit" ? "text-emerald-400" : "text-cyan-300"}`}>{s.clamped && phase === "flight" ? "on pad" : s.status === "orbit" || s.status === "flight" ? (s.body === "earth" && s.orbitAt && s.alt < 160000 && (s.vr < 0 || s.entry.ei) ? (s.entry.chute === "drogue" || s.entry.chute === "main" ? "descent" : "entry") : s.body === "moon" ? (s.lunarOrbitAt ? "lunar orbit" : "lunar SOI") : s.status === "orbit" && s.apo > 1e8 ? "cislunar" : s.status) : s.status}</span>}
         </div>
         {phase === "flight" && s && (
           <div className="panel pointer-events-auto flex items-center gap-1 rounded-sm p-1">

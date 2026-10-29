@@ -458,7 +458,7 @@ export class FlightSim {
         mass: nav.mass / 1000,
       });
     }
-    if (this.status === "orbit" && this.t - this.lastAutoCkpt > 86400) {
+    if (this.status === "orbit" && !this.eph && this.t - this.lastAutoCkpt > 86400) {
       this.lastAutoCkpt = this.t;
       this.requestCheckpoint("Long coast (24 h)");
     }
