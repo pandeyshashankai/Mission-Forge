@@ -1,12 +1,11 @@
 import { useRef, useState } from "react";
-import { Rocket, Play, FolderOpen, Upload, Settings, ListChecks, Trash2, History } from "lucide-react";
+import { Rocket, Play, FolderOpen, Upload, Settings, Trash2, History } from "lucide-react";
 import { CheckpointList } from "../components/game/FlightPanels";
 import { toast } from "sonner";
 import { useGame } from "../game/GameContext";
-import { DIFFICULTIES, setCustomDifficulty } from "../sim/missions";
+import { DIFFICULTIES } from "../sim/missions";
 import { startTutorial, TUTORIALS } from "../components/game/Tutorial";
 import { storage, readJSONFile, isValidDesign } from "../sim/storage";
-import { STATUS } from "../sim/status";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../components/ui/dialog";
 
 const MenuButton = ({ icon: Icon, label, sub, onClick, testId, disabled, primary }) => (
@@ -24,10 +23,8 @@ const MenuButton = ({ icon: Icon, label, sub, onClick, testId, disabled, primary
   </button>
 );
 
-const STATUS_TONE = { implemented: "text-cyan-300", tested: "text-emerald-400", partial: "text-amber-400", pending: "text-slate-500" };
 
 export default function MainMenu() {
-  const [, setTick] = useState(0);
   const g = useGame();
   const fileRef = useRef(null);
   const [dlg, setDlg] = useState(null);
@@ -79,13 +76,12 @@ export default function MainMenu() {
             <MenuButton icon={FolderOpen} label="Load Design" sub={`${designs.length} saved in this browser`} testId="menu-load-btn" onClick={() => { setDesigns(storage.designs()); setDlg("load"); }} />
             <MenuButton icon={Upload} label="Import Design" sub="From a .json file" testId="menu-import-btn" onClick={() => fileRef.current.click()} />
             <MenuButton icon={Settings} label="Settings" testId="menu-settings-btn" onClick={() => setDlg("settings")} />
-            <MenuButton icon={ListChecks} label="Build Status" sub="Requirements: implemented / tested / pending" testId="menu-status-btn" onClick={() => setDlg("status")} />
             <input ref={fileRef} type="file" accept=".json,application/json" className="hidden" onChange={onImport} data-testid="menu-import-input" />
           </div>
 
           <div className="panel self-end rounded-sm p-5 rise" style={{ animationDelay: "220ms" }}>
             <div className="eyebrow mb-3">Difficulty — physics is identical in every mode</div>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-3 gap-2">
               {Object.values(DIFFICULTIES).map((d) => (
                 <button key={d.id} data-testid={`difficulty-${d.id}-btn`} onClick={() => g.setDifficulty(d.id)} className={`border px-3 py-2 text-left transition-colors ${g.difficulty === d.id ? "border-cyan-400 bg-cyan-500/10" : "border-slate-800 hover:border-slate-600"}`}>
                   <div className="font-display text-base font-semibold uppercase tracking-wider">{d.label}</div>
@@ -94,12 +90,6 @@ export default function MainMenu() {
               ))}
             </div>
             <p className="mt-3 text-xs text-slate-400" data-testid="difficulty-description">{DIFFICULTIES[g.difficulty].desc}</p>
-            {g.difficulty === "custom" && (
-              <div className="mt-3 grid grid-cols-2 gap-3 font-mono text-[11px] text-slate-400" data-testid="custom-difficulty">
-                <label>Budget ×{DIFFICULTIES.custom.budgetMult}<input data-testid="custom-budget-slider" type="range" min={0.5} max={2.5} step={0.1} value={DIFFICULTIES.custom.budgetMult} onChange={(e) => { setCustomDifficulty({ budgetMult: +e.target.value }); g.setDifficulty("custom"); setTick((n) => n + 1); }} className="w-full accent-cyan-500" /></label>
-                <label>Faults {DIFFICULTIES.custom.faultRate}/day<input data-testid="custom-fault-slider" type="range" min={0} max={1} step={0.05} value={DIFFICULTIES.custom.faultRate} onChange={(e) => { setCustomDifficulty({ faultRate: +e.target.value }); setTick((n) => n + 1); }} className="w-full accent-cyan-500" /></label>
-              </div>
-            )}
             <div className="mt-3 flex flex-wrap gap-2" data-testid="tutorial-list">
               {Object.entries(TUTORIALS).map(([id, t]) => (
                 <button key={id} data-testid={`tutorial-start-${id}`} onClick={() => startTutorial(id)} className="border border-amber-500/40 px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-amber-200 hover:bg-amber-500/10">Tutorial: {t.title}</button>
@@ -109,7 +99,7 @@ export default function MainMenu() {
         </div>
 
         <div className="flex justify-between font-mono text-[10px] uppercase tracking-widest text-slate-600">
-          <span>Phase 1 · Milestones 1–3 — First Orbit, orbital operations & the Moon</span>
+          <span>Earth orbit · Lunar exploration · Crew return</span>
           <span>Saves stay in this browser · export to keep them</span>
         </div>
       </div>
@@ -148,28 +138,10 @@ export default function MainMenu() {
               <button key={q} data-testid={`graphics-${q}-btn`} onClick={() => g.setSettings({ ...g.settings, graphics: q })} className={`border px-3 py-2 font-mono text-xs uppercase ${g.settings.graphics === q ? "border-cyan-400 text-cyan-300" : "border-slate-800 text-slate-400"}`}>{q}</button>
             ))}
           </div>
-          <p className="text-xs text-slate-500">Changes resolution, shadows and planet detail. Ultra preset and automatic quality scaling arrive in Milestone 6.</p>
+          <p className="text-xs text-slate-500">Changes resolution, shadows and planet detail. Auto adjusts resolution to keep flight smooth.</p>
         </DialogContent>
       </Dialog>
 
-      <Dialog open={dlg === "status"} onOpenChange={(o) => !o && setDlg(null)}>
-        <DialogContent className="dark max-w-3xl border-slate-800 bg-slate-950 text-slate-100" data-testid="status-dialog">
-          <DialogHeader><DialogTitle className="font-display uppercase tracking-wider">Requirements status</DialogTitle></DialogHeader>
-          <div className="max-h-[60vh] overflow-y-auto scroll-thin">
-            <table className="w-full text-xs">
-              <tbody>
-                {STATUS.map(([m, f, s], i) => (
-                  <tr key={i} className="border-t border-slate-800">
-                    <td className="py-1.5 pr-3 font-mono text-slate-500">{m}</td>
-                    <td className="py-1.5 pr-3 text-slate-300">{f}</td>
-                    <td className={`py-1.5 font-mono uppercase ${STATUS_TONE[s]}`}>{s}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

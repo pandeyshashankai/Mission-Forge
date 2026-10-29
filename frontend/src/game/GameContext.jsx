@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { storage } from "../sim/storage";
 import { presetFalconLike } from "../sim/presets";
+import { DIFFICULTIES } from "../sim/missions";
 import { DEFAULT_PROFILE } from "../sim/guidance";
 
 const GameCtx = createContext(null);
@@ -9,10 +10,10 @@ export const useGame = () => useContext(GameCtx);
 export function GameProvider({ children }) {
   const auto = storage.autosave();
   const [screen, setScreen] = useState("menu");
-  const [difficulty, setDifficulty] = useState(auto?.difficulty || "amateur");
+  const [difficulty, setDifficulty] = useState(DIFFICULTIES[auto?.difficulty] ? auto.difficulty : "amateur");
   const [missionId, setMissionId] = useState(auto?.missionId || "first_orbit");
   const [design, setDesignState] = useState(auto?.design || presetFalconLike());
-  const [profile, setProfile] = useState(auto?.profile || DEFAULT_PROFILE);
+  const [profile, setProfile] = useState({ ...DEFAULT_PROFILE, ...auto?.profile });
   const [settings, setSettingsState] = useState(storage.settings());
   const [result, setResult] = useState(null);
   const [pendingCheckpoint, setPendingCheckpoint] = useState(null);

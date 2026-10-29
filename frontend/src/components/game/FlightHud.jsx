@@ -36,9 +36,9 @@ export const TelemetryPanel = ({ s }) => (
 export const OrbitPanel = ({ s }) => (
   <div className="panel w-60 rounded-sm p-3" data-testid="hud-orbit">
     <div className="eyebrow mb-1 text-cyan-400">Orbit</div>
-    <Row label="Region" value={s.body === "moon" ? "Moon SOI" : s.body === "mars" ? "Mars SOI" : "Earth"} testId="telemetry-region-value" tone={s.body === "moon" ? "text-amber-300" : undefined} />
-    <Row label={s.body === "moon" ? "Aposelene" : s.body === "mars" ? "Apoareion" : "Apoapsis"} value={!Number.isFinite(s.apo) || s.apo > 1e9 ? "ESCAPE" : fmt(s.apo / 1000, 1)} unit="km" testId="telemetry-apoapsis-value" />
-    <Row label={s.body === "moon" ? "Periselene" : s.body === "mars" ? "Periareion" : "Periapsis"} value={s.peri < -6e6 ? "—" : fmt(s.peri / 1000, 1)} unit="km" testId="telemetry-periapsis-value" tone={s.peri >= 140000 ? "text-emerald-400" : s.peri > 0 ? "text-amber-400" : "text-sky-300"} />
+    <Row label="Region" value={s.body === "moon" ? "Moon SOI" : "Earth"} testId="telemetry-region-value" tone={s.body === "moon" ? "text-amber-300" : undefined} />
+    <Row label={s.body === "moon" ? "Aposelene" : "Apoapsis"} value={!Number.isFinite(s.apo) || s.apo > 1e9 ? "ESCAPE" : fmt(s.apo / 1000, 1)} unit="km" testId="telemetry-apoapsis-value" />
+    <Row label={s.body === "moon" ? "Periselene" : "Periapsis"} value={s.peri < -6e6 ? "—" : fmt(s.peri / 1000, 1)} unit="km" testId="telemetry-periapsis-value" tone={s.peri >= 140000 ? "text-emerald-400" : s.peri > 0 ? "text-amber-400" : "text-sky-300"} />
     <Row label="Inclination" value={fmt(s.inc, 2)} unit="°" testId="telemetry-inclination-value" />
     <Row label="Time to apo" value={s.status === "splashdown" || s.status === "crashed" ? "—" : mmss(s.tApo)} testId="telemetry-time-to-apo-value" />
     <Row label="Period" value={s.status === "splashdown" || s.status === "crashed" ? "—" : mmss(s.period)} testId="telemetry-period-value" />

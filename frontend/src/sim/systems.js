@@ -2,13 +2,12 @@ import { PARTS } from "./parts";
 import { len, dot, sub, scale } from "./vec";
 import { EARTH } from "./constants";
 import { attachedNodes } from "./crew";
-import { DIFFICULTIES } from "./missions";
 
 export const SOLAR_CONST = 1361;
 const SIGMA = 5.670374e-8;
 const C_LIGHT = 299792458;
 export const T_MIN = 263, T_MAX = 318, T_FAULT = 338;
-export const FAULT_RATES = { amateur: 0, intermediate: 0.15, expert: 0.4 };
+export const FAULT_RATES = { amateur: 0, intermediate: 0, expert: 0.4 };
 export const SYSTEMS_SOURCE = "Solar constant 1361 W/m² (TSIS-1); Stefan–Boltzmann radiator, ε 0.85, absorptance 0.3; cylindrical shadow model";
 
 // Defaults for control parts that carry their own power & thermal hardware.
@@ -41,7 +40,7 @@ export function powerOfNodes(nodes, f = { gen: 1, battery: 1, rad: 1 }) {
 export function newSystems(missionId, difficulty) {
   let seed = 2166136261;
   for (const ch of `${missionId}|${difficulty}`) seed = Math.imul(seed ^ ch.charCodeAt(0), 16777619) >>> 0;
-  return { soc: null, temp: 293, rng: seed, faults: [], alarms: [], factors: { gen: 1, battery: 1, rad: 1, wheel: 1 }, commsOutUntil: 0, powerOut: false, lit: true, lastCheck: 0, delay: 0, link: true, rate: difficulty === "custom" ? DIFFICULTIES.custom.faultRate : FAULT_RATES[difficulty] ?? 0.15 };
+  return { soc: null, temp: 293, rng: seed, faults: [], alarms: [], factors: { gen: 1, battery: 1, rad: 1, wheel: 1 }, commsOutUntil: 0, powerOut: false, lit: true, lastCheck: 0, delay: 0, link: true, rate: FAULT_RATES[difficulty] ?? 0 };
 }
 
 const rand = (sys) => {
@@ -175,8 +174,8 @@ export function systemsChecks(sections, mission) {
       [{ name: "Radiator area", value: c.rad.toFixed(1), unit: "m²", source: "Built-in + radiator parts" }, { name: "Internal heat", value: c.load, unit: "W", source: "Avionics load" }, { name: "Absorbed sunlight", value: Math.round(0.3 * SOLAR_CONST * 2), unit: "W", source: "α 0.3 × 1361 W/m² × 2 m²" }],
       [`T_sun = ${Math.round(tHot)} K, T_eclipse = ${Math.round(tCold)} K`]),
     (() => {
-      const d = mission.kind === "mars" ? 3.78e11 : mission.kind && mission.kind.startsWith("lunar") ? 4.06e8 : 2e6;
-      return mk("comms", "Communication link", "pass", `Max one-way signal delay ≈ ${d / C_LIGHT > 60 ? `${(d / C_LIGHT / 60).toFixed(1)} min` : `${(d / C_LIGHT).toFixed(2)} s`} at the destination; occultation by the Moon/planet causes loss of signal`, "delay = distance / c", [{ name: "Max distance", value: (d / 1000).toExponential(2), unit: "km", source: mission.kind === "mars" ? "Earth–Mars at conjunction (2.52 AU)" : "Mission geometry" }, { name: "c", value: C_LIGHT, unit: "m/s", source: "SI definition" }], [`${(d / 1000).toExponential(3)} km / c = ${(d / C_LIGHT).toFixed(2)} s`]);
+      const d = mission.kind && mission.kind.startsWith("lunar") ? 4.06e8 : 2e6;
+      return mk("comms", "Communication link", "pass", `Max one-way signal delay ≈ ${d / C_LIGHT > 60 ? `${(d / C_LIGHT / 60).toFixed(1)} min` : `${(d / C_LIGHT).toFixed(2)} s`} at the destination; occultation by the Moon/planet causes loss of signal`, "delay = distance / c", [{ name: "Max distance", value: (d / 1000).toExponential(2), unit: "km", source: "Mission geometry" }, { name: "c", value: C_LIGHT, unit: "m/s", source: "SI definition" }], [`${(d / 1000).toExponential(3)} km / c = ${(d / C_LIGHT).toFixed(2)} s`]);
     })(),
   ];
 }

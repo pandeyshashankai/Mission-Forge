@@ -20,7 +20,6 @@ export const PROPELLANTS = {
   monoprop: { label: "Hydrazine (RCS)", short: "N2H4" },
   hypergolic: { label: "MMH / N2O4 (storable)", short: "MMH/NTO" },
   methalox: { label: "Liquid methane / LOX", short: "CH4/LOX" },
-  xenon: { label: "Xenon (electric propulsion)", short: "Xe" },
 };
 
 const list = [
@@ -55,8 +54,6 @@ const list = [
   P({ id: "radiator_panel", name: "Radiator Panels 6 m²", category: "power", diameter: 2.5, height: 0.5, dryMass: 70, cost: 1.2, systems: { rad: 6 }, look: "pallet", desc: "Rejects heat: εσAT⁴ with ε = 0.85 (~2.1 kW at 20 °C).", source: "Approx. body-mounted loop radiator" }),
   P({ id: "tank_m_37", name: "Methalox Tank 3.7 m", category: "tank", diameter: 3.7, height: 14, dryMass: 9500, cost: 3.5, propellant: { type: "methalox", mass: 160000 }, look: "tank_white", desc: "CH4/LOX — lower density than kerosene, cleaner and reusable-friendly.", source: "Approx. stainless methalox tank set" }),
   P({ id: "eng_m2", name: "M-2 Methalox Engine (full-flow)", category: "engine", diameter: 1.8, height: 3.1, dryMass: 1600, cost: 9, look: "engine_sl", engine: { propellant: "methalox", thrustVac: 2450000, ispVac: 363, ispSL: 327, minThrottle: 0.4, gimbal: 15 }, desc: "High-pressure full-flow staged combustion.", source: "Approx. Raptor 2 class" }),
-  P({ id: "tank_xe", name: "Xenon Tank 450 kg", category: "tank", diameter: 1.8, height: 0.9, dryMass: 45, cost: 1.5, propellant: { type: "xenon", mass: 450 }, look: "tank_mono", desc: "High-pressure composite xenon tank for ion engines.", source: "Approx. Dawn xenon tank" }),
-  P({ id: "eng_ion", name: "Ion Thruster Pair (gridded, 2 × 0.09 N)", category: "engine", diameter: 1.8, height: 0.6, dryMass: 60, cost: 6, look: "engine_vac", engine: { propellant: "xenon", thrustVac: 0.18, ispVac: 3100, ispSL: 1, minThrottle: 1, gimbal: 0, powerW: 4600 }, desc: "Very high efficiency, tiny thrust. Draws 4.6 kW while firing — no power, no thrust.", source: "Approx. NSTAR / NEXT gridded ion thrusters" }),
   P({ id: "decoupler_37", name: "Stage Decoupler 3.7 m", category: "structure", diameter: 3.7, height: 0.6, dryMass: 420, cost: 0.3, decoupler: true, look: "decoupler", desc: "Separates stages. Stays with the stage below.", source: "Approx. interstage ring" }),
   P({ id: "decoupler_18", name: "Stage Decoupler 1.8 m", category: "structure", diameter: 1.8, height: 0.35, dryMass: 120, cost: 0.15, decoupler: true, look: "decoupler", source: "Approx. small separation ring" }),
   P({ id: "adapter_37_18", name: "Adapter 3.7 → 1.8 m", category: "structure", diameter: 3.7, diameterTop: 1.8, height: 1.4, dryMass: 300, cost: 0.2, look: "adapter", source: "Approx. conical adapter" }),

@@ -10,7 +10,7 @@ export function addPart(design, partId, selectedUid, mode, symmetry) {
     const uid = newUid();
     return { design: { ...design, radials: [...(design.radials || []), { uid, parentUid: selectedUid, partId, symmetry }], events: null }, uid, radial: true };
   }
-  if (mode === "radial") return { error: "Only solid boosters attach radially in this milestone. Switch to Above/Below." };
+  if (mode === "radial") return { error: "Only solid boosters attach radially. Switch to Above/Below." };
   const node = { uid: newUid(), partId };
   const stack = [...design.stack];
   if (idx < 0) mode === "above" ? stack.unshift(node) : stack.push(node);

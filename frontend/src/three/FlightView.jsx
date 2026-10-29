@@ -166,11 +166,6 @@ export const FlightView = ({ simRef, cameraMode, quality = "medium", onFrame }) 
     const moonMesh = new THREE.Mesh(new THREE.SphereGeometry(MOON.radius, q.seg, q.seg / 2), new THREE.MeshStandardMaterial({ map: moonTex, roughness: 1, metalness: 0 }));
     moonCenter.add(moonMesh);
     moonCenter.visible = !!simRef.current.eph;
-    const marsCenter = new THREE.Group();
-    scene.add(marsCenter);
-    const marsMesh = new THREE.Mesh(new THREE.SphereGeometry(3389500, q.seg, q.seg / 2), new THREE.MeshStandardMaterial({ map: moonTex, color: "#e0764a", roughness: 1 }));
-    marsCenter.add(marsMesh);
-    marsCenter.visible = false;
     let fpsAcc = 0, fpsN = 0, px = Math.min(window.devicePixelRatio, q.px);
     const sim0 = simRef.current;
     const { lat, lon } = sim0.site;
@@ -232,7 +227,7 @@ export const FlightView = ({ simRef, cameraMode, quality = "medium", onFrame }) 
     let chaseDist = 0;
     let lastMode = null;
     let lastBody = "earth";
-    const frameOf = (body) => (body === "moon" ? moonCenter : body === "mars" ? marsCenter : earthCenter);
+    const frameOf = (body) => (body === "moon" ? moonCenter : earthCenter);
     const onWheel = (e) => {
       if (camModeRef.current === "chase") chaseDist = Math.max(0.5, Math.min(40, (chaseDist || 1) * (e.deltaY > 0 ? 1.1 : 0.9)));
     };
@@ -287,13 +282,7 @@ export const FlightView = ({ simRef, cameraMode, quality = "medium", onFrame }) 
       }
       const rPos = toThree(sim.r);
       earthCenter.position.copy(rPos).multiplyScalar(-1);
-      const atMars = !!(sim.eph && sim.eph.central);
-      earthCenter.visible = !atMars;
-      marsCenter.visible = atMars;
-      if (atMars) {
-        moonCenter.visible = false;
-        marsCenter.position.copy(rPos).multiplyScalar(-1);
-      } else if (sim.eph) {
+      if (sim.eph) {
         moonCenter.visible = true;
         moonCenter.position.copy(toThree(moonState(sim.t, sim.eph).r)).sub(rPos);
         moonMesh.rotation.y = MOON.n * sim.t;

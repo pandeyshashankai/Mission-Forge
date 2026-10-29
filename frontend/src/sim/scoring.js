@@ -36,19 +36,6 @@ export function evaluateFlight(sim, design, mission, difficulty) {
       { id: "budget", label: mission.objectives[3], met: stats.cost <= budget, detail: `$${fmt(stats.cost, 1)}M of $${fmt(budget, 1)}M` },
       { id: "payload", label: mission.objectives[4], met: has(mission.payload) && band, detail: !has(mission.payload) ? "Payload missing" : band ? "Payload delivered to lunar orbit" : "Payload on board, but not in the target lunar orbit" },
     ];
-  } else if (mission.kind === "mars") {
-    const T = mission.marsTarget;
-    const inMars = !!sim.marsOrbitAt && sim.nav.body === "mars" && el.e < 1 && sim.status !== "crashed";
-    const band = inMars && Math.abs(el.periapsis - T.periAlt) <= T.periTol && el.apoapsis <= T.apoMax;
-    achieved = band;
-    const arr = sim.mars && sim.mars.arrival;
-    objectives = [
-      { id: "tmi", label: mission.objectives[0], met: !!arr, detail: arr ? `Cruise ${arr.tof} days, corrections ${fmt(arr.tcm)} m/s, arrival v∞ ${fmt(arr.vinf)} m/s` : "Never left Earth" },
-      { id: "mars", label: mission.objectives[1], met: band, detail: inMars ? `${km(el.apoapsis)} × ${km(el.periapsis)}` : "Not in Mars orbit" },
-      { id: "safe", label: mission.objectives[2], met: !!arr && sim.status !== "crashed", detail: sim.status === "crashed" ? sim.endReason : "No impact" },
-      { id: "budget", label: mission.objectives[3], met: stats.cost <= budget, detail: `$${fmt(stats.cost, 1)}M of $${fmt(budget, 1)}M` },
-      { id: "payload", label: mission.objectives[4], met: has(mission.payload) && band, detail: has(mission.payload) ? (band ? "Orbiter delivered" : "On board, not in target orbit") : "Payload missing" },
-    ];
   } else if (mission.kind === "lunar_flyby") {
     const e = sim.entry;
     const splash = sim.status === "splashdown" && !sim.crewLost;
@@ -76,10 +63,10 @@ export function evaluateFlight(sim, design, mission, difficulty) {
   }
   const metCount = objectives.filter((o) => o.met).length;
   const reqFull = requiredDeltaV(mission);
-  const refDv = isLunar(mission) || mission.kind === "mars" ? reqFull.extra.reduce((a, x) => a + x.value, 0) : req;
+  const refDv = isLunar(mission) ? reqFull.extra.reduce((a, x) => a + x.value, 0) : req;
   const margin = achieved ? remDv / refDv : 0;
   const ts = mission.timeScore;
-  const tOrbit = ts.basis === "orbit" ? sim.orbitAt || 0 : ts.basis === "lunar" ? sim.lunarOrbitAt || 0 : ts.basis === "mars" ? sim.marsOrbitAt || 0 : sim.t;
+  const tOrbit = ts.basis === "orbit" ? sim.orbitAt || 0 : ts.basis === "lunar" ? sim.lunarOrbitAt || 0 : sim.t;
   const crewed = stats.crew > 0;
   const W = crewed ? { obj: 40, cost: 15, fuel: 10, crew: 20, time: 15 } : { obj: 50, cost: 20, fuel: 15, crew: 0, time: 15 };
   const ls = lifeSupportStatus(sim);
@@ -107,8 +94,8 @@ export function evaluateFlight(sim, design, mission, difficulty) {
     objectives,
     score,
     total,
-    causeChain: isLunar(mission) || mission.kind === "mars" ? lunarCauseChain(sim, mission) : buildCauseChain(sim, inOrbit, el, tgt),
-    recommendations: isLunar(mission) || mission.kind === "mars" ? lunarRecommendations(sim, mission, achieved, remDv, refDv) : buildRecommendations(sim, inOrbit, remDv, req, el, tgt, incDeg),
+    causeChain: isLunar(mission) ? lunarCauseChain(sim, mission) : buildCauseChain(sim, inOrbit, el, tgt),
+    recommendations: isLunar(mission) ? lunarRecommendations(sim, mission, achieved, remDv, refDv) : buildRecommendations(sim, inOrbit, remDv, req, el, tgt, incDeg),
     telemetry: sim.telemetry,
     log: sim.log,
     entry: sim.entry.ei ? { ...sim.entry.ei, maxG: sim.entry.maxGEntry || sim.entry.maxG, maxFlux: sim.entry.maxFlux, heatLoad: sim.entry.heatLoad } : null,

@@ -9,7 +9,6 @@ import { ManeuverExec } from "./maneuver";
 import { gravity, primaryOf, regionOf, dynStep, rk4, moonState, lunarEphemeris, sunDirAt, MOON } from "./bodies";
 import { initLifeSupport, lifeSupportStep } from "./crew";
 import { newSystems, systemsStep, applyFaultFactors } from "./systems";
-import { startCruise, bestDepartureDay, dayOf, planetState, eclToEq, EARTH_SOI } from "./mars";
 import { aeroConfig, newEntryState, capsuleAero, entryUpdate, sensedAccelG, SPLASH_SPEED } from "./entry";
 
 const OMEGA = [0, 0, EARTH.rotationRate];
@@ -22,8 +21,6 @@ const srcKey = (s) => (s.kind === "section" ? `S${s.s}-${s.prop}` : `R-${s.uid}`
 export class FlightSim {
   constructor({ design, mission, profile, guidanceOn = true, difficulty = "amateur" }) {
     this.sys = newSystems(mission.id, difficulty);
-    this.mars = mission.kind === "mars" ? { depDay: profile.marsDepartDay ?? bestDepartureDay(), periAlt: mission.marsTarget.periAlt, inc: 0, arrival: null } : null;
-    this.marsOrbitAt = null;
     this.sunAU = 1;
     this.design = design;
     this.mission = mission;
@@ -88,32 +85,15 @@ export class FlightSim {
   }
 
   get sunDir() {
-    if (!this.mars) return sunDirAt(this.t, this.sunLon0);
-    return norm(eclToEq(scale(planetState(this.eph && this.eph.central ? "mars" : "earth", dayOf(this)).r, -1)));
+    return sunDirAt(this.t, this.sunLon0);
   }
 
   earthVector() {
-    if (!(this.eph && this.eph.central)) return scale(this.r, -1);
-    const d = dayOf(this);
-    return sub(eclToEq(sub(planetState("earth", d).r, planetState("mars", d).r)), this.r);
+    return scale(this.r, -1);
   }
 
   inAtmo() {
-    return !(this.eph && this.eph.central) && len(this.r) - EARTH.radius < ATMOS_TOP;
-  }
-
-  spendDeltaV(dv) {
-    const ts = thrustState(this.rt, 1, 0);
-    if (!(ts.F > 0)) return false;
-    const mdot = ts.flows.reduce((a, f) => a + f.mdot, 0);
-    const need = runtimeMass(this.rt) * (1 - Math.exp(-dv / (ts.F / mdot)));
-    if (this.remainingDeltaV() < dv) return false;
-    consume(this.rt, ts.flows, need / mdot);
-    return true;
-  }
-
-  lifeAndSystemsCruise(T) {
-    lifeSupportStep(this, T);
+    return len(this.r) - EARTH.radius < ATMOS_TOP;
   }
 
   requestCheckpoint(label) {
@@ -139,7 +119,7 @@ export class FlightSim {
   }
 
   trackMoon() {
-    if (!this.eph || this.eph.central) return;
+    if (!this.eph) return;
     const m = moonState(this.t, this.eph);
     const d = len(sub(this.r, m.r));
     if (!this.moonClosest || d < this.moonClosest.d) this.moonClosest = { d, alt: d - MOON.radius, t: this.t };
@@ -375,7 +355,7 @@ export class FlightSim {
 
   aeroAccel(r, v, m, area) {
     const alt = len(r) - EARTH.radius;
-    if (alt >= ATMOS_TOP || (this.eph && this.eph.central)) return [0, 0, 0];
+    if (alt >= ATMOS_TOP) return [0, 0, 0];
     const atm = atmosphere(alt);
     const vRel = sub(v, cross(OMEGA, r));
     if (this.aero.blunt) return capsuleAero(this, r, vRel, atm.rho, m);
@@ -514,19 +494,8 @@ export class FlightSim {
       const reg = regionOf(this.r, this.t, this.eph);
       if (reg !== this.region) this.onRegionChange(reg);
     }
-    if (this.mars && !this.mars.arrival && nav.body === "earth" && len(this.r) > EARTH_SOI) {
-      startCruise(this);
-      this.nav = this.computeNav();
-      return;
-    }
-    if (nav.body === "mars" && !this.marsOrbitAt && nav.F === 0 && nav.el.e < 1 && nav.el.periapsis > 100000) {
-      this.marsOrbitAt = this.t;
-      this.requestCheckpoint("Mars orbit");
-      this.addLog("success", `Mars orbit achieved — ${(nav.el.apoapsis / 1000).toFixed(0)} × ${(nav.el.periapsis / 1000).toFixed(0)} km`);
-    }
     if (nav.alt < 0) {
-      if (nav.body === "mars") this.end("crashed", `Vehicle impacted Mars at ${nav.surfSpeed.toFixed(0)} m/s`);
-      else if (nav.body === "moon") this.end("crashed", `Vehicle impacted the lunar surface at ${nav.surfSpeed.toFixed(0)} m/s`);
+      if (nav.body === "moon") this.end("crashed", `Vehicle impacted the lunar surface at ${nav.surfSpeed.toFixed(0)} m/s`);
       else if (this.aero.blunt && nav.surfSpeed <= SPLASH_SPEED) this.end("splashdown", `Splashdown at ${nav.surfSpeed.toFixed(1)} m/s${this.aero.crew ? " — crew recovered" : ""}`);
       else this.end("crashed", `Vehicle impacted the surface at ${nav.surfSpeed.toFixed(0)} m/s`);
       if (this.status === "crashed" && this.aero.crew) this.crewLost = true;
@@ -556,7 +525,7 @@ export class FlightSim {
       log: this.log, telemetry: this.telemetry, flameouts: this.flameouts, prematureStaging: this.prematureStaging, stagedAt: this.stagedAt,
       maxQ: this.maxQ, maxApo: this.maxApo, maxAlt: this.maxAlt, lastSample: this.lastSample, orbitAt: this.orbitAt, lastAutoCkpt: this.lastAutoCkpt,
       lastBurnEnergy: this.lastBurnEnergy ?? null, stageDelay: this.stageDelay, acc: this.acc || 0, node: this.node, wheelsSaturated: !!this.wheelsSaturated, rcsEmptyLogged: !!this.rcsEmptyLogged,
-      sys: this.sys, region: this.region, eph: this.eph ? (this.eph.central ? { central: this.eph.central } : { raan: this.eph.raan, argp: this.eph.argp, M0: this.eph.M0 }) : null, mars: this.mars, marsOrbitAt: this.marsOrbitAt, sunAU: this.sunAU, ls: this.ls, entry: this.entry, moonClosest: this.moonClosest, lunarOrbitAt: this.lunarOrbitAt, crewLost: this.crewLost, lossReason: this.lossReason, endReason: this.endReason, input: this.input, inputActive: this.inputActive,
+      sys: this.sys, region: this.region, eph: this.eph ? { raan: this.eph.raan, argp: this.eph.argp, M0: this.eph.M0 } : null, sunAU: this.sunAU, ls: this.ls, entry: this.entry, moonClosest: this.moonClosest, lunarOrbitAt: this.lunarOrbitAt, crewLost: this.crewLost, lossReason: this.lossReason, endReason: this.endReason, input: this.input, inputActive: this.inputActive,
       guidance: g ? { p: g.p, phase: g.phase, phaseT: g.phaseT, done: g.done, frozenDir: g.frozenDir, disengaged: !!g.disengaged } : null,
       maneuver: mv ? { node: mv.node, dvVec: mv.dvVec, dvTot: mv.dvTot, burnTime: mv.burnTime, tStart: mv.tStart, delivered: mv.delivered, phase: mv.phase, done: mv.done } : null,
     }));

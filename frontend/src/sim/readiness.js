@@ -1,5 +1,5 @@
 import { G0 } from "./constants";
-import { designStats, engineIssues, describeEvent, buildSections } from "./design";
+import { designStats, engineIssues, buildSections } from "./design";
 import { engineSL, PARTS } from "./parts";
 import { missionBudget, requiredDeltaV } from "./missions";
 import { attitudeRequirement, rcsTorque } from "./attitude";
@@ -149,9 +149,6 @@ const simple = (id, subsystem, ok, summary, formula, inputs, steps, warn = false
   calc: { formula, inputs, steps, assumptions: [] },
 });
 
-const PENDING = [
-  ["structure", "Structure & loads", 4],
-];
 
 export function runReadiness(design, mission, difficulty) {
   const stats = designStats(design);
@@ -189,9 +186,7 @@ export function runReadiness(design, mission, difficulty) {
   );
   checks.push(...crewChecks(design, mission, stats));
   checks.push(...systemsChecks(buildSections(design), mission));
-  for (const [id, subsystem, ms] of PENDING)
-    checks.push({ id, subsystem, status: "pending", summary: `Not evaluated yet — scheduled for Milestone ${ms}. Not counted toward Go/No-Go.`, calc: null });
-  const active = checks.filter((c) => c.status !== "pending");
+  const active = checks;
   const overall = active.some((c) => c.status === "fail") ? "NO-GO" : active.some((c) => c.status === "warn") ? "GO-WARN" : "GO";
   return { stats, req, budget, checks, overall };
 }

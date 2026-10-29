@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import { Trash2, Save, RotateCcw } from "lucide-react";
 import { nodePrediction, burnTime, raiseApoDv, stateAt } from "../../sim/maneuver";
 import { planTLI, planMCC, planLOI, planCorridor } from "../../sim/transfer";
-import { planTMI, planMOI } from "../../sim/mars";
 import { toast } from "sonner";
 import { EARTH } from "../../sim/constants";
 import { mmss, fmt } from "./FlightHud";
@@ -46,8 +45,7 @@ const Adj = ({ label, value, onChange, testId }) => (
 
 const LunarPlanner = ({ sim, mission, set, busy, setBusy }) => {
   const flyby = mission.kind === "lunar_flyby";
-  const mars = mission.kind === "mars";
-  const periAlt = flyby ? mission.flyby.periAlt : mars ? 0 : mission.lunar.altitude;
+  const periAlt = flyby ? mission.flyby.periAlt : mission.lunar.altitude;
   const run = (label, fn) => {
     setBusy(label);
     setTimeout(() => {
@@ -64,13 +62,6 @@ const LunarPlanner = ({ sim, mission, set, busy, setBusy }) => {
   const B = ({ id, label, fn, disabled }) => (
     <button key={id} data-testid={id} disabled={!!busy || disabled} onClick={() => run(label, fn)} className="border border-amber-500/40 py-1 text-[11px] text-amber-200 hover:border-amber-400 disabled:opacity-30">{busy === label ? "Computing…" : label}</button>
   );
-  if (mars)
-    return (
-      <div className="mt-1 grid grid-cols-2 gap-1" data-testid="mars-planner">
-        {B({ id: "node-tmi-btn", label: "Trans-Mars injection", disabled: body !== "earth" || !(sim.nav.el.apoapsis < 2e6), fn: () => planTMI(sim).node })}
-        {B({ id: "node-moi-btn", label: "Mars orbit insertion", disabled: body !== "mars" || !!sim.marsOrbitAt, fn: () => planMOI(sim) })}
-      </div>
-    );
   return (
     <div className="mt-1 grid grid-cols-2 gap-1" data-testid="lunar-planner">
       {B({ id: "node-tli-btn", label: "Trans-lunar injection", disabled: body !== "earth" || !(sim.nav.el.apoapsis < 2e6), fn: () => planTLI(sim, { periAlt, apogeeFactor: flyby ? mission.flyby.apogeeFactor : 1 }).node })}
@@ -84,7 +75,7 @@ const LunarPlanner = ({ sim, mission, set, busy, setBusy }) => {
 export const ManeuverPanel = ({ s, sim, mission, targetAlt, onWarpTo }) => {
   const [, force] = useState(0);
   const [busy, setBusy] = useState(null);
-  const lunar = mission && mission.kind && (mission.kind.startsWith("lunar") || mission.kind === "mars");
+  const lunar = mission && mission.kind && mission.kind.startsWith("lunar");
   const node = sim.node;
   const set = (n) => {
     sim.node = n;
@@ -130,9 +121,11 @@ export const ManeuverPanel = ({ s, sim, mission, targetAlt, onWarpTo }) => {
               {[-60, -10, 10, 60].map((d) => <button key={d} data-testid={`node-time-${d}`} onClick={() => set({ ...node, t: Math.max(sim.t + 5, node.t + d) })} className="bg-slate-900 px-1 text-[10px] text-slate-400 hover:text-white">{d > 0 ? "+" : ""}{d}s</button>)}
             </span>
           </div>
+          <details><summary className="cursor-pointer text-[11px] text-cyan-300">Adjust burn manually</summary>
           <Adj label="Prograde" value={node.dv[0]} onChange={(v) => set({ ...node, dv: [v, node.dv[1], node.dv[2]] })} testId="node-dv-prograde" />
           <Adj label="Normal" value={node.dv[1]} onChange={(v) => set({ ...node, dv: [node.dv[0], v, node.dv[2]] })} testId="node-dv-normal" />
           <Adj label="Radial" value={node.dv[2]} onChange={(v) => set({ ...node, dv: [node.dv[0], node.dv[1], v] })} testId="node-dv-radial" />
+          </details>
           <div className="grid grid-cols-2 gap-x-3 border-t border-slate-800 pt-1.5 font-mono text-[10px]">
             <span className="text-slate-500">Δv total</span><span className="text-right text-amber-300" data-testid="node-dv-total">{fmt(pred.dv, 1)} m/s</span>
             <span className="text-slate-500">Burn time</span><span className="text-right text-sky-300" data-testid="node-burn-time">{bt ? `${fmt(bt, 1)} s` : "no engine"}</span>

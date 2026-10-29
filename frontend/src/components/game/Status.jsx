@@ -1,10 +1,9 @@
-import { CheckCircle2, AlertTriangle, XCircle, Clock, Info } from "lucide-react";
+import { CheckCircle2, AlertTriangle, XCircle, Info } from "lucide-react";
 
 const MAP = {
   pass: { icon: CheckCircle2, cls: "text-emerald-400 border-emerald-500/40 bg-emerald-500/10", label: "PASS" },
   warn: { icon: AlertTriangle, cls: "text-amber-400 border-amber-500/50 bg-amber-500/10", label: "WARN" },
   fail: { icon: XCircle, cls: "text-red-400 border-red-500/60 bg-red-500/10", label: "FAIL" },
-  pending: { icon: Clock, cls: "text-slate-400 border-slate-700 bg-slate-800/40", label: "PENDING" },
   info: { icon: Info, cls: "text-cyan-400 border-cyan-500/40 bg-cyan-500/10", label: "INFO" },
 };
 

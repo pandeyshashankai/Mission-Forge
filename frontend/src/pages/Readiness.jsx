@@ -58,7 +58,7 @@ export default function Readiness() {
                 <button data-testid={`check-row-${c.id}`} disabled={!c.calc} onClick={() => toggle(c.id)} className="flex w-full items-center gap-4 px-5 py-3.5 text-left transition-colors hover:bg-slate-900/60 disabled:cursor-default">
                   <ChevronRight size={14} className={`shrink-0 text-slate-500 transition-transform ${open.has(c.id) ? "rotate-90" : ""} ${!c.calc ? "opacity-0" : ""}`} />
                   <div className="w-56 shrink-0 font-display text-base font-semibold uppercase tracking-wide">{c.subsystem}</div>
-                  <div className={`flex-1 font-mono text-xs ${c.status === "pending" ? "text-slate-600" : "text-slate-300"}`} data-testid={`check-summary-${c.id}`}>{c.summary}</div>
+                  <div className="flex-1 font-mono text-xs text-slate-300" data-testid={`check-summary-${c.id}`}>{c.summary}</div>
                   <StatusBadge status={c.status} testId={`check-status-${c.id}`} />
                 </button>
                 {open.has(c.id) && c.calc && (
@@ -70,7 +70,7 @@ export default function Readiness() {
         </div>
         <div className="panel min-h-0 overflow-y-auto rounded-sm p-4 scroll-thin">
           <AdvisorPanel items={advice} onRef={reveal} />
-          <p className="mt-4 text-[11px] text-slate-600">The advisor is rules-based and offline. Every statement is computed from the checks on the left; nothing is estimated by AI.</p>
+          <p className="mt-4 text-[11px] text-slate-600">The advisor explains the readiness checks and suggests practical changes to your rocket.</p>
         </div>
       </div>
     </div>
