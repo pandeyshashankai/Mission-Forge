@@ -11,7 +11,7 @@ A 3D spaceflight game by **Shashank Pandey**, built for the browser.
 ![Three.js](https://img.shields.io/badge/Three.js-WebGL-white?style=flat-square&logo=threedotjs&logoColor=white)
 ![Platform](https://img.shields.io/badge/Platform-Desktop_browser-64748b?style=flat-square)
 
-[Get started](#get-started) · [Missions](#missions) · [Controls](#controls) · [Latest release](https://github.com/pandeyshashankai/Mission-Forge/releases/latest) · [Report a bug](https://github.com/pandeyshashankai/Mission-Forge/issues)
+[🎮 Play MissionForge Online](https://mission-forge.pandeyshashankai.workers.dev/) · [Get started](#get-started) · [Missions](#missions) · [Controls](#controls) · [Latest release](https://github.com/pandeyshashankai/Mission-Forge/releases/latest) · [Report a bug](https://github.com/pandeyshashankai/Mission-Forge/issues)
 
 </div>
 
