@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "checkedAt": "2026-11-06T14:27:55.307Z",
+  "checks": [
+    "loading/320x568",
+    "fracture/320x568",
+    "engine/320x568",
+    "loading/568x320",
+    "fracture/568x320",
+    "engine/568x320",
+    "loading/768x1024",
+    "fracture/768x1024",
+    "engine/768x1024"
+  ]
+}

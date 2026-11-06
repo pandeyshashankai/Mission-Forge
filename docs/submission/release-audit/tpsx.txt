@@ -1,0 +1,5 @@
+
+> mission-forge@1.0.0 test:tpsx:ui
+> node scripts/tpsx-check.cjs
+
+PASS: three TPSX phone presets fly/save, backing state persists, source download matches supplied evidence, no browser exceptions

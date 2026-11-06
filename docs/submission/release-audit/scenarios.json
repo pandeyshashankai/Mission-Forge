@@ -2,7 +2,7 @@
   "name": "scenarios",
   "command": "npm run test:scenarios",
   "status": "PASS",
-  "durationMs": 76568,
-  "completedAt": "2026-11-06T02:14:15.386Z",
-  "log": "scenarios.log"
+  "durationMs": 85816,
+  "completedAt": "2026-11-06T13:58:15.913Z",
+  "log": "scenarios.txt"
 }

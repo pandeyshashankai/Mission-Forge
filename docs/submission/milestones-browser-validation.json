@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "checks": [
+    "342-constituent loading and hourly displacement table",
+    "2/4/8 closed fracture meshes and conservation diagnostics",
+    "actual Wasm worker, advanced atmosphere/forces, powered flight, fleet and paired parity",
+    "campaign launch, staging, paired verification and standard-renderer handoff",
+    "phone layout, Wasm initialization and cancellation"
+  ],
+  "build": "7ee44172ab47c558611cf73e39f82c7e70e35fafe7b534ba368a0e127df70dc1",
+  "sourceCommit": "7bc598ccb5b58656d3b3b65aeb48f57b17c9dd45",
+  "checkedAt": "2026-11-06T14:06:54.341Z",
+  "scope": "Actual Chromium worker execution; emulated phone/desktop layouts, not physical-device certification."
+}

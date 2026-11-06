@@ -1,0 +1,5 @@
+
+> mission-forge@1.0.0 test:skips:ui
+> node scripts/skip-path-check.cjs
+
+PASS: all tutorial skip/close paths and checklist back, countdown hold/scrub, finish cancel/confirm on four viewport profiles

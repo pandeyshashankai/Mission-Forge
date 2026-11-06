@@ -1,0 +1,5 @@
+
+> mission-forge@1.0.0 test:backlog:ui
+> node scripts/backlog-check.cjs
+
+PASS: Command search, keyboard selection, Ctrl+K and Escape; Seed repeatability, safe challenge installation and preflight; Logbook, milestones, comparison and retained events; Controller neutral arming, full/cut, held axis, modal isolation, disconnect, mapping and optional comfort API lifecycle; OPFS file archive, checksum download, confirmed delete and IndexedDB fallback; Measured JS/Wasm central gravity, invariant check and worker-rendered orbit plot; Canvas fallback when OffscreenCanvas is unavailable

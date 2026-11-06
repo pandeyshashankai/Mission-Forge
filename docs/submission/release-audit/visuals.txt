@@ -1,0 +1,5 @@
+
+> mission-forge@1.0.0 test:visuals:ui
+> node scripts/visuals-check.cjs
+
+PASS: three models, view switching, PNG export, reduced motion, phone layout, touch target, no browser exceptions.

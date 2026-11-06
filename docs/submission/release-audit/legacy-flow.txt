@@ -1,0 +1,6 @@
+
+> mission-forge@1.0.0 test:legacy-flow:ui
+> node scripts/browser-check.cjs
+
+PASS: exploration, system map, Europa orbit/save, builder, blueprint, filters, duplicate/undo, review, countdown hold, liftoff, pause
+PASS: no uncaught browser exceptions

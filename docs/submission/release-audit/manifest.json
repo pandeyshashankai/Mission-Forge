@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "build": "104b8624b90d1c0c66f418b18933d1cf9f83d03641381f38751f893068831ef3",
-  "commit": "d93c322dc11099f44d03da1345a3b49b74ea16a2",
-  "dirty": true,
+  "build": "7ee44172ab47c558611cf73e39f82c7e70e35fafe7b534ba368a0e127df70dc1",
+  "commit": "7bc598ccb5b58656d3b3b65aeb48f57b17c9dd45",
+  "dirty": false,
   "browserAuditsIncluded": true,
   "extendedAuditsIncluded": true,
   "status": "PASS",
@@ -12,234 +12,242 @@
       "name": "regressions",
       "command": "npm run test",
       "status": "PASS",
-      "durationMs": 32997,
-      "completedAt": "2026-11-06T02:12:09.281Z",
-      "log": "regressions.log",
-      "checks": 309
+      "durationMs": 43102,
+      "completedAt": "2026-11-06T13:55:51.358Z",
+      "log": "regressions.txt",
+      "checks": 321
     },
     {
       "name": "build",
       "command": "npm run build",
       "status": "PASS",
-      "durationMs": 15002,
-      "completedAt": "2026-11-06T02:12:24.285Z",
-      "log": "build.log"
+      "durationMs": 19715,
+      "completedAt": "2026-11-06T13:56:11.075Z",
+      "log": "build.txt"
     },
     {
       "name": "campaign",
       "command": "npm run test:campaign",
       "status": "PASS",
-      "durationMs": 27053,
-      "completedAt": "2026-11-06T02:12:51.339Z",
-      "log": "campaign.log"
+      "durationMs": 30737,
+      "completedAt": "2026-11-06T13:56:41.813Z",
+      "log": "campaign.txt"
     },
     {
       "name": "combinations",
       "command": "npm run test:combinations",
       "status": "PASS",
-      "durationMs": 7479,
-      "completedAt": "2026-11-06T02:12:58.818Z",
-      "log": "combinations.log"
+      "durationMs": 8284,
+      "completedAt": "2026-11-06T13:56:50.097Z",
+      "log": "combinations.txt"
     },
     {
       "name": "scenarios",
       "command": "npm run test:scenarios",
       "status": "PASS",
-      "durationMs": 76568,
-      "completedAt": "2026-11-06T02:14:15.386Z",
-      "log": "scenarios.log"
+      "durationMs": 85816,
+      "completedAt": "2026-11-06T13:58:15.913Z",
+      "log": "scenarios.txt"
     },
     {
       "name": "challenges",
       "command": "npm run test:challenges",
       "status": "PASS",
-      "durationMs": 4406,
-      "completedAt": "2026-11-06T02:14:19.792Z",
-      "log": "challenges.log"
+      "durationMs": 4835,
+      "completedAt": "2026-11-06T13:58:20.749Z",
+      "log": "challenges.txt"
     },
     {
       "name": "profile",
       "command": "npm run test:optimization:profile",
       "status": "PASS",
-      "durationMs": 53307,
-      "completedAt": "2026-11-06T02:15:13.099Z",
-      "log": "profile.log"
+      "durationMs": 55642,
+      "completedAt": "2026-11-06T13:59:16.391Z",
+      "log": "profile.txt"
     },
     {
       "name": "persistence",
       "command": "npm run test:persistence:ui",
       "status": "PASS",
-      "durationMs": 7421,
-      "completedAt": "2026-11-06T02:15:20.521Z",
-      "log": "persistence.log"
+      "durationMs": 8827,
+      "completedAt": "2026-11-06T13:59:25.219Z",
+      "log": "persistence.txt"
     },
     {
       "name": "interface",
       "command": "npm run test:ui",
       "status": "PASS",
-      "durationMs": 125764,
-      "completedAt": "2026-11-06T02:17:26.285Z",
-      "log": "interface.log"
+      "durationMs": 185158,
+      "completedAt": "2026-11-06T14:02:30.377Z",
+      "log": "interface.txt"
     },
     {
       "name": "controls",
       "command": "npm run test:controls",
       "status": "PASS",
-      "durationMs": 73893,
-      "completedAt": "2026-11-06T02:18:40.178Z",
-      "log": "controls.log"
+      "durationMs": 89057,
+      "completedAt": "2026-11-06T14:03:59.435Z",
+      "log": "controls.txt"
     },
     {
       "name": "engineering",
       "command": "npm run test:engineering:ui",
       "status": "PASS",
-      "durationMs": 32260,
-      "completedAt": "2026-11-06T02:19:12.439Z",
-      "log": "engineering.log"
+      "durationMs": 31343,
+      "completedAt": "2026-11-06T14:04:30.779Z",
+      "log": "engineering.txt"
     },
     {
       "name": "visuals",
       "command": "npm run test:visuals:ui",
       "status": "PASS",
-      "durationMs": 12087,
-      "completedAt": "2026-11-06T02:19:24.527Z",
-      "log": "visuals.log"
+      "durationMs": 9868,
+      "completedAt": "2026-11-06T14:04:40.647Z",
+      "log": "visuals.txt"
     },
     {
       "name": "roadmap",
       "command": "npm run test:roadmap:ui",
       "status": "PASS",
-      "durationMs": 18826,
-      "completedAt": "2026-11-06T02:19:43.353Z",
-      "log": "roadmap.log"
+      "durationMs": 16429,
+      "completedAt": "2026-11-06T14:04:57.076Z",
+      "log": "roadmap.txt"
     },
     {
       "name": "advanced",
       "command": "npm run test:advanced:ui",
       "status": "PASS",
-      "durationMs": 35045,
-      "completedAt": "2026-11-06T02:20:18.398Z",
-      "log": "advanced.log"
+      "durationMs": 30258,
+      "completedAt": "2026-11-06T14:05:27.334Z",
+      "log": "advanced.txt"
     },
     {
       "name": "catalogue",
       "command": "npm run test:catalogue:ui",
       "status": "PASS",
-      "durationMs": 34695,
-      "completedAt": "2026-11-06T02:20:53.093Z",
-      "log": "catalogue.log"
+      "durationMs": 63329,
+      "completedAt": "2026-11-06T14:06:30.663Z",
+      "log": "catalogue.txt"
     },
     {
       "name": "submission",
       "command": "npm run test:submission",
       "status": "PASS",
-      "durationMs": 1866,
-      "completedAt": "2026-11-06T02:20:54.959Z",
-      "log": "submission.log"
+      "durationMs": 2059,
+      "completedAt": "2026-11-06T14:06:32.722Z",
+      "log": "submission.txt"
+    },
+    {
+      "name": "milestones",
+      "command": "npm run test:milestones:ui",
+      "status": "PASS",
+      "durationMs": 21619,
+      "completedAt": "2026-11-06T14:06:54.341Z",
+      "log": "milestones.txt"
     },
     {
       "name": "education",
       "command": "npm run test:education:ui",
       "status": "PASS",
-      "durationMs": 166922,
-      "completedAt": "2026-11-06T02:23:41.881Z",
-      "log": "education.log"
+      "durationMs": 168189,
+      "completedAt": "2026-11-06T14:09:42.530Z",
+      "log": "education.txt"
     },
     {
       "name": "backlog",
       "command": "npm run test:backlog:ui",
       "status": "PASS",
-      "durationMs": 18416,
-      "completedAt": "2026-11-06T02:24:00.297Z",
-      "log": "backlog.log"
+      "durationMs": 16256,
+      "completedAt": "2026-11-06T14:09:58.786Z",
+      "log": "backlog.txt"
     },
     {
       "name": "devices",
       "command": "npm run test:devices:ui",
       "status": "PASS",
-      "durationMs": 435515,
-      "completedAt": "2026-11-06T02:31:15.812Z",
-      "log": "devices.log"
+      "durationMs": 438054,
+      "completedAt": "2026-11-06T14:17:16.840Z",
+      "log": "devices.txt"
     },
     {
       "name": "skips",
       "command": "npm run test:skips:ui",
       "status": "PASS",
-      "durationMs": 111645,
-      "completedAt": "2026-11-06T02:33:07.457Z",
-      "log": "skips.log"
+      "durationMs": 157931,
+      "completedAt": "2026-11-06T14:19:54.771Z",
+      "log": "skips.txt"
     },
     {
       "name": "mobile",
       "command": "npm run test:mobile:ui",
       "status": "PASS",
-      "durationMs": 28212,
-      "completedAt": "2026-11-06T02:33:35.669Z",
-      "log": "mobile.log"
+      "durationMs": 35129,
+      "completedAt": "2026-11-06T14:20:29.900Z",
+      "log": "mobile.txt"
     },
     {
       "name": "vehicle",
       "command": "npm run test:vehicle:ui",
       "status": "PASS",
-      "durationMs": 7717,
-      "completedAt": "2026-11-06T02:33:43.386Z",
-      "log": "vehicle.log"
+      "durationMs": 6069,
+      "completedAt": "2026-11-06T14:20:35.969Z",
+      "log": "vehicle.txt"
     },
     {
       "name": "contact",
       "command": "npm run test:contact:ui",
       "status": "PASS",
-      "durationMs": 14362,
-      "completedAt": "2026-11-06T02:33:57.748Z",
-      "log": "contact.log"
+      "durationMs": 10543,
+      "completedAt": "2026-11-06T14:20:46.513Z",
+      "log": "contact.txt"
     },
     {
       "name": "tpsx",
       "command": "npm run test:tpsx:ui",
       "status": "PASS",
-      "durationMs": 8934,
-      "completedAt": "2026-11-06T02:34:06.683Z",
-      "log": "tpsx.log"
+      "durationMs": 7483,
+      "completedAt": "2026-11-06T14:20:53.996Z",
+      "log": "tpsx.txt"
     },
     {
       "name": "thermal",
       "command": "npm run test:thermal:ui",
       "status": "PASS",
-      "durationMs": 3817,
-      "completedAt": "2026-11-06T02:34:10.500Z",
-      "log": "thermal.log"
+      "durationMs": 3938,
+      "completedAt": "2026-11-06T14:20:57.934Z",
+      "log": "thermal.txt"
     },
     {
       "name": "empty",
       "command": "npm run test:empty:ui",
       "status": "PASS",
-      "durationMs": 16668,
-      "completedAt": "2026-11-06T02:34:27.168Z",
-      "log": "empty.log"
+      "durationMs": 51741,
+      "completedAt": "2026-11-06T14:21:49.675Z",
+      "log": "empty.txt"
     },
     {
       "name": "legacy-flow",
       "command": "npm run test:legacy-flow:ui",
       "status": "PASS",
-      "durationMs": 43698,
-      "completedAt": "2026-11-06T02:35:10.866Z",
-      "log": "legacy-flow.log"
+      "durationMs": 54927,
+      "completedAt": "2026-11-06T14:22:44.602Z",
+      "log": "legacy-flow.txt"
     },
     {
       "name": "showcase",
       "command": "npm run test:showcase",
       "status": "PASS",
-      "durationMs": 143424,
-      "completedAt": "2026-11-06T02:37:34.290Z",
-      "log": "showcase.log"
+      "durationMs": 153474,
+      "completedAt": "2026-11-06T14:25:18.076Z",
+      "log": "showcase.txt"
     },
     {
       "name": "offline",
       "command": "npm run test:offline",
       "status": "PASS",
-      "durationMs": 89874,
-      "completedAt": "2026-11-06T02:39:04.164Z",
-      "log": "offline.log"
+      "durationMs": 92382,
+      "completedAt": "2026-11-06T14:26:50.458Z",
+      "log": "offline.txt"
     }
   ]
 }

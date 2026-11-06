@@ -2,7 +2,7 @@
   "name": "tpsx",
   "command": "npm run test:tpsx:ui",
   "status": "PASS",
-  "durationMs": 8934,
-  "completedAt": "2026-11-06T02:34:06.683Z",
-  "log": "tpsx.log"
+  "durationMs": 7483,
+  "completedAt": "2026-11-06T14:20:53.996Z",
+  "log": "tpsx.txt"
 }

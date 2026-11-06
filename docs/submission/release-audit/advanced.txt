@@ -1,0 +1,8 @@
+
+> mission-forge@1.0.0 test:advanced:ui
+> node scripts/advanced-check.cjs
+
+PASS: browser control trace replay, including WASM density and degree-8 gravity.
+PASS: persistent visual program, manual cutoff, non-blocking entry and closest-approach workers.
+PASS: persistent fleet, formation camera, invalid/valid docking, conserved fuel transfer and undocking.
+PASS: local Lambert grid, CR3BP, standards frames, playable custom world, custom mission and external-tool validation; no browser exceptions.

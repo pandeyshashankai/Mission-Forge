@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "startedAt": "2026-11-06T02:24:01.052Z",
+  "startedAt": "2026-11-06T14:09:59.874Z",
   "profiles": [
     {
       "name": "small-phone",
@@ -2057,7 +2057,7 @@
   ],
   "limitations": "Chromium emulation with software WebGL, not physical device or browser-engine certification.",
   "status": "PASS",
-  "finishedAt": "2026-11-06T02:31:15.786Z",
+  "finishedAt": "2026-11-06T14:17:16.796Z",
   "total": 330,
   "sample": false,
   "executedProfiles": [

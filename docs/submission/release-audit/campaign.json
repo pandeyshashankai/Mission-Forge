@@ -2,7 +2,7 @@
   "name": "campaign",
   "command": "npm run test:campaign",
   "status": "PASS",
-  "durationMs": 27053,
-  "completedAt": "2026-11-06T02:12:51.339Z",
-  "log": "campaign.log"
+  "durationMs": 30737,
+  "completedAt": "2026-11-06T13:56:41.813Z",
+  "log": "campaign.txt"
 }

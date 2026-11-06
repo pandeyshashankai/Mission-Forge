@@ -132,6 +132,7 @@ CDP session on port 9222. See [test setup](docs/testing.md).
 MF_AUDIT_OUTPUT=/tmp/mission-forge-audit npm run audit:release -- --extended
 ```
 
+[Release notes](docs/release-2026-11-06.md) ·
 [Latest recorded release evidence](docs/submission/final-validation.json) ·
 [Audit manifest](docs/submission/release-audit/manifest.json) ·
 [Project report](docs/submission/project-report.md) ·

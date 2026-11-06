@@ -2,7 +2,7 @@
   "name": "controls",
   "command": "npm run test:controls",
   "status": "PASS",
-  "durationMs": 73893,
-  "completedAt": "2026-11-06T02:18:40.178Z",
-  "log": "controls.log"
+  "durationMs": 89057,
+  "completedAt": "2026-11-06T14:03:59.435Z",
+  "log": "controls.txt"
 }

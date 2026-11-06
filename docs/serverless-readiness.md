@@ -78,8 +78,9 @@ make readiness incomplete on a later status query.
 
 After changing a generated report or slide PDF in an existing build, rerun
 `node frontend/scripts/build-identity.cjs`. Prefer a fresh production build for a
-release. This working tree contains uncommitted work: the identity says so. It is
-not presented as a clean committed/deployed release candidate.
+release. The earlier working-tree audit was explicitly marked uncommitted. The
+current clean implementation commit and build are recorded in
+`docs/submission/final-validation.json`; deployment remains a separate check.
 
 ## Plan coverage and remaining work
 
@@ -89,15 +90,16 @@ finite-burn/entry previews, themes/remappable controls, adaptive rendering and
 `?debug=1` FPS/frame/physics/draw-call/resource diagnostics.
 
 This update implements the missing recovery/backups, storage manager, evidence
-entry, short demo entry and verified offline installation. OPFS archives, a Wasm
-physics rewrite and OffscreenCanvas remain deferred pending a measured need, as
-recommended by the supplied plan. Seeded challenges, command palette, gamepad and
-wake lock remain optional follow-up work. No additional physics-fidelity or
-measured learning claim is made by this update.
+entry, short demo entry and verified offline installation. A native-language
+physics rewrite remains future research. OPFS archives, bounded
+OffscreenCanvas plotting, seeded challenges, command palette, gamepad and wake
+lock now ship. A complete-source QuickJS Wasm backend is optional; it is not a
+native-language rewrite. No measured learner-outcome claim is made.
 
-Release still needs a reviewed clean commit/deployment, real phone and non-Chromium
-checks, and actual learner testing. The source PDFs remain references rather than
-full experimental calibration datasets; full ocean loading remains unavailable.
+The local release now has a clean tested implementation commit. Deployment, real
+phone and non-Chromium checks, and learner testing remain external tasks. Source
+PDFs are references rather than full experimental calibration datasets. Complete
+342-constituent station response is implemented; a global ocean atlas is not bundled.
 
 ## Reproduce
 
@@ -145,3 +147,17 @@ and archive checksums retain a local path when OPFS is unavailable. The sandbox
 adds a bounded JS/Wasm component benchmark and OffscreenCanvas/canvas orbit plot.
 Production [optimization](optimization.md) preserves physics, warp and display
 quality rather than lowering simulation throughput under load.
+
+
+## Current release addendum — 6 November 2026
+
+The historical deferred items above are superseded by the implemented command
+palette, challenges, gamepad controls, wake lock, OPFS archive and connected
+learning workflow. Station loading now includes all 342 HARDISP constituents;
+convex mesh fracture/contact and full-source QuickJS Wasm sessions are optional.
+These do not supply a global ocean atlas or native-language engine rewrite.
+
+The release audit now records 30 passing groups against a clean implementation
+commit. See `docs/submission/final-validation.json` and the GitHub-reviewable
+transcripts. Cloudflare deployment, physical hardware and learner testing remain
+external checks; their outcomes are not claimed by this local audit.

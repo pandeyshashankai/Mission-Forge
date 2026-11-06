@@ -14,18 +14,17 @@ simulation are excluded by instruction. Items are processed in the order below.
 | 6 | Bounded large replay archive using OPFS when available, with fallback | Implemented; dedicated browser lifecycle/fallback checks passed |
 | 7 | Performance evidence and decisions on remaining compute/render architecture | Exact-result optimization and paired benchmarks passed; bounded Wasm/OffscreenCanvas workbench checked |
 | 8 | Reconcile stale roadmap/docs and regenerate submission material | Updated scope/controls/optimization documentation; report and presentation rebuilt |
-| 9 | Full regression / combinations / device / specialist / offline audit | Passed all 29 audit groups: 309 regressions, 621,913 generated checks, 330 device/world/craft cases, missions and offline play |
+| 9 | Full regression / combinations / device / specialist / offline audit | Passed all 30 audit groups: 321 regressions, 621,913 generated checks, 330 device/world/craft cases, missions and offline play |
 
 ## Connected learning recommendations — 6 November
 
 Academy, NASA Data Explorer, interactive debrief, first-flight guidance, model
 comparison and restricted Build-to-Exploration are implemented. The full build-scoped
-audit passed all 29 groups, including the dedicated education browser flow,
-309 regression checks, 621,913 generated cases and 330 emulated device cases.
+audit passed all 30 groups, including the dedicated education browser flow,
+321 regression checks, 621,913 generated cases and 330 emulated device cases.
 See [connected learning](connected-learning.md) for entry points and adapter limits.
 
-The next three requested milestones are [full ocean loading, mesh fracture and
-a complete Wasm engine](next-milestones.md). None is marked complete here.
+The three requested milestones now ship bounded, tested implementations: 342-constituent station ocean loading, convex mesh fracture/contact and complete source execution in a QuickJS Wasm worker. See [implemented scope and further research](next-milestones.md).
 
 ## External completion requirements
 
@@ -39,19 +38,18 @@ They remain explicitly tracked rather than blocking unrelated software work.
   requires those environments.
 - Actual learner study: requires consenting participants and recorded observations.
   The existing protocol is ready; automated examples are not learner evidence.
-- General articulated rigid-body constraints, detailed mesh/fracture contact and a
-  fully calibrated spacecraft material model are not implemented by the bounded
-  box/contact and thermal approximations. Their limits remain explicit.
+- General articulated constraints, concave part-level crack propagation and fully
+  calibrated material failure laws remain outside the implemented convex hull model.
 - Experimental spacecraft thermal calibration and detailed material/fracture laws:
   the supplied papers/screenshots do not contain full matched experimental data.
   The public-evidence collection scope remains closed; assumptions stay labelled.
-- Full global ocean loading / frequency-dependent loading validation: truncated
-  degree-eight ocean gravity coefficients are not an ocean-loading displacement
-  grid or a validated complete loading solution.
+- A global ocean atlas and worldwide station validation are not bundled. The new
+  342-constituent station-loading response is independently checked at two fixtures;
+  the truncated gravity model remains separate.
 - Longer/current precision ephemerides and real-time EOP: bounded supplied packs
   and explicitly entered frame parameters remain the supported evidence.
-- Reviewed clean release/deployment: build identity records the existing uncommitted
-  tree. No unreviewed publication or blanket commit of existing work is implied.
+- The local implementation is committed and tested from a clean tree. Cloudflare
+  deployment and live-origin checks are performed after GitHub publication.
 
 OPFS, WebAssembly and OffscreenCanvas are implementation choices, not scientific
 accuracy claims. Architecture work must retain a useful fallback and present

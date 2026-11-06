@@ -1,0 +1,5 @@
+
+> mission-forge@1.0.0 test:roadmap:ui
+> node scripts/roadmap-check.cjs
+
+PASS: fresh navigation, deterministic replay verification, source checksum, stage inspector, orbital singularities, physics badge, phone layout; no exceptions.

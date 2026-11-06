@@ -1,0 +1,5 @@
+
+> mission-forge@1.0.0 test:challenges
+> node scripts/challenge-check.cjs
+
+PASS: all 16 seeded target pairs succeed at minimum budget on Expert

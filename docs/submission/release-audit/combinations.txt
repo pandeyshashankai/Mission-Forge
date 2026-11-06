@@ -1,0 +1,103 @@
+
+> mission-forge@1.0.0 test:combinations
+> node scripts/combination-audit.cjs && node scripts/option-audit.cjs
+
+{
+  "total": 57776,
+  "groups": {
+    "individual axial parts": {
+      "cases": 35,
+      "passed": 35,
+      "failed": 0
+    },
+    "all ordered axial pairs": {
+      "cases": 1225,
+      "passed": 1225,
+      "failed": 0
+    },
+    "all ordered axial triples": {
+      "cases": 42875,
+      "passed": 42875,
+      "failed": 0
+    },
+    "all booster parent symmetry groups": {
+      "cases": 105,
+      "passed": 105,
+      "failed": 0
+    },
+    "command tank engine throttle pressure": {
+      "cases": 5184,
+      "passed": 5184,
+      "failed": 0
+    },
+    "preset mission difficulty readiness": {
+      "cases": 84,
+      "passed": 84,
+      "failed": 0
+    },
+    "every preset part placement": {
+      "cases": 756,
+      "passed": 756,
+      "failed": 0
+    },
+    "grouped short physical launches": {
+      "cases": 432,
+      "passed": 432,
+      "failed": 0
+    },
+    "all preset staging permutations": {
+      "cases": 883,
+      "passed": 883,
+      "failed": 0
+    },
+    "all axial pair edit groups": {
+      "cases": 4900,
+      "passed": 4900,
+      "failed": 0
+    },
+    "every individual part forced launch and staging": {
+      "cases": 36,
+      "passed": 36,
+      "failed": 0
+    },
+    "individual part geometry": {
+      "cases": 36,
+      "passed": 36,
+      "failed": 0
+    },
+    "all ordered pair geometry": {
+      "cases": 1225,
+      "passed": 1225,
+      "failed": 0
+    }
+  },
+  "failures": [],
+  "report": "/tmp/mission-forge-combination-audit.json"
+}
+{
+  "total": 9140,
+  "groups": {
+    "all binary force/system combinations on Earth": {
+      "cases": 2048,
+      "passed": 2048,
+      "failed": 0
+    },
+    "body craft integrator ephemeris harmonics thermal atmosphere": {
+      "cases": 6336,
+      "passed": 6336,
+      "failed": 0
+    },
+    "thermal exposures wall phase thickness initial temperature": {
+      "cases": 324,
+      "passed": 324,
+      "failed": 0
+    },
+    "all craft-pair contact and material groups": {
+      "cases": 432,
+      "passed": 432,
+      "failed": 0
+    }
+  },
+  "failures": [],
+  "report": "/tmp/mission-forge-option-audit.json"
+}

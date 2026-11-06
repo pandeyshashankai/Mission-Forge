@@ -1,11 +1,11 @@
 {
-  "checkedAt": "2026-11-06T02:39:37.896663+00:00",
+  "checkedAt": "2026-11-06T14:27:12.458345+00:00",
   "status": "PASS",
-  "build": "104b8624b90d1c0c66f418b18933d1cf9f83d03641381f38751f893068831ef3",
-  "sourceCommit": "d93c322dc11099f44d03da1345a3b49b74ea16a2",
-  "uncommittedSource": true,
-  "auditGroups": 29,
-  "standardRegressions": 309,
+  "build": "7ee44172ab47c558611cf73e39f82c7e70e35fafe7b534ba368a0e127df70dc1",
+  "sourceCommit": "7bc598ccb5b58656d3b3b65aeb48f57b17c9dd45",
+  "uncommittedSource": false,
+  "auditGroups": 30,
+  "standardRegressions": 321,
   "expectedCampaignOutcomes": 12,
   "generatedChecks": 621913,
   "generatedBreakdown": {
@@ -95,7 +95,7 @@
     "Chromium software WebGL and emulated screen/touch/DPR profiles; physical devices and other browser engines were not certified.",
     "Short-step compatibility checks do not establish universal long-duration physical accuracy."
   ],
-  "artifactHashesVerified": 84,
+  "artifactHashesVerified": 105,
   "seededChallengeTargets": 16,
   "exactOptimizationWorkloadPairs": 27,
   "optimizationReport": "optimization-validation.json",
@@ -103,5 +103,12 @@
   "educationBrowserReport": "education-validation.json",
   "academyLessons": 5,
   "adapterWorldPropellantCases": 33,
-  "adapterScope": "Eleven worlds x three liquid-propellant families; short powered steps and save/restore. Restricted adapter; not every arbitrary design."
+  "adapterScope": "Eleven worlds x three liquid-propellant families; short powered steps and save/restore. Restricted adapter; not every arbitrary design.",
+  "milestoneRegressionGroups": 12,
+  "milestoneNumericReport": "milestone-validation.json",
+  "milestoneBrowserReport": "milestones-browser-validation.json",
+  "stationLoadingConstituents": 342,
+  "stationReferenceHours": 48,
+  "extraLabLayoutChecks": 9,
+  "extraLabLayoutReport": "milestones-extra-layouts.json"
 }

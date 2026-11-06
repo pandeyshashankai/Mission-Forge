@@ -2,7 +2,7 @@
   "name": "advanced",
   "command": "npm run test:advanced:ui",
   "status": "PASS",
-  "durationMs": 35045,
-  "completedAt": "2026-11-06T02:20:18.398Z",
-  "log": "advanced.log"
+  "durationMs": 30258,
+  "completedAt": "2026-11-06T14:05:27.334Z",
+  "log": "advanced.txt"
 }

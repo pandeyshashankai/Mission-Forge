@@ -1,0 +1,5 @@
+
+> mission-forge@1.0.0 test:catalogue:ui
+> node scripts/catalogue-browser-audit.cjs
+
+PASS: 74 real-browser catalogue assemblies and 2 invalid grouped imports; no exceptions

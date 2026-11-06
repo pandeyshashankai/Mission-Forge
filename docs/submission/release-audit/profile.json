@@ -2,7 +2,7 @@
   "name": "profile",
   "command": "npm run test:optimization:profile",
   "status": "PASS",
-  "durationMs": 53307,
-  "completedAt": "2026-11-06T02:15:13.099Z",
-  "log": "profile.log"
+  "durationMs": 55642,
+  "completedAt": "2026-11-06T13:59:16.391Z",
+  "log": "profile.txt"
 }

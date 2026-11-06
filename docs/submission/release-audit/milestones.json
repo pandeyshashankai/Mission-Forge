@@ -1,0 +1,8 @@
+{
+  "name": "milestones",
+  "command": "npm run test:milestones:ui",
+  "status": "PASS",
+  "durationMs": 21619,
+  "completedAt": "2026-11-06T14:06:54.341Z",
+  "log": "milestones.txt"
+}

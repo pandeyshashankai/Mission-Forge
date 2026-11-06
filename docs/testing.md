@@ -43,3 +43,9 @@ layouts. The offline audit also starts the complete Wasm worker without network.
 The generated scenarios are a finite matrix. Browser emulation cannot establish
 thermal throttling, touch ergonomics or graphics-driver compatibility on every
 physical device. Conduct the final Android/desktop checks on the deployed URL.
+
+Supplemental release layout checks open all three new labs at 320×568, 568×320
+and 768×1024 and assert `document.documentElement.scrollWidth <= innerWidth`.
+They use `browserSession()` from `scripts/browser-session.cjs`, then `viewport`,
+`home`, `click("menu-sandbox-btn")` and each `sandbox-tab-loading/fracture/engine`.
+The nine results are retained in `docs/submission/milestones-extra-layouts.json`.

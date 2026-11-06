@@ -2,7 +2,7 @@
   "name": "mobile",
   "command": "npm run test:mobile:ui",
   "status": "PASS",
-  "durationMs": 28212,
-  "completedAt": "2026-11-06T02:33:35.669Z",
-  "log": "mobile.log"
+  "durationMs": 35129,
+  "completedAt": "2026-11-06T14:20:29.900Z",
+  "log": "mobile.txt"
 }

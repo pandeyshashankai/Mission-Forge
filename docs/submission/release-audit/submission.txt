@@ -1,0 +1,6 @@
+
+> mission-forge@1.0.0 test:submission
+> node scripts/submission-check.cjs
+
+PASS: all report/deck/guide/protocol HTML and PDFs, validation snapshot, and analysis CSV are served
+PASS: presentation pointer/keyboard navigation and readable phone report, with no uncaught exceptions

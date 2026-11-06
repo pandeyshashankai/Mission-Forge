@@ -2,7 +2,7 @@
   "name": "offline",
   "command": "npm run test:offline",
   "status": "PASS",
-  "durationMs": 89874,
-  "completedAt": "2026-11-06T02:39:04.164Z",
-  "log": "offline.log"
+  "durationMs": 92382,
+  "completedAt": "2026-11-06T14:26:50.458Z",
+  "log": "offline.txt"
 }

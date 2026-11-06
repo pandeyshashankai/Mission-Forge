@@ -1,0 +1,5 @@
+
+> mission-forge@1.0.0 test:thermal:ui
+> node scripts/thermal-bench-check.cjs
+
+PASS: phone thermal comparison, reference switching, reset, three graphs, CSV/JSON downloads and no browser exceptions

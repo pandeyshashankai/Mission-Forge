@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased — 2026-11-06
+## 2026-11-06 — learning and advanced simulation
 
 - Connect five Academy lessons, NASA Data Explorer, interactive debriefs and optional first-flight guidance.
 - Add paired scientific trajectory comparisons with worker cancellation, bounded horizons and zero-difference control.

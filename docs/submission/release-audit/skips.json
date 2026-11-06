@@ -2,7 +2,7 @@
   "name": "skips",
   "command": "npm run test:skips:ui",
   "status": "PASS",
-  "durationMs": 111645,
-  "completedAt": "2026-11-06T02:33:07.457Z",
-  "log": "skips.log"
+  "durationMs": 157931,
+  "completedAt": "2026-11-06T14:19:54.771Z",
+  "log": "skips.txt"
 }

@@ -2,7 +2,7 @@
   "name": "legacy-flow",
   "command": "npm run test:legacy-flow:ui",
   "status": "PASS",
-  "durationMs": 43698,
-  "completedAt": "2026-11-06T02:35:10.866Z",
-  "log": "legacy-flow.log"
+  "durationMs": 54927,
+  "completedAt": "2026-11-06T14:22:44.602Z",
+  "log": "legacy-flow.txt"
 }

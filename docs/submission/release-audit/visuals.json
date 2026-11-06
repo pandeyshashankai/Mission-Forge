@@ -2,7 +2,7 @@
   "name": "visuals",
   "command": "npm run test:visuals:ui",
   "status": "PASS",
-  "durationMs": 12087,
-  "completedAt": "2026-11-06T02:19:24.527Z",
-  "log": "visuals.log"
+  "durationMs": 9868,
+  "completedAt": "2026-11-06T14:04:40.647Z",
+  "log": "visuals.txt"
 }

@@ -1,0 +1,12 @@
+
+> mission-forge@1.0.0 test:ui
+> node scripts/ui-check.cjs
+
+PASS: all three themes change, persist after reload, and style home and planner
+PASS: larger text and reduced motion controls operate
+PASS: home, mission selection, builder panels and launch review work at 1440, 1024, 768 and 390 px
+PASS: all four recommended missions pass UI preflight, guidance toggle and countdown hold/scrub
+PASS: all seven rocket presets render; incomplete rocket cannot launch without confirmation; duplicate, undo, redo, staging and inspector work
+PASS: rocket saves reopen correctly; valid file import works and an invalid import preserves the current rocket
+PASS: all 33 exploration spacecraft/destination combinations start, render a map and save the correct body and craft
+PASS: exploration views and attitude controls work; no uncaught browser errors
