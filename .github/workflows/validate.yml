@@ -33,7 +33,7 @@ jobs:
         working-directory: frontend
         env:
           MF_AUDIT_OUTPUT: /tmp/mission-forge-release-audit
-          CI: "false"
+          CI: "true"
       - uses: actions/upload-artifact@v4
         if: always()
         with:

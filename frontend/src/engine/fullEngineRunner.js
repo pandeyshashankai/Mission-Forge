@@ -1,4 +1,3 @@
-/* global globalThis */
 import variant from "@jitl/quickjs-singlefile-browser-release-sync";
 import { newQuickJSWASMModuleFromVariant } from "quickjs-emscripten-core";
 import { weatherDensity } from "../sim/advanced/weatherAtmosphere";

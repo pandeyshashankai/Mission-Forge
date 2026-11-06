@@ -4,21 +4,22 @@ import { searchCommands } from '../../features/navigation';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '../ui/dialog';
 export function CommandPalette() {
   const g = useGame(),
+    { settingsOpen, setOverlayOpen } = g,
     [query, setQuery] = useState(''),
     [active, setActive] = useState(0),
     commands = searchCommands(query);
   useEffect(() => {
     const key = e => {
-      if(g.settingsOpen)return;
+      if(settingsOpen)return;
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
         e.stopImmediatePropagation();
-        g.setOverlayOpen(v => !v);
+        setOverlayOpen(v => !v);
       }
     };
     window.addEventListener('keydown', key, true);
     return () => window.removeEventListener('keydown', key, true);
-  }, [g.setOverlayOpen,g.settingsOpen]);
+  }, [setOverlayOpen, settingsOpen]);
   const choose = c => {
     if (!c) return;
     g.setOverlayOpen(false);

@@ -85,7 +85,7 @@ export function useFlightInput({
       }
       const code = eventCode(e),
         action = Object.keys(c.bindings).find(id => c.bindings[id] === code);
-      if (!action || e.target?.closest?.("button,summary,a") && ["Space", "Enter"].includes(code)) return;
+      if (!action || (e.target?.closest?.("button,summary,a") && ["Space", "Enter"].includes(code))) return;
       e.preventDefault();
       if (e.repeat) return;
       if (HELD_ACTIONS.has(action)) press(action, `key:${e.code || code}`);else trigger(action);
@@ -189,5 +189,5 @@ export function useTouchControlsVisible(preference) {
     media.addEventListener("change", change);
     return () => media.removeEventListener("change", change);
   }, []);
-  return preference === "on" || preference !== "off" && compact;
+  return preference === "on" || (preference !== "off" && compact);
 }
