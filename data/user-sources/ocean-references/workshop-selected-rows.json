@@ -1,0 +1,189 @@
+{
+  "sourceFile": "BIPM_ocean_tides_2007.pdf",
+  "classification": "Selected normalized ocean-height coefficient rows, not a complete degree-100 model",
+  "units": "centimetres; not dimensionless geopotential coefficients",
+  "rows": [
+    {
+      "doodson": "55.565",
+      "name": "Om1",
+      "n": 2,
+      "m": 0,
+      "sinPlusCm": -0.540594,
+      "cosPlusCm": 0.0,
+      "sinMinusCm": 0.0,
+      "cosMinusCm": 0.0
+    },
+    {
+      "doodson": "55.575",
+      "name": "Om2",
+      "n": 2,
+      "m": 0,
+      "sinPlusCm": -0.005218,
+      "cosPlusCm": 0.0,
+      "sinMinusCm": 0.0,
+      "cosMinusCm": 0.0
+    },
+    {
+      "doodson": "56.554",
+      "name": "Sa",
+      "n": 2,
+      "m": 0,
+      "sinPlusCm": -0.046604,
+      "cosPlusCm": -0.000903,
+      "sinMinusCm": 0.0,
+      "cosMinusCm": 0.0
+    },
+    {
+      "doodson": "57.555",
+      "name": "Ssa",
+      "n": 2,
+      "m": 0,
+      "sinPlusCm": -0.296385,
+      "cosPlusCm": -0.010794,
+      "sinMinusCm": 0.0,
+      "cosMinusCm": 0.0
+    },
+    {
+      "doodson": "65.455",
+      "name": "Mm",
+      "n": 2,
+      "m": 0,
+      "sinPlusCm": -0.47914,
+      "cosPlusCm": -0.084083,
+      "sinMinusCm": 0.0,
+      "cosMinusCm": 0.0
+    },
+    {
+      "doodson": "75.555",
+      "name": "Mf",
+      "n": 2,
+      "m": 0,
+      "sinPlusCm": -0.805539,
+      "cosPlusCm": -0.236132,
+      "sinMinusCm": 0.0,
+      "cosMinusCm": 0.0
+    },
+    {
+      "doodson": "85.455",
+      "name": "Mtm",
+      "n": 2,
+      "m": 0,
+      "sinPlusCm": -0.139082,
+      "cosPlusCm": -0.049418,
+      "sinMinusCm": 0.0,
+      "cosMinusCm": 0.0
+    },
+    {
+      "doodson": "93.555",
+      "name": "Msq",
+      "n": 2,
+      "m": 0,
+      "sinPlusCm": -0.019391,
+      "cosPlusCm": -0.006674,
+      "sinMinusCm": 0.0,
+      "cosMinusCm": 0.0
+    },
+    {
+      "doodson": "135.655",
+      "name": "Q1",
+      "n": 2,
+      "m": 1,
+      "sinPlusCm": -0.29129,
+      "cosPlusCm": 0.308134,
+      "sinMinusCm": 0.049563,
+      "cosMinusCm": -0.203915
+    },
+    {
+      "doodson": "145.555",
+      "name": "O1",
+      "n": 2,
+      "m": 1,
+      "sinPlusCm": -1.480706,
+      "cosPlusCm": 1.383072,
+      "sinMinusCm": 0.455121,
+      "cosMinusCm": -0.79248
+    },
+    {
+      "doodson": "163.555",
+      "name": "P1",
+      "n": 2,
+      "m": 1,
+      "sinPlusCm": -0.505544,
+      "cosPlusCm": 0.551083,
+      "sinMinusCm": 0.279251,
+      "cosMinusCm": -0.259244
+    },
+    {
+      "doodson": "165.555",
+      "name": "K1",
+      "n": 2,
+      "m": 1,
+      "sinPlusCm": -1.530097,
+      "cosPlusCm": 1.660923,
+      "sinMinusCm": 0.84511,
+      "cosMinusCm": -0.785011
+    },
+    {
+      "doodson": "235.755",
+      "name": "2N2",
+      "n": 2,
+      "m": 2,
+      "sinPlusCm": -0.044241,
+      "cosPlusCm": 0.134832,
+      "sinMinusCm": 0.020987,
+      "cosMinusCm": -0.001671
+    },
+    {
+      "doodson": "245.655",
+      "name": "N2",
+      "n": 2,
+      "m": 2,
+      "sinPlusCm": -0.577967,
+      "cosPlusCm": 0.958489,
+      "sinMinusCm": 0.162389,
+      "cosMinusCm": 0.00945
+    },
+    {
+      "doodson": "255.555",
+      "name": "M2",
+      "n": 2,
+      "m": 2,
+      "sinPlusCm": -3.233275,
+      "cosPlusCm": 3.840723,
+      "sinMinusCm": 0.786314,
+      "cosMinusCm": 0.430793
+    },
+    {
+      "doodson": "273.555",
+      "name": "S2",
+      "n": 2,
+      "m": 2,
+      "sinPlusCm": -1.28861,
+      "cosPlusCm": 1.293664,
+      "sinMinusCm": 0.040901,
+      "cosMinusCm": 0.419782
+    },
+    {
+      "doodson": "275.555",
+      "name": "K2",
+      "n": 2,
+      "m": 2,
+      "sinPlusCm": -0.337696,
+      "cosPlusCm": 0.358821,
+      "sinMinusCm": -0.000662,
+      "cosMinusCm": 0.114679
+    },
+    {
+      "doodson": "455.555",
+      "name": "M4",
+      "n": 4,
+      "m": 4,
+      "sinPlusCm": -0.000551,
+      "cosPlusCm": -0.003144,
+      "sinMinusCm": 0.001155,
+      "cosMinusCm": -0.002202
+    }
+  ],
+  "conventionWarning": "Om1/Om2 sine-plus signs differ from the accessible Orekit 7x7 height test file. The difference is unresolved; do not overwrite existing coefficients or mix conventions.",
+  "sourcePdfPage": 6
+}

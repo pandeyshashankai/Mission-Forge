@@ -1,170 +1,156 @@
-<div align="center">
+# MissionForge
 
-# Mission-Forge
+**Build a rocket. Predict its flight. Use the result to explain what happened.**
 
-### Build the rocket. Plan the mission. Fly beyond Earth.
+MissionForge is a browser-based space engineering and learning game by
+**Shashank Pandey**. It combines rocket construction, four scored missions,
+solar-system exploration and traceable scientific experiments. No account,
+backend, API key or multiplayer service is required.
 
-A 3D spaceflight game by **Shashank Pandey**, built for the browser.
+![Mission Control Academy](docs/images/release-academy.png)
 
-[![Release](https://img.shields.io/github/v/release/pandeyshashankai/Mission-Forge?style=flat-square&color=22d3ee)](https://github.com/pandeyshashankai/Mission-Forge/releases/latest)
-![React](https://img.shields.io/badge/React-19-61dafb?style=flat-square&logo=react&logoColor=white)
-![Three.js](https://img.shields.io/badge/Three.js-WebGL-white?style=flat-square&logo=threedotjs&logoColor=white)
-![Platform](https://img.shields.io/badge/Platform-Desktop_browser-64748b?style=flat-square)
+## Start playing
 
-[🎮 Play MissionForge Online](https://mission-forge.pandeyshashankai.workers.dev/) · [Get started](#get-started) · [Missions](#missions) · [Controls](#controls) · [Latest release](https://github.com/pandeyshashankai/Mission-Forge/releases/latest) · [Report a bug](https://github.com/pandeyshashankai/Mission-Forge/issues)
+Choose **First Orbit** for an assisted launch or **Mission Control Academy** for
+a predict–fly–reflect lesson. **NASA Data Explorer** shows which source values
+affect gravity, orbital speed and atmosphere. Advanced laboratories are optional.
 
-</div>
+- **Engineering:** 36 construction parts, seven presets, staging, readiness checks,
+  fuel and delta-v calculations, three difficulties and mission reports.
+- **Learning:** five Academy lessons, first-flight guide, evidence-linked debriefs,
+  reflection journal and paired scientific model comparison.
+- **Exploration:** eleven destinations, three stock spacecraft, compatible
+  single-stage Hangar craft, orbit/system maps, maneuvers, fleets and docking.
+- **Science:** sourced planetary constants and atmosphere tables, selectable
+  integrators, third-body gravity, harmonics, eclipses, radiation pressure, tides,
+  thermal response, power and damage models.
+- **New laboratories:** 342-constituent station ocean loading, closed convex mesh
+  fracture and complete simulation sessions inside a WebAssembly interpreter.
+- **Access:** keyboard remapping, touch steering/throttle/stage/RCS, themes, local
+  saves and exports, recovery tools and prepared offline play.
 
-![Mission-Forge main menu with Earth in the background](docs/images/mission-forge-menu.jpg)
+![NASA Data Explorer](docs/images/release-nasa-data.png)
 
-## Overview
+## Run locally
 
-Mission-Forge takes you from a rocket design to an orbital mission and its flight report. Assemble a spacecraft in the 3D Hangar, check whether it can meet the mission's engineering limits, and fly it with assisted guidance or manual controls.
-
-Start with a launch into Earth orbit, deliver an observation satellite, send an orbiter to the Moon, or bring a crew home after a lunar flyby. Fuel, mass, thrust, trajectory, and crew safety determine the outcome.
-
-**No account, backend, database, or API key is required.** The game runs in your browser, and designs and flight checkpoints are saved locally.
-
-## Features
-
-- **3D rocket assembly** — build from engines, tanks, payloads, capsules, boosters, and recovery equipment, with staging, part inspection, and undo/redo.
-- **Practical readiness checks** — review propulsion, thrust-to-weight, propellant compatibility, control, budget, power, and mission-specific requirements before launch.
-- **Assisted or manual flight** — use guidance and automatic staging, or take control of steering and throttle yourself.
-- **Orbital and lunar operations** — plan suggested burns, execute maneuvers with guidance, and use time warp for coasts.
-- **Realistic mission consequences** — account for drag, fuel use, spacecraft power, crew supplies, re-entry heating, and acceleration limits.
-- **Flight reports and saves** — review objectives, scores, charts, and recommendations; export designs and resume flights from checkpoints.
-
-## Missions
-
-| Mission | Your goal | Focus |
-| --- | --- | --- |
-| **First Orbit** | Reach a roughly 200 km circular Earth orbit. | Launch, staging, and orbital insertion |
-| **Earth Observer** | Deliver an observation satellite to a roughly 700 km sun-synchronous orbit. | Retrograde launch and a two-burn orbital transfer |
-| **Lunar Orbiter** | Send a spacecraft to the Moon and capture it into lunar orbit. | Trans-lunar injection, corrections, and orbit insertion |
-| **Crewed Lunar Flyby & Return** | Fly three crew past the Moon and return them safely to Earth. | Supplies, return trajectory, re-entry, and splashdown |
-
-![Mission Planner showing the four missions and the First Orbit brief](docs/images/mission-planner.jpg)
-
-## Get started
-
-You need **Node.js 20 or later**, npm, and a modern desktop browser with WebGL enabled.
+Use **Node.js 24** and npm.
 
 ```sh
-git clone https://github.com/pandeyshashankai/Mission-Forge.git
-cd Mission-Forge/frontend
+cd frontend
 npm ci
 npm start
 ```
 
-Open **http://localhost:3000**. A keyboard and mouse or trackpad are recommended.
+Production build:
 
-You can also download the source from the [latest release](https://github.com/pandeyshashankai/Mission-Forge/releases/latest), extract it, and run the same npm commands from its `frontend` folder.
+```sh
+cd frontend
+npm run build
+python3 -m http.server 8080 --directory build
+```
 
-### Your first flight
+Open `http://localhost:8080`. Serve at the origin root, with WebGL and
+WebAssembly enabled. The build includes scientific model assets and the full
+engine bundle; no scientific API is needed at runtime.
 
-1. Choose **Amateur**, then **New Mission → First Orbit**.
-2. Keep the suggested rocket and open the **Hangar**.
-3. Open **Readiness Review** and resolve any failed checks. The advisor explains what needs changing.
-4. Proceed to the launch pad. Leave **guidance** and **automatic staging** enabled, then start the countdown.
-5. Watch the orbit develop. Complete the mission to see your objectives and flight report.
+## Cloudflare Pages
 
-For Earth Observer and lunar missions, the parking orbit is the first step. Open **Map**, choose a suggested maneuver, and select **Execute with guidance**. Time warp speeds up coasts and reduces automatically near burns.
+Connect this repository and select `main`.
 
-### Difficulty
+| Setting | Value |
+| --- | --- |
+| Root directory | `frontend` |
+| Build command | `npm ci && npm run build` |
+| Build output directory | `build` |
+| Environment variable | `NODE_VERSION=24` |
+| Production branch | `main` |
 
-| Mode | Budget | Equipment faults |
-| --- | --- | --- |
-| **Amateur** | Larger mission budget | No random faults |
-| **Intermediate** | Standard mission budget | No random faults |
-| **Expert** | Tighter mission budget | Seeded hardware faults after reaching orbit |
-
-Flight physics is the same in every mode. Advanced ascent tuning, manual burn adjustments, and the **Engineering** panels are optional.
+No secrets or server functions are needed. After deployment, verify the actual
+Pages URL on desktop and Android, run First Orbit, export/import a save and
+prepare offline play. Reload offline only after preparation reports ready.
+[Deployment and live checks](docs/deployment.md) distinguish local validation
+from checks that must be performed on the final hosted origin.
 
 ## Controls
 
-| Input | Action |
+| Action | Default |
 | --- | --- |
-| `Space` | Stage the vehicle |
-| `G` | Toggle flight guidance |
-| `W` / `S` | Manual pitch control |
-| `A` / `D` | Manual heading control |
-| `Shift` / `Ctrl` | Increase / decrease throttle |
-| `Z` / `X` | Full throttle / engine cutoff |
-| `R` | Toggle reaction control system |
-| `M` | Toggle the orbital map |
-| `C` | Cycle camera views |
-| `,` / `.` | Decrease / increase time warp |
-| Drag / scroll in the Hangar | Orbit the camera / zoom |
-| `Ctrl+Z` / `Ctrl+Y` in the Hangar | Undo / redo |
+| Pitch / yaw | W/S and A/D |
+| Stage in campaign | Space |
+| Full / cut throttle | E / Q |
+| Adjust throttle | Shift / Ctrl |
+| Pause | P |
+| System map in exploration | M |
+| Coast warp | Comma / period |
 
-Steering or throttle keys hand control back to you. Use `G` to re-engage guidance when needed.
+Settings allow remapping. Touch layouts provide steering, throttle, staging and
+RCS controls. See the in-game Controls panel for mode-specific bindings and
+[the controls guide](docs/controls.md) for the complete reference.
 
-## Saves
+## New engineering laboratories
 
-Use **Save** in the Hangar to keep a design in the current browser, or **Export** to keep a JSON copy. Import exported designs from the menu or Hangar. **Resume Flight** loads a saved checkpoint.
+![Convex mesh fracture and conservation diagnostics](docs/images/release-mesh-fracture.png)
 
-Browser storage is specific to the browser profile and site address. Clearing site data removes those local saves, so export designs you want to keep. Saves from removed mission types are excluded from Continue and Resume.
+**Ocean loading:** evaluate 342 constituents from eleven complex BLQ responses,
+import station files, inspect hourly displacement and export results. UT1 and
+TT-minus-UT1 are explicit. Independent HARDISP series validate the local
+components; this is not a bundled global ocean-height atlas.
 
-## Build and host
+**Mesh fracture:** split closed convex triangle hulls into 2/4/8 pieces, preserve
+mass and momentum, resolve angular contact impulses and save moving debris.
+Imported hulls must be convex and closed. Uniform-density inertia and prescribed
+separation energy are educational assumptions, not calibrated material failures.
 
-From `frontend`:
+**Full Wasm engine:** run campaign/fleet physics in a cancellable QuickJS Wasm
+worker, compare against JavaScript and export or hand off state. All supported
+simulation modules are bundled; the NRLMSISE Wasm library uses a typed bridge.
+This is an interpreter backend, not a native C/Rust port. Measured slower cases
+keep it optional; standard gameplay uses the established JavaScript engine.
+
+![Full-engine Wasm parity experiment](docs/images/release-full-wasm-engine.png)
+
+## Tests and evidence
 
 ```sh
-npm run build
+cd frontend
+npm test
+npm run test:campaign
+npm run test:combinations
+npm run test:milestones
 ```
 
-This creates `frontend/build`. From the repository root, serve it locally with:
+The regression suite contains **321 tests**. The extended release audit runs
+30 sequential groups including 621,913 generated catalogue/scenario checks,
+12 expected campaign outcomes, 330 emulated device/world/craft cases, learning
+flows, optional models, mesh/Wasm labs and offline recovery. These are finite
+test matrices; they do not prove every possible trajectory or physical device.
+
+Browser audits need the production build on port 8080 and an isolated Chromium
+CDP session on port 9222. See [test setup](docs/testing.md).
 
 ```sh
-python3 -m http.server 8080 --directory frontend/build
+MF_AUDIT_OUTPUT=/tmp/mission-forge-audit npm run audit:release -- --extended
 ```
 
-Open **http://localhost:8080**. Use a web server rather than opening the HTML directly from disk.
+[Latest recorded release evidence](docs/submission/final-validation.json) ·
+[Audit manifest](docs/submission/release-audit/manifest.json) ·
+[Project report](docs/submission/project-report.md) ·
+[Presentation](docs/submission/presentation.html) ·
+[Three-minute demo](docs/submission/demo-script.md)
 
-The output can be hosted on a static web host. Serve it at the site's root; the current texture paths use `/textures/`. A project subdirectory deployment needs asset-path changes. The repository contains source and assets; the production build is generated locally.
+## Scientific scope and credits
 
-## Technology
+NASA-derived inputs, third-party models and gameplay assumptions are labelled
+separately. Source snapshots and conversions are retained in `data/` and
+`frontend/src/science/`. See [NASA data provenance](data/nasa/README.md),
+[scientific model notes](docs/third-party-science.md) and
+[milestone boundaries](docs/next-milestones.md).
 
-| Layer | Technology |
-| --- | --- |
-| Interface | React 19, Tailwind CSS, Radix UI |
-| 3D rendering | Three.js and WebGL |
-| Simulation | JavaScript physics and mission systems |
-| Flight charts | Recharts |
-| Storage | Browser localStorage and JSON import/export |
-| Build | React Scripts with CRACO |
+Campaign and exploration use different documented force paths. Fixed/approximate
+ephemerides, simplified terrain/materials and sandbox orbit placements are not
+presented as mission-design-grade predictions. Emulated tests do not replace
+physical-device testing or learner studies. No judging outcome is guaranteed.
 
-```text
-Mission-Forge/
-├── docs/images/        Screenshots used in this README
-├── frontend/
-│   ├── public/         HTML entry and Earth/Moon textures
-│   ├── src/
-│   │   ├── components/ Interface and flight panels
-│   │   ├── game/       Game state and design operations
-│   │   ├── pages/      Menu, planning, Hangar, flight, and reports
-│   │   ├── sim/        Physics, guidance, scoring, and mission systems
-│   │   └── three/      Hangar and flight rendering
-│   └── package.json    Dependencies and run/build commands
-├── CHANGELOG.md
-└── README.md
-```
-
-## Simulation scope
-
-The game models gravity, Earth rotation and J2, atmosphere and drag, engine thrust and propellant use, attitude control, orbital transfers, power and eclipses, crew supplies, and re-entry limits.
-
-Vehicle figures are approximate. Lunar flight uses patched Earth/Moon gravity and a fixed lunar ellipse; thermal behaviour uses a simplified single-node model. Weather and structural loads are not simulated. Mission examples draw inspiration from real spaceflight and are not affiliated with NASA or other space agencies.
-
-## Troubleshooting
-
-- **Blank or slow 3D view:** enable WebGL/hardware acceleration, update your browser, or choose Low graphics in Settings.
-- **Rocket will not launch:** check Readiness Review for insufficient thrust, missing propellant, control, or other failed requirements.
-- **A mission reports partial success:** a stable orbit alone may not meet the target altitude, inclination, payload, or return objectives. Read the mission report for the unmet conditions.
-- **Missing saves:** check that you are using the same browser profile and site address. Designs exported as JSON can be imported again.
-
-For a reproducible problem, [open an issue](https://github.com/pandeyshashankai/Mission-Forge/issues) with your browser, mission, difficulty, steps to reproduce, and an exported design if relevant.
-
----
-
-Created by [**Shashank Pandey**](https://github.com/pandeyshashankai). See [CHANGELOG.md](CHANGELOG.md) for release details.
+Third-party libraries, model sources and data retain their original licences and
+notices, including Orekit/IERS loading references and QuickJS. No overall project licence is declared in this repository; third-party
+permissions do not grant a licence to the original game code.

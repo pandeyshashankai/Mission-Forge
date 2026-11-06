@@ -1,25 +1,77 @@
+import {BuildToExplore} from '../components/education/BuildToExplore';
+import { Subassemblies } from "../components/game/Subassemblies";
+import { DesignEngineering } from "../components/instruments/EngineeringInspector";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, Undo2, Redo2, Save, Download, Upload, ClipboardCheck, Eye, EyeOff, Rocket } from "lucide-react";
+import {
+  ArrowLeft,
+  Undo2,
+  Redo2,
+  Save,
+  Download,
+  Upload,
+  ClipboardCheck,
+  Eye,
+  EyeOff,
+  Rocket,
+  Copy,
+  Trash2,
+  Box,
+  SlidersHorizontal,
+} from "lucide-react";
 import { toast } from "sonner";
 import { useGame } from "../game/GameContext";
+import { MissionSteps } from "../components/app/MissionSteps";
+import { DisplayButton } from "../components/app/Appearance";
+import { Blueprint } from "../components/game/Blueprint";
+import { duplicatePart } from "../game/designOps";
 import { HangarView } from "../three/HangarView";
 import { PartCatalog } from "../components/game/PartCatalog";
-import { StackList, StagingList, Inspector } from "../components/game/HangarPanels";
+import {
+  StackList,
+  StagingList,
+  Inspector,
+} from "../components/game/HangarPanels";
 import { AdvisorPanel } from "../components/game/AdvisorPanel";
 import { GoNoGo, Stat } from "../components/game/Status";
-import { addPart, removePart, movePart, setSymmetry, findNode } from "../game/designOps";
+import {
+  addPart,
+  removePart,
+  movePart,
+  setSymmetry,
+  findNode,
+} from "../game/designOps";
 import { runReadiness } from "../sim/readiness";
 import { adviseDesign } from "../sim/advisor";
 import { getMission } from "../sim/missions";
 import { PARTS } from "../sim/parts";
 import { PRESETS } from "../sim/presets";
-import { storage, downloadJSON, readJSONFile, isValidDesign } from "../sim/storage";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
+import {
+  storage,
+  downloadJSON,
+  readJSONFile,
+  isValidDesign,
+} from "../sim/storage";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../components/ui/tabs";
 
-const fmt = (x, d = 0) => Number(x).toLocaleString("en-US", { maximumFractionDigits: d, minimumFractionDigits: d });
+const fmt = (x, d = 0) =>
+  Number(x).toLocaleString("en-US", {
+    maximumFractionDigits: d,
+    minimumFractionDigits: d,
+  });
 const HdrBtn = ({ icon: Icon, label, onClick, testId, disabled }) => (
-  <button data-testid={testId} disabled={disabled} onClick={onClick} title={label} className="flex items-center gap-1.5 border border-slate-800 px-2.5 py-1.5 text-xs text-slate-300 transition-colors hover:border-slate-600 hover:text-white disabled:opacity-30">
-    <Icon size={14} /> <span className="hidden xl:inline">{label}</span>
+  <button
+    data-testid={testId}
+    disabled={disabled}
+    onClick={onClick}
+    title={label}
+    className="flex items-center gap-1.5 border border-slate-800 px-2.5 py-1.5 text-xs text-slate-300 transition-colors hover:border-slate-600 hover:text-white disabled:opacity-30"
+  >
+    <Icon size={14} /> <span>{label}</span>
   </button>
 );
 
@@ -28,39 +80,78 @@ export default function Hangar() {
   const { design, setDesign } = g;
   const mission = getMission(g.missionId);
   const [selected, setSelected] = useState(null);
+  const [rightTab, setRightTab] = useState("stack");
   const [mode, setMode] = useState("below");
   const [symmetry, setSym] = useState(2);
   const [xray, setXray] = useState(false);
+  const [overlays,setOverlays]=useState(false);
+  const [smallPane, setSmallPane] = useState("build");
+  const [workspace, setWorkspace] = useState("3d");
   const fileRef = useRef(null);
 
-  const review = useMemo(() => runReadiness(design, mission, g.difficulty), [design, mission, g.difficulty]);
+  const review = useMemo(
+    () => runReadiness(design, mission, g.difficulty),
+    [design, mission, g.difficulty],
+  );
   const advice = useMemo(() => adviseDesign(design, review), [design, review]);
   const s = review.stats;
 
+  const selectPart = (uid) => {
+    setSelected(uid);
+    if (uid) {
+      setRightTab("inspect");
+      if (window.matchMedia("(max-width:999px)").matches)
+        setSmallPane("details");
+    }
+  };
+
   const onAdd = (partId) => {
-    const target = selected && design.stack.some((n) => n.uid === selected) ? selected : null;
+    const target =
+      selected && design.stack.some((n) => n.uid === selected)
+        ? selected
+        : null;
     const res = addPart(design, partId, target, mode, symmetry);
     if (res.error) return toast.error(res.error);
     setDesign(res.design);
+    setSmallPane("build");
     if (!res.radial) setSelected(res.uid);
-    toast.success(`${PARTS[partId].name} attached${res.radial ? ` ×${symmetry} radially` : ` ${mode} ${target ? "selection" : "stack"}`}`);
+    toast.success(
+      `${PARTS[partId].name} attached${res.radial ? ` ×${symmetry} radially` : ` ${mode} ${target ? "selection" : "stack"}`}`,
+    );
   };
 
-  const onRemove = useCallback((uid) => {
-    setDesign((d) => removePart(d, uid));
-    setSelected(null);
-  }, [setDesign]);
+  const onRemove = useCallback(
+    (uid) => {
+      setDesign((d) => removePart(d, uid));
+      setSelected(null);
+    },
+    [setDesign],
+  );
 
   useEffect(() => {
     const onKey = (e) => {
-      if (e.target.tagName === "INPUT") return;
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") { e.preventDefault(); e.shiftKey ? g.redo() : g.undo(); }
-      else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "y") { e.preventDefault(); g.redo(); }
-      else if ((e.key === "Delete" || e.key === "Backspace") && selected) onRemove(selected);
+      if (["INPUT", "TEXTAREA", "SELECT"].includes(e.target.tagName)) return;
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") {
+        e.preventDefault();
+        e.shiftKey ? g.redo() : g.undo();
+      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "y") {
+        e.preventDefault();
+        g.redo();
+      } else if (
+        (e.ctrlKey || e.metaKey) &&
+        e.key.toLowerCase() === "d" &&
+        selected
+      ) {
+        e.preventDefault();
+        const result = duplicatePart(design, selected);
+        setDesign(result.design);
+        setSelected(result.uid);
+      } else if ((e.key === "Delete" || e.key === "Backspace") && selected)
+        onRemove(selected);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [g, selected, onRemove]);
+  }, [g, selected, onRemove, design, setDesign]);
 
   const onImport = async (e) => {
     const f = e.target.files[0];
@@ -68,7 +159,8 @@ export default function Hangar() {
     if (!f) return;
     try {
       const d = await readJSONFile(f);
-      if (!isValidDesign(d) || d.stack.some((n) => !PARTS[n.partId])) throw new Error();
+      if (!isValidDesign(d) || d.stack.some((n) => !PARTS[n.partId]))
+        throw new Error();
       g.loadDesign(d);
       toast.success(`Imported "${d.name}"`);
     } catch {
@@ -79,85 +171,390 @@ export default function Hangar() {
   const selNode = selected ? findNode(design, selected) : null;
 
   return (
-    <div className="flex h-full w-full flex-col">
-      <header className="flex h-12 shrink-0 items-center gap-2 border-b border-slate-800 bg-slate-950/90 px-4 backdrop-blur-md">
-        <button data-testid="hangar-back-btn" onClick={() => g.go("planner")} className="mr-2 flex items-center gap-1 text-sm text-slate-400 hover:text-white"><ArrowLeft size={16} /></button>
-        <div className="eyebrow hidden md:block">Hangar · {mission.name}</div>
-        <input data-testid="design-name-input" value={design.name} onChange={(e) => setDesign({ ...design, name: e.target.value }, false)} className="ml-3 w-56 border border-slate-800 bg-slate-950 px-2 py-1 font-mono text-xs outline-none focus:border-cyan-500/60" />
-        <div className="ml-auto flex items-center gap-1.5">
-          <HdrBtn icon={Undo2} label="Undo" testId="undo-btn" disabled={!g.canUndo} onClick={g.undo} />
-          <HdrBtn icon={Redo2} label="Redo" testId="redo-btn" disabled={!g.canRedo} onClick={g.redo} />
-          <select data-testid="preset-select" value="" onChange={(e) => { const p = PRESETS.find((x) => x.id === e.target.value); if (p) { setDesign(p.make()); setSelected(null); } }} className="border border-slate-800 bg-slate-950 px-2 py-1.5 text-xs text-slate-300">
+    <div
+      className="builder-screen flex h-full w-full flex-col"
+      data-builder-pane={smallPane}
+    >
+      <div className="workflow-header">
+        <button
+          className="ui-button ui-button-quiet"
+          data-testid="hangar-mission-back"
+          onClick={() => g.go("planner")}
+        >
+          <ArrowLeft size={16} /> Missions
+        </button>
+        <MissionSteps current={1} />
+        <DisplayButton compact />
+      </div>
+      <header className="builder-toolbar">
+        <button
+          data-testid="hangar-back-btn"
+          onClick={() => g.go("planner")}
+          className="mr-2 flex items-center gap-1 text-sm text-slate-400 hover:text-white"
+        >
+          <ArrowLeft size={16} />
+          <span className="sr-only">Back to missions</span>
+        </button>
+        <label className="builder-name-label" htmlFor="rocket-name">
+          Your rocket
+        </label>
+        <input
+          id="rocket-name"
+          aria-label="Rocket name"
+          data-testid="design-name-input"
+          value={design.name}
+          onChange={(e) =>
+            setDesign({ ...design, name: e.target.value }, false)
+          }
+          className="builder-name border border-slate-800 bg-slate-950 px-2 py-1 font-mono text-xs outline-none focus:border-cyan-500/60"
+        />
+        <div className="builder-actions">
+          <HdrBtn
+            icon={Undo2}
+            label="Undo"
+            testId="undo-btn"
+            disabled={!g.canUndo}
+            onClick={g.undo}
+          />
+          <HdrBtn
+            icon={Redo2}
+            label="Redo"
+            testId="redo-btn"
+            disabled={!g.canRedo}
+            onClick={g.redo}
+          />
+          <select
+            aria-label="Load a rocket preset"
+            data-testid="preset-select"
+            value=""
+            onChange={(e) => {
+              const p = PRESETS.find((x) => x.id === e.target.value);
+              if (p) {
+                setDesign(p.make());
+                setSelected(null);
+              }
+            }}
+            className="builder-presets border border-slate-800 bg-slate-950 px-2 py-1.5 text-xs text-slate-300"
+          >
             <option value="">Load preset…</option>
-            {PRESETS.map((p) => <option key={p.id} value={p.id}>{p.label}</option>)}
+            {PRESETS.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.label}
+              </option>
+            ))}
           </select>
-          <HdrBtn icon={Save} label="Save" testId="save-design-btn" onClick={() => { storage.saveDesign(design); toast.success(`Saved "${design.name}" to this browser`); }} />
-          <HdrBtn icon={Download} label="Export" testId="export-design-btn" onClick={() => downloadJSON(`${design.name.replace(/\W+/g, "_")}.mfdesign.json`, design)} />
-          <HdrBtn icon={Upload} label="Import" testId="import-design-btn" onClick={() => fileRef.current.click()} />
-          <input ref={fileRef} type="file" accept=".json" className="hidden" onChange={onImport} data-testid="hangar-import-input" />
-          <button data-testid="open-readiness-btn" onClick={() => g.go("review")} className="ml-2 flex items-center gap-2 border border-cyan-400 bg-cyan-500/15 px-3 py-1.5 font-display text-sm font-semibold uppercase tracking-widest text-cyan-200 hover:bg-cyan-500/25">
-            <ClipboardCheck size={15} /> Readiness Review
+          <HdrBtn
+            icon={Save}
+            label="Save"
+            testId="save-design-btn"
+            onClick={() => {
+              storage.saveDesign(design);
+              toast.success(`Saved "${design.name}" to this browser`);
+            }}
+          />
+          <HdrBtn
+            icon={Download}
+            label="Export"
+            testId="export-design-btn"
+            onClick={() =>
+              downloadJSON(
+                `${design.name.replace(/\W+/g, "_")}.mfdesign.json`,
+                design,
+              )
+            }
+          />
+          <HdrBtn
+            icon={Upload}
+            label="Import"
+            testId="import-design-btn"
+            onClick={() => fileRef.current.click()}
+          />
+          <input
+            ref={fileRef}
+            type="file"
+            accept=".json"
+            className="hidden"
+            onChange={onImport}
+            data-testid="hangar-import-input"
+          />
+          <button
+            data-testid="open-readiness-btn"
+            onClick={() => g.go("review")}
+            className="ui-button ui-button-primary"
+          >
+            <ClipboardCheck size={15} /> Check & launch
           </button>
         </div>
       </header>
 
-      <div className="grid min-h-0 flex-1 grid-cols-[260px_1fr_340px]">
-        <aside className="min-h-0 border-r border-slate-800 bg-slate-950/80">
+      <nav className="builder-mobile-tabs" aria-label="Builder panels">
+        {[
+          ["parts", Box, "Parts"],
+          ["build", Rocket, "Rocket"],
+          ["details", SlidersHorizontal, "Details"],
+        ].map(([id, Icon, label]) => (
+          <button
+            key={id}
+            onClick={() => setSmallPane(id)}
+            aria-pressed={smallPane === id}
+          >
+            <Icon size={16} />
+            {label}
+          </button>
+        ))}
+      </nav>
+      <div className="assembly-workspace grid min-h-0 flex-1">
+        <aside className="assembly-catalog min-h-0 border-r border-slate-800 bg-slate-950/80">
           <PartCatalog onAdd={onAdd} />
         </aside>
 
-        <main className="relative min-h-0">
-          <HangarView design={design} selectedUid={selected} onSelect={setSelected} xray={xray} quality={g.settings.graphics} />
-          <div className="panel absolute left-3 top-3 flex items-center gap-1 rounded-sm p-1" data-testid="attach-toolbar">
+        <main className="assembly-viewport relative min-h-0">
+          {workspace === "blueprint" ? (
+            <Blueprint
+              design={design}
+              selectedUid={selected}
+              onSelect={selectPart}
+            />
+          ) : (
+            <HangarView
+              design={design}
+              selectedUid={selected}
+              onSelect={selectPart}
+              xray={xray}
+              overlays={overlays}
+              quality={g.settings.graphics}
+            />
+          )}
+          <div
+            className="panel absolute left-3 top-3 flex items-center gap-1 rounded-sm p-1"
+            data-testid="attach-toolbar"
+          >
+            {["3d", "blueprint"].map((w) => (
+              <button
+                key={w}
+                data-testid={`workspace-${w}`}
+                onClick={() => setWorkspace(w)}
+                className={`px-2 py-1 font-mono text-[11px] uppercase ${workspace === w ? "bg-cyan-500/20 text-cyan-200" : "text-slate-400"}`}
+              >
+                {w === "3d" ? "3D" : "Blueprint"}
+              </button>
+            ))}
+            <span className="mx-1 h-4 w-px bg-slate-700" />
             <span className="eyebrow px-2 !text-[9px]">Attach</span>
             {["above", "below"].map((m) => (
-              <button key={m} data-testid={`attach-mode-${m}`} onClick={() => setMode(m)} className={`px-2 py-1 font-mono text-[11px] uppercase ${mode === m ? "bg-cyan-500/20 text-cyan-200" : "text-slate-400 hover:text-white"}`}>{m}</button>
+              <button
+                key={m}
+                data-testid={`attach-mode-${m}`}
+                onClick={() => setMode(m)}
+                className={`px-2 py-1 font-mono text-[11px] uppercase ${mode === m ? "bg-cyan-500/20 text-cyan-200" : "text-slate-400 hover:text-white"}`}
+              >
+                {m}
+              </button>
             ))}
             <span className="mx-1 h-4 w-px bg-slate-700" />
             <span className="eyebrow px-1 !text-[9px]">Radial sym</span>
             {[2, 3, 4].map((n) => (
-              <button key={n} data-testid={`symmetry-${n}`} onClick={() => setSym(n)} className={`px-2 py-1 font-mono text-[11px] ${symmetry === n ? "bg-cyan-500/20 text-cyan-200" : "text-slate-400 hover:text-white"}`}>×{n}</button>
+              <button
+                key={n}
+                data-testid={`symmetry-${n}`}
+                onClick={() => setSym(n)}
+                className={`px-2 py-1 font-mono text-[11px] ${symmetry === n ? "bg-cyan-500/20 text-cyan-200" : "text-slate-400 hover:text-white"}`}
+              >
+                ×{n}
+              </button>
             ))}
             <span className="mx-1 h-4 w-px bg-slate-700" />
-            <button data-testid="xray-toggle" onClick={() => setXray(!xray)} className="flex items-center gap-1 px-2 py-1 font-mono text-[11px] text-slate-400 hover:text-white">{xray ? <EyeOff size={12} /> : <Eye size={12} />} fairing</button>
+            <button
+              data-testid="xray-toggle"
+              onClick={() => setXray(!xray)}
+              className="flex items-center gap-1 px-2 py-1 font-mono text-[11px] text-slate-400 hover:text-white"
+            >
+              {xray ? <EyeOff size={12} /> : <Eye size={12} />} fairing
+            </button>
           </div>
-          <div className="pointer-events-none absolute right-3 top-3 text-right font-mono text-[10px] text-slate-500">
-            Click part to select · drag to orbit · scroll to zoom<br />Ctrl+Z / Ctrl+Y · Del removes
+          <div className="pointer-events-none absolute right-3 top-28 text-right font-mono text-[10px] text-slate-500">
+            Select a part to edit it. Drag the view to rotate.
+            <br />
+            Ctrl+Z / Ctrl+Y · Ctrl+D duplicates · Del removes
           </div>
-          <div className="panel absolute bottom-3 left-3 right-3 grid grid-cols-6 gap-2 rounded-sm p-2" data-testid="hangar-stats-bar">
-            <Stat label="Liftoff mass" value={fmt(s.mass / 1000, 1)} unit="t" testId="stat-mass" tone={s.mass > mission.massLimit ? "text-red-400" : undefined} />
-            <Stat label="Cost" value={`$${fmt(s.cost, 1)}M`} unit={`/ $${review.budget}M`} testId="stat-cost" tone={s.cost > review.budget ? "text-red-400" : undefined} />
-            <Stat label="Δv available" value={fmt(s.dv.total)} unit="m/s" testId="stat-dv" tone={review.checks[0].status === "fail" ? "text-red-400" : review.checks[0].status === "warn" ? "text-amber-400" : "text-emerald-400"} />
-            <Stat label="Δv required" value={fmt(review.req.value * (1 + mission.reserve))} unit="m/s" testId="stat-dv-required" />
-            <Stat label="Liftoff TWR" value={fmt(s.liftoffTWR, 2)} testId="stat-twr" tone={s.liftoffTWR < 1 ? "text-red-400" : s.liftoffTWR < 1.2 ? "text-amber-400" : undefined} />
-            <Stat label="Stages · parts" value={`${s.stageCount} · ${s.partCount}`} testId="stat-stages" />
+          {selNode && (
+            <div className="selected-part-actions panel">
+              <span>{PARTS[selNode.partId].name}</span>
+              <button
+                className="ui-button"
+                data-testid="duplicate-selected-btn"
+                onClick={() => {
+                  const r = duplicatePart(design, selected);
+                  setDesign(r.design);
+                  setSelected(r.uid);
+                }}
+              >
+                <Copy size={14} /> Duplicate
+              </button>
+              <button
+                className="ui-button"
+                data-testid="remove-selected-btn"
+                disabled={!selNode.parentUid && design.stack.length === 1}
+                onClick={() => onRemove(selected)}
+              >
+                <Trash2 size={14} /> Remove
+              </button>
+            </div>
+          )}
+          <button className="ui-button mass-overlay-toggle" data-testid="mass-overlay-toggle" aria-pressed={overlays} onClick={()=>{setOverlays(!overlays);setWorkspace("3d");}}>Mass & thrust</button>
+          {overlays&&workspace==='3d'&&<p className="mass-overlay-legend">Cyan: wet mass centre · Violet: dry mass centre · Amber: side-area centre (proxy) · Green: combined engine axis. Uniform part masses; all engine positions, not a flight-stage force solution.</p>}
+          <div
+            className="assembly-stats panel absolute bottom-3 left-3 right-3 grid grid-cols-3 xl:grid-cols-6 gap-2 rounded-sm p-2"
+            data-testid="hangar-stats-bar"
+          >
+            <Stat
+              label="Liftoff mass"
+              value={fmt(s.mass / 1000, 1)}
+              unit="t"
+              testId="stat-mass"
+              tone={s.mass > mission.massLimit ? "text-red-400" : undefined}
+            />
+            <Stat
+              label="Cost"
+              value={`$${fmt(s.cost, 1)}M`}
+              unit={`/ $${review.budget}M`}
+              testId="stat-cost"
+              tone={s.cost > review.budget ? "text-red-400" : undefined}
+            />
+            <Stat
+              label="Burn capacity (Δv)"
+              value={fmt(s.dv.total)}
+              unit="m/s"
+              testId="stat-dv"
+              tone={
+                review.checks[0].status === "fail"
+                  ? "text-red-400"
+                  : review.checks[0].status === "warn"
+                    ? "text-amber-400"
+                    : "text-emerald-400"
+              }
+            />
+            <Stat
+              label="Mission needs"
+              value={fmt(review.req.value * (1 + mission.reserve))}
+              unit="m/s"
+              testId="stat-dv-required"
+            />
+            <Stat
+              label="Launch power (TWR)"
+              value={fmt(s.liftoffTWR, 2)}
+              testId="stat-twr"
+              tone={
+                s.liftoffTWR < 1
+                  ? "text-red-400"
+                  : s.liftoffTWR < 1.2
+                    ? "text-amber-400"
+                    : undefined
+              }
+            />
+            <Stat
+              label="Stages · parts"
+              value={`${s.stageCount} · ${s.partCount}`}
+              testId="stat-stages"
+            />
           </div>
         </main>
 
-        <aside className="flex min-h-0 flex-col border-l border-slate-800 bg-slate-950/80">
-          <Tabs defaultValue="stack" className="flex min-h-0 flex-1 flex-col">
+        <aside className="assembly-details flex min-h-0 flex-col border-l border-slate-800 bg-slate-950/80">
+          <Tabs
+            value={rightTab}
+            onValueChange={setRightTab}
+            className="flex min-h-0 flex-1 flex-col"
+          >
             <TabsList className="m-2 grid grid-cols-3 rounded-sm bg-slate-900">
-              <TabsTrigger value="stack" data-testid="tab-stack" className="text-xs">Stack</TabsTrigger>
-              <TabsTrigger value="staging" data-testid="tab-staging" className="text-xs">Staging</TabsTrigger>
-              <TabsTrigger value="inspect" data-testid="tab-inspector" className="text-xs">Inspector</TabsTrigger>
+              <TabsTrigger
+                value="stack"
+                data-testid="tab-stack"
+                className="text-xs"
+              >
+                Stack
+              </TabsTrigger>
+              <TabsTrigger
+                value="staging"
+                data-testid="tab-staging"
+                className="text-xs"
+              >
+                Staging
+              </TabsTrigger>
+              <TabsTrigger
+                value="inspect"
+                data-testid="tab-inspector"
+                className="text-xs"
+              >
+                Inspector
+              </TabsTrigger>
             </TabsList>
             <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-3 scroll-thin">
               <TabsContent value="stack">
-                <StackList design={design} stats={s} selectedUid={selected} onSelect={setSelected} onRemove={onRemove}
-                  onMove={(uid, d) => setDesign(movePart(design, uid, d))} onSymmetry={(uid, n) => setDesign(setSymmetry(design, uid, n))} />
+                <StackList
+                  design={design}
+                  stats={s}
+                  selectedUid={selected}
+                  onSelect={selectPart}
+                  onRemove={onRemove}
+                  onMove={(uid, d) => setDesign(movePart(design, uid, d))}
+                  onSymmetry={(uid, n) =>
+                    setDesign(setSymmetry(design, uid, n))
+                  }
+                />
               </TabsContent>
               <TabsContent value="staging">
-                <StagingList stats={s} design={design} onReorder={(ev) => setDesign({ ...design, events: ev })} />
+                <BuildToExplore/><DesignEngineering stats={s} />
+                <StagingList
+                  stats={s}
+                  design={design}
+                  onReorder={(ev) => setDesign({ ...design, events: ev })}
+                />
               </TabsContent>
-              <TabsContent value="inspect"><Inspector node={selNode} /></TabsContent>
+              <TabsContent value="inspect">
+                <Inspector node={selNode} />
+                <Subassemblies design={design} selectedUid={selected} onInsert={setDesign} />
+                {selNode && (
+                  <div className="inspector-part-actions">
+                    <button
+                      className="ui-button"
+                      data-testid="duplicate-inspected-btn"
+                      onClick={() => {
+                        const r = duplicatePart(design, selected);
+                        setDesign(r.design);
+                        setSelected(r.uid);
+                      }}
+                    >
+                      <Copy size={14} /> Duplicate
+                    </button>
+                    <button
+                      className="ui-button"
+                      disabled={!selNode.parentUid && design.stack.length === 1}
+                      data-testid="remove-inspected-btn"
+                      onClick={() => onRemove(selected)}
+                    >
+                      <Trash2 size={14} /> Remove
+                    </button>
+                  </div>
+                )}
+              </TabsContent>
             </div>
           </Tabs>
           <div className="max-h-[42%] shrink-0 overflow-y-auto border-t border-slate-800 p-3 scroll-thin">
             <div className="mb-2 flex items-center justify-between">
               <GoNoGo overall={review.overall} testId="hangar-go-nogo" />
-              <button data-testid="hangar-launch-btn" onClick={() => g.go("review")} className="flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-cyan-400 hover:text-cyan-200"><Rocket size={12} /> Review →</button>
+              <button
+                data-testid="hangar-launch-btn"
+                onClick={() => g.go("review")}
+                className="flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-cyan-400 hover:text-cyan-200"
+              >
+                <Rocket size={12} /> Review →
+              </button>
             </div>
-            <AdvisorPanel items={advice} compact testId="hangar-advisor" />
+            <details className="builder-advice">
+              <summary>Design suggestions ({advice.length})</summary>
+              <AdvisorPanel items={advice} compact testId="hangar-advisor" />
+            </details>
           </div>
         </aside>
       </div>

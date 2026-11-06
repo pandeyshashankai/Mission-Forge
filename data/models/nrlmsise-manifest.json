@@ -1,0 +1,12 @@
+{
+  "package": "nrlmsise-00",
+  "version": "1.0.10",
+  "license": "Apache-2.0",
+  "upstream": "https://github.com/digitalarsenal/nrlmsise-00",
+  "tarball": "https://registry.npmjs.org/nrlmsise-00/-/nrlmsise-00-1.0.10.tgz",
+  "integrity": "sha512-MusZlaRIlmCWasRNEXpIYpGj7nU2L2h+ttqOkXP1HgRHp/Xg1dpTmTFJmzIN1epGkBYbb6nDkzrSd3iAMaEJaw==",
+  "sourceSha256": "8d30b405101976aa04168f73eac75e162647c7d7f1accf47ee3f0b54396444e8",
+  "browserSha256": "ccd89ee3b15146263c5ebb326d3c92c458faaaa48a9ce8ad1d2363ee54086f5d",
+  "adaptation": "Remove Node createRequire header; set ENVIRONMENT_IS_NODE=false. Embedded WASM bytes unchanged.",
+  "retrievedAt": "2026-11-04"
+}

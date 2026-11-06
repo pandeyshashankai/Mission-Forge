@@ -1,0 +1,1277 @@
+{
+  "version": 1,
+  "commit": "c9b78bd1c8499845cb78fde315e1f761b6b06f1c",
+  "retrievedAt": "2026-11-04",
+  "units": {
+    "radius": "m",
+    "radiiKm": "km",
+    "mu": "m³/s²",
+    "muKm3s2": "km³/s²",
+    "rotation": "s",
+    "rotationRateDegDay": "degrees/day",
+    "primeMeridianDeg": "degrees"
+  },
+  "sources": [
+    {
+      "id": "naif-pck11",
+      "name": "JPL/NAIF pck00011 planetary constants",
+      "file": "pck00011.tpc",
+      "path": "application/data/planetary_coeff/SPICEPlanetaryConstantsKernel.tpc",
+      "sha256": "3dff7b1dbeceaa01f25467767d3fa25816051c85d162d1edf04acb310ee28bb1",
+      "upstream": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
+      "fields": "Triaxial radii (km) and linear prime-meridian rates (degrees/day). Original kernel by Nat Bachman (NAIF), 2022-12-27.",
+      "kind": "dataset",
+      "url": "https://raw.githubusercontent.com/nasa/GMAT/c9b78bd1c8499845cb78fde315e1f761b6b06f1c/application/data/planetary_coeff/SPICEPlanetaryConstantsKernel.tpc",
+      "repositoryUrl": "https://github.com/nasa/GMAT/blob/c9b78bd1c8499845cb78fde315e1f761b6b06f1c/application/data/planetary_coeff/SPICEPlanetaryConstantsKernel.tpc",
+      "retrievedAt": "2026-11-04"
+    },
+    {
+      "id": "nasa-gmat",
+      "name": "NASA GMAT gravitational-parameter defaults",
+      "file": "GmatDefaults.hpp",
+      "path": "src/gmatutil/util/GmatDefaults.hpp",
+      "sha256": "430845c2e8b700559690c43069de5d347c4384631efd881cc1a3a3cc5917465e",
+      "upstream": "https://github.com/nasa/GMAT",
+      "fields": "PLANET_MU, MOON_MU and STAR_MU, km³/s². Software defaults, not a current precision ephemeris.",
+      "kind": "dataset",
+      "url": "https://raw.githubusercontent.com/nasa/GMAT/c9b78bd1c8499845cb78fde315e1f761b6b06f1c/src/gmatutil/util/GmatDefaults.hpp",
+      "repositoryUrl": "https://github.com/nasa/GMAT/blob/c9b78bd1c8499845cb78fde315e1f761b6b06f1c/src/gmatutil/util/GmatDefaults.hpp",
+      "retrievedAt": "2026-11-04"
+    },
+    {
+      "id": "nasa-earth-atmosphere",
+      "name": "NASA GMAT Earth exponential density table",
+      "file": "EarthExponentialAtmosphereData.txt",
+      "path": "application/data/atmosphere/earth/EarthExponentialAtmosphereData.txt",
+      "sha256": "75762f679f82e089a4a6eadaa1251c797a2151aab5311b36b2ae96cffefda85e",
+      "upstream": "https://github.com/nasa/GMAT",
+      "fields": "Altitude km, density kg/m³, scale height km; 28 archived model bands.",
+      "kind": "dataset",
+      "url": "https://raw.githubusercontent.com/nasa/GMAT/c9b78bd1c8499845cb78fde315e1f761b6b06f1c/application/data/atmosphere/earth/EarthExponentialAtmosphereData.txt",
+      "repositoryUrl": "https://github.com/nasa/GMAT/blob/c9b78bd1c8499845cb78fde315e1f761b6b06f1c/application/data/atmosphere/earth/EarthExponentialAtmosphereData.txt",
+      "retrievedAt": "2026-11-04"
+    },
+    {
+      "id": "nasa-mars-atmosphere",
+      "name": "NASA GMAT Mars exponential density table",
+      "file": "MarsExponentialAtmosphereData.txt",
+      "path": "application/data/atmosphere/mars/MarsExponentialAtmosphereData.txt",
+      "sha256": "376cd96341c3eaf20f9cdc9e39b43b1fa2e65aa61550df4349b96c26ed6ed027",
+      "upstream": "https://github.com/nasa/GMAT",
+      "fields": "Altitude km, density kg/m³, scale height km; 150 archived model bands.",
+      "kind": "dataset",
+      "url": "https://raw.githubusercontent.com/nasa/GMAT/c9b78bd1c8499845cb78fde315e1f761b6b06f1c/application/data/atmosphere/mars/MarsExponentialAtmosphereData.txt",
+      "repositoryUrl": "https://github.com/nasa/GMAT/blob/c9b78bd1c8499845cb78fde315e1f761b6b06f1c/application/data/atmosphere/mars/MarsExponentialAtmosphereData.txt",
+      "retrievedAt": "2026-11-04"
+    },
+    {
+      "id": "nasa-density-method",
+      "name": "NASA GMAT exponential atmosphere implementation",
+      "file": "ExponentialAtmosphere.cpp",
+      "path": "src/base/solarsys/ExponentialAtmosphere.cpp",
+      "sha256": "e0aacfbaa27c951f05680a69ac88ce3ee49687ead35d226e302233be1e1b7f13",
+      "upstream": "https://github.com/nasa/GMAT",
+      "fields": "Reference implementation for band selection and density units; game implementation is separate.",
+      "kind": "method",
+      "url": "https://raw.githubusercontent.com/nasa/GMAT/c9b78bd1c8499845cb78fde315e1f761b6b06f1c/src/base/solarsys/ExponentialAtmosphere.cpp",
+      "repositoryUrl": "https://github.com/nasa/GMAT/blob/c9b78bd1c8499845cb78fde315e1f761b6b06f1c/src/base/solarsys/ExponentialAtmosphere.cpp",
+      "retrievedAt": "2026-11-04"
+    },
+    {
+      "id": "nasa-transfer-guide",
+      "name": "NASA GMAT Simple Orbit Transfer tutorial",
+      "file": "Tut_SimpleOrbitTransfer.xml",
+      "path": "doc/help/src/Tut_SimpleOrbitTransfer.xml",
+      "sha256": "28fb7f4d787db0a61115084f91a18602fc497e519f07559fdf33f74ea24db52d",
+      "upstream": "https://github.com/nasa/GMAT",
+      "fields": "Two-burn coplanar orbit transfer and coast to apoapsis/periapsis; method reference.",
+      "kind": "method",
+      "url": "https://raw.githubusercontent.com/nasa/GMAT/c9b78bd1c8499845cb78fde315e1f761b6b06f1c/doc/help/src/Tut_SimpleOrbitTransfer.xml",
+      "repositoryUrl": "https://github.com/nasa/GMAT/blob/c9b78bd1c8499845cb78fde315e1f761b6b06f1c/doc/help/src/Tut_SimpleOrbitTransfer.xml",
+      "retrievedAt": "2026-11-04"
+    },
+    {
+      "id": "nasa-burn-guide",
+      "name": "NASA GMAT ImpulsiveBurn reference",
+      "file": "Resource_ImpulsiveBurn.xml",
+      "path": "doc/help/src/Resource_ImpulsiveBurn.xml",
+      "sha256": "f5565ebe6a695faed43ff182a9894dc47918a7f03b685506ec2410072f9accf0",
+      "upstream": "https://github.com/nasa/GMAT",
+      "fields": "Local burn directions, Isp and propellant accounting; method reference, not engine hardware data.",
+      "kind": "method",
+      "url": "https://raw.githubusercontent.com/nasa/GMAT/c9b78bd1c8499845cb78fde315e1f761b6b06f1c/doc/help/src/Resource_ImpulsiveBurn.xml",
+      "repositoryUrl": "https://github.com/nasa/GMAT/blob/c9b78bd1c8499845cb78fde315e1f761b6b06f1c/doc/help/src/Resource_ImpulsiveBurn.xml",
+      "retrievedAt": "2026-11-04"
+    }
+  ],
+  "bodies": {
+    "sun": {
+      "naifId": 10,
+      "radiiKm": [
+        695700.0,
+        695700.0,
+        695700.0
+      ],
+      "radius": 695699999.9999995,
+      "radiusSource": "naif-pck11",
+      "radiusField": "BODY10_RADII",
+      "radiusMethod": "volume-equivalent sphere: 1000 × (a × b × c)^(1/3)",
+      "mu": 1.3271244001799001e+20,
+      "muKm3s2": 132712440017.99,
+      "muSource": "nasa-gmat",
+      "muField": "STAR_MU",
+      "rotation": 2192831.561433688,
+      "rotationSource": "naif-pck11",
+      "rotationField": "BODY10_PM",
+      "rotationRateDegDay": 14.1844,
+      "primeMeridianDeg": 84.176
+    },
+    "mercury": {
+      "naifId": 199,
+      "radiiKm": [
+        2440.53,
+        2440.53,
+        2438.26
+      ],
+      "radius": 2439773.0986136273,
+      "radiusSource": "naif-pck11",
+      "radiusField": "BODY199_RADII",
+      "radiusMethod": "volume-equivalent sphere: 1000 × (a × b × c)^(1/3)",
+      "mu": 22032080486418.0,
+      "muKm3s2": 22032.080486418,
+      "muSource": "nasa-gmat",
+      "muField": "PLANET_MU[0]",
+      "rotation": 5067027.005963727,
+      "rotationSource": "naif-pck11",
+      "rotationField": "BODY199_PM",
+      "rotationRateDegDay": 6.1385108,
+      "primeMeridianDeg": 329.5988
+    },
+    "venus": {
+      "naifId": 299,
+      "radiiKm": [
+        6051.8,
+        6051.8,
+        6051.8
+      ],
+      "radius": 6051799.999999997,
+      "radiusSource": "naif-pck11",
+      "radiusField": "BODY299_RADII",
+      "radiusMethod": "volume-equivalent sphere: 1000 × (a × b × c)^(1/3)",
+      "mu": 324858598826460.0,
+      "muKm3s2": 324858.59882646,
+      "muSource": "nasa-gmat",
+      "muField": "PLANET_MU[1]",
+      "rotation": -20996797.016381066,
+      "rotationSource": "naif-pck11",
+      "rotationField": "BODY299_PM",
+      "rotationRateDegDay": -1.4813688,
+      "primeMeridianDeg": 160.2
+    },
+    "earth": {
+      "naifId": 399,
+      "radiiKm": [
+        6378.1366,
+        6378.1366,
+        6356.7519
+      ],
+      "radius": 6371000.385249618,
+      "radiusSource": "naif-pck11",
+      "radiusField": "BODY399_RADII",
+      "radiusMethod": "volume-equivalent sphere: 1000 × (a × b × c)^(1/3)",
+      "mu": 398600441500000.0,
+      "muKm3s2": 398600.4415,
+      "muSource": "nasa-gmat",
+      "muField": "PLANET_MU[2]",
+      "rotation": 86164.09622750532,
+      "rotationSource": "naif-pck11",
+      "rotationField": "BODY399_PM",
+      "rotationRateDegDay": 360.9856235,
+      "primeMeridianDeg": 190.147
+    },
+    "mars": {
+      "naifId": 499,
+      "radiiKm": [
+        3396.19,
+        3396.19,
+        3376.2
+      ],
+      "radius": 3389513.5502710794,
+      "radiusSource": "naif-pck11",
+      "radiusField": "BODY499_RADII",
+      "radiusMethod": "volume-equivalent sphere: 1000 × (a × b × c)^(1/3)",
+      "mu": 42828314258067.0,
+      "muKm3s2": 42828.314258067,
+      "muSource": "nasa-gmat",
+      "muField": "PLANET_MU[3]",
+      "rotation": 88642.66371496905,
+      "rotationSource": "naif-pck11",
+      "rotationField": "BODY499_PM",
+      "rotationRateDegDay": 350.891982443297,
+      "primeMeridianDeg": 176.049863
+    },
+    "jupiter": {
+      "naifId": 599,
+      "radiiKm": [
+        71492.0,
+        71492.0,
+        66854.0
+      ],
+      "radius": 69911308.40807077,
+      "radiusSource": "naif-pck11",
+      "radiusField": "BODY599_RADII",
+      "radiusMethod": "volume-equivalent sphere: 1000 × (a × b × c)^(1/3)",
+      "mu": 1.267127678578e+17,
+      "muKm3s2": 126712767.8578,
+      "muSource": "nasa-gmat",
+      "muField": "PLANET_MU[4]",
+      "rotation": 35729.71135024859,
+      "rotationSource": "naif-pck11",
+      "rotationField": "BODY599_PM",
+      "rotationRateDegDay": 870.536,
+      "primeMeridianDeg": 284.95
+    },
+    "saturn": {
+      "naifId": 699,
+      "radiiKm": [
+        60268.0,
+        60268.0,
+        54364.0
+      ],
+      "radius": 58231993.02231827,
+      "radiusSource": "naif-pck11",
+      "radiusField": "BODY699_RADII",
+      "radiusMethod": "volume-equivalent sphere: 1000 × (a × b × c)^(1/3)",
+      "mu": 3.7940626061137e+16,
+      "muKm3s2": 37940626.061137,
+      "muSource": "nasa-gmat",
+      "muField": "PLANET_MU[5]",
+      "rotation": 38362.39999823659,
+      "rotationSource": "naif-pck11",
+      "rotationField": "BODY699_PM",
+      "rotationRateDegDay": 810.7939024,
+      "primeMeridianDeg": 38.9
+    },
+    "uranus": {
+      "naifId": 799,
+      "radiiKm": [
+        25559.0,
+        25559.0,
+        24973.0
+      ],
+      "radius": 25362154.53144497,
+      "radiusSource": "naif-pck11",
+      "radiusField": "BODY799_RADII",
+      "radiusMethod": "volume-equivalent sphere: 1000 × (a × b × c)^(1/3)",
+      "mu": 5794549007071900.0,
+      "muKm3s2": 5794549.0070719,
+      "muSource": "nasa-gmat",
+      "muField": "PLANET_MU[6]",
+      "rotation": -62064.00000091947,
+      "rotationSource": "naif-pck11",
+      "rotationField": "BODY799_PM",
+      "rotationRateDegDay": -501.1600928,
+      "primeMeridianDeg": 203.81
+    },
+    "neptune": {
+      "naifId": 899,
+      "radiiKm": [
+        24764.0,
+        24764.0,
+        24341.0
+      ],
+      "radius": 24622189.47512359,
+      "radiusSource": "naif-pck11",
+      "radiusField": "BODY899_RADII",
+      "radiusMethod": "volume-equivalent sphere: 1000 × (a × b × c)^(1/3)",
+      "mu": 6836534063879300.0,
+      "muKm3s2": 6836534.0638793,
+      "muSource": "nasa-gmat",
+      "muField": "PLANET_MU[7]",
+      "rotation": 57478.67999495126,
+      "rotationSource": "naif-pck11",
+      "rotationField": "BODY899_PM",
+      "rotationRateDegDay": 541.1397757,
+      "primeMeridianDeg": 249.978
+    },
+    "moon": {
+      "naifId": 301,
+      "radiiKm": [
+        1737.4,
+        1737.4,
+        1737.4
+      ],
+      "radius": 1737399.9999999993,
+      "radiusSource": "naif-pck11",
+      "radiusField": "BODY301_RADII",
+      "radiusMethod": "volume-equivalent sphere: 1000 × (a × b × c)^(1/3)",
+      "mu": 4902800582147.8,
+      "muKm3s2": 4902.8005821478,
+      "muSource": "nasa-gmat",
+      "muField": "MOON_MU[0]",
+      "rotation": 2360591.572110538,
+      "rotationSource": "naif-pck11",
+      "rotationField": "BODY301_PM",
+      "rotationRateDegDay": 13.17635815,
+      "primeMeridianDeg": 38.3213
+    },
+    "europa": {
+      "naifId": 502,
+      "radiiKm": [
+        1562.6,
+        1560.3,
+        1559.5
+      ],
+      "radius": 1560799.4470247512,
+      "radiusSource": "naif-pck11",
+      "radiusField": "BODY502_RADII",
+      "radiusMethod": "volume-equivalent sphere: 1000 × (a × b × c)^(1/3)",
+      "rotation": 306822.0452408928,
+      "rotationSource": "naif-pck11",
+      "rotationField": "BODY502_PM",
+      "rotationRateDegDay": 101.3747235,
+      "primeMeridianDeg": 36.022
+    },
+    "titan": {
+      "naifId": 606,
+      "radiiKm": [
+        2575.15,
+        2574.78,
+        2574.47
+      ],
+      "radius": 2574799.984995713,
+      "radiusSource": "naif-pck11",
+      "radiusField": "BODY606_RADII",
+      "radiusMethod": "volume-equivalent sphere: 1000 × (a × b × c)^(1/3)",
+      "rotation": 1377686.6706086176,
+      "rotationSource": "naif-pck11",
+      "rotationField": "BODY606_PM",
+      "rotationRateDegDay": 22.5769768,
+      "primeMeridianDeg": 186.5855
+    }
+  },
+  "atmospheres": {
+    "earth": {
+      "source": "nasa-earth-atmosphere",
+      "methodSource": "nasa-density-method",
+      "bands": [
+        {
+          "altitude": 0.0,
+          "density": 1.225,
+          "scaleHeight": 7249.0
+        },
+        {
+          "altitude": 25000.0,
+          "density": 0.03899,
+          "scaleHeight": 6349.0
+        },
+        {
+          "altitude": 30000.0,
+          "density": 0.01774,
+          "scaleHeight": 6682.0
+        },
+        {
+          "altitude": 40000.0,
+          "density": 0.003972,
+          "scaleHeight": 7554.0
+        },
+        {
+          "altitude": 50000.0,
+          "density": 0.001057,
+          "scaleHeight": 8382.0
+        },
+        {
+          "altitude": 60000.0,
+          "density": 0.0003206,
+          "scaleHeight": 7714.0
+        },
+        {
+          "altitude": 70000.0,
+          "density": 8.77e-05,
+          "scaleHeight": 6549.0
+        },
+        {
+          "altitude": 80000.0,
+          "density": 1.905e-05,
+          "scaleHeight": 5799.0
+        },
+        {
+          "altitude": 90000.0,
+          "density": 3.396e-06,
+          "scaleHeight": 5382.0
+        },
+        {
+          "altitude": 100000.0,
+          "density": 5.297e-07,
+          "scaleHeight": 5877.0
+        },
+        {
+          "altitude": 110000.0,
+          "density": 9.661e-08,
+          "scaleHeight": 7263.0
+        },
+        {
+          "altitude": 120000.0,
+          "density": 2.438e-08,
+          "scaleHeight": 9473.0
+        },
+        {
+          "altitude": 130000.0,
+          "density": 8.484e-09,
+          "scaleHeight": 12636.0
+        },
+        {
+          "altitude": 140000.0,
+          "density": 3.845e-09,
+          "scaleHeight": 16149.0
+        },
+        {
+          "altitude": 150000.0,
+          "density": 2.07e-09,
+          "scaleHeight": 22523.0
+        },
+        {
+          "altitude": 180000.0,
+          "density": 5.464e-10,
+          "scaleHeight": 29740.0
+        },
+        {
+          "altitude": 200000.0,
+          "density": 2.789e-10,
+          "scaleHeight": 37105.0
+        },
+        {
+          "altitude": 250000.0,
+          "density": 7.248e-11,
+          "scaleHeight": 45546.0
+        },
+        {
+          "altitude": 300000.0,
+          "density": 2.418e-11,
+          "scaleHeight": 53628.0
+        },
+        {
+          "altitude": 350000.0,
+          "density": 9.518e-12,
+          "scaleHeight": 53298.0
+        },
+        {
+          "altitude": 400000.0,
+          "density": 3.725e-12,
+          "scaleHeight": 58515.0
+        },
+        {
+          "altitude": 450000.0,
+          "density": 1.585e-12,
+          "scaleHeight": 60828.0
+        },
+        {
+          "altitude": 500000.0,
+          "density": 6.967e-13,
+          "scaleHeight": 63822.0
+        },
+        {
+          "altitude": 600000.0,
+          "density": 1.454e-13,
+          "scaleHeight": 71835.0
+        },
+        {
+          "altitude": 700000.0,
+          "density": 3.614e-14,
+          "scaleHeight": 88667.0
+        },
+        {
+          "altitude": 800000.0,
+          "density": 1.17e-14,
+          "scaleHeight": 124640.0
+        },
+        {
+          "altitude": 900000.0,
+          "density": 5.245e-15,
+          "scaleHeight": 181050.0
+        },
+        {
+          "altitude": 1000000.0,
+          "density": 3.019e-15,
+          "scaleHeight": 268000.0
+        }
+      ],
+      "maximumAltitude": 1000000.0,
+      "units": {
+        "altitude": "m",
+        "density": "kg/m³",
+        "scaleHeight": "m"
+      }
+    },
+    "mars": {
+      "source": "nasa-mars-atmosphere",
+      "methodSource": "nasa-density-method",
+      "bands": [
+        {
+          "altitude": 0.0,
+          "density": 0.0120030165795468,
+          "scaleHeight": 11492.9388793859
+        },
+        {
+          "altitude": 20000.0,
+          "density": 0.00210635520881872,
+          "scaleHeight": 8975.35229788682
+        },
+        {
+          "altitude": 40000.0,
+          "density": 0.000226872810966998,
+          "scaleHeight": 7419.83260503157
+        },
+        {
+          "altitude": 60000.0,
+          "density": 1.53161979308154e-05,
+          "scaleHeight": 7278.86172016274
+        },
+        {
+          "altitude": 80000.0,
+          "density": 9.8140367539147e-07,
+          "scaleHeight": 6857.08792096717
+        },
+        {
+          "altitude": 100000.0,
+          "density": 5.31062081058162e-08,
+          "scaleHeight": 7157.03215763541
+        },
+        {
+          "altitude": 120000.0,
+          "density": 3.24735050760148e-09,
+          "scaleHeight": 9695.028396193838
+        },
+        {
+          "altitude": 140000.0,
+          "density": 4.12683818103245e-10,
+          "scaleHeight": 12300.7777115486
+        },
+        {
+          "altitude": 160000.0,
+          "density": 8.11880663471033e-11,
+          "scaleHeight": 13478.9546658179
+        },
+        {
+          "altitude": 180000.0,
+          "density": 1.84114670748279e-11,
+          "scaleHeight": 14410.4160856767
+        },
+        {
+          "altitude": 200000.0,
+          "density": 4.59555119465074e-12,
+          "scaleHeight": 16836.068329728503
+        },
+        {
+          "altitude": 220000.0,
+          "density": 1.40096726317681e-12,
+          "scaleHeight": 20498.2318983641
+        },
+        {
+          "altitude": 240000.0,
+          "density": 5.28067581470175e-13,
+          "scaleHeight": 24902.2724592363
+        },
+        {
+          "altitude": 260000.0,
+          "density": 2.36532286499747e-13,
+          "scaleHeight": 29085.365543889497
+        },
+        {
+          "altitude": 280000.0,
+          "density": 1.18920319167024e-13,
+          "scaleHeight": 32569.6429571409
+        },
+        {
+          "altitude": 300000.0,
+          "density": 6.43530886218845e-14,
+          "scaleHeight": 35550.3544179159
+        },
+        {
+          "altitude": 320000.0,
+          "density": 3.66642671808679e-14,
+          "scaleHeight": 38479.0844277824
+        },
+        {
+          "altitude": 340000.0,
+          "density": 2.18028293431138e-14,
+          "scaleHeight": 41821.310735729596
+        },
+        {
+          "altitude": 360000.0,
+          "density": 1.35151957011947e-14,
+          "scaleHeight": 46027.2193971113
+        },
+        {
+          "altitude": 380000.0,
+          "density": 8.7520606129182e-15,
+          "scaleHeight": 51547.5648674193
+        },
+        {
+          "altitude": 400000.0,
+          "density": 5.93755837761846e-15,
+          "scaleHeight": 58815.0419795119
+        },
+        {
+          "altitude": 420000.0,
+          "density": 4.22597049290644e-15,
+          "scaleHeight": 68167.7890531747
+        },
+        {
+          "altitude": 440000.0,
+          "density": 3.15142658584236e-15,
+          "scaleHeight": 79723.07566636491
+        },
+        {
+          "altitude": 460000.0,
+          "density": 2.45220308819783e-15,
+          "scaleHeight": 93251.7102574699
+        },
+        {
+          "altitude": 480000.0,
+          "density": 1.97884543686915e-15,
+          "scaleHeight": 108141.724476758
+        },
+        {
+          "altitude": 500000.0,
+          "density": 1.64472150179919e-15,
+          "scaleHeight": 123518.33212404
+        },
+        {
+          "altitude": 520000.0,
+          "density": 1.39885183914115e-15,
+          "scaleHeight": 138486.88712261
+        },
+        {
+          "altitude": 540000.0,
+          "density": 1.21074246629072e-15,
+          "scaleHeight": 152369.92974195202
+        },
+        {
+          "altitude": 560000.0,
+          "density": 1.06180924191496e-15,
+          "scaleHeight": 164821.311746763
+        },
+        {
+          "altitude": 580000.0,
+          "density": 9.40475908538691e-16,
+          "scaleHeight": 175800.360498911
+        },
+        {
+          "altitude": 600000.0,
+          "density": 8.39343990753456e-16,
+          "scaleHeight": 185469.26204834902
+        },
+        {
+          "altitude": 620000.0,
+          "density": 7.53542969669149e-16,
+          "scaleHeight": 194084.491111949
+        },
+        {
+          "altitude": 640000.0,
+          "density": 6.79758874694802e-16,
+          "scaleHeight": 201919.06477918202
+        },
+        {
+          "altitude": 660000.0,
+          "density": 6.15656114592558e-16,
+          "scaleHeight": 209220.462909214
+        },
+        {
+          "altitude": 680000.0,
+          "density": 5.59529139709706e-16,
+          "scaleHeight": 216194.60257837
+        },
+        {
+          "altitude": 700000.0,
+          "density": 5.10089581648246e-16,
+          "scaleHeight": 223004.548657182
+        },
+        {
+          "altitude": 720000.0,
+          "density": 4.66333988659462e-16,
+          "scaleHeight": 229775.78903619098
+        },
+        {
+          "altitude": 740000.0,
+          "density": 4.27460000948329e-16,
+          "scaleHeight": 236603.41089193698
+        },
+        {
+          "altitude": 760000.0,
+          "density": 3.92811983460903e-16,
+          "scaleHeight": 243558.969692366
+        },
+        {
+          "altitude": 780000.0,
+          "density": 3.61844820249403e-16,
+          "scaleHeight": 250696.234373143
+        },
+        {
+          "altitude": 800000.0,
+          "density": 3.34099089065771e-16,
+          "scaleHeight": 258055.66902529303
+        },
+        {
+          "altitude": 820000.0,
+          "density": 3.09183504350142e-16,
+          "scaleHeight": 265667.788865147
+        },
+        {
+          "altitude": 840000.0,
+          "density": 2.86762106602835e-16,
+          "scaleHeight": 273555.609218739
+        },
+        {
+          "altitude": 860000.0,
+          "density": 2.66544630303323e-16,
+          "scaleHeight": 281736.402304323
+        },
+        {
+          "altitude": 880000.0,
+          "density": 2.48279060170247e-16,
+          "scaleHeight": 290222.942806346
+        },
+        {
+          "altitude": 900000.0,
+          "density": 2.31745738681429e-16,
+          "scaleHeight": 299024.384138279
+        },
+        {
+          "altitude": 920000.0,
+          "density": 2.16752606109559e-16,
+          "scaleHeight": 308146.872369282
+        },
+        {
+          "altitude": 940000.0,
+          "density": 2.03131291124739e-16,
+          "scaleHeight": 317593.976663145
+        },
+        {
+          "altitude": 960000.0,
+          "density": 1.90733857059828e-16,
+          "scaleHeight": 327366.993576954
+        },
+        {
+          "altitude": 980000.0,
+          "density": 1.7943006532917e-16,
+          "scaleHeight": 337465.166586868
+        },
+        {
+          "altitude": 1000000.0,
+          "density": 1.69105054790317e-16,
+          "scaleHeight": 347885.850504111
+        },
+        {
+          "altitude": 1020000.0,
+          "density": 1.59657361084446e-16,
+          "scaleHeight": 358624.64192351303
+        },
+        {
+          "altitude": 1040000.0,
+          "density": 1.50997217512976e-16,
+          "scaleHeight": 369675.490641705
+        },
+        {
+          "altitude": 1060000.0,
+          "density": 1.43045091492134e-16,
+          "scaleHeight": 381030.802442081
+        },
+        {
+          "altitude": 1080000.0,
+          "density": 1.35730419759594e-16,
+          "scaleHeight": 392681.54029716604
+        },
+        {
+          "altitude": 1100000.0,
+          "density": 1.28990512359671e-16,
+          "scaleHeight": 404617.32854648103
+        },
+        {
+          "altitude": 1120000.0,
+          "density": 1.22769600697164e-16,
+          "scaleHeight": 416826.56273802795
+        },
+        {
+          "altitude": 1140000.0,
+          "density": 1.17018009078733e-16,
+          "scaleHeight": 429296.52640629304
+        },
+        {
+          "altitude": 1160000.0,
+          "density": 1.11691432458301e-16,
+          "scaleHeight": 442013.514990281
+        },
+        {
+          "altitude": 1180000.0,
+          "density": 1.06750305776871e-16,
+          "scaleHeight": 454962.966295958
+        },
+        {
+          "altitude": 1200000.0,
+          "density": 1.02159252482675e-16,
+          "scaleHeight": 468129.596314421
+        },
+        {
+          "altitude": 1220000.0,
+          "density": 9.78866016385481e-17,
+          "scaleHeight": 481497.538802166
+        },
+        {
+          "altitude": 1240000.0,
+          "density": 9.39039645461326e-17,
+          "scaleHeight": 495050.486760875
+        },
+        {
+          "altitude": 1260000.0,
+          "density": 9.01858630982792e-17,
+          "scaleHeight": 508771.833820293
+        },
+        {
+          "altitude": 1280000.0,
+          "density": 8.67094031554899e-17,
+          "scaleHeight": 522644.813492262
+        },
+        {
+          "altitude": 1300000.0,
+          "density": 8.34539871639001e-17,
+          "scaleHeight": 536652.6343302741
+        },
+        {
+          "altitude": 1320000.0,
+          "density": 8.04010610181917e-17,
+          "scaleHeight": 550778.6091509459
+        },
+        {
+          "altitude": 1340000.0,
+          "density": 7.75338908449761e-17,
+          "scaleHeight": 565006.276675754
+        },
+        {
+          "altitude": 1360000.0,
+          "density": 7.4837365958432e-17,
+          "scaleHeight": 579319.514175414
+        },
+        {
+          "altitude": 1380000.0,
+          "density": 7.22978247350563e-17,
+          "scaleHeight": 593702.639970905
+        },
+        {
+          "altitude": 1400000.0,
+          "density": 6.99029005804991e-17,
+          "scaleHeight": 608140.5049153081
+        },
+        {
+          "altitude": 1420000.0,
+          "density": 6.7641385528818e-17,
+          "scaleHeight": 622618.572267024
+        },
+        {
+          "altitude": 1440000.0,
+          "density": 6.55031093316651e-17,
+          "scaleHeight": 637122.9856432
+        },
+        {
+          "altitude": 1460000.0,
+          "density": 6.34788321691406e-17,
+          "scaleHeight": 651640.624987946
+        },
+        {
+          "altitude": 1480000.0,
+          "density": 6.15601493514388e-17,
+          "scaleHeight": 666159.150744144
+        },
+        {
+          "altitude": 1500000.0,
+          "density": 5.97394065861484e-17,
+          "scaleHeight": 680667.036608043
+        },
+        {
+          "altitude": 1520000.0,
+          "density": 5.80096245646001e-17,
+          "scaleHeight": 695153.591435377
+        },
+        {
+          "altitude": 1540000.0,
+          "density": 5.63644317757156e-17,
+          "scaleHeight": 709608.971000894
+        },
+        {
+          "altitude": 1560000.0,
+          "density": 5.47980045906661e-17,
+          "scaleHeight": 724024.180433417
+        },
+        {
+          "altitude": 1580000.0,
+          "density": 5.33050137790156e-17,
+          "scaleHeight": 738391.06821544
+        },
+        {
+          "altitude": 1600000.0,
+          "density": 5.18805767193031e-17,
+          "scaleHeight": 752702.3126957479
+        },
+        {
+          "altitude": 1620000.0,
+          "density": 5.05202146562149e-17,
+          "scaleHeight": 766951.4020720939
+        },
+        {
+          "altitude": 1640000.0,
+          "density": 4.92198144343725e-17,
+          "scaleHeight": 781132.608808501
+        },
+        {
+          "altitude": 1660000.0,
+          "density": 4.79755942068151e-17,
+          "scaleHeight": 795240.9594220241
+        },
+        {
+          "altitude": 1680000.0,
+          "density": 4.67840726757751e-17,
+          "scaleHeight": 809272.200530154
+        },
+        {
+          "altitude": 1700000.0,
+          "density": 4.56420414754559e-17,
+          "scaleHeight": 823222.7620106549
+        },
+        {
+          "altitude": 1720000.0,
+          "density": 4.45465403521866e-17,
+          "scaleHeight": 837089.718037033
+        },
+        {
+          "altitude": 1740000.0,
+          "density": 4.34948348373749e-17,
+          "scaleHeight": 850870.746718189
+        },
+        {
+          "altitude": 1760000.0,
+          "density": 4.24843961438404e-17,
+          "scaleHeight": 864564.0889574101
+        },
+        {
+          "altitude": 1780000.0,
+          "density": 4.15128830469977e-17,
+          "scaleHeight": 878168.507109431
+        },
+        {
+          "altitude": 1800000.0,
+          "density": 4.05781255395264e-17,
+          "scaleHeight": 891683.2439086831
+        },
+        {
+          "altitude": 1820000.0,
+          "density": 3.96781100720744e-17,
+          "scaleHeight": 905107.9820919769
+        },
+        {
+          "altitude": 1840000.0,
+          "density": 3.88109662136005e-17,
+          "scaleHeight": 918442.805058164
+        },
+        {
+          "altitude": 1860000.0,
+          "density": 3.79749545835352e-17,
+          "scaleHeight": 931688.158849147
+        },
+        {
+          "altitude": 1880000.0,
+          "density": 3.71684559243234e-17,
+          "scaleHeight": 944844.815676569
+        },
+        {
+          "altitude": 1900000.0,
+          "density": 3.63899611973838e-17,
+          "scaleHeight": 957913.8391633771
+        },
+        {
+          "altitude": 1920000.0,
+          "density": 3.56380625983112e-17,
+          "scaleHeight": 970896.551426712
+        },
+        {
+          "altitude": 1940000.0,
+          "density": 3.49114453984643e-17,
+          "scaleHeight": 983794.502080777
+        },
+        {
+          "altitude": 1960000.0,
+          "density": 3.42088805300964e-17,
+          "scaleHeight": 996609.439208125
+        },
+        {
+          "altitude": 1980000.0,
+          "density": 3.35292178410661e-17,
+          "scaleHeight": 1009343.2823114
+        },
+        {
+          "altitude": 2000000.0,
+          "density": 3.28713799530331e-17,
+          "scaleHeight": 1021998.09722946
+        },
+        {
+          "altitude": 2020000.0,
+          "density": 3.22343566640329e-17,
+          "scaleHeight": 1034576.0729988001
+        },
+        {
+          "altitude": 2040000.0,
+          "density": 3.1617199842526e-17,
+          "scaleHeight": 1047079.50058291
+        },
+        {
+          "altitude": 2060000.0,
+          "density": 3.10190187655343e-17,
+          "scaleHeight": 1059510.75343489
+        },
+        {
+          "altitude": 2080000.0,
+          "density": 3.04389758583818e-17,
+          "scaleHeight": 1071872.2697921
+        },
+        {
+          "altitude": 2100000.0,
+          "density": 2.98762827979279e-17,
+          "scaleHeight": 1084166.5366273
+        },
+        {
+          "altitude": 2120000.0,
+          "density": 2.93301969450678e-17,
+          "scaleHeight": 1096396.07517845
+        },
+        {
+          "altitude": 2140000.0,
+          "density": 2.88000180757511e-17,
+          "scaleHeight": 1108563.42793816
+        },
+        {
+          "altitude": 2160000.0,
+          "density": 2.82850853828618e-17,
+          "scaleHeight": 1120671.14704174
+        },
+        {
+          "altitude": 2180000.0,
+          "density": 2.7784774724068e-17,
+          "scaleHeight": 1132721.78392569
+        },
+        {
+          "altitude": 2200000.0,
+          "density": 2.72984960932255e-17,
+          "scaleHeight": 1144717.88019491
+        },
+        {
+          "altitude": 2220000.0,
+          "density": 2.68256912951233e-17,
+          "scaleHeight": 1156661.95958362
+        },
+        {
+          "altitude": 2240000.0,
+          "density": 2.63658318053434e-17,
+          "scaleHeight": 1168556.52093662
+        },
+        {
+          "altitude": 2260000.0,
+          "density": 2.59184167987742e-17,
+          "scaleHeight": 1180404.0321223699
+        },
+        {
+          "altitude": 2280000.0,
+          "density": 2.54829713319093e-17,
+          "scaleHeight": 1192206.92479285
+        },
+        {
+          "altitude": 2300000.0,
+          "density": 2.50590446654857e-17,
+          "scaleHeight": 1203967.58992524
+        },
+        {
+          "altitude": 2320000.0,
+          "density": 2.46462087152948e-17,
+          "scaleHeight": 1215688.37406121
+        },
+        {
+          "altitude": 2340000.0,
+          "density": 2.42440566201497e-17,
+          "scaleHeight": 1227371.57618392
+        },
+        {
+          "altitude": 2360000.0,
+          "density": 2.38522014170249e-17,
+          "scaleHeight": 1239019.4451709301
+        },
+        {
+          "altitude": 2380000.0,
+          "density": 2.34702748143125e-17,
+          "scaleHeight": 1250634.17775634
+        },
+        {
+          "altitude": 2400000.0,
+          "density": 2.30979260549771e-17,
+          "scaleHeight": 1262217.9169595
+        },
+        {
+          "altitude": 2420000.0,
+          "density": 2.27348208621457e-17,
+          "scaleHeight": 1273772.75092296
+        },
+        {
+          "altitude": 2440000.0,
+          "density": 2.23806404603461e-17,
+          "scaleHeight": 1285300.71210931
+        },
+        {
+          "altitude": 2460000.0,
+          "density": 2.20350806662239e-17,
+          "scaleHeight": 1296803.77683126
+        },
+        {
+          "altitude": 2480000.0,
+          "density": 2.16978510431186e-17,
+          "scaleHeight": 1308283.86505895
+        },
+        {
+          "altitude": 2500000.0,
+          "density": 2.13686741143808e-17,
+          "scaleHeight": 1319742.84047738
+        },
+        {
+          "altitude": 2520000.0,
+          "density": 2.10472846307663e-17,
+          "scaleHeight": 1331182.51076422
+        },
+        {
+          "altitude": 2540000.0,
+          "density": 2.07334288876476e-17,
+          "scaleHeight": 1342604.62805145
+        },
+        {
+          "altitude": 2560000.0,
+          "density": 2.04268640881595e-17,
+          "scaleHeight": 1354010.8895553502
+        },
+        {
+          "altitude": 2580000.0,
+          "density": 2.01273577487259e-17,
+          "scaleHeight": 1365402.93833729
+        },
+        {
+          "altitude": 2600000.0,
+          "density": 1.98346871437231e-17,
+          "scaleHeight": 1376782.36419232
+        },
+        {
+          "altitude": 2620000.0,
+          "density": 1.95486387863073e-17,
+          "scaleHeight": 1388150.70462741
+        },
+        {
+          "altitude": 2640000.0,
+          "density": 1.92690079426892e-17,
+          "scaleHeight": 1399509.44592348
+        },
+        {
+          "altitude": 2660000.0,
+          "density": 1.89955981773609e-17,
+          "scaleHeight": 1410860.02426771
+        },
+        {
+          "altitude": 2680000.0,
+          "density": 1.87282209269931e-17,
+          "scaleHeight": 1422203.82693412
+        },
+        {
+          "altitude": 2700000.0,
+          "density": 1.84666951009023e-17,
+          "scaleHeight": 1433542.19350539
+        },
+        {
+          "altitude": 2720000.0,
+          "density": 1.82108467061666e-17,
+          "scaleHeight": 1444876.41713124
+        },
+        {
+          "altitude": 2740000.0,
+          "density": 1.79605084956185e-17,
+          "scaleHeight": 1456207.7457959298
+        },
+        {
+          "altitude": 2760000.0,
+          "density": 1.77155196370882e-17,
+          "scaleHeight": 1467537.3836113298
+        },
+        {
+          "altitude": 2780000.0,
+          "density": 1.74757254024021e-17,
+          "scaleHeight": 1478866.4921027601
+        },
+        {
+          "altitude": 2800000.0,
+          "density": 1.7240976874756e-17,
+          "scaleHeight": 1490196.19150944
+        },
+        {
+          "altitude": 2820000.0,
+          "density": 1.70111306731953e-17,
+          "scaleHeight": 1501527.56206288
+        },
+        {
+          "altitude": 2840000.0,
+          "density": 1.67860486930287e-17,
+          "scaleHeight": 1512861.6452649
+        },
+        {
+          "altitude": 2860000.0,
+          "density": 1.6565597861097e-17,
+          "scaleHeight": 1524199.4451487001
+        },
+        {
+          "altitude": 2880000.0,
+          "density": 1.63496499048974e-17,
+          "scaleHeight": 1535541.9295188598
+        },
+        {
+          "altitude": 2900000.0,
+          "density": 1.61380811346428e-17,
+          "scaleHeight": 1546890.0311745598
+        },
+        {
+          "altitude": 2920000.0,
+          "density": 1.59307722374031e-17,
+          "scaleHeight": 1558244.6491073
+        },
+        {
+          "altitude": 2940000.0,
+          "density": 1.57276080825395e-17,
+          "scaleHeight": 1569606.64967463
+        },
+        {
+          "altitude": 2960000.0,
+          "density": 1.55284775377024e-17,
+          "scaleHeight": 1580976.86773856
+        },
+        {
+          "altitude": 2980000.0,
+          "density": 1.53332732947155e-17,
+          "scaleHeight": 1592356.1077996
+        }
+      ],
+      "maximumAltitude": 2980000.0,
+      "units": {
+        "altitude": "m",
+        "density": "kg/m³",
+        "scaleHeight": "m"
+      }
+    }
+  },
+  "limits": [
+    "Spherical bodies replace the source triaxial shapes.",
+    "GMAT values are archived software defaults, not the latest gravitational solutions.",
+    "Europa and Titan gravitational parameters retain labelled model values; only their radii are imported.",
+    "Rotation uses only the linear prime-meridian rate; axis tilt, periodic terms and full SPICE orientation are not evaluated.",
+    "Earth/Mars densities are archived exponential models, not live weather. Other atmospheres and fixed orbital elements remain separate model inputs.",
+    "No live SPICE ephemeris, orientation kernel evaluation or mission navigation service is provided."
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "name": "empty",
+  "command": "npm run test:empty:ui",
+  "status": "PASS",
+  "durationMs": 16668,
+  "completedAt": "2026-11-06T02:34:27.168Z",
+  "log": "empty.log"
+}

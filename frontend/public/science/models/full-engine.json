@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "engine": "Complete campaign and fleet source in QuickJS WebAssembly",
+  "runtime": "QuickJS 2025-09-13 via quickjs-emscripten 0.32.0",
+  "sha256": "4eb0a9ea89841cda803ef73711638313517886dc7ebf0c14af3fd752e26f238e",
+  "bytes": 1155615,
+  "notice": "All bundled flight, force, resource, staging, crew, thermal, contact and fleet logic executes inside the Wasm VM. NRLMSISE uses the separately bundled atmosphere Wasm through a typed synchronous bridge. This is an interpreter backend, not a native C/Rust rewrite or a performance claim."
+}

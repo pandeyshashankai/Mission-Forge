@@ -1,0 +1,8 @@
+{
+  "name": "roadmap",
+  "command": "npm run test:roadmap:ui",
+  "status": "PASS",
+  "durationMs": 18826,
+  "completedAt": "2026-11-06T02:19:43.353Z",
+  "log": "roadmap.log"
+}

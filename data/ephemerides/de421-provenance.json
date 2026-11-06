@@ -1,0 +1,10 @@
+{
+  "source": "JPL DE421 via skyfield-data 7.0.0",
+  "kernelSha256": "a20a7139da04cbc462454634918e9a9ca69127044e2cc9d4f9c16e238d2deedc",
+  "start": 0,
+  "end": 2678400,
+  "step": 3600,
+  "frame": "heliocentric ECLIPJ2000",
+  "time": "TDB seconds from JD2451545.0",
+  "outerPlanets": "system barycentres, not planet centres"
+}

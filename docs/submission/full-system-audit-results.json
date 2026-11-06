@@ -1,0 +1,37 @@
+{
+  "checkedOn": "2026-11-05",
+  "timezone": "Asia/Calcutta",
+  "regressionTests": 282,
+  "generatedMatrixCases": 66916,
+  "expectedCampaignOutcomes": 12,
+  "nativeCatalogueAssemblies": 74,
+  "invalidGroupedImportsRejected": 2,
+  "checksPassed": [
+    "unit regressions",
+    "generated catalogue/options/thermal/fleet matrices",
+    "campaign envelopes",
+    "general UI/themes/presets",
+    "keyboard and multitouch controls",
+    "full guided showcase",
+    "finite transfer workflow",
+    "visual cameras and exports",
+    "roadmap/replay/source instruments",
+    "advanced physics and planners",
+    "vehicle/material tools",
+    "calibration/fleet reload and collision switches",
+    "TPSX presets",
+    "thermal comparison and CSV/JSON exports",
+    "empty-vehicle browser failure",
+    "submission files and slide controls",
+    "offline reload/models/thermal bench"
+  ],
+  "fixedIssues": [
+    "duplicate IDs in imported craft",
+    "missing calibration observations in companions",
+    "inconsistent collision/rigid-body switches",
+    "zero-mass acceleration NaN after full jettison"
+  ],
+  "limitations": "Exhaustive only within listed bounded matrices. Short-coast option checks do not establish long-term accuracy. Browser emulation, not physical-device certification. Arbitrary-length rockets and continuous pilot inputs are unbounded.",
+  "details": "../full-system-test-audit.md",
+  "passed": true
+}

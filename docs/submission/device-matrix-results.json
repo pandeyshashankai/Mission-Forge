@@ -1,0 +1,2075 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-11-06T02:24:01.052Z",
+  "profiles": [
+    {
+      "name": "small-phone",
+      "width": 320,
+      "height": 568,
+      "touch": true,
+      "dpr": 2
+    },
+    {
+      "name": "phone",
+      "width": 360,
+      "height": 640,
+      "touch": true,
+      "dpr": 3
+    },
+    {
+      "name": "tall-phone",
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "dpr": 3
+    },
+    {
+      "name": "large-phone",
+      "width": 430,
+      "height": 932,
+      "touch": true,
+      "dpr": 3
+    },
+    {
+      "name": "short-landscape",
+      "width": 568,
+      "height": 320,
+      "touch": true,
+      "dpr": 2
+    },
+    {
+      "name": "phone-landscape",
+      "width": 844,
+      "height": 390,
+      "touch": true,
+      "dpr": 3
+    },
+    {
+      "name": "portrait-tablet",
+      "width": 768,
+      "height": 1024,
+      "touch": true,
+      "dpr": 2
+    },
+    {
+      "name": "landscape-tablet",
+      "width": 1024,
+      "height": 768,
+      "touch": true,
+      "dpr": 2
+    },
+    {
+      "name": "laptop",
+      "width": 1366,
+      "height": 768,
+      "touch": false,
+      "dpr": 1.25
+    },
+    {
+      "name": "wide-desktop",
+      "width": 1920,
+      "height": 1080,
+      "touch": false,
+      "dpr": 1
+    }
+  ],
+  "cases": [
+    {
+      "profile": "small-phone",
+      "craft": "pathfinder",
+      "body": "mercury",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "pathfinder",
+      "body": "venus",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "pathfinder",
+      "body": "earth",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "pathfinder",
+      "body": "mars",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "pathfinder",
+      "body": "jupiter",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "pathfinder",
+      "body": "saturn",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "pathfinder",
+      "body": "uranus",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "pathfinder",
+      "body": "neptune",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "pathfinder",
+      "body": "moon",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "pathfinder",
+      "body": "europa",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "pathfinder",
+      "body": "titan",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "voyager",
+      "body": "mercury",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "voyager",
+      "body": "venus",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "voyager",
+      "body": "earth",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "voyager",
+      "body": "mars",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "voyager",
+      "body": "jupiter",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "voyager",
+      "body": "saturn",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "voyager",
+      "body": "uranus",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "voyager",
+      "body": "neptune",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "voyager",
+      "body": "moon",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "voyager",
+      "body": "europa",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "voyager",
+      "body": "titan",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "lander",
+      "body": "mercury",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "lander",
+      "body": "venus",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "lander",
+      "body": "earth",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "lander",
+      "body": "mars",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "lander",
+      "body": "jupiter",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "lander",
+      "body": "saturn",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "lander",
+      "body": "uranus",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "lander",
+      "body": "neptune",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "lander",
+      "body": "moon",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "lander",
+      "body": "europa",
+      "status": "PASS"
+    },
+    {
+      "profile": "small-phone",
+      "craft": "lander",
+      "body": "titan",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "pathfinder",
+      "body": "mercury",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "pathfinder",
+      "body": "venus",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "pathfinder",
+      "body": "earth",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "pathfinder",
+      "body": "mars",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "pathfinder",
+      "body": "jupiter",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "pathfinder",
+      "body": "saturn",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "pathfinder",
+      "body": "uranus",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "pathfinder",
+      "body": "neptune",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "pathfinder",
+      "body": "moon",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "pathfinder",
+      "body": "europa",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "pathfinder",
+      "body": "titan",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "voyager",
+      "body": "mercury",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "voyager",
+      "body": "venus",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "voyager",
+      "body": "earth",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "voyager",
+      "body": "mars",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "voyager",
+      "body": "jupiter",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "voyager",
+      "body": "saturn",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "voyager",
+      "body": "uranus",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "voyager",
+      "body": "neptune",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "voyager",
+      "body": "moon",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "voyager",
+      "body": "europa",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "voyager",
+      "body": "titan",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "lander",
+      "body": "mercury",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "lander",
+      "body": "venus",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "lander",
+      "body": "earth",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "lander",
+      "body": "mars",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "lander",
+      "body": "jupiter",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "lander",
+      "body": "saturn",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "lander",
+      "body": "uranus",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "lander",
+      "body": "neptune",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "lander",
+      "body": "moon",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "lander",
+      "body": "europa",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone",
+      "craft": "lander",
+      "body": "titan",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "pathfinder",
+      "body": "mercury",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "pathfinder",
+      "body": "venus",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "pathfinder",
+      "body": "earth",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "pathfinder",
+      "body": "mars",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "pathfinder",
+      "body": "jupiter",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "pathfinder",
+      "body": "saturn",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "pathfinder",
+      "body": "uranus",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "pathfinder",
+      "body": "neptune",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "pathfinder",
+      "body": "moon",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "pathfinder",
+      "body": "europa",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "pathfinder",
+      "body": "titan",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "voyager",
+      "body": "mercury",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "voyager",
+      "body": "venus",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "voyager",
+      "body": "earth",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "voyager",
+      "body": "mars",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "voyager",
+      "body": "jupiter",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "voyager",
+      "body": "saturn",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "voyager",
+      "body": "uranus",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "voyager",
+      "body": "neptune",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "voyager",
+      "body": "moon",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "voyager",
+      "body": "europa",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "voyager",
+      "body": "titan",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "lander",
+      "body": "mercury",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "lander",
+      "body": "venus",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "lander",
+      "body": "earth",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "lander",
+      "body": "mars",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "lander",
+      "body": "jupiter",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "lander",
+      "body": "saturn",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "lander",
+      "body": "uranus",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "lander",
+      "body": "neptune",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "lander",
+      "body": "moon",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "lander",
+      "body": "europa",
+      "status": "PASS"
+    },
+    {
+      "profile": "tall-phone",
+      "craft": "lander",
+      "body": "titan",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "pathfinder",
+      "body": "mercury",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "pathfinder",
+      "body": "venus",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "pathfinder",
+      "body": "earth",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "pathfinder",
+      "body": "mars",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "pathfinder",
+      "body": "jupiter",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "pathfinder",
+      "body": "saturn",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "pathfinder",
+      "body": "uranus",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "pathfinder",
+      "body": "neptune",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "pathfinder",
+      "body": "moon",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "pathfinder",
+      "body": "europa",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "pathfinder",
+      "body": "titan",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "voyager",
+      "body": "mercury",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "voyager",
+      "body": "venus",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "voyager",
+      "body": "earth",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "voyager",
+      "body": "mars",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "voyager",
+      "body": "jupiter",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "voyager",
+      "body": "saturn",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "voyager",
+      "body": "uranus",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "voyager",
+      "body": "neptune",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "voyager",
+      "body": "moon",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "voyager",
+      "body": "europa",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "voyager",
+      "body": "titan",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "lander",
+      "body": "mercury",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "lander",
+      "body": "venus",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "lander",
+      "body": "earth",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "lander",
+      "body": "mars",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "lander",
+      "body": "jupiter",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "lander",
+      "body": "saturn",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "lander",
+      "body": "uranus",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "lander",
+      "body": "neptune",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "lander",
+      "body": "moon",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "lander",
+      "body": "europa",
+      "status": "PASS"
+    },
+    {
+      "profile": "large-phone",
+      "craft": "lander",
+      "body": "titan",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "pathfinder",
+      "body": "mercury",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "pathfinder",
+      "body": "venus",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "pathfinder",
+      "body": "earth",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "pathfinder",
+      "body": "mars",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "pathfinder",
+      "body": "jupiter",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "pathfinder",
+      "body": "saturn",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "pathfinder",
+      "body": "uranus",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "pathfinder",
+      "body": "neptune",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "pathfinder",
+      "body": "moon",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "pathfinder",
+      "body": "europa",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "pathfinder",
+      "body": "titan",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "voyager",
+      "body": "mercury",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "voyager",
+      "body": "venus",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "voyager",
+      "body": "earth",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "voyager",
+      "body": "mars",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "voyager",
+      "body": "jupiter",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "voyager",
+      "body": "saturn",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "voyager",
+      "body": "uranus",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "voyager",
+      "body": "neptune",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "voyager",
+      "body": "moon",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "voyager",
+      "body": "europa",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "voyager",
+      "body": "titan",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "lander",
+      "body": "mercury",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "lander",
+      "body": "venus",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "lander",
+      "body": "earth",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "lander",
+      "body": "mars",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "lander",
+      "body": "jupiter",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "lander",
+      "body": "saturn",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "lander",
+      "body": "uranus",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "lander",
+      "body": "neptune",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "lander",
+      "body": "moon",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "lander",
+      "body": "europa",
+      "status": "PASS"
+    },
+    {
+      "profile": "short-landscape",
+      "craft": "lander",
+      "body": "titan",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "pathfinder",
+      "body": "mercury",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "pathfinder",
+      "body": "venus",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "pathfinder",
+      "body": "earth",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "pathfinder",
+      "body": "mars",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "pathfinder",
+      "body": "jupiter",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "pathfinder",
+      "body": "saturn",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "pathfinder",
+      "body": "uranus",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "pathfinder",
+      "body": "neptune",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "pathfinder",
+      "body": "moon",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "pathfinder",
+      "body": "europa",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "pathfinder",
+      "body": "titan",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "voyager",
+      "body": "mercury",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "voyager",
+      "body": "venus",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "voyager",
+      "body": "earth",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "voyager",
+      "body": "mars",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "voyager",
+      "body": "jupiter",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "voyager",
+      "body": "saturn",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "voyager",
+      "body": "uranus",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "voyager",
+      "body": "neptune",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "voyager",
+      "body": "moon",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "voyager",
+      "body": "europa",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "voyager",
+      "body": "titan",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "lander",
+      "body": "mercury",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "lander",
+      "body": "venus",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "lander",
+      "body": "earth",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "lander",
+      "body": "mars",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "lander",
+      "body": "jupiter",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "lander",
+      "body": "saturn",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "lander",
+      "body": "uranus",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "lander",
+      "body": "neptune",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "lander",
+      "body": "moon",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "lander",
+      "body": "europa",
+      "status": "PASS"
+    },
+    {
+      "profile": "phone-landscape",
+      "craft": "lander",
+      "body": "titan",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "pathfinder",
+      "body": "mercury",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "pathfinder",
+      "body": "venus",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "pathfinder",
+      "body": "earth",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "pathfinder",
+      "body": "mars",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "pathfinder",
+      "body": "jupiter",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "pathfinder",
+      "body": "saturn",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "pathfinder",
+      "body": "uranus",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "pathfinder",
+      "body": "neptune",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "pathfinder",
+      "body": "moon",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "pathfinder",
+      "body": "europa",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "pathfinder",
+      "body": "titan",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "voyager",
+      "body": "mercury",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "voyager",
+      "body": "venus",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "voyager",
+      "body": "earth",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "voyager",
+      "body": "mars",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "voyager",
+      "body": "jupiter",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "voyager",
+      "body": "saturn",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "voyager",
+      "body": "uranus",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "voyager",
+      "body": "neptune",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "voyager",
+      "body": "moon",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "voyager",
+      "body": "europa",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "voyager",
+      "body": "titan",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "lander",
+      "body": "mercury",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "lander",
+      "body": "venus",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "lander",
+      "body": "earth",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "lander",
+      "body": "mars",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "lander",
+      "body": "jupiter",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "lander",
+      "body": "saturn",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "lander",
+      "body": "uranus",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "lander",
+      "body": "neptune",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "lander",
+      "body": "moon",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "lander",
+      "body": "europa",
+      "status": "PASS"
+    },
+    {
+      "profile": "portrait-tablet",
+      "craft": "lander",
+      "body": "titan",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "pathfinder",
+      "body": "mercury",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "pathfinder",
+      "body": "venus",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "pathfinder",
+      "body": "earth",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "pathfinder",
+      "body": "mars",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "pathfinder",
+      "body": "jupiter",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "pathfinder",
+      "body": "saturn",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "pathfinder",
+      "body": "uranus",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "pathfinder",
+      "body": "neptune",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "pathfinder",
+      "body": "moon",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "pathfinder",
+      "body": "europa",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "pathfinder",
+      "body": "titan",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "voyager",
+      "body": "mercury",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "voyager",
+      "body": "venus",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "voyager",
+      "body": "earth",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "voyager",
+      "body": "mars",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "voyager",
+      "body": "jupiter",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "voyager",
+      "body": "saturn",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "voyager",
+      "body": "uranus",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "voyager",
+      "body": "neptune",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "voyager",
+      "body": "moon",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "voyager",
+      "body": "europa",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "voyager",
+      "body": "titan",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "lander",
+      "body": "mercury",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "lander",
+      "body": "venus",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "lander",
+      "body": "earth",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "lander",
+      "body": "mars",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "lander",
+      "body": "jupiter",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "lander",
+      "body": "saturn",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "lander",
+      "body": "uranus",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "lander",
+      "body": "neptune",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "lander",
+      "body": "moon",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "lander",
+      "body": "europa",
+      "status": "PASS"
+    },
+    {
+      "profile": "landscape-tablet",
+      "craft": "lander",
+      "body": "titan",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "pathfinder",
+      "body": "mercury",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "pathfinder",
+      "body": "venus",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "pathfinder",
+      "body": "earth",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "pathfinder",
+      "body": "mars",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "pathfinder",
+      "body": "jupiter",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "pathfinder",
+      "body": "saturn",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "pathfinder",
+      "body": "uranus",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "pathfinder",
+      "body": "neptune",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "pathfinder",
+      "body": "moon",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "pathfinder",
+      "body": "europa",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "pathfinder",
+      "body": "titan",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "voyager",
+      "body": "mercury",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "voyager",
+      "body": "venus",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "voyager",
+      "body": "earth",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "voyager",
+      "body": "mars",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "voyager",
+      "body": "jupiter",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "voyager",
+      "body": "saturn",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "voyager",
+      "body": "uranus",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "voyager",
+      "body": "neptune",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "voyager",
+      "body": "moon",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "voyager",
+      "body": "europa",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "voyager",
+      "body": "titan",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "lander",
+      "body": "mercury",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "lander",
+      "body": "venus",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "lander",
+      "body": "earth",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "lander",
+      "body": "mars",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "lander",
+      "body": "jupiter",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "lander",
+      "body": "saturn",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "lander",
+      "body": "uranus",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "lander",
+      "body": "neptune",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "lander",
+      "body": "moon",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "lander",
+      "body": "europa",
+      "status": "PASS"
+    },
+    {
+      "profile": "laptop",
+      "craft": "lander",
+      "body": "titan",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "pathfinder",
+      "body": "mercury",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "pathfinder",
+      "body": "venus",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "pathfinder",
+      "body": "earth",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "pathfinder",
+      "body": "mars",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "pathfinder",
+      "body": "jupiter",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "pathfinder",
+      "body": "saturn",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "pathfinder",
+      "body": "uranus",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "pathfinder",
+      "body": "neptune",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "pathfinder",
+      "body": "moon",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "pathfinder",
+      "body": "europa",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "pathfinder",
+      "body": "titan",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "voyager",
+      "body": "mercury",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "voyager",
+      "body": "venus",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "voyager",
+      "body": "earth",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "voyager",
+      "body": "mars",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "voyager",
+      "body": "jupiter",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "voyager",
+      "body": "saturn",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "voyager",
+      "body": "uranus",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "voyager",
+      "body": "neptune",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "voyager",
+      "body": "moon",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "voyager",
+      "body": "europa",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "voyager",
+      "body": "titan",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "lander",
+      "body": "mercury",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "lander",
+      "body": "venus",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "lander",
+      "body": "earth",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "lander",
+      "body": "mars",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "lander",
+      "body": "jupiter",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "lander",
+      "body": "saturn",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "lander",
+      "body": "uranus",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "lander",
+      "body": "neptune",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "lander",
+      "body": "moon",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "lander",
+      "body": "europa",
+      "status": "PASS"
+    },
+    {
+      "profile": "wide-desktop",
+      "craft": "lander",
+      "body": "titan",
+      "status": "PASS"
+    }
+  ],
+  "limitations": "Chromium emulation with software WebGL, not physical device or browser-engine certification.",
+  "status": "PASS",
+  "finishedAt": "2026-11-06T02:31:15.786Z",
+  "total": 330,
+  "sample": false,
+  "executedProfiles": [
+    "small-phone",
+    "phone",
+    "tall-phone",
+    "large-phone",
+    "short-landscape",
+    "phone-landscape",
+    "portrait-tablet",
+    "landscape-tablet",
+    "laptop",
+    "wide-desktop"
+  ]
+}

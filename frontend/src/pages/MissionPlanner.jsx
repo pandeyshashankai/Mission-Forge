@@ -1,95 +1,321 @@
-import { useState } from "react";
-import { ArrowLeft, Rocket, MapPin, Target, Users, Wallet, Clock } from "lucide-react";
+import { useMemo, useState } from "react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Rocket,
+  Target,
+  Users,
+  Wallet,
+  Clock,
+  CheckCircle2,
+  ChevronDown,
+  Orbit,
+  Moon,
+  Satellite,
+} from "lucide-react";
 import { useGame } from "../game/GameContext";
-import { MISSIONS, getMission, missionBudget, requiredDeltaV, DIFFICULTIES } from "../sim/missions";
+import {
+  MISSIONS,
+  getMission,
+  missionBudget,
+  requiredDeltaV,
+  DIFFICULTIES,
+} from "../sim/missions";
 import { LAUNCH_SITES } from "../sim/constants";
 import { DEFAULT_PROFILE } from "../sim/guidance";
+import { designStats } from "../sim/design";
 import { PRESETS } from "../sim/presets";
+import { MissionSteps } from "../components/app/MissionSteps";
+import { DisplayButton } from "../components/app/Appearance";
 
-const Row = ({ icon: Icon, label, value, testId }) => (
-  <div className="flex items-start gap-3 border-t border-slate-800/80 py-2.5">
-    <Icon size={14} className="mt-0.5 text-slate-500" />
-    <div className="eyebrow w-32 shrink-0 !text-[10px]">{label}</div>
-    <div className="font-mono text-sm text-slate-200" data-testid={testId}>{value}</div>
-  </div>
-);
-
+const PRESENTATION = {
+  first_orbit: {
+    icon: Orbit,
+    color: "cyan",
+    level: "First flight",
+    summary: "Turn a launch into a stable orbit around Earth.",
+    time: "About 10 minutes",
+    steps: [
+      "Launch from Cape Canaveral",
+      "Let guidance build your orbit",
+      "Review your first flight report",
+    ],
+  },
+  earth_observer: {
+    icon: Satellite,
+    color: "blue",
+    level: "Next challenge",
+    summary: "Deliver a satellite to its working orbit, 700 km above Earth.",
+    time: "About 1–2 hours",
+    steps: [
+      "Reach a 200 km parking orbit",
+      "Raise your orbit with two planned burns",
+      "Deliver the observation satellite",
+    ],
+  },
+  lunar_orbiter: {
+    icon: Moon,
+    color: "violet",
+    level: "Deep space",
+    summary:
+      "Leave Earth behind and place a mapping spacecraft around the Moon.",
+    time: "4–5 simulated days",
+    steps: [
+      "Launch into Earth parking orbit",
+      "Plan a transfer and correct your course",
+      "Brake into lunar orbit",
+    ],
+  },
+  crewed_lunar_flyby: {
+    icon: Users,
+    color: "amber",
+    level: "Crewed expedition",
+    summary: "Take three explorers past the Moon and bring them safely home.",
+    time: "8–10 simulated days",
+    steps: [
+      "Reach orbit with your crew",
+      "Fly a lunar free-return trajectory",
+      "Separate, re-enter, and splash down",
+    ],
+  },
+};
+const missionPresentation = (m) =>
+  m.custom
+    ? {
+        ...PRESENTATION.first_orbit,
+        level: "Custom challenge",
+        summary: `Reach a ${m.target.altitude / 1000} km Earth orbit at ${m.target.inclination}° inclination.`,
+        time: "Timing depends on your design",
+        steps: [
+          "Inspect the starting rocket and staging",
+          `Reach the ${m.target.altitude / 1000} km target orbit`,
+          "Check inclination and budget in your report",
+        ],
+      }
+    : PRESENTATION[m.id] || PRESENTATION.first_orbit;
 export default function MissionPlanner() {
   const g = useGame();
   const [sel, setSel] = useState(g.missionId);
   const m = getMission(sel) || getMission("first_orbit");
-  const [preset, setPreset] = useState(m.preset || (m.payload ? "orbiter9eo" : "orbiter9"));
-  const req = m.available ? requiredDeltaV(m) : null;
-
+  const recommended = m.preset || (m.payload ? "orbiter9eo" : "orbiter9");
+  const [preset, setPreset] = useState(recommended);
+  const p = missionPresentation(m),
+    Icon = p.icon;
+  const req = requiredDeltaV(m);
+  const selectedRocket = PRESETS.find((p) => p.id === preset);
+  const rocketStats = useMemo(
+    () => designStats(selectedRocket.make()),
+    [selectedRocket],
+  );
+  const budget = missionBudget(m, g.difficulty);
+  const overBudget = rocketStats.cost > budget;
   const start = () => {
     g.setMissionId(m.id);
-    g.loadDesign(PRESETS.find((p) => p.id === preset).make());
-    g.setProfile({ ...DEFAULT_PROFILE, targetAltitude: m.target.parkingAltitude ?? m.target.altitude, targetInclination: m.target.inclination });
+    g.loadDesign(selectedRocket.make());
+    g.setProfile({
+      ...DEFAULT_PROFILE,
+      targetAltitude: m.target.parkingAltitude ?? m.target.altitude,
+      targetInclination: m.target.inclination,
+    });
     g.go("hangar");
   };
-
   return (
-    <div className="flex h-full w-full flex-col grid-bg">
-      <header className="flex items-center justify-between border-b border-slate-800 bg-slate-950/80 px-6 py-3 backdrop-blur-md">
-        <button data-testid="planner-back-btn" onClick={() => g.go("menu")} className="flex items-center gap-2 text-sm text-slate-400 hover:text-slate-100"><ArrowLeft size={16} /> Menu</button>
-        <div className="eyebrow">Mission Planner · {DIFFICULTIES[g.difficulty].label}</div>
-        <div className="w-16" />
+    <div className="planner-screen">
+      <header className="workflow-header">
+        <button
+          className="ui-button ui-button-quiet"
+          data-testid="planner-back-btn"
+          onClick={() => g.go("menu")}
+        >
+          <ArrowLeft size={16} /> Home
+        </button>
+        <MissionSteps current={0} />
+        <DisplayButton compact />
       </header>
-      <div className="grid flex-1 grid-cols-1 gap-6 overflow-hidden p-6 lg:grid-cols-[380px_1fr]">
-        <div className="space-y-2 overflow-y-auto scroll-thin pr-1">
-          <div className="eyebrow mb-2">Mission templates</div>
-          {MISSIONS.map((x, i) => (
-            <button key={x.id} data-testid={`mission-card-${x.id}`} disabled={!x.available} onClick={() => { setSel(x.id); setPreset(x.preset || (x.payload ? "orbiter9eo" : "orbiter9")); }} style={{ animationDelay: `${i * 60}ms` }}
-              className={`rise relative w-full border p-4 text-left transition-colors ${sel === x.id ? "border-cyan-400 bg-cyan-500/10" : "border-slate-800 bg-slate-950/60 hover:border-slate-600"} ${!x.available ? "cursor-not-allowed opacity-50" : ""}`}>
-              <div className="flex items-center justify-between">
-                <div className="font-display text-xl font-semibold uppercase tracking-wider">{x.name}</div>
-                <span className="font-mono text-[10px] text-emerald-400">AVAILABLE</span>
+      <div className="planner-layout">
+        <aside className="mission-picker">
+          <div className="section-kicker">Choose your adventure</div>
+          <h1>Where to next?</h1>
+          <p>
+            Every mission includes a starting rocket and optional flight
+            guidance.
+          </p>
+          <div className="mission-cards">
+            {MISSIONS.map((x, i) => {
+              const c = missionPresentation(x),
+                CardIcon = c.icon;
+              return (
+                <button
+                  key={x.id}
+                  className={`mission-card mission-${c.color} ${sel === x.id ? "is-selected" : ""}`}
+                  data-testid={`mission-card-${x.id}`}
+                  aria-pressed={sel === x.id}
+                  disabled={!x.available}
+                  onClick={() => {
+                    setSel(x.id);
+                    setPreset(
+                      x.preset || (x.payload ? "orbiter9eo" : "orbiter9"),
+                    );
+                  }}
+                >
+                  <span className="mission-card-icon">
+                    <CardIcon size={23} />
+                  </span>
+                  <span className="mission-card-copy">
+                    <span>{c.level}</span>
+                    <strong>{x.name}</strong>
+                    <small>
+                      {x.crewed ? "3 crew" : "Uncrewed"} · {c.time}
+                    </small>
+                  </span>
+                  {sel === x.id ? (
+                    <CheckCircle2 size={19} />
+                  ) : (
+                    <ArrowRight size={17} />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+          <div className="planner-tip">
+            <Clock size={16} />
+            <p>
+              Long trips do not mean long waits. Use time warp while coasting.
+            </p>
+          </div>
+        </aside>
+        <section className="mission-brief" data-testid="mission-details-panel">
+          <div className={`mission-brief-hero mission-${p.color}`}>
+            <span className="brief-orbit" aria-hidden="true" />
+            <span className="mission-brief-icon">
+              <Icon size={30} />
+            </span>
+            <span className="section-kicker">
+              {p.level} · {DIFFICULTIES[g.difficulty].label}
+            </span>
+            <h2>{m.name}</h2>
+            <p>{p.summary}</p>
+          </div>
+          <div className="mission-brief-body scroll-thin">
+            <div className="mission-quickfacts">
+              <div>
+                <Target size={17} />
+                <span>
+                  {m.moon ? "Parking orbit" : "Target orbit"}
+                  <strong data-testid="mission-target-orbit">
+                    {(m.target.parkingAltitude ?? m.target.altitude) / 1000} km
+                    · {m.target.inclination}°
+                  </strong>
+                </span>
               </div>
-              <div className="mt-1 text-xs text-slate-400">{x.destination} · {x.crewed ? "Crewed" : "Uncrewed"}</div>
-              <div className="mt-1 text-[11px] italic text-slate-600">{x.inspiredBy}</div>
-            </button>
-          ))}
-        </div>
-
-        <div className="panel overflow-y-auto rounded-sm p-8 scroll-thin" data-testid="mission-details-panel">
-          <div className="eyebrow text-cyan-400">Mission brief</div>
-          <h2 className="mt-2 font-display text-4xl font-bold uppercase tracking-tight">{m.name}</h2>
-          <p className="mt-1 text-xs italic text-slate-500">{m.inspiredBy}. Not affiliated with or endorsed by NASA.</p>
-          <div className="mt-6 grid grid-cols-1 gap-x-10 xl:grid-cols-2">
-            <div>
-              <Row icon={Target} label="Destination" value={m.destination} />
-              <Row icon={Target} label="Target orbit" value={`${m.target.altitude / 1000} km circular · i ${m.target.inclination}°`} testId="mission-target-orbit" />
-              <Row icon={Users} label="Crew" value={m.crewed ? "Crewed" : "Uncrewed"} />
-              <Row icon={MapPin} label="Launch site" value={LAUNCH_SITES[m.site].name} />
-              <Row icon={Wallet} label="Budget" value={`$${missionBudget(m, g.difficulty)}M`} testId="mission-budget" />
-              <Row icon={Clock} label="Duration" value={m.duration} />
-              <Row icon={Rocket} label="Δv estimate" value={`${Math.round(req.value).toLocaleString()} m/s + ${m.reserve * 100}% reserve`} testId="mission-dv-estimate" />
+              <div>
+                <Wallet size={17} />
+                <span>
+                  Mission budget
+                  <strong data-testid="mission-budget">
+                    ${missionBudget(m, g.difficulty)}M
+                  </strong>
+                </span>
+              </div>
+              <div>
+                <Users size={17} />
+                <span>
+                  Flight crew
+                  <strong>
+                    {m.crewed ? "3 explorers" : "Remote spacecraft"}
+                  </strong>
+                </span>
+              </div>
             </div>
-            <div>
-              <div className="eyebrow mb-2 mt-3 xl:mt-0">Objectives</div>
-              <ol className="space-y-2 text-sm text-slate-300">
-                {m.objectives.map((o, i) => (
-                  <li key={i} className="flex gap-3"><span className="font-mono text-cyan-500">{String(i + 1).padStart(2, "0")}</span>{o}</li>
+            <h3>Your flight, in three steps</h3>
+            <ol className="mission-flight-steps">
+              {p.steps.map((step, i) => (
+                <li key={step}>
+                  <span>{i + 1}</span>
+                  {step}
+                </li>
+              ))}
+            </ol>
+            <div className="recommended-rocket">
+              <Rocket size={24} />
+              <div>
+                <span className="section-kicker">
+                  {preset === recommended
+                    ? "Recommended rocket"
+                    : "Your starting rocket"}
+                </span>
+                <strong>{selectedRocket.label.split(" — ")[0]}</strong>
+                <p>
+                  {preset === "empty"
+                    ? "Start from a probe core and build your own vehicle."
+                    : overBudget
+                      ? `This rocket is $${(rocketStats.cost - budget).toFixed(1)}M over your ${DIFFICULTIES[g.difficulty].label} budget. Reduce its cost in the builder before launch.`
+                      : "You can fly this design or customise it in the builder."}
+                </p>
+              </div>
+              {preset === recommended && (
+                <span
+                  className={`ready-chip ${overBudget ? "is-over-budget" : ""}`}
+                >
+                  {overBudget ? "Over budget" : "Ready to customise"}
+                </span>
+              )}
+            </div>
+            <details className="ui-disclosure" data-testid="rocket-choices">
+              <summary>
+                Choose a different rocket <ChevronDown size={15} />
+              </summary>
+              <div className="rocket-options">
+                {PRESETS.map((r) => (
+                  <button
+                    key={r.id}
+                    data-testid={`preset-${r.id}-btn`}
+                    aria-pressed={preset === r.id}
+                    className={`ui-button ${preset === r.id ? "ui-button-selected" : ""}`}
+                    onClick={() => setPreset(r.id)}
+                  >
+                    {r.label}
+                  </button>
+                ))}
+              </div>
+            </details>
+            <details className="ui-disclosure">
+              <summary>
+                Mission objectives & engineering details{" "}
+                <ChevronDown size={15} />
+              </summary>
+              <ol className="detailed-objectives">
+                {m.objectives.map((o) => (
+                  <li key={o}>{o}</li>
                 ))}
               </ol>
-              <div className="eyebrow mb-2 mt-6">Constraints</div>
-              <ul className="space-y-1 text-sm text-slate-400">
-                {m.constraints.map((c, i) => <li key={i}>— {c}</li>)}
+              <p data-testid="mission-dv-estimate">
+                Required velocity change (Δv):{" "}
+                {Math.round(req.value).toLocaleString()} m/s + {m.reserve * 100}
+                % reserve.
+              </p>
+              <p>Launch site: {LAUNCH_SITES[m.site].name}</p>
+              <ul>
+                {m.constraints.map((c) => (
+                  <li key={c}>{c}</li>
+                ))}
               </ul>
-            </div>
+              <p className="ui-help">
+                {m.inspiredBy}. Not affiliated with NASA.
+              </p>
+            </details>
           </div>
-          <div className="mt-8 border-t border-slate-800 pt-6">
-            <div className="eyebrow mb-2">Starting design</div>
-            <div className="flex flex-wrap gap-2">
-              {PRESETS.map((p) => (
-                <button key={p.id} data-testid={`preset-${p.id}-btn`} onClick={() => setPreset(p.id)} className={`border px-3 py-2 text-xs ${preset === p.id ? "border-cyan-400 text-cyan-200" : "border-slate-800 text-slate-400 hover:border-slate-600"}`}>{p.label}</button>
-              ))}
-            </div>
-            <button data-testid="planner-open-hangar-btn" onClick={start} className="mt-6 inline-flex items-center gap-3 border border-cyan-400 bg-cyan-500/15 px-6 py-3 font-display text-lg font-semibold uppercase tracking-widest text-cyan-200 transition-colors hover:bg-cyan-500/25">
-              <Rocket size={18} /> Open Hangar
+          <footer className="mission-brief-footer">
+            <p>Next: make it yours in the rocket builder.</p>
+            <button
+              className="ui-button ui-button-primary"
+              data-testid="planner-open-hangar-btn"
+              onClick={start}
+            >
+              Build this rocket <ArrowRight size={17} />
             </button>
-          </div>
-        </div>
+          </footer>
+        </section>
       </div>
     </div>
   );

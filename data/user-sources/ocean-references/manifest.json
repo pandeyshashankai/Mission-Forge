@@ -1,0 +1,38 @@
+{
+  "receivedOn": "2026-11-05",
+  "files": [
+    {
+      "file": "TM-95-06.pdf",
+      "sha256": "a01dabf0a236dc346d5481e9d1476141af959b1e2ef15fbef4f43d523258ebcf",
+      "bytes": 257835,
+      "pages": 28,
+      "classification": "CSR 3.0 background; a distinct older model",
+      "relevantPdfPages": [],
+      "completeCoefficientDataset": false
+    },
+    {
+      "file": "FES2004.pdf",
+      "sha256": "eb88162a224029c4aa7275dce40fe04fb18641db59f1998393c58db17e37de90",
+      "bytes": 1567655,
+      "pages": 22,
+      "classification": "FES2004 scientific paper; digital atlas distributed separately",
+      "relevantPdfPages": [
+        7
+      ],
+      "completeCoefficientDataset": false
+    },
+    {
+      "file": "BIPM_ocean_tides_2007.pdf",
+      "sha256": "ed28159eee91870387deb82a7271446104686b94e58f72c9833441b5f6f13c94",
+      "bytes": 5535695,
+      "pages": 20,
+      "classification": "Ocean-to-geopotential derivation and selected coefficient rows",
+      "relevantPdfPages": [
+        6
+      ],
+      "completeCoefficientDataset": false
+    }
+  ],
+  "modelUpgradeApplied": false,
+  "reason": "Documentation and representative rows do not supply the complete digital atlas."
+}

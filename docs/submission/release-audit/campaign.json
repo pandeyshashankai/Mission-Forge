@@ -1,0 +1,8 @@
+{
+  "name": "campaign",
+  "command": "npm run test:campaign",
+  "status": "PASS",
+  "durationMs": 27053,
+  "completedAt": "2026-11-06T02:12:51.339Z",
+  "log": "campaign.log"
+}

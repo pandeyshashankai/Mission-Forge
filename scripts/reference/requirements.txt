@@ -1,0 +1,2 @@
+# Only needed to regenerate external Orekit fixtures; never used by the browser.
+JPype1==1.7.1

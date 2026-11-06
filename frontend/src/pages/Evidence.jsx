@@ -1,0 +1,14 @@
+import { useEffect, useState } from 'react';
+import { useGame } from '../game/GameContext';
+export default function Evidence() {
+  const g = useGame(),
+    [identity, setIdentity] = useState(null),
+    [error, setError] = useState('');
+  useEffect(() => {
+    fetch('/build-info.json').then(r => {
+      if (!r.ok) throw Error('Build identity is available in a production build.');
+      return r.json();
+    }).then(setIdentity).catch(e => setError(e.message));
+  }, []);
+  return <main className="local-tools h-full overflow-y-auto p-4 md:p-8"><div className="max-w-4xl mx-auto space-y-4"><button className="ui-button" onClick={() => g.go('menu')}>← Home</button><h1 className="text-3xl font-bold">Mission evidence</h1><p>Build, fly and explain how sourced physical quantities affect a mission. Use the guided showcase for a dependable presentation route.</p><div className="flex flex-wrap gap-2"><button className="ui-button" onClick={() => g.go('showcase')}>Run guided showcase</button><button className="ui-button" onClick={() => g.go('science')}>Sources & science checks</button><button className="ui-button" onClick={() => g.go('sandbox')}>Engineering experiments</button><button className="ui-button" onClick={() => g.go('storage')}>Backups & recovery</button></div><section className="ui-panel p-4 space-y-2"><h2 className="text-xl">Reviewable evidence</h2>{[['Project report', '/submission/project-report.pdf'], ['Presentation', '/submission/presentation.pdf'], ['Demo script', '/submission/demo-script.pdf'], ['Learning evaluation protocol', '/submission/user-testing-protocol.pdf'], ['Science validation results', '/submission/validation-results.json'], ['External reference comparisons', '/science/advanced-validation-results.json']].map(([name, url]) => <p key={url}><a className="underline" href={url} target="_blank" rel="noreferrer">{name}</a></p>)}</section><section className="ui-panel p-4"><h2 className="text-xl">Exact build identity</h2>{identity ? <><p className="break-all">Artifact SHA-256: {identity.id}</p><p className="break-all">Source commit: {identity.commit}</p><p>{identity.dirty ? 'Includes uncommitted source changes' : 'Clean source tree'} · {identity.assets.length} hashed artifacts</p><p>{identity.builtAt}</p></> : <p>{error || 'Loading…'}</p>}</section><section className="ui-panel p-4"><h2 className="text-xl">Scientific scope</h2><p>Software regressions and analytic checks establish behavior within stated tolerances; they do not certify a spacecraft. External comparisons cover selected reference cases. Thermal response uses simplified material models. Ocean harmonics are truncated; full ocean loading is unavailable. Experimental fitting examples are synthetic unless an uploaded measured dataset is explicitly identified. Learning outcomes require real participant evaluation.</p></section></div></main>;
+}

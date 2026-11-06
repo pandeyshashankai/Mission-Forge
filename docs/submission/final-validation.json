@@ -1,0 +1,107 @@
+{
+  "checkedAt": "2026-11-06T02:39:37.896663+00:00",
+  "status": "PASS",
+  "build": "104b8624b90d1c0c66f418b18933d1cf9f83d03641381f38751f893068831ef3",
+  "sourceCommit": "d93c322dc11099f44d03da1345a3b49b74ea16a2",
+  "uncommittedSource": true,
+  "auditGroups": 29,
+  "standardRegressions": 309,
+  "expectedCampaignOutcomes": 12,
+  "generatedChecks": 621913,
+  "generatedBreakdown": {
+    "catalogueAndOptions": 66916,
+    "expandedScenarios": 554997
+  },
+  "deviceWorldCraftCases": 330,
+  "emulatedProfiles": [
+    {
+      "name": "small-phone",
+      "width": 320,
+      "height": 568,
+      "touch": true,
+      "dpr": 2
+    },
+    {
+      "name": "phone",
+      "width": 360,
+      "height": 640,
+      "touch": true,
+      "dpr": 3
+    },
+    {
+      "name": "tall-phone",
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "dpr": 3
+    },
+    {
+      "name": "large-phone",
+      "width": 430,
+      "height": 932,
+      "touch": true,
+      "dpr": 3
+    },
+    {
+      "name": "short-landscape",
+      "width": 568,
+      "height": 320,
+      "touch": true,
+      "dpr": 2
+    },
+    {
+      "name": "phone-landscape",
+      "width": 844,
+      "height": 390,
+      "touch": true,
+      "dpr": 3
+    },
+    {
+      "name": "portrait-tablet",
+      "width": 768,
+      "height": 1024,
+      "touch": true,
+      "dpr": 2
+    },
+    {
+      "name": "landscape-tablet",
+      "width": 1024,
+      "height": 768,
+      "touch": true,
+      "dpr": 2
+    },
+    {
+      "name": "laptop",
+      "width": 1366,
+      "height": 768,
+      "touch": false,
+      "dpr": 1.25
+    },
+    {
+      "name": "wide-desktop",
+      "width": 1920,
+      "height": 1080,
+      "touch": false,
+      "dpr": 1
+    }
+  ],
+  "tutorialStepsSkipped": 44,
+  "manifest": "release-audit/manifest.json",
+  "scenarioReport": "scenario-audit-results.json",
+  "deviceReport": "device-matrix-results.json",
+  "skipReport": "skip-path-results.json",
+  "limitations": [
+    "Finite declared matrices; continuous inputs, arbitrary custom content and all category products are not exhausted.",
+    "Chromium software WebGL and emulated screen/touch/DPR profiles; physical devices and other browser engines were not certified.",
+    "Short-step compatibility checks do not establish universal long-duration physical accuracy."
+  ],
+  "artifactHashesVerified": 84,
+  "seededChallengeTargets": 16,
+  "exactOptimizationWorkloadPairs": 27,
+  "optimizationReport": "optimization-validation.json",
+  "newFeatureBrowserReport": "backlog-validation.json",
+  "educationBrowserReport": "education-validation.json",
+  "academyLessons": 5,
+  "adapterWorldPropellantCases": 33,
+  "adapterScope": "Eleven worlds x three liquid-propellant families; short powered steps and save/restore. Restricted adapter; not every arbitrary design."
+}

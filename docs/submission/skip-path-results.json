@@ -1,0 +1,146 @@
+{
+  "status": "PASS",
+  "results": [
+    {
+      "corruptTutorialIgnored": "{bad"
+    },
+    {
+      "corruptTutorialIgnored": "{\"id\":\"first_orbit\",\"step\":999}"
+    },
+    {
+      "corruptTutorialIgnored": "{\"id\":\"constructor\",\"step\":0}"
+    },
+    {
+      "viewport": [
+        320,
+        568
+      ],
+      "tutorial": "tutorial-start-first_orbit",
+      "skipped": 7
+    },
+    {
+      "viewport": [
+        320,
+        568
+      ],
+      "tutorial": "tutorial-start-maneuvers",
+      "skipped": 4
+    },
+    {
+      "viewport": [
+        320,
+        568
+      ],
+      "checklistBack": true,
+      "countdownHold": true,
+      "countdownScrub": true
+    },
+    {
+      "viewport": [
+        320,
+        568
+      ],
+      "finishCancel": true,
+      "finishConfirm": true
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "tutorial": "tutorial-start-first_orbit",
+      "skipped": 7
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "tutorial": "tutorial-start-maneuvers",
+      "skipped": 4
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "checklistBack": true,
+      "countdownHold": true,
+      "countdownScrub": true
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "finishCancel": true,
+      "finishConfirm": true
+    },
+    {
+      "viewport": [
+        568,
+        320
+      ],
+      "tutorial": "tutorial-start-first_orbit",
+      "skipped": 7
+    },
+    {
+      "viewport": [
+        568,
+        320
+      ],
+      "tutorial": "tutorial-start-maneuvers",
+      "skipped": 4
+    },
+    {
+      "viewport": [
+        568,
+        320
+      ],
+      "checklistBack": true,
+      "countdownHold": true,
+      "countdownScrub": true
+    },
+    {
+      "viewport": [
+        568,
+        320
+      ],
+      "finishCancel": true,
+      "finishConfirm": true
+    },
+    {
+      "viewport": [
+        1366,
+        768
+      ],
+      "tutorial": "tutorial-start-first_orbit",
+      "skipped": 7
+    },
+    {
+      "viewport": [
+        1366,
+        768
+      ],
+      "tutorial": "tutorial-start-maneuvers",
+      "skipped": 4
+    },
+    {
+      "viewport": [
+        1366,
+        768
+      ],
+      "checklistBack": true,
+      "countdownHold": true,
+      "countdownScrub": true
+    },
+    {
+      "viewport": [
+        1366,
+        768
+      ],
+      "finishCancel": true,
+      "finishConfirm": true
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "name": "Crystalline aluminium",
+  "reference": "Cox 1989 p217, NASA CEA thermo.inp AL(cr)",
+  "source": "https://raw.githubusercontent.com/sonofeft/RocketCEA/master/rocketcea/thermo.inp",
+  "fileSha256": "fa7746572952d74e249e818a82a35c113829742fb421a308e167185528884363",
+  "cpCoefficients": [
+    -62518.1143,
+    634.393435,
+    -0.713188382,
+    0.0108872528,
+    -1.45874182e-05,
+    9.96116088e-09,
+    -1.77492801e-12
+  ],
+  "molarMass": 0.026981538,
+  "range": [
+    300,
+    933.61
+  ],
+  "status": "Published thermodynamic fit; not a calibrated spacecraft or ablative material"
+}

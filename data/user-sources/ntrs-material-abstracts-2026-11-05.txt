@@ -1,0 +1,300 @@
+Progress Towards Modeling the Mars Science Laboratory PICA-NuSil Heatshield
+The data collected by the Mars Science Laboratory (MSL) Entry, Descent and Landing Instrumentation, MEDLI, have become an established reference to assess the performance of engineering models of the Phenolic Impregnated Carbon Ablator (PICA) and to validate hypersonic computational fluid dynamics (CFD) tools for entry systems. MEDLI measurements are also extensively used as validation reference for current developments of high-fidelity material response models for PICA. So large has been the scientific output and impact of MEDLI that a follow-up instrumentation suite MEDLI2 is underway for the upcoming Mars 2020 mission.A feature neglected thus far in the modeling of the MSL heatshield, is the presence of a silicone-based room temperature vulcanizing coating designated NuSil CV-1144-0. NuSil was used to coat the entire MSL heatshield, including the MEDLI plugs, to mitigate the spread of phenolic dust from PICA, and limit contamination during clean room operations. NuSil CV-1144-0 is a space grade siloxane copolymer, designed as an oxygen protection barrier for extreme low temperature environment.Assessments conducted during MSL development demonstrated that the presence of NuSil had no adverse effect on the performance of PICA. However, evidence from ground testing of PICA-NuSil (PICA-N) models in the HyMETS arc-jet test facility suggests that the silicone changes the high temperature response of PICA. It is therefore critical to assess the importance of modeling the coating in ongoing code validation efforts.
+Document ID
+20190028635
+Acquisition Source
+Ames Research Center
+Document Type
+Presentation
+Authors
+Bessire, Brody K.
+(Analytical Mechanics Associates, Inc. Moffett Field, CA, United States)
+Borner, Arnaud P.
+(Science and Technology Corp. Moffett Field, CA, United States)
+Meurisse, Jeremie B.
+(Science and Technology Corp. Moffett Field, CA, United States)
+Monk, Joshua D.
+(Analytical Mechanics Associates, Inc. Moffett Field, CA, United States)
+Date Acquired
+August 1, 2019
+Publication Date
+July 8, 2019
+Subject Category
+Composite Materials
+Report/Patent Number
+ARC-E-DAA-TN70428
+Report Number: ARC-E-DAA-TN70428
+Meeting Information
+Meeting: International Planetary Probe Workshop 2019
+Location: Oxford, England
+Country: United Kingdom
+Start Date: July 8, 2019
+End Date: July 12, 2019
+Sponsors: European Space Agency (ESA)
+Funding Number(s)
+CONTRACT_GRANT: NNA15BB15C
+CONTRACT_GRANT: NNA16BD60C
+TASK: 04B.TSM.02.M0
+Distribution Limits
+Public
+Copyright
+Public Use Permitted.
+Characterization of Material Response During Arc-Jet Testing with Optical Methods Status and Perspectives
+The characterization of ablation and recession of heat shield materials during arc jet testing is an important step towards understanding the governing processes during these tests and therefore for a successful extrapolation of ground test data to flight. The behavior of ablative heat shield materials in a ground-based arc jet facility is usually monitored through measurement of temperature distributions (across the surface and in-depth), and through measurement of the final surface recession. These measurements are then used to calibrate/validate materials thermal response codes, which have mathematical models with reasonably good fidelity to the physics and chemistry of ablation, and codes thus calibrated are used for predicting material behavior in flight environments. However, these thermal measurements only indirectly characterize the pyrolysis processes within an ablative material pyrolysis is the main effect during ablation. Quantification of pyrolysis chemistry would therefore provide more definitive and useful data for validation of the material response codes. Information of the chemical products of ablation, to various levels of detail, can be obtained using optical methods. Suitable optical methods to measure the shape and composition of these layers (with emphasis on the blowing layer) during arc jet testing are: 1) optical emission spectroscopy (OES) 2) filtered imaging 3) laser induced fluorescence (LIF) and 4) absorption spectroscopy. Several attempts have been made to optically measure the material response of ablative materials during arc-jet testing. Most recently, NH and OH have been identified in the boundary layer of a PICA ablator. These species are suitable candidates for a detection through PLIF which would enable a spatially-resolved characterization of the blowing layer in terms of both its shape and composition. The recent emission spectroscopy data will be presented and future experiments for a qualitative and quantitative characterization of the material response of ablative materials during arc-jet testing will be discussed.
+Document ID
+20120011156
+Acquisition Source
+Ames Research Center
+Document Type
+Presentation
+Authors
+Winter, Michael
+(California Univ. Moffett Field, CA, United States)
+Date Acquired
+August 26, 2013
+Publication Date
+February 28, 2012
+Subject Category
+Chemistry And Materials (General)
+Report/Patent Number
+ARC-E-DAA-TN4853
+Report Number: ARC-E-DAA-TN4853
+Meeting Information
+Meeting: 5th Ablation Workshop
+Location: Lexington, KY
+Country: United States
+Start Date: February 28, 2012
+End Date: March 1, 2012
+Sponsors: Kentucky Univ.
+Funding Number(s)
+CONTRACT_GRANT: NAS2-03144
+Distribution Limits
+Public
+Copyright
+Public Use Permitted.
+Identification and Study of Validation Level Test Cases for Computational Modeling of Non-Charring Ablators
+Computational modeling of Thermal Protection System (TPS) materials, used for aerospace applications, provides numerous advantages in preliminary selection and design of a heatshield material and shape for atmospheric entry vehicles. However, to serve as a reliable tool for prediction of material thermal and ablative behavior, the modeling approach needs to be validated against real experimental and flight data, preferably at a range of applied conditions. The validation study is typically very complex as it requires reliable measured data not only for the material thermal response and surface recession, but also well characterized environmental conditions. The validation problem becomes even more complex when the material thermal response is dictated by multi-physics effects such as solid conduction, in-depth thermal decomposition, pyrolysis gas flow and chemical reactions. The multi-physics effects complicate not only the modeling effort, but also the experimental measurement for validation of various aspects of the highly coupled problem. In this study, an attempt is made to identify suitable experimental data that could serve as a source for validation of material thermal response modeling tools. To reduce the computational complexity, this study focuses only on non-charring ablators, where the material thermal response could be modeled with a single governing equation for solid conduction and the ablation is limited only to the surface of the material. With a well characterized and publicly available experimental data being sparse, the study is limited in presenting test cases for only three materials: camphor, graphite and FiberForm® in the sequence of increased modeling complexity. Graphite is a commonly used TPS material for aerospace applications, both for leading edges of high-speed vehicles and internal insulation of solid rocket motors. FiberForm® is a porous carbon pre-form used in preparation of the well known PICA material Tran et al. [1996]. Inclusion of camphor into the list is conditioned with the relative simplicity in modeling the material thermal and chemical response and the low-enthalpy flow environment. In addition, camphor has been used as a simple test material for study of flow transition behavior by Stock and Ginoux [1973] and assessment of a heatshield shape change at flight relevant conditions by Rotondi et al. [2022]. In this work, the identified experimental data was extracted from the public literature and test cases that yet have been published. As it was found from the review, not a single test case contains an exhaustive set of data that would validate every aspect of the material physics. However, in the data collected, various aspects of the material behavior can be still validated, such as surface and in-depth temperature, amount of recession and a shape change. The identified experimental data for each case is accompanied with a characterized flow environment and simulated boundary conditions predicted by a Data-Parallel Line Relaxation (DPLR) code Wright et al. [1998]. In addition, material thermal response numerical simulations in each test case are performed with Kentucky Aerothermodynamics and Thermal Response System (KATS-MR) Zibitsker et al. [2022] providing a comparative study and a sanity check for the proposed validation data. Sample results from the performed numerical study are shown below. Figure 1 shows distribution of surface heat flux and pressure values on a hemi-cylinder model made of FiberForm® and tested in HyMETS arc-jet facility. The results are shown for the high pressure condition among the two tests. Flow simulation was performed with DPLR code on a quarter of original geometry. In the figure, the quarter shape was mirrored across zx and xy planes to show the complete distribution. Figure 2 shows the material response results for the high pressure case (7500 Pa), simulated with KATS-MR and a comparison to the experimental data for the surface temperature and shape shape. The simulation was performed on a 2-D slice, extracted in the xy plane at the middle of the sample. Figure 3 shows the material response simulation for the low pressure case (3500 Pa) and a comparison to the experimental data for surface temperature and shape change.
+Document ID
+20220014385
+Acquisition Source
+Ames Research Center
+Document Type
+Conference Paper
+Authors
+Aleksander Zibitsker
+(University of Kentucky Lexington, Kentucky, United States)
+Eric Stern
+(Ames Research Center Mountain View, California, United States)
+Grant Palmer
+(Analytical Mechanics Associates (United States) Hampton, Virginia, United States)
+Alexandre Martin
+(University of Kentucky Lexington, Kentucky, United States)
+Date Acquired
+September 21, 2022
+Subject Category
+Astronautics (General)
+Meeting Information
+Meeting: 12th Ablation Workshop
+Location: Lexington, KY
+Country: US
+Start Date: November 9, 2022
+End Date: November 10, 2022
+Sponsors: Kentucky Space Grant Consortium
+Funding Number(s)
+CONTRACT_GRANT: 80HQTR20NOA01-20STRI_B3
+CONTRACT_GRANT: NNA15BB15C
+Distribution Limits
+Public
+Copyright
+Use by or on behalf of the US Gov. Permitted.
+Technical Review
+NASA Peer Committee
+Keywords
+ablation
+TPS
+entry
+edl
+validation
+MEDLI2 Material Response Model Development and Validation
+During the entry of Mars Science Laboratory (MSL) the heatshield was equipped with the instrumentation suite Mars Entry, Descent, and Landing Instruments (MEDLI). In-depth thermocouple (TC) data was used to reconstruct the surface heating and temperatures. Discrepancies between MEDLI’s recorded in-depth heating data and the predicted thermal response and recession led to a campaign to characterize and test Mars Entry, Descent, and Landing Instrument 2 (MEDLI2) flight lot thermal protection materials (TPS) at relevant temperatures and pressures for Martian entry conditions. This paper covers the development and validation of MEDLI2 flight lot material response models for the heatshield material Phenolic Impregnated Carbon Ablator (PICA) and the backshell material Super-Lightweight Ablator (SLA-561V). Virgin and char thermal conductivities were updated as a function of temperature and pressure in the MEDLI2 specific material response models. Other material properties such as virgin and char density, emissivity, absorptivity, and specific heat capacitance was also characterized and compared to the “Heritage” models used during the TPS design phase of Mars 2020. Fully Implicit Ablation and Thermal response (FIAT) simulations were completed using the Heritage and MEDLI2 material response models to provide evidence of the increased accuracy of the MEDLI2 model. FIAT predicted in-depth temperatures were compared to flight lot certification ground-test arc jet test data and MEDLI2 flight thermocouple data.
+Document ID
+20210024735
+Acquisition Source
+Ames Research Center
+Document Type
+Conference Paper
+Authors
+Joshua D Monk
+(Ames Research Center Mountain View, California, United States)
+Jay D Feldman
+(Ames Research Center Mountain View, California, United States)
+Milad Mahzari
+(Ames Research Center Mountain View, California, United States)
+Jose Santos
+(Ames Research Center Mountain View, California, United States)
+Todd R White
+(Ames Research Center Mountain View, California, United States)
+Et al
+Date Acquired
+November 22, 2021
+Subject Category
+Chemistry And Materials (General)
+Space Sciences (General)
+Meeting Information
+Meeting: AIAA SciTech Forum
+Location: San Diego, CA
+Country: US
+Start Date: January 3, 2022
+End Date: January 7, 2022
+Sponsors: American Institute of Aeronautics and Astronautics
+Funding Number(s)
+WBS: 389693.03.01.01
+Distribution Limits
+Public
+Copyright
+Public Use Permitted.
+Technical Review
+NASA Peer Committee
+Keywords
+Material response
+Thermal Protection Materials
+Model development
+MEDLI2: Ablator Models for Flight
+During the entry of Mars Science Laboratory (MSL) the heatshield was equipped with the instrumentation suite Mars Entry, Descent, and Landing Instruments (MEDLI). In-depth thermocouple (TC) data was used to reconstruct the surface heating[1,2]. Discrepancies between MEDLI’s flight heating data and predicted thermal response and recession[3] led to a campaign to characterize and test Mars2020 and MEDLI2 (Mars Entry, Descent, and Landing Instrument 2)[4] flight-lot thermal protection materials (TPS) at relevant ground test conditions. This paper covers the development and validation of flight-lot material response models for the heatshield material Phenolic Impregnated Carbon Ablator (PICA) and the backshell material SLA-561V (Super Lightweight Ablator). Virgin and char properties such as thermal conductivity and emissivity were updated as a function of temperature and pressure in the MEDLI2 specific material response models. Other material properties were characterized and determined to be similar to prior TPS material measurements used for the heritage models. MEDLI2 also investigated the impact of the protective coating that was applied to MSL and Mars2020’s PICA heatshield to reduce the particulate matter shedding. Evidence from arc jet experiments on coated PICA showed that although there were no adverse effects on the performance of the TPS, there were differences in the in-depth temperatures and reduced recession compared to material response predictions of uncoated PICA.[5,6]. Fully Implicit Ablation and Thermal response (FIAT)[7] material response simulations were conducted with the heritage and MEDLI2 flight-lot material models. FIAT-predicted in-depth temperature responses and recession predictions were compared to flight-lot certification ground-test arc jet test data and MEDLI2 thermocouple data.
+Document ID
+20210016175
+Acquisition Source
+Ames Research Center
+Document Type
+Conference Paper
+Authors
+Joshua D. Monk
+(Ames Research Center Mountain View, California, United States)
+Jay D. Feldman
+(Ames Research Center Mountain View, California, United States)
+Milad Mahzari
+(Ames Research Center Mountain View, California, United States)
+Todd R. White
+(Ames Research Center Mountain View, California, United States)
+Dinesh K. Prabhu
+(Analytical Mechanics Associates (United States) Hampton, Virginia, United States)
+Et al
+Date Acquired
+May 24, 2021
+Subject Category
+Fluid Mechanics And Thermodynamics
+Meeting Information
+Meeting: AIAA SciTech Forum
+Location: San Diego, CA
+Country: US
+Start Date: January 3, 2022
+End Date: January 7, 2022
+Sponsors: American Institute of Aeronautics and Astronautics
+Funding Number(s)
+CONTRACT_GRANT: NNA15BB15C
+WBS: 389693.04.01.01
+Distribution Limits
+Public
+Copyright
+Public Use Permitted.
+Technical Review
+NASA Peer Committee
+Keywords
+Materials Response
+Model development
+Mars2020 Entry, Descent, and Landing Instrumentation 2 (MEDLI2) Do No Harm Test Series
+A total of seventeen instrumented thermal sensor plugs, eight pressure transducers, two heat flux sensors, and one radiometer are planned to be utilized on the Mars 2020 missions thermal protection system (TPS) as part of the Mars Entry, Descent, and Landing Instrumentation II (MEDLI2) project. Of the MEDLI2 instrumentation, eleven instrumented thermal plugs and seven pressure transducers will be installed on the heatshield of the Mars 2020 vehicle while the rest will be installed on the backshell. The goal of the MEDLI2 instrumentation is to directly inform the large performance uncertainties that contribute to the design and validation of a Mars entry system. A better understanding of the entry environment and TPS performance could lead to reduced design margins enabling a greater payload mass-fraction and smaller landing ellipses. To prove that the MEDLI2 system will not degrade the performance of the Mars 2020 TPS, an Aerothermal Do No Harm (DNH) test series was designed and conducted. Like Mars 2020s predecessor, Mars Science Laboratory (MSL), the heatshield material will be Phenolic Impregnated Carbon Ablator (PICA); the Mars 2020 entry conditions are enveloped by the MSL design environments, therefore the development and qualification testing performed during MEDLI is sufficient to show that the similar MEDLI2 heatshield instrumentation will not degrade PICA performance. However, given that MEDLI did not include any backshell instrumentation, the MEDLI2 team was required to design and execute a DNH test series utilizing the backshell TPS material (SLA-561V) with the intended flight sensor suite. To meet the requirements handed down from Mars 2020, the MEDLI2 DNH test series emphasized the interaction between the MEDLI2 sensors and sensing locations with the surrounding backshell TPS and substrucutre. These interactions were characterized by performing environmental testing of four 12 by 12 test panels, which mimicked the construction of the backshell TPS and the integration of the MEDLI2 sensors as seen in Figure 1. The testing included thermal vacuumcycling, random vibration, shock, and arc jet testing. The test panels were fabricated by Lockheed Martin, establishing techniques that will be utilized during the Mars 2020 vehicle installation. Each test panel included one thermal sensor plug (two embedded thermocouples), one heat flux sensor, and multiple pressure port holes for evaluation.This presentation will discuss the planning and execution of the MEDLI2 DNH test series. Selected highlights and results of each environmental test will be presented, and lessons learned will be addressed that will feed forward into the planning for the MEDLI2 flight system certification testing.
+Document ID
+20170009883
+Acquisition Source
+Ames Research Center
+Document Type
+Presentation
+Authors
+Swanson, Gregory
+(Analytical Mechanics Associates, Inc. Moffett Field, CA, United States)
+Santos, Jose
+(Sierra Lobo, Inc. Moffett Field, CA, United States)
+White, Todd
+(NASA Ames Research Center Moffett Field, CA, United States)
+Bruce, Walt
+(NASA Langley Research Center Hampton, VA, United States)
+Kuhl, Chris
+(NASA Langley Research Center Hampton, VA, United States)
+Et al
+Date Acquired
+October 11, 2017
+Publication Date
+June 15, 2017
+Subject Category
+Spacecraft Instrumentation And Astrionics
+Aerodynamics
+Report/Patent Number
+ARC-E-DAA-TN42807
+Report Number: ARC-E-DAA-TN42807
+Meeting Information
+Meeting: International Planetary Probe Workshop (IPPW-14)
+Location: The Hague
+Country: Netherlands
+Start Date: June 12, 2017
+End Date: June 16, 2017
+Sponsors: European Space Agency. European Space Research and Technology Center, ESTEC, NASA Headquarters
+Funding Number(s)
+CONTRACT_GRANT: NNA15BB15C
+CONTRACT_GRANT: NNA16BD26C
+Distribution Limits
+Public
+Copyright
+Public Use Permitted.
+Keywords
+backshell
+instrumentation
+Heatshield
+MELDI2 Do No Harm Test Series
+Mars 2020 will fly the Mars Entry, Descent, and Landing Instrumentation II (MEDLI2) sensor suite consisting of a total of seventeen instrumented thermal sensor plugs, eight pressure transducers, two heat flux sensors, and one radiometer embedded in the thermal protection system (TPS). Of the MEDLI2 instrumentation, eleven instrumented thermal plugs and seven pressure transducers will be installed on the heatshield of the Mars 2020 vehicle while the rest will be installed on the backshell. The goal of the MEDLI2 instrumentation is to directly inform the large performance uncertainties that contribute to the design and validation of a Mars entry system. A better understanding of the entry environment and TPS performance could lead to reduced design margins enabling a greater payload mass-fraction and smaller landing ellipses. To prove that the MEDLI2 system will not degrade the performance of the Mars 2020 TPS, an Aerothermal Do No Harm (DNH) test series was designed and conducted. Like Mars 2020's predecessor, Mars Science Laboratory (MSL), the heatshield material will be Phenolic Impregnated Carbon Ablator (PICA); the Mars 2020 entry conditions are enveloped by the MSL design environments, therefore the development and qualification testing performed during MEDLI is sufficient to show that the similar MEDLI2 heatshield instrumentation will not degrade PICA performance. However, given that MEDLI did not include any backshell instrumentation, the MEDLI2 team was required to design and execute a DNH test series utilizing the backshell TPS material (SLA-561V) with the intended flight sensor suite. To meet the requirements handed down from Mars 2020, the MEDLI2 DNH test series emphasized the interaction between the MEDLI2 sensors and sensing locations with the surrounding backshell TPS and substrucutre. These interactions were characterized by performing environmental testing of four 12" by 12" test panels, which mimicked the construction of the backshell TPS and the integration of the MEDLI2 sensors as seen in Figure 1. The testing included thermal vacuum/ cycling, random vibration, shock, and arc jet testing. The test panels were fabricated by Lockheed Martin, establishing techniques that will be utilized during the Mars 2020 vehicle installation. Each test panel included one thermal sensor plug (two embedded thermocouples), one heat flux sensor, and multiple pressure port holes for evaluation. This presentation will discuss the planning and execution of the MEDLI2 DNH test series. Selected highlights and results of each environmental test will be presented, and lessons learned will be addressed that will feed forward into the planning for the MEDLI2 flight system certification testing.
+Document ID
+20170005551
+Acquisition Source
+Ames Research Center
+Document Type
+Abstract
+Authors
+Swanson, G. T.
+(Analytical Mechanics Associates, Inc. Moffett Field, CA, United States)
+Santos, J. A.
+(Jacobs Technology, Inc. Moffett Field, CA, United States)
+White, T. R.
+(NASA Ames Research Center Moffett Field, CA United States)
+Bruce, W. E.
+(NASA Langley Research Center Hampton, VA United States)
+Kuhl, C. A.
+(NASA Langley Research Center Hampton, VA United States)
+Et al
+Date Acquired
+June 14, 2017
+Publication Date
+June 12, 2017
+Subject Category
+Spacecraft Instrumentation And Astrionics
+Spacecraft Design, Testing And Performance
+Report/Patent Number
+ARC-E-DAA-TN39603
+Report Number: ARC-E-DAA-TN39603
+Meeting Information
+Meeting: International Planetary Probe Workshop
+Location: The Hague
+Country: Netherlands
+Start Date: June 12, 2017
+End Date: June 16, 2017
+Sponsors: European Space Agency. European Space Research and Technology Center, ESTEC
+Funding Number(s)
+CONTRACT_GRANT: NNA16BD26C
+CONTRACT_GRANT: NNA15BB15C
+Distribution Limits
+Public
+Copyright
+Public Use Permitted.
+Keywords
+Heatshield
+instrumentation
+backshell

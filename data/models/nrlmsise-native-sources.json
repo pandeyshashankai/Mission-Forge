@@ -1,0 +1,20 @@
+{
+  "commit": "a5f81be6c8802e9014f94457b41d3484673e0bfb",
+  "files": [
+    {
+      "file": "nrlmsise-00.c",
+      "url": "https://raw.githubusercontent.com/magnific0/nrlmsise-00/a5f81be6c8802e9014f94457b41d3484673e0bfb/nrlmsise-00.c",
+      "sha256": "29213367f4f7fd37cdd1eb37fa4b9d11d19399a5b6d794032ec69055af94f0d8"
+    },
+    {
+      "file": "nrlmsise-00.h",
+      "url": "https://raw.githubusercontent.com/magnific0/nrlmsise-00/a5f81be6c8802e9014f94457b41d3484673e0bfb/nrlmsise-00.h",
+      "sha256": "d5b45be690bbc6cf394f69b18c0e641a1769da0a87015704fdabf0e7560794aa"
+    },
+    {
+      "file": "nrlmsise-00_data.c",
+      "url": "https://raw.githubusercontent.com/magnific0/nrlmsise-00/a5f81be6c8802e9014f94457b41d3484673e0bfb/nrlmsise-00_data.c",
+      "sha256": "d0b3022f3c3e7ffdf703cc0e0d02339dfee01c0bf1520b29c68d5f4afd8784d5"
+    }
+  ]
+}

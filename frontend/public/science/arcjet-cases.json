@@ -1,0 +1,98 @@
+{
+  "cases": [
+    {
+      "facility": "IHF",
+      "testId": 362,
+      "material": "PICA",
+      "targetHotWallFluxWm2": 1760000,
+      "targetColdWallFluxWm2": 2100000,
+      "estimatedStagnationPressurePa": 17000,
+      "exposureSeconds": 33,
+      "source": "AIAA_2022_Monk.pdf Table 4",
+      "classification": "Target conditions, not measured time histories"
+    },
+    {
+      "facility": "IHF",
+      "testId": 362,
+      "material": "PICA",
+      "targetHotWallFluxWm2": 660000,
+      "targetColdWallFluxWm2": 810000,
+      "estimatedStagnationPressurePa": 20000,
+      "exposureSeconds": 84,
+      "source": "AIAA_2022_Monk.pdf Table 4",
+      "classification": "Target conditions, not measured time histories"
+    },
+    {
+      "facility": "AHF",
+      "testId": 350,
+      "material": "PICA",
+      "targetHotWallFluxWm2": 650000,
+      "targetColdWallFluxWm2": 810000,
+      "estimatedStagnationPressurePa": 4000,
+      "exposureSeconds": 25,
+      "source": "AIAA_2022_Monk.pdf Table 4",
+      "classification": "Target conditions, not measured time histories"
+    },
+    {
+      "facility": "AHF",
+      "testId": 350,
+      "material": "PICA",
+      "targetHotWallFluxWm2": 500000,
+      "targetColdWallFluxWm2": 630000,
+      "estimatedStagnationPressurePa": 3000,
+      "exposureSeconds": 25,
+      "source": "AIAA_2022_Monk.pdf Table 4",
+      "classification": "Target conditions, not measured time histories"
+    },
+    {
+      "facility": "PTF",
+      "testId": 162,
+      "material": "SLA-561V",
+      "targetHotWallFluxWm2": 43000.0,
+      "targetColdWallFluxWm2": 54000.0,
+      "estimatedStagnationPressurePa": 200.0,
+      "exposureSeconds": 63,
+      "source": "AIAA_2022_Monk.pdf Table 4",
+      "classification": "Target conditions, not measured time histories"
+    },
+    {
+      "facility": "PTF",
+      "testId": 162,
+      "material": "SLA-561V",
+      "targetHotWallFluxWm2": 86000.0,
+      "targetColdWallFluxWm2": 97000.0,
+      "estimatedStagnationPressurePa": 800.0,
+      "exposureSeconds": 25,
+      "source": "AIAA_2022_Monk.pdf Table 4",
+      "classification": "Target conditions, not measured time histories"
+    }
+  ],
+  "properties": [
+    {
+      "model": "Heritage",
+      "virginDensityKgM3": 274,
+      "roomTemperatureConductivityWmK": {
+        "virginAt1Atm": 0.174,
+        "charAt1Atm": 0.224,
+        "virginAt0001Atm": 0.52,
+        "charAt0001Atm": 0.202
+      },
+      "source": "AIAA_2022_Monk.pdf Table 3, PDF page 4; visually checked",
+      "limits": "Exact room temperature not specified. Table pressure is 0.001 atm, while surrounding methods text mentions 0.01 atm. Preserve this discrepancy; do not silently interpolate."
+    },
+    {
+      "model": "MEDLI2",
+      "virginDensityKgM3": 292,
+      "roomTemperatureConductivityWmK": {
+        "virginAt1Atm": 0.169,
+        "charAt1Atm": 0.169,
+        "virginAt0001Atm": 0.127,
+        "charAt0001Atm": 0.143
+      },
+      "source": "AIAA_2022_Monk.pdf Table 3, PDF page 4; visually checked",
+      "limits": "Exact room temperature not specified. Table pressure is 0.001 atm, while surrounding methods text mentions 0.01 atm. Preserve this discrepancy; do not silently interpolate."
+    }
+  ],
+  "source": "AIAA_2022_Monk.pdf Table 4; user supplied original SHA256 9f9b7f4c92738219f434d227feb1638cabb5d0f0b477d42649364fa06657ad5e",
+  "notice": "Target conditions only; no measured response histories. Constant prescribed hot/cold-wall flux is not a reconstructed absorbed-flux boundary."
+}

@@ -1,0 +1,8 @@
+{
+  "name": "devices",
+  "command": "npm run test:devices:ui",
+  "status": "PASS",
+  "durationMs": 435515,
+  "completedAt": "2026-11-06T02:31:15.812Z",
+  "log": "devices.log"
+}

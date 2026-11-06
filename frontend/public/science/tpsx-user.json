@@ -1,0 +1,202 @@
+{
+  "version": 1,
+  "transcribedOn": "2026-11-05",
+  "evidence": "User-supplied screenshots of NASA Ames TPSX; not independently fetched or authenticated",
+  "temperatureDependenceAvailable": false,
+  "materials": [
+    {
+      "id": "pica-virgin",
+      "name": "PICA [virgin]",
+      "phase": "virgin",
+      "screenshots": [
+        "Screenshot 2026-11-05 064555.png"
+      ],
+      "properties": {
+        "density": {
+          "value": 236,
+          "unit": "kg/m3",
+          "source": "measured",
+          "conditions": "assumed/assumed",
+          "reference": "1",
+          "uncertainty": {
+            "value": 12,
+            "unit": "kg/m3",
+            "type": "unspecified in screenshot"
+          }
+        },
+        "conductivity": {
+          "value": 0.305,
+          "unit": "W/(m K)",
+          "source": "measured",
+          "conditions": "nonstp",
+          "reference": "2",
+          "uncertainty": null
+        },
+        "specificHeat": {
+          "value": 1200,
+          "unit": "J/(kg K)",
+          "source": "unknown",
+          "conditions": "TRUE",
+          "reference": null,
+          "uncertainty": null
+        },
+        "emissivity": {
+          "value": 0.8,
+          "unit": "1",
+          "source": "measured",
+          "conditions": "assumed/assumed",
+          "reference": "2",
+          "uncertainty": null
+        }
+      }
+    },
+    {
+      "id": "pica-char",
+      "name": "PICA [char]",
+      "phase": "char",
+      "screenshots": [
+        "Screenshot 2026-11-05 064514.png",
+        "Screenshot 2026-11-05 064534.png"
+      ],
+      "properties": {
+        "density": {
+          "value": 160,
+          "unit": "kg/m3",
+          "source": "unknown",
+          "conditions": "assumed/assumed",
+          "reference": null,
+          "uncertainty": null
+        },
+        "emissivity": {
+          "value": 0.89,
+          "unit": "1",
+          "source": "measured",
+          "conditions": "assumed/assumed",
+          "reference": "1",
+          "uncertainty": null
+        }
+      },
+      "missing": [
+        "specificHeat",
+        "conductivity",
+        "effectiveHeatOfAblation"
+      ]
+    },
+    {
+      "id": "avcoat-virgin",
+      "name": "AVCOAT-5026 H/CG [virgin]",
+      "phase": "virgin",
+      "screenshots": [
+        "Screenshot 2026-11-05 064736.png",
+        "Screenshot 2026-11-05 064744.png"
+      ],
+      "properties": {
+        "density": {
+          "value": 529,
+          "unit": "kg/m3",
+          "source": "unknown",
+          "conditions": "assumed/assumed",
+          "reference": null,
+          "uncertainty": null
+        },
+        "conductivity": {
+          "value": 0.242,
+          "unit": "W/(m K)",
+          "source": "unknown",
+          "conditions": "TRUE",
+          "reference": null,
+          "uncertainty": null
+        },
+        "specificHeat": {
+          "value": 1610,
+          "unit": "J/(kg K)",
+          "source": "unknown",
+          "conditions": "TRUE",
+          "reference": null,
+          "uncertainty": null
+        },
+        "emissivity": {
+          "value": 0.667,
+          "unit": "1",
+          "source": "unknown",
+          "conditions": "assumed/assumed",
+          "reference": null,
+          "uncertainty": null
+        },
+        "effectiveHeatOfAblation": {
+          "value": 23800000.0,
+          "unit": "J/kg",
+          "source": "unknown",
+          "conditions": "nonstp*",
+          "reference": null,
+          "uncertainty": null
+        },
+        "laminarBlowingCorrection": {
+          "value": 0.7,
+          "unit": "1",
+          "source": "unknown",
+          "conditions": "assumed/assumed",
+          "reference": null,
+          "uncertainty": null
+        },
+        "turbulentBlowingCorrection": {
+          "value": 0.37,
+          "unit": "1",
+          "source": "unknown",
+          "conditions": "assumed/assumed",
+          "reference": null,
+          "uncertainty": null
+        }
+      }
+    },
+    {
+      "id": "avcoat-char",
+      "name": "AVCOAT-5026 H/CG [char]",
+      "phase": "char",
+      "screenshots": [
+        "Screenshot 2026-11-05 064712.png",
+        "Screenshot 2026-11-05 064720.png"
+      ],
+      "properties": {
+        "density": {
+          "value": 264,
+          "unit": "kg/m3",
+          "source": "unknown",
+          "conditions": "assumed/assumed",
+          "reference": null,
+          "uncertainty": null
+        },
+        "conductivity": {
+          "value": 0.242,
+          "unit": "W/(m K)",
+          "source": "unknown",
+          "conditions": "TRUE",
+          "reference": null,
+          "uncertainty": null
+        },
+        "specificHeat": {
+          "value": 2780,
+          "unit": "J/(kg K)",
+          "source": "unknown",
+          "conditions": "nonstp",
+          "reference": null,
+          "uncertainty": null
+        },
+        "emissivity": {
+          "value": 0.49,
+          "unit": "1",
+          "source": "unknown",
+          "conditions": "assumed/assumed",
+          "reference": null,
+          "uncertainty": null
+        }
+      }
+    }
+  ],
+  "limits": [
+    "No temperature/pressure property curves or quantitative time histories supplied.",
+    "No automatic virgin-to-char or NuSil coating model inferred.",
+    "Blowing correction values are preserved as reference data, not applied as universal heat-flux multipliers.",
+    "Screenshot source date for properties: 2006-01-05. STP flags are preserved literally; exact test conditions not given."
+  ]
+}

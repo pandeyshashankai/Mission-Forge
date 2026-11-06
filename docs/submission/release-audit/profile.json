@@ -1,0 +1,8 @@
+{
+  "name": "profile",
+  "command": "npm run test:optimization:profile",
+  "status": "PASS",
+  "durationMs": 53307,
+  "completedAt": "2026-11-06T02:15:13.099Z",
+  "log": "profile.log"
+}

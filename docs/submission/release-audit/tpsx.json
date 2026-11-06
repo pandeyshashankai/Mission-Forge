@@ -1,0 +1,8 @@
+{
+  "name": "tpsx",
+  "command": "npm run test:tpsx:ui",
+  "status": "PASS",
+  "durationMs": 8934,
+  "completedAt": "2026-11-06T02:34:06.683Z",
+  "log": "tpsx.log"
+}

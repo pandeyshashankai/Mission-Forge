@@ -1,0 +1,8 @@
+{
+  "name": "advanced",
+  "command": "npm run test:advanced:ui",
+  "status": "PASS",
+  "durationMs": 35045,
+  "completedAt": "2026-11-06T02:20:18.398Z",
+  "log": "advanced.log"
+}

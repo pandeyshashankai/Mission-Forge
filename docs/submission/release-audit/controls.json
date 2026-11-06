@@ -1,0 +1,8 @@
+{
+  "name": "controls",
+  "command": "npm run test:controls",
+  "status": "PASS",
+  "durationMs": 73893,
+  "completedAt": "2026-11-06T02:18:40.178Z",
+  "log": "controls.log"
+}

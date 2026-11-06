@@ -1,0 +1,41 @@
+{
+  "sha256": "97019deab598c36bc474c00a45d02fae30722c4c8a712f2d14f4b1bdf64e93d2",
+  "kind": "User-supplied abstracts and metadata; not full reports or experimental tables",
+  "reports": [
+    {
+      "id": "20190028635",
+      "url": "https://ntrs.nasa.gov/citations/20190028635"
+    },
+    {
+      "id": "20120011156",
+      "url": "https://ntrs.nasa.gov/citations/20120011156"
+    },
+    {
+      "id": "20220014385",
+      "url": "https://ntrs.nasa.gov/citations/20220014385"
+    },
+    {
+      "id": "20210024735",
+      "url": "https://ntrs.nasa.gov/citations/20210024735"
+    },
+    {
+      "id": "20210016175",
+      "url": "https://ntrs.nasa.gov/citations/20210016175"
+    },
+    {
+      "id": "20170009883",
+      "url": "https://ntrs.nasa.gov/citations/20170009883"
+    },
+    {
+      "id": "20170005551",
+      "url": "https://ntrs.nasa.gov/citations/20170005551"
+    }
+  ],
+  "quantitativeContextOnly": {
+    "fiberFormPressuresPa": [
+      3500,
+      7500
+    ]
+  },
+  "calibrationReady": false
+}

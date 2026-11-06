@@ -1,0 +1,591 @@
+{
+  "checkedOn": "2026-11-05",
+  "timezone": "Asia/Calcutta",
+  "sourceCommit": "c9b78bd1c8499845cb78fde315e1f761b6b06f1c",
+  "regressionChecks": 321,
+  "science": [
+    {
+      "body": "earth",
+      "name": "Earth",
+      "altitude": 200000,
+      "analytic": [
+        {
+          "name": "Circular speed",
+          "actual": 7788.487753727511,
+          "expected": 7788.487753727509,
+          "unit": "m/s",
+          "error": 2.335484706482722e-16,
+          "tolerance": 1e-10,
+          "pass": true
+        },
+        {
+          "name": "Escape speed",
+          "actual": 11014.585011698207,
+          "expected": 11014.585011698206,
+          "unit": "m/s",
+          "error": 1.651437073311406e-16,
+          "tolerance": 1e-10,
+          "pass": true
+        },
+        {
+          "name": "Orbital period",
+          "actual": 5301.005070504509,
+          "expected": 5301.005070504511,
+          "unit": "s",
+          "error": 5.147107141059775e-16,
+          "tolerance": 1e-10,
+          "pass": true
+        }
+      ],
+      "integration": {
+        "closure": 9.895617764257773e-10,
+        "energyError": 2.341077789968687e-11,
+        "steps": 360,
+        "pass": true
+      },
+      "pass": true
+    },
+    {
+      "body": "moon",
+      "name": "Moon",
+      "altitude": 100000,
+      "analytic": [
+        {
+          "name": "Circular speed",
+          "actual": 1633.5042113721956,
+          "expected": 1633.5042113721954,
+          "unit": "m/s",
+          "error": 1.3919381037422056e-16,
+          "tolerance": 1e-10,
+          "pass": true
+        },
+        {
+          "name": "Escape speed",
+          "actual": 2310.123809916126,
+          "expected": 2310.1238099161255,
+          "unit": "m/s",
+          "error": 1.9684977442961153e-16,
+          "tolerance": 1e-10,
+          "pass": true
+        },
+        {
+          "name": "Orbital period",
+          "actual": 7067.459393761729,
+          "expected": 7067.459393761733,
+          "unit": "s",
+          "error": 5.147505778813338e-16,
+          "tolerance": 1e-10,
+          "pass": true
+        }
+      ],
+      "integration": {
+        "closure": 1.910301471923063e-09,
+        "energyError": 1.4515912997769556e-10,
+        "steps": 360,
+        "pass": true
+      },
+      "pass": true
+    },
+    {
+      "body": "mars",
+      "name": "Mars",
+      "altitude": 200000,
+      "analytic": [
+        {
+          "name": "Circular speed",
+          "actual": 3454.2016858050765,
+          "expected": 3454.2016858050756,
+          "unit": "m/s",
+          "error": 2.633009837006524e-16,
+          "tolerance": 1e-10,
+          "pass": true
+        },
+        {
+          "name": "Escape speed",
+          "actual": 4884.9788712375475,
+          "expected": 4884.978871237547,
+          "unit": "m/s",
+          "error": 1.8618191106781992e-16,
+          "tolerance": 1e-10,
+          "pass": true
+        },
+        {
+          "name": "Orbital period",
+          "actual": 6529.31729252187,
+          "expected": 6529.317292521874,
+          "unit": "s",
+          "error": 6.964699837872684e-16,
+          "tolerance": 1e-10,
+          "pass": true
+        }
+      ],
+      "integration": {
+        "closure": 2.453800581288675e-09,
+        "energyError": 2.595821098428632e-12,
+        "steps": 360,
+        "pass": true
+      },
+      "pass": true
+    }
+  ],
+  "campaign": [
+    {
+      "mission": "first_orbit",
+      "difficulty": "amateur",
+      "outcome": "success",
+      "validation": "pass",
+      "envelopeMisses": [],
+      "summary": {
+        "mass": 525860,
+        "cost": 37.6,
+        "dv": 12576.706202113455,
+        "twr": 1.4463940007773612,
+        "stages": 2,
+        "remDv": 1791.1184366640387,
+        "apo": 204100.13492715545,
+        "peri": 196135.4197957134,
+        "inc": 28.599409120580884,
+        "maxQ": 35877.714997250776,
+        "flightTime": 589.9599999997611,
+        "guidance": true,
+        "moonClosest": null,
+        "maxG": 4.000000000000002
+      },
+      "note": null
+    },
+    {
+      "mission": "earth_observer",
+      "difficulty": "amateur",
+      "outcome": "success",
+      "validation": "pass",
+      "envelopeMisses": [],
+      "summary": {
+        "mass": 527860,
+        "cost": 69.60000000000001,
+        "dv": 11968.742989533577,
+        "twr": 1.4409137825347311,
+        "stages": 2,
+        "remDv": 1181.8171683712142,
+        "apo": 694136.4658806408,
+        "peri": 692953.63619579,
+        "inc": 98.1965466729892,
+        "maxQ": 35985.20663747983,
+        "flightTime": 3609.979999997509,
+        "guidance": false,
+        "moonClosest": null,
+        "maxG": 5.834280584260823
+      },
+      "note": null
+    },
+    {
+      "mission": "lunar_orbiter",
+      "difficulty": "amateur",
+      "outcome": "success",
+      "validation": "pass",
+      "envelopeMisses": [],
+      "summary": {
+        "mass": 632640,
+        "cost": 103.70000000000002,
+        "dv": 15249.522239205315,
+        "twr": 1.575934932366383,
+        "stages": 4,
+        "remDv": 1015.4378497652804,
+        "apo": 113944.9882022764,
+        "peri": 109487.1173727971,
+        "inc": 28.04432682170975,
+        "maxQ": 36991.03855780082,
+        "flightTime": 320091.0388887886,
+        "guidance": false,
+        "moonClosest": 110745.45513653313,
+        "maxG": 19.361426295029336
+      },
+      "note": null
+    },
+    {
+      "mission": "crewed_lunar_flyby",
+      "difficulty": "amateur",
+      "outcome": "success",
+      "validation": "pass",
+      "envelopeMisses": [],
+      "summary": {
+        "mass": 1257220,
+        "cost": 180.6,
+        "dv": 13061.054620405563,
+        "twr": 1.5860382043115264,
+        "stages": 4,
+        "remDv": 0,
+        "apo": 4.602805581875145,
+        "peri": -6361624.278141699,
+        "inc": 22.632835164279427,
+        "maxQ": 37109.51878600954,
+        "flightTime": 772220.1790655592,
+        "guidance": false,
+        "moonClosest": 1995464.2044260853,
+        "maxG": 7.3552635047857855
+      },
+      "note": null
+    },
+    {
+      "mission": "first_orbit",
+      "difficulty": "intermediate",
+      "outcome": "success",
+      "validation": "pass",
+      "envelopeMisses": [],
+      "summary": {
+        "mass": 525860,
+        "cost": 37.6,
+        "dv": 12576.706202113455,
+        "twr": 1.4463940007773612,
+        "stages": 2,
+        "remDv": 1791.1184366640387,
+        "apo": 204100.13492715545,
+        "peri": 196135.4197957134,
+        "inc": 28.599409120580884,
+        "maxQ": 35877.714997250776,
+        "flightTime": 589.9599999997611,
+        "guidance": true,
+        "moonClosest": null,
+        "maxG": 4.000000000000002
+      },
+      "note": null
+    },
+    {
+      "mission": "earth_observer",
+      "difficulty": "intermediate",
+      "outcome": "success",
+      "validation": "pass",
+      "envelopeMisses": [],
+      "summary": {
+        "mass": 527860,
+        "cost": 69.60000000000001,
+        "dv": 11968.742989533577,
+        "twr": 1.4409137825347311,
+        "stages": 2,
+        "remDv": 1181.8171683712142,
+        "apo": 694136.4658806408,
+        "peri": 692953.63619579,
+        "inc": 98.1965466729892,
+        "maxQ": 35985.20663747983,
+        "flightTime": 3609.979999997509,
+        "guidance": false,
+        "moonClosest": null,
+        "maxG": 5.834280584260823
+      },
+      "note": null
+    },
+    {
+      "mission": "lunar_orbiter",
+      "difficulty": "intermediate",
+      "outcome": "success",
+      "validation": "pass",
+      "envelopeMisses": [],
+      "summary": {
+        "mass": 632640,
+        "cost": 103.70000000000002,
+        "dv": 15249.522239205315,
+        "twr": 1.575934932366383,
+        "stages": 4,
+        "remDv": 1015.4378497652804,
+        "apo": 113944.9882022764,
+        "peri": 109487.1173727971,
+        "inc": 28.04432682170975,
+        "maxQ": 36991.03855780082,
+        "flightTime": 320091.0388887886,
+        "guidance": false,
+        "moonClosest": 110745.45513653313,
+        "maxG": 19.361426295029336
+      },
+      "note": null
+    },
+    {
+      "mission": "crewed_lunar_flyby",
+      "difficulty": "intermediate",
+      "outcome": "success",
+      "validation": "pass",
+      "envelopeMisses": [],
+      "summary": {
+        "mass": 1257220,
+        "cost": 180.6,
+        "dv": 13061.054620405563,
+        "twr": 1.5860382043115264,
+        "stages": 4,
+        "remDv": 0,
+        "apo": 4.602805581875145,
+        "peri": -6361624.278141699,
+        "inc": 22.632835164279427,
+        "maxQ": 37109.51878600954,
+        "flightTime": 772220.1790655592,
+        "guidance": false,
+        "moonClosest": 1995464.2044260853,
+        "maxG": 7.3552635047857855
+      },
+      "note": null
+    },
+    {
+      "mission": "first_orbit",
+      "difficulty": "expert",
+      "outcome": "success",
+      "validation": "pass",
+      "envelopeMisses": [],
+      "summary": {
+        "mass": 525860,
+        "cost": 37.6,
+        "dv": 12576.706202113455,
+        "twr": 1.4463940007773612,
+        "stages": 2,
+        "remDv": 1791.1184366640387,
+        "apo": 204100.13492715545,
+        "peri": 196135.4197957134,
+        "inc": 28.599409120580884,
+        "maxQ": 35877.714997250776,
+        "flightTime": 589.9599999997611,
+        "guidance": true,
+        "moonClosest": null,
+        "maxG": 4.000000000000002
+      },
+      "note": null
+    },
+    {
+      "mission": "earth_observer",
+      "difficulty": "expert",
+      "outcome": "success",
+      "validation": "pass",
+      "envelopeMisses": [],
+      "summary": {
+        "mass": 527860,
+        "cost": 69.60000000000001,
+        "dv": 11968.742989533577,
+        "twr": 1.4409137825347311,
+        "stages": 2,
+        "remDv": 1181.8171683712142,
+        "apo": 694136.4658806408,
+        "peri": 692953.63619579,
+        "inc": 98.1965466729892,
+        "maxQ": 35985.20663747983,
+        "flightTime": 3609.979999997509,
+        "guidance": false,
+        "moonClosest": null,
+        "maxG": 5.834280584260823
+      },
+      "note": null
+    },
+    {
+      "mission": "lunar_orbiter",
+      "difficulty": "expert",
+      "outcome": "partial",
+      "validation": "pass",
+      "envelopeMisses": [],
+      "summary": {
+        "mass": 632640,
+        "cost": 103.70000000000002,
+        "dv": 15249.522239205315,
+        "twr": 1.575934932366383,
+        "stages": 4,
+        "remDv": 1015.4378497652804,
+        "apo": 113944.9882022764,
+        "peri": 109487.1173727971,
+        "inc": 28.04432682170975,
+        "maxQ": 36991.03855780082,
+        "flightTime": 320091.0388887886,
+        "guidance": false,
+        "moonClosest": 110745.45513653313,
+        "maxG": 19.361426295029336
+      },
+      "note": "Stock rocket flies successfully but exceeds Expert budget; customise before launch."
+    },
+    {
+      "mission": "crewed_lunar_flyby",
+      "difficulty": "expert",
+      "outcome": "success",
+      "validation": "pass",
+      "envelopeMisses": [],
+      "summary": {
+        "mass": 1257220,
+        "cost": 180.6,
+        "dv": 13061.054620405563,
+        "twr": 1.5860382043115264,
+        "stages": 4,
+        "remDv": 0,
+        "apo": 4.602805581875145,
+        "peri": -6361624.278141699,
+        "inc": 22.632835164279427,
+        "maxQ": 37109.51878600954,
+        "flightTime": 772220.1790655592,
+        "guidance": false,
+        "moonClosest": 1995464.2044260853,
+        "maxG": 7.3552635047857855
+      },
+      "note": null
+    }
+  ],
+  "showcase": {
+    "status": "pass",
+    "flow": "predict, launch, stage, insert, report, reflect, export, reload",
+    "uncaughtExceptions": 0
+  },
+  "limits": [
+    "Ideal two-body numerical checks, not measured ephemeris accuracy or all physical effects.",
+    "Browser device emulation, not physical-device certification.",
+    "No learner study or measured learning gains."
+  ],
+  "sourceSnapshots": 8,
+  "rotationPeriods": 12,
+  "densityBands": 178,
+  "engineering": [
+    {
+      "name": "earth density at 115 km",
+      "actual": 4.8533850005678735e-08,
+      "expected": 4.8533850005678735e-08,
+      "unit": "kg/m\u00b3",
+      "error": 0,
+      "pass": true,
+      "tolerance": 1e-10
+    },
+    {
+      "name": "mars density at 55 km",
+      "actual": 3.0047534366684754e-05,
+      "expected": 3.004753436668476e-05,
+      "unit": "kg/m\u00b3",
+      "error": 2.2551812389463785e-16,
+      "pass": true,
+      "tolerance": 1e-10
+    },
+    {
+      "name": "Ideal rocket velocity change",
+      "actual": 3456.5467912802796,
+      "expected": 3456.546791280279,
+      "unit": "m/s",
+      "error": 1.3156117314356653e-16,
+      "pass": true,
+      "tolerance": 1e-10
+    },
+    {
+      "name": "Hohmann burn 1",
+      "actual": 58.158568345813364,
+      "expected": 58.15856834581299,
+      "unit": "m/s",
+      "error": 6.475187761047505e-15,
+      "pass": true,
+      "tolerance": 1e-10
+    },
+    {
+      "name": "Hohmann burn 2",
+      "actual": 57.72424739301459,
+      "expected": 57.724247393015034,
+      "unit": "m/s",
+      "error": 7.631740837985694e-15,
+      "pass": true,
+      "tolerance": 1e-10
+    },
+    {
+      "name": "Hohmann coast time",
+      "actual": 2711.2366937707175,
+      "expected": 2711.236693770719,
+      "unit": "s",
+      "error": 5.031807277445922e-16,
+      "pass": true,
+      "tolerance": 1e-10
+    }
+  ],
+  "finiteTransfers": {
+    "cases": 66,
+    "craft": 3,
+    "destinations": 11,
+    "directions": 2,
+    "orbitToleranceMeters": 1500,
+    "requiresFuelUse": true,
+    "allowsPlacement": false
+  },
+  "browserEngineering": {
+    "status": "pass",
+    "initialFuel": 3200,
+    "finalFuel": 3002.149612676022,
+    "apoapsis": 499997.4513718914,
+    "periapsis": 499993.3914195653,
+    "exceptions": []
+  },
+  "roadmap": {
+    "automatedChecks": 11,
+    "seededValidStates": 10000,
+    "circularCoastPeriods": 10,
+    "ellipticalCoastPeriods": 20,
+    "j2PrecessionRelativeTolerance": 0.03,
+    "replayHash": "6ec55bdd",
+    "replayCommands": 60,
+    "goldenCampaignEnvelopes": 12,
+    "sourceSnapshotsBundled": 8,
+    "externalToolComparison": "Actual Orekit 13.1.9 trajectories and gravity, native NRLMSISE-00 C, published ERFA matrix; see advanced-validation-results.json"
+  },
+  "advancedValidation": "advanced-validation-results.json",
+  "workingTreeIncludesUncommittedImplementation": true,
+  "clientExpansion": {
+    "automatedChecks": 27,
+    "externalReferenceChecks": 51,
+    "browserWorkflow": "pass",
+    "offlineReloadAndLocalModels": "pass",
+    "browserExceptions": 0,
+    "physicalDeviceTesting": false
+  },
+  "higherFidelity": {
+    "physicsRevision": 2,
+    "automatedChecks": 12,
+    "lambertEndpointCases": 48,
+    "atmosphericConfigurations": 12,
+    "atmosphericSampleRatesSeconds": [
+      1,
+      0.5
+    ],
+    "orekitEclipses": 27,
+    "orekitRelativisticVectors": 5,
+    "orekitRelativisticTrajectories": 2,
+    "dockingFuelCycles": 20,
+    "referenceResults": "advanced-validation-results.json"
+  },
+  "vehicleDynamics": {
+    "automatedChecks": 9,
+    "de421HeldOutSamples": 27,
+    "ephemerisPositionToleranceMeters": 2,
+    "ephemerisWindow": "January 2000 TDB",
+    "limits": "Fixed material assumptions; spherical collision; degree-three/lagged solid tides, not ocean loading."
+  },
+  "contactAndMaterial": {
+    "automatedChecks": 9,
+    "orekitOceanCoefficientCases": 3,
+    "fullOceanLoadingFinished": false,
+    "spacecraftMaterialCalibrationFinished": false,
+    "rigidContactGeometry": "Oriented boxes, impulses and friction; paired docking attachment remains simplified"
+  },
+  "uploadedTpsx": {
+    "automatedChecks": 5,
+    "materialRecords": 4,
+    "playablePresets": 3,
+    "calibrationReady": false,
+    "source": "User-supplied screenshots and report abstracts"
+  },
+  "thermalBench": {
+    "automatedChecks": 4,
+    "publishedExposures": 6,
+    "materialPhases": 3,
+    "caseMaterialCombinations": 18,
+    "experimentalCalibrationClaimed": false
+  },
+  "combinationAudit": {
+    "catalogueCases": 57776,
+    "physicsAndThermalCases": 9140,
+    "totalGeneratedCases": 66916,
+    "catalogueParts": 36,
+    "orderedAxialPairs": 1225,
+    "orderedAxialTriples": 42875,
+    "allBinaryForceMasks": 1024,
+    "craftPairContactMaterialCases": 432,
+    "limits": "Bounded built-in catalogue, short-coast flag matrix and sampled parameter values; not exhaustive arbitrary-length designs or physical-device certification.",
+    "catalogueBrowserAssemblies": 74,
+    "invalidGroupedImportsRejected": 2,
+    "fixedIssues": [
+      "duplicate/invalid part IDs",
+      "missing companion calibration",
+      "inconsistent collision switches",
+      "empty-vehicle navigation NaN"
+    ]
+  }
+}

@@ -1,4 +1,6 @@
-// U.S. Standard Atmosphere 1976 (layers to 86 km), exponential tail above.
+import { nasaDensity } from "../science/atmospheres";
+// U.S. Standard Atmosphere 1976 to 86 km; blend to NASA GMAT density by 90 km.
+// Upper temperature and the 160 km cutoff remain educational model choices.
 const R0 = 6356766;
 const RAIR = 287.053;
 const GMR = 0.0341632;
@@ -25,7 +27,10 @@ function lower(hgp) {
   const b = layerAt(hgp);
   const dh = hgp - b.h;
   const T = b.T + b.L * dh;
-  const P = b.L === 0 ? b.P * Math.exp((-GMR * dh) / b.T) : b.P * Math.pow(b.T / T, GMR / b.L);
+  const P =
+    b.L === 0
+      ? b.P * Math.exp((-GMR * dh) / b.T)
+      : b.P * Math.pow(b.T / T, GMR / b.L);
   return { T, P };
 }
 
@@ -41,15 +46,30 @@ export function atmosphere(z) {
     T = BASE86.T;
     P = BASE86.P * Math.exp(-(alt - 86000) / TAIL_SCALE);
   }
-  return { T, P, rho: P / (RAIR * T), a: Math.sqrt(1.4 * RAIR * T) };
+  let rho = P / (RAIR * T);
+  if (alt > 86000) {
+    const blend = Math.min(1, (alt - 86000) / 4000);
+    rho = rho * (1 - blend) + nasaDensity("earth", alt) * blend;
+    P = rho * RAIR * T;
+  }
+  return { T, P, rho, a: Math.sqrt(1.4 * RAIR * T) };
 }
 
 // Drag coefficient vs Mach for a slender launch vehicle (approximate public wind-tunnel trend).
 const CD_TABLE = [
-  [0, 0.3], [0.8, 0.32], [1.0, 0.45], [1.2, 0.5], [1.5, 0.42], [2, 0.36], [3, 0.3], [5, 0.26], [10, 0.25],
+  [0, 0.3],
+  [0.8, 0.32],
+  [1.0, 0.45],
+  [1.2, 0.5],
+  [1.5, 0.42],
+  [2, 0.36],
+  [3, 0.3],
+  [5, 0.26],
+  [10, 0.25],
 ];
 export function dragCoefficient(mach) {
-  if (mach >= CD_TABLE[CD_TABLE.length - 1][0]) return CD_TABLE[CD_TABLE.length - 1][1];
+  if (mach >= CD_TABLE[CD_TABLE.length - 1][0])
+    return CD_TABLE[CD_TABLE.length - 1][1];
   for (let i = 1; i < CD_TABLE.length; i++) {
     const [m1, c1] = CD_TABLE[i];
     const [m0, c0] = CD_TABLE[i - 1];

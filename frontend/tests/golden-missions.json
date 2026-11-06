@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "notice": "Gameplay regression envelopes, not GMAT/Orekit reference trajectories. SI units except inclination in degrees. All difficulty levels use the same physical goal envelopes.",
+  "cases": {
+    "first_orbit": {"apo": [175000, 225000], "peri": [175000, 225000], "inc": [26.6, 30.6], "flightTime": [300, 1800]},
+    "earth_observer": {"apo": [675000, 725000], "peri": [675000, 725000], "inc": [97.7, 98.7], "flightTime": [300, 20000]},
+    "lunar_orbiter": {"apo": [25000, 175000], "peri": [25000, 175000], "flightTime": [86400, 864000]},
+    "crewed_lunar_flyby": {"flightTime": [86400, 1728000], "maxG": [0, 9]}
+  }
+}

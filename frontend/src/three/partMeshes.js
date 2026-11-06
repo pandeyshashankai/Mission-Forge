@@ -44,21 +44,81 @@ function panelTexture(key, base, line, bands = 6, stripe) {
 }
 
 const M = {
-  white: () => new THREE.MeshStandardMaterial({ map: panelTexture("white", "#e8e9ea", "rgba(60,60,70,0.35)"), roughness: 0.55, metalness: 0.08 }),
-  orange: () => new THREE.MeshStandardMaterial({ map: panelTexture("orange", "#c8692e", "rgba(70,30,10,0.35)", 8), roughness: 0.92, metalness: 0 }),
-  srb: () => new THREE.MeshStandardMaterial({ map: panelTexture("srb", "#e9e7e1", "rgba(40,40,40,0.5)", 4), roughness: 0.6, metalness: 0.05 }),
-  dark: () => new THREE.MeshStandardMaterial({ color: "#26292f", roughness: 0.38, metalness: 0.85 }),
-  bell: () => new THREE.MeshStandardMaterial({ color: "#3b3532", roughness: 0.42, metalness: 0.75, side: THREE.DoubleSide }),
-  bellVac: () => new THREE.MeshStandardMaterial({ color: "#4a3d33", roughness: 0.35, metalness: 0.8, side: THREE.DoubleSide }),
-  gray: () => new THREE.MeshStandardMaterial({ color: "#8d939c", roughness: 0.45, metalness: 0.7 }),
-  gold: () => new THREE.MeshStandardMaterial({ color: "#d4a23c", roughness: 0.32, metalness: 1 }),
-  black: () => new THREE.MeshStandardMaterial({ color: "#121316", roughness: 0.7, metalness: 0.2 }),
-  solar: () => new THREE.MeshStandardMaterial({ color: "#1c2f5c", roughness: 0.25, metalness: 0.6 }),
-  glass: () => new THREE.MeshStandardMaterial({ color: "#0b1220", roughness: 0.1, metalness: 0.9 }),
+  white: () =>
+    new THREE.MeshStandardMaterial({
+      map: panelTexture("white", "#e8e9ea", "rgba(60,60,70,0.35)"),
+      roughness: 0.55,
+      metalness: 0.08,
+    }),
+  orange: () =>
+    new THREE.MeshStandardMaterial({
+      map: panelTexture("orange", "#c8692e", "rgba(70,30,10,0.35)", 8),
+      roughness: 0.92,
+      metalness: 0,
+    }),
+  srb: () =>
+    new THREE.MeshStandardMaterial({
+      map: panelTexture("srb", "#e9e7e1", "rgba(40,40,40,0.5)", 4),
+      roughness: 0.6,
+      metalness: 0.05,
+    }),
+  dark: () =>
+    new THREE.MeshStandardMaterial({
+      color: "#26292f",
+      roughness: 0.38,
+      metalness: 0.85,
+    }),
+  bell: () =>
+    new THREE.MeshStandardMaterial({
+      color: "#3b3532",
+      roughness: 0.42,
+      metalness: 0.75,
+      side: THREE.DoubleSide,
+    }),
+  bellVac: () =>
+    new THREE.MeshStandardMaterial({
+      color: "#4a3d33",
+      roughness: 0.35,
+      metalness: 0.8,
+      side: THREE.DoubleSide,
+    }),
+  gray: () =>
+    new THREE.MeshStandardMaterial({
+      color: "#8d939c",
+      roughness: 0.45,
+      metalness: 0.7,
+    }),
+  gold: () =>
+    new THREE.MeshStandardMaterial({
+      color: "#d4a23c",
+      roughness: 0.32,
+      metalness: 1,
+    }),
+  black: () =>
+    new THREE.MeshStandardMaterial({
+      color: "#121316",
+      roughness: 0.7,
+      metalness: 0.2,
+    }),
+  solar: () =>
+    new THREE.MeshStandardMaterial({
+      color: "#1c2f5c",
+      roughness: 0.25,
+      metalness: 0.6,
+    }),
+  glass: () =>
+    new THREE.MeshStandardMaterial({
+      color: "#0b1220",
+      roughness: 0.1,
+      metalness: 0.9,
+    }),
 };
 
 const cyl = (rt, rb, h, mat, seg = 48, y = 0) => {
-  const m = new THREE.Mesh(new THREE.CylinderGeometry(rt, rb, h, seg, 1, false), mat);
+  const m = new THREE.Mesh(
+    new THREE.CylinderGeometry(rt, rb, h, seg, 1, false),
+    mat,
+  );
   m.position.y = y + h / 2;
   return m;
 };
@@ -67,7 +127,12 @@ function bell(throat, exit, h, mat) {
   const pts = [];
   for (let i = 0; i <= 16; i++) {
     const f = i / 16;
-    pts.push(new THREE.Vector2(throat + (exit - throat) * Math.pow(f, 0.6), h * (1 - f)));
+    pts.push(
+      new THREE.Vector2(
+        throat + (exit - throat) * Math.pow(f, 0.6),
+        h * (1 - f),
+      ),
+    );
   }
   return new THREE.Mesh(new THREE.LatheGeometry(pts, 40), mat);
 }
@@ -81,7 +146,12 @@ function ogive(radius, cylH, noseH, mat) {
   pts.push(new THREE.Vector2(radius, 0), new THREE.Vector2(radius, cylH));
   for (let i = 1; i <= 20; i++) {
     const f = i / 20;
-    pts.push(new THREE.Vector2(Math.max(0.02, radius * Math.sqrt(1 - f * f)), cylH + noseH * f));
+    pts.push(
+      new THREE.Vector2(
+        Math.max(0.02, radius * Math.sqrt(1 - f * f)),
+        cylH + noseH * f,
+      ),
+    );
   }
   return new THREE.Mesh(new THREE.LatheGeometry(pts, 48), mat);
 }
@@ -99,11 +169,17 @@ export function buildPartMesh(part, height = part.height) {
       break;
     }
     case "engine":
+    case "engine_sl":
     case "engine_vac": {
       const vac = part.look === "engine_vac";
       g.add(cyl(r * 0.45, r * 0.5, h * 0.12, M.dark(), 32, h * 0.88));
       g.add(cyl(r * 0.16, r * 0.2, h * 0.16, M.gray(), 24, h * 0.72));
-      const b = bell(r * 0.15, vac ? r * 0.95 : r * 0.6, h * 0.72, vac ? M.bellVac() : M.bell());
+      const b = bell(
+        r * 0.15,
+        vac ? r * 0.95 : r * 0.6,
+        h * 0.72,
+        vac ? M.bellVac() : M.bell(),
+      );
       g.add(b);
       break;
     }
@@ -111,12 +187,29 @@ export function buildPartMesh(part, height = part.height) {
       g.add(cyl(r, r, h * 0.2, M.dark(), 48, h * 0.8));
       const bh = h * 0.8;
       const add = (x, z) => {
-        const b = bell(r * 0.05, r * 0.15, bh, M.bell());
+        const b = bell(
+          r * 0.05,
+          r * (part.nozzleCount === 3 ? 0.32 : 0.15),
+          bh,
+          M.bell(),
+        );
         b.position.set(x, 0, z);
         g.add(b);
       };
-      add(0, 0);
-      for (let i = 0; i < 8; i++) add(Math.cos((i / 8) * Math.PI * 2) * r * 0.66, Math.sin((i / 8) * Math.PI * 2) * r * 0.66);
+      if (part.nozzleCount === 3) {
+        for (let i = 0; i < 3; i++)
+          add(
+            Math.cos((i / 3) * Math.PI * 2) * r * 0.5,
+            Math.sin((i / 3) * Math.PI * 2) * r * 0.5,
+          );
+      } else {
+        add(0, 0);
+        for (let i = 0; i < 8; i++)
+          add(
+            Math.cos((i / 8) * Math.PI * 2) * r * 0.66,
+            Math.sin((i / 8) * Math.PI * 2) * r * 0.66,
+          );
+      }
       break;
     }
     case "capsule": {
@@ -124,7 +217,10 @@ export function buildPartMesh(part, height = part.height) {
       g.add(cyl(r * 0.32, r * 0.95, h * 0.78, M.gray(), 48, 0.18));
       g.add(cyl(r * 0.22, r * 0.25, h * 0.18, M.dark(), 32, 0.18 + h * 0.78));
       for (let i = 0; i < 2; i++) {
-        const w = new THREE.Mesh(new THREE.BoxGeometry(r * 0.25, r * 0.22, 0.05), M.glass());
+        const w = new THREE.Mesh(
+          new THREE.BoxGeometry(r * 0.25, r * 0.22, 0.05),
+          M.glass(),
+        );
         const a = (i - 0.5) * 0.7;
         w.position.set(Math.sin(a) * r * 0.62, h * 0.5, Math.cos(a) * r * 0.62);
         w.rotation.y = a;
@@ -143,15 +239,24 @@ export function buildPartMesh(part, height = part.height) {
     }
     case "satellite": {
       g.add(cyl(r * 0.45, r * 0.5, 0.25, M.dark(), 32, 0));
-      const bus = new THREE.Mesh(new THREE.BoxGeometry(r * 1.1, h - 0.25, r * 1.1), M.gold());
+      const bus = new THREE.Mesh(
+        new THREE.BoxGeometry(r * 1.1, h - 0.25, r * 1.1),
+        M.gold(),
+      );
       bus.position.y = 0.25 + (h - 0.25) / 2;
       g.add(bus);
       for (const s of [-1, 1]) {
-        const p = new THREE.Mesh(new THREE.BoxGeometry(0.06, h * 0.8, r * 0.9), M.solar());
+        const p = new THREE.Mesh(
+          new THREE.BoxGeometry(0.06, h * 0.8, r * 0.9),
+          M.solar(),
+        );
         p.position.set(s * r * 0.6, 0.25 + (h - 0.25) / 2, 0);
         g.add(p);
       }
-      const dish = new THREE.Mesh(new THREE.SphereGeometry(r * 0.3, 24, 8, 0, Math.PI * 2, 0, 1.1), M.white());
+      const dish = new THREE.Mesh(
+        new THREE.SphereGeometry(r * 0.3, 24, 8, 0, Math.PI * 2, 0, 1.1),
+        M.white(),
+      );
       dish.position.y = h + 0.05;
       dish.rotation.x = Math.PI;
       g.add(dish);
@@ -173,8 +278,12 @@ export function buildPartMesh(part, height = part.height) {
     }
     case "srb": {
       g.add(cyl(r, r, h * 0.84, M.srb(), 32, h * 0.04));
-      for (let i = 1; i < 4; i++) g.add(ring(r, h * 0.04 + (h * 0.84 * i) / 4, 0.1));
-      const cone = new THREE.Mesh(new THREE.ConeGeometry(r, h * 0.12, 32), M.srb());
+      for (let i = 1; i < 4; i++)
+        g.add(ring(r, h * 0.04 + (h * 0.84 * i) / 4, 0.1));
+      const cone = new THREE.Mesh(
+        new THREE.ConeGeometry(r, h * 0.12, 32),
+        M.srb(),
+      );
       cone.position.y = h * 0.88 + h * 0.06;
       g.add(cone);
       g.add(bell(r * 0.3, r * 0.75, h * 0.05, M.bell()));
@@ -187,7 +296,10 @@ export function buildPartMesh(part, height = part.height) {
     case "rcs":
       g.add(cyl(r, r, h, M.gray()));
       for (let i = 0; i < 4; i++) {
-        const b = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.3, 0.35), M.dark());
+        const b = new THREE.Mesh(
+          new THREE.BoxGeometry(0.35, 0.3, 0.35),
+          M.dark(),
+        );
         const a = (i / 4) * Math.PI * 2 + Math.PI / 4;
         b.position.set(Math.cos(a) * (r + 0.1), h / 2, Math.sin(a) * (r + 0.1));
         g.add(b);
@@ -199,13 +311,27 @@ export function buildPartMesh(part, height = part.height) {
       break;
     case "solar": {
       g.add(cyl(r * 0.6, r * 0.6, h, M.gray()));
-      const wing = new THREE.Mesh(new THREE.BoxGeometry(r * 7, h * 0.7, 0.05), new THREE.MeshStandardMaterial({ color: "#1e3a8a", metalness: 0.4, roughness: 0.4 }));
+      const wing = new THREE.Mesh(
+        new THREE.BoxGeometry(r * 7, h * 0.7, 0.05),
+        new THREE.MeshStandardMaterial({
+          color: "#1e3a8a",
+          metalness: 0.4,
+          roughness: 0.4,
+        }),
+      );
       wing.position.y = h / 2;
       g.add(wing);
       break;
     }
     case "heatshield":
-      g.add(cyl(r, r * 0.97, h, new THREE.MeshStandardMaterial({ color: "#5a3a22", roughness: 0.95 })));
+      g.add(
+        cyl(
+          r,
+          r * 0.97,
+          h,
+          new THREE.MeshStandardMaterial({ color: "#5a3a22", roughness: 0.95 }),
+        ),
+      );
       break;
     case "chute":
       g.add(cyl(r * 0.45, r, h, M.white(), 32));
@@ -237,7 +363,8 @@ export function layoutDesign(design) {
   stack.forEach((n, i) => {
     if (!PARTS[n.partId].fairing) return;
     let j = i + 1;
-    while (j < stack.length && ENCLOSABLE.has(PARTS[stack[j].partId].category)) j++;
+    while (j < stack.length && ENCLOSABLE.has(PARTS[stack[j].partId].category))
+      j++;
     enclosedBy[i] = j - 1;
   });
   const bottomOf = {};
@@ -248,10 +375,20 @@ export function layoutDesign(design) {
       const lastEnclosed = enclosedBy[i];
       const baseY = lastEnclosed > i ? bottomOf[lastEnclosed] : y;
       const h = y - baseY + p.height;
-      items[i] = { uid: stack[i].uid, partId: stack[i].partId, y: baseY, height: h };
+      items[i] = {
+        uid: stack[i].uid,
+        partId: stack[i].partId,
+        y: baseY,
+        height: h,
+      };
       y = baseY + h;
     } else {
-      items[i] = { uid: stack[i].uid, partId: stack[i].partId, y, height: p.height };
+      items[i] = {
+        uid: stack[i].uid,
+        partId: stack[i].partId,
+        y,
+        height: p.height,
+      };
       bottomOf[i] = y;
       y += p.height;
     }
@@ -266,7 +403,14 @@ export function layoutDesign(design) {
     const rad = pp.diameter / 2 + bp.diameter / 2 + 0.05;
     for (let k = 0; k < r.symmetry; k++) {
       const a = (k / r.symmetry) * Math.PI * 2 + Math.PI / 2;
-      radials.push({ uid: r.uid, partId: r.partId, y: Math.max(0, parent.y - 1.5), height: bp.height, x: Math.cos(a) * rad, z: Math.sin(a) * rad });
+      radials.push({
+        uid: r.uid,
+        partId: r.partId,
+        y: Math.max(0, parent.y - 1.5),
+        height: bp.height,
+        x: Math.cos(a) * rad,
+        z: Math.sin(a) * rad,
+      });
     }
   }
   return { items, radials, height: y };
@@ -304,7 +448,9 @@ export function disposeObject(obj) {
   obj.traverse((o) => {
     if (o.isMesh || o.isLine || o.isPoints) {
       o.geometry.dispose();
-      (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => m.dispose());
+      (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) =>
+        m.dispose(),
+      );
     }
   });
 }

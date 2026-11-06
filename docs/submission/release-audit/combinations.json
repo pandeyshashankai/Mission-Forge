@@ -1,0 +1,8 @@
+{
+  "name": "combinations",
+  "command": "npm run test:combinations",
+  "status": "PASS",
+  "durationMs": 7479,
+  "completedAt": "2026-11-06T02:12:58.818Z",
+  "log": "combinations.log"
+}

@@ -1,0 +1,700 @@
+{
+  "checkedAt": "2026-11-06T02:15:13.085Z",
+  "status": "PASS",
+  "scope": "Three paired isolated Node processes per implementation; alternating execution order. Each case uses 10 warmups and 100 identical advance requests. Median of per-process medians; timings are environment-specific, not a universal FPS guarantee. Small sub-millisecond timings are noisy.",
+  "invariants": "No force-model, integrator, step-limit, warp, rendering-quality, control or UI changes. State checksums and achieved simulation times must match exactly.",
+  "cases": [
+    {
+      "name": "central",
+      "requestedSeconds": 0.1,
+      "beforeMs": 0.03413999999997941,
+      "afterMs": 0.029162999999925887,
+      "cpuTimeReductionPercent": 14.57820738153639,
+      "identicalState": true,
+      "finalSimulationTime": 10.999999999999977,
+      "stateSHA256": "872f9013720251429625bdda76448c22580090f74f27c8564e9a1c349341d15d"
+    },
+    {
+      "name": "central",
+      "requestedSeconds": 10,
+      "beforeMs": 0.03047500000002401,
+      "afterMs": 0.025807999999983622,
+      "cpuTimeReductionPercent": 15.314191960743928,
+      "identicalState": true,
+      "finalSimulationTime": 1100,
+      "stateSHA256": "ae058537e852d059896ce3dfe6033e5ada9e1a8ab515808f3dcc3a327d439c14"
+    },
+    {
+      "name": "central",
+      "requestedSeconds": 1000,
+      "beforeMs": 1.9578940000000102,
+      "afterMs": 1.3504800000000614,
+      "cpuTimeReductionPercent": 31.02384500897115,
+      "identicalState": true,
+      "finalSimulationTime": 110000.00000000001,
+      "stateSHA256": "899cd897fc8fa01630b927fd4e0f073b1d5369d87b010984d0ad9b8bf3de9907"
+    },
+    {
+      "name": "advanced",
+      "requestedSeconds": 0.1,
+      "beforeMs": 0.6409640000000536,
+      "afterMs": 0.3854980000000978,
+      "cpuTimeReductionPercent": 39.856528603780305,
+      "identicalState": true,
+      "finalSimulationTime": 10.999999999999977,
+      "stateSHA256": "c68444c2d6af29e34e230163b934c15dcdd34a6d3f0e0d95cf0650e545592832"
+    },
+    {
+      "name": "advanced",
+      "requestedSeconds": 10,
+      "beforeMs": 0.6642990000000282,
+      "afterMs": 0.334692999999902,
+      "cpuTimeReductionPercent": 49.617115184594915,
+      "identicalState": true,
+      "finalSimulationTime": 1100,
+      "stateSHA256": "cce4e85fc35acec5b11804defdc875c11f60790d1bec9bd88172a590d9db0066"
+    },
+    {
+      "name": "advanced",
+      "requestedSeconds": 1000,
+      "beforeMs": 78.56286800000089,
+      "afterMs": 31.88727999999992,
+      "cpuTimeReductionPercent": 59.411766892217386,
+      "identicalState": true,
+      "finalSimulationTime": 110000.00000000084,
+      "stateSHA256": "142187237900ad9f0d09b278c08aa6c8e4763c862ef70430fcf4cd091e3824cb"
+    },
+    {
+      "name": "adaptive",
+      "requestedSeconds": 0.1,
+      "beforeMs": 0.06544700000085868,
+      "afterMs": 0.051494999999704305,
+      "cpuTimeReductionPercent": 21.31801305021058,
+      "identicalState": true,
+      "finalSimulationTime": 10.999999999999977,
+      "stateSHA256": "3604875b070cf47e79d332665f9c157b1ec7acfa04dc28905bb4cd8e857ee172"
+    },
+    {
+      "name": "adaptive",
+      "requestedSeconds": 10,
+      "beforeMs": 0.0681799999983923,
+      "afterMs": 0.05454100000042672,
+      "cpuTimeReductionPercent": 20.004400114824282,
+      "identicalState": true,
+      "finalSimulationTime": 1100.0000000000007,
+      "stateSHA256": "2c8d0f5d63faf30a23cab10fbab45fadc0a0908b2063f407f23ada169b3857d8"
+    },
+    {
+      "name": "adaptive",
+      "requestedSeconds": 1000,
+      "beforeMs": 6.191301000000749,
+      "afterMs": 4.865015999999741,
+      "cpuTimeReductionPercent": 21.421749645201338,
+      "identicalState": true,
+      "finalSimulationTime": 110000.00000000116,
+      "stateSHA256": "6172b53e7a28005e38a9362da184ea501d6a5a60dc54bcf1d7e13fceb569927c"
+    }
+  ],
+  "rounds": [
+    {
+      "before": {
+        "checkedAt": "2026-11-06T02:14:31.263Z",
+        "runtime": "v24.19.0",
+        "platform": "linux",
+        "scope": "Single-vessel Earth 600 km coasts; 10 warmups then 100 bounded advance calls per setting. Timings include this environment and are not physical-device certification.",
+        "cases": [
+          {
+            "name": "central",
+            "requestedSeconds": 0.1,
+            "requests": 100,
+            "medianMs": 0.03380000000004202,
+            "p95Ms": 0.11503899999991063,
+            "maxMs": 0.18660499999998592,
+            "finalSimulationTime": 10.999999999999977,
+            "stateSHA256": "872f9013720251429625bdda76448c22580090f74f27c8564e9a1c349341d15d"
+          },
+          {
+            "name": "central",
+            "requestedSeconds": 10,
+            "requests": 100,
+            "medianMs": 0.03063499999996111,
+            "p95Ms": 0.0671589999999469,
+            "maxMs": 0.19524799999999232,
+            "finalSimulationTime": 1100,
+            "stateSHA256": "ae058537e852d059896ce3dfe6033e5ada9e1a8ab515808f3dcc3a327d439c14"
+          },
+          {
+            "name": "central",
+            "requestedSeconds": 1000,
+            "requests": 100,
+            "medianMs": 1.9578940000000102,
+            "p95Ms": 3.282844999999952,
+            "maxMs": 5.787985000000049,
+            "finalSimulationTime": 110000.00000000001,
+            "stateSHA256": "899cd897fc8fa01630b927fd4e0f073b1d5369d87b010984d0ad9b8bf3de9907"
+          },
+          {
+            "name": "advanced",
+            "requestedSeconds": 0.1,
+            "requests": 100,
+            "medianMs": 0.6367480000000114,
+            "p95Ms": 0.8774530000000595,
+            "maxMs": 1.3050719999999956,
+            "finalSimulationTime": 10.999999999999977,
+            "stateSHA256": "c68444c2d6af29e34e230163b934c15dcdd34a6d3f0e0d95cf0650e545592832"
+          },
+          {
+            "name": "advanced",
+            "requestedSeconds": 10,
+            "requests": 100,
+            "medianMs": 0.6642990000000282,
+            "p95Ms": 1.7869020000000546,
+            "maxMs": 17.275456000000077,
+            "finalSimulationTime": 1100,
+            "stateSHA256": "cce4e85fc35acec5b11804defdc875c11f60790d1bec9bd88172a590d9db0066"
+          },
+          {
+            "name": "advanced",
+            "requestedSeconds": 1000,
+            "requests": 100,
+            "medianMs": 74.05004499999995,
+            "p95Ms": 121.01396699999896,
+            "maxMs": 130.1515019999997,
+            "finalSimulationTime": 110000.00000000084,
+            "stateSHA256": "142187237900ad9f0d09b278c08aa6c8e4763c862ef70430fcf4cd091e3824cb"
+          },
+          {
+            "name": "adaptive",
+            "requestedSeconds": 0.1,
+            "requests": 100,
+            "medianMs": 0.06544700000085868,
+            "p95Ms": 0.1404870000005758,
+            "maxMs": 0.17201399999976275,
+            "finalSimulationTime": 10.999999999999977,
+            "stateSHA256": "3604875b070cf47e79d332665f9c157b1ec7acfa04dc28905bb4cd8e857ee172"
+          },
+          {
+            "name": "adaptive",
+            "requestedSeconds": 10,
+            "requests": 100,
+            "medianMs": 0.0681799999983923,
+            "p95Ms": 0.2233589999996184,
+            "maxMs": 4.0936300000012125,
+            "finalSimulationTime": 1100.0000000000007,
+            "stateSHA256": "2c8d0f5d63faf30a23cab10fbab45fadc0a0908b2063f407f23ada169b3857d8"
+          },
+          {
+            "name": "adaptive",
+            "requestedSeconds": 1000,
+            "requests": 100,
+            "medianMs": 6.161235999999917,
+            "p95Ms": 10.64755299999888,
+            "maxMs": 13.578530000000683,
+            "finalSimulationTime": 110000.00000000116,
+            "stateSHA256": "6172b53e7a28005e38a9362da184ea501d6a5a60dc54bcf1d7e13fceb569927c"
+          }
+        ],
+        "decision": "Retain the existing integration steps, force models, rendering quality and requested warp behavior. Optimize repeated harmonic, tide and Kepler calculations with exact-result regression checks. No automatic step-budget throttling is active. The isolated Wasm component remains a diagnostic experiment, not a flight-engine replacement."
+      },
+      "after": {
+        "checkedAt": "2026-11-06T02:14:36.904Z",
+        "runtime": "v24.19.0",
+        "platform": "linux",
+        "scope": "Single-vessel Earth 600 km coasts; 10 warmups then 100 bounded advance calls per setting. Timings include this environment and are not physical-device certification.",
+        "cases": [
+          {
+            "name": "central",
+            "requestedSeconds": 0.1,
+            "requests": 100,
+            "medianMs": 0.04969400000004498,
+            "p95Ms": 0.1095709999999599,
+            "maxMs": 0.22766599999999926,
+            "finalSimulationTime": 10.999999999999977,
+            "stateSHA256": "872f9013720251429625bdda76448c22580090f74f27c8564e9a1c349341d15d"
+          },
+          {
+            "name": "central",
+            "requestedSeconds": 10,
+            "requests": 100,
+            "medianMs": 0.026078999999981534,
+            "p95Ms": 0.06197100000008504,
+            "maxMs": 0.10150899999996454,
+            "finalSimulationTime": 1100,
+            "stateSHA256": "ae058537e852d059896ce3dfe6033e5ada9e1a8ab515808f3dcc3a327d439c14"
+          },
+          {
+            "name": "central",
+            "requestedSeconds": 1000,
+            "requests": 100,
+            "medianMs": 1.3504800000000614,
+            "p95Ms": 2.5444380000000137,
+            "maxMs": 5.471919999999955,
+            "finalSimulationTime": 110000.00000000001,
+            "stateSHA256": "899cd897fc8fa01630b927fd4e0f073b1d5369d87b010984d0ad9b8bf3de9907"
+          },
+          {
+            "name": "advanced",
+            "requestedSeconds": 0.1,
+            "requests": 100,
+            "medianMs": 0.3906059999999343,
+            "p95Ms": 0.8190569999999298,
+            "maxMs": 1.0151650000000245,
+            "finalSimulationTime": 10.999999999999977,
+            "stateSHA256": "c68444c2d6af29e34e230163b934c15dcdd34a6d3f0e0d95cf0650e545592832"
+          },
+          {
+            "name": "advanced",
+            "requestedSeconds": 10,
+            "requests": 100,
+            "medianMs": 0.3351040000000012,
+            "p95Ms": 0.8637130000000752,
+            "maxMs": 9.669614000000024,
+            "finalSimulationTime": 1100,
+            "stateSHA256": "cce4e85fc35acec5b11804defdc875c11f60790d1bec9bd88172a590d9db0066"
+          },
+          {
+            "name": "advanced",
+            "requestedSeconds": 1000,
+            "requests": 100,
+            "medianMs": 30.205716000000393,
+            "p95Ms": 51.23415699999987,
+            "maxMs": 69.87983800000029,
+            "finalSimulationTime": 110000.00000000084,
+            "stateSHA256": "142187237900ad9f0d09b278c08aa6c8e4763c862ef70430fcf4cd091e3824cb"
+          },
+          {
+            "name": "adaptive",
+            "requestedSeconds": 0.1,
+            "requests": 100,
+            "medianMs": 0.05231700000058481,
+            "p95Ms": 0.13852399999996123,
+            "maxMs": 0.18805699999938952,
+            "finalSimulationTime": 10.999999999999977,
+            "stateSHA256": "3604875b070cf47e79d332665f9c157b1ec7acfa04dc28905bb4cd8e857ee172"
+          },
+          {
+            "name": "adaptive",
+            "requestedSeconds": 10,
+            "requests": 100,
+            "medianMs": 0.05489099999977043,
+            "p95Ms": 0.16671600000063336,
+            "maxMs": 2.1059720000002926,
+            "finalSimulationTime": 1100.0000000000007,
+            "stateSHA256": "2c8d0f5d63faf30a23cab10fbab45fadc0a0908b2063f407f23ada169b3857d8"
+          },
+          {
+            "name": "adaptive",
+            "requestedSeconds": 1000,
+            "requests": 100,
+            "medianMs": 4.865015999999741,
+            "p95Ms": 8.974788999999873,
+            "maxMs": 11.65628899999956,
+            "finalSimulationTime": 110000.00000000116,
+            "stateSHA256": "6172b53e7a28005e38a9362da184ea501d6a5a60dc54bcf1d7e13fceb569927c"
+          }
+        ],
+        "decision": "Retain the existing integration steps, force models, rendering quality and requested warp behavior. Optimize repeated harmonic, tide and Kepler calculations with exact-result regression checks. No automatic step-budget throttling is active. The isolated Wasm component remains a diagnostic experiment, not a flight-engine replacement."
+      }
+    },
+    {
+      "after": {
+        "checkedAt": "2026-11-06T02:14:42.766Z",
+        "runtime": "v24.19.0",
+        "platform": "linux",
+        "scope": "Single-vessel Earth 600 km coasts; 10 warmups then 100 bounded advance calls per setting. Timings include this environment and are not physical-device certification.",
+        "cases": [
+          {
+            "name": "central",
+            "requestedSeconds": 0.1,
+            "requests": 100,
+            "medianMs": 0.028191999999990003,
+            "p95Ms": 0.08880099999998947,
+            "maxMs": 0.1373320000000149,
+            "finalSimulationTime": 10.999999999999977,
+            "stateSHA256": "872f9013720251429625bdda76448c22580090f74f27c8564e9a1c349341d15d"
+          },
+          {
+            "name": "central",
+            "requestedSeconds": 10,
+            "requests": 100,
+            "medianMs": 0.024987000000010084,
+            "p95Ms": 0.04782999999997628,
+            "maxMs": 0.0960819999999103,
+            "finalSimulationTime": 1100,
+            "stateSHA256": "ae058537e852d059896ce3dfe6033e5ada9e1a8ab515808f3dcc3a327d439c14"
+          },
+          {
+            "name": "central",
+            "requestedSeconds": 1000,
+            "requests": 100,
+            "medianMs": 1.3604540000000043,
+            "p95Ms": 2.594602000000009,
+            "maxMs": 6.341671000000019,
+            "finalSimulationTime": 110000.00000000001,
+            "stateSHA256": "899cd897fc8fa01630b927fd4e0f073b1d5369d87b010984d0ad9b8bf3de9907"
+          },
+          {
+            "name": "advanced",
+            "requestedSeconds": 0.1,
+            "requests": 100,
+            "medianMs": 0.36344500000006974,
+            "p95Ms": 0.6443590000000086,
+            "maxMs": 1.9073290000000043,
+            "finalSimulationTime": 10.999999999999977,
+            "stateSHA256": "c68444c2d6af29e34e230163b934c15dcdd34a6d3f0e0d95cf0650e545592832"
+          },
+          {
+            "name": "advanced",
+            "requestedSeconds": 10,
+            "requests": 100,
+            "medianMs": 0.334692999999902,
+            "p95Ms": 0.7016340000000127,
+            "maxMs": 10.054589999999962,
+            "finalSimulationTime": 1100,
+            "stateSHA256": "cce4e85fc35acec5b11804defdc875c11f60790d1bec9bd88172a590d9db0066"
+          },
+          {
+            "name": "advanced",
+            "requestedSeconds": 1000,
+            "requests": 100,
+            "medianMs": 31.906073999999535,
+            "p95Ms": 55.749901000000136,
+            "maxMs": 64.87751799999978,
+            "finalSimulationTime": 110000.00000000084,
+            "stateSHA256": "142187237900ad9f0d09b278c08aa6c8e4763c862ef70430fcf4cd091e3824cb"
+          },
+          {
+            "name": "adaptive",
+            "requestedSeconds": 0.1,
+            "requests": 100,
+            "medianMs": 0.051494999999704305,
+            "p95Ms": 0.11526899999989837,
+            "maxMs": 0.18109699999968143,
+            "finalSimulationTime": 10.999999999999977,
+            "stateSHA256": "3604875b070cf47e79d332665f9c157b1ec7acfa04dc28905bb4cd8e857ee172"
+          },
+          {
+            "name": "adaptive",
+            "requestedSeconds": 10,
+            "requests": 100,
+            "medianMs": 0.05430999999953201,
+            "p95Ms": 0.14345099999991362,
+            "maxMs": 1.5038959999992585,
+            "finalSimulationTime": 1100.0000000000007,
+            "stateSHA256": "2c8d0f5d63faf30a23cab10fbab45fadc0a0908b2063f407f23ada169b3857d8"
+          },
+          {
+            "name": "adaptive",
+            "requestedSeconds": 1000,
+            "requests": 100,
+            "medianMs": 5.093724000000293,
+            "p95Ms": 9.20404899999994,
+            "maxMs": 16.08337399999982,
+            "finalSimulationTime": 110000.00000000116,
+            "stateSHA256": "6172b53e7a28005e38a9362da184ea501d6a5a60dc54bcf1d7e13fceb569927c"
+          }
+        ],
+        "decision": "Retain the existing integration steps, force models, rendering quality and requested warp behavior. Optimize repeated harmonic, tide and Kepler calculations with exact-result regression checks. No automatic step-budget throttling is active. The isolated Wasm component remains a diagnostic experiment, not a flight-engine replacement."
+      },
+      "before": {
+        "checkedAt": "2026-11-06T02:14:54.918Z",
+        "runtime": "v24.19.0",
+        "platform": "linux",
+        "scope": "Single-vessel Earth 600 km coasts; 10 warmups then 100 bounded advance calls per setting. Timings include this environment and are not physical-device certification.",
+        "cases": [
+          {
+            "name": "central",
+            "requestedSeconds": 0.1,
+            "requests": 100,
+            "medianMs": 0.044164999999907195,
+            "p95Ms": 0.13509899999996833,
+            "maxMs": 0.2850199999999177,
+            "finalSimulationTime": 10.999999999999977,
+            "stateSHA256": "872f9013720251429625bdda76448c22580090f74f27c8564e9a1c349341d15d"
+          },
+          {
+            "name": "central",
+            "requestedSeconds": 10,
+            "requests": 100,
+            "medianMs": 0.030274999999960528,
+            "p95Ms": 0.09069400000009864,
+            "maxMs": 0.1108440000000428,
+            "finalSimulationTime": 1100,
+            "stateSHA256": "ae058537e852d059896ce3dfe6033e5ada9e1a8ab515808f3dcc3a327d439c14"
+          },
+          {
+            "name": "central",
+            "requestedSeconds": 1000,
+            "requests": 100,
+            "medianMs": 1.9409689999999955,
+            "p95Ms": 3.2464919999999893,
+            "maxMs": 6.0518240000000105,
+            "finalSimulationTime": 110000.00000000001,
+            "stateSHA256": "899cd897fc8fa01630b927fd4e0f073b1d5369d87b010984d0ad9b8bf3de9907"
+          },
+          {
+            "name": "advanced",
+            "requestedSeconds": 0.1,
+            "requests": 100,
+            "medianMs": 0.6409640000000536,
+            "p95Ms": 1.4105780000001005,
+            "maxMs": 1.7597319999999854,
+            "finalSimulationTime": 10.999999999999977,
+            "stateSHA256": "c68444c2d6af29e34e230163b934c15dcdd34a6d3f0e0d95cf0650e545592832"
+          },
+          {
+            "name": "advanced",
+            "requestedSeconds": 10,
+            "requests": 100,
+            "medianMs": 0.6603720000000521,
+            "p95Ms": 2.11215100000004,
+            "maxMs": 17.158352999999806,
+            "finalSimulationTime": 1100,
+            "stateSHA256": "cce4e85fc35acec5b11804defdc875c11f60790d1bec9bd88172a590d9db0066"
+          },
+          {
+            "name": "advanced",
+            "requestedSeconds": 1000,
+            "requests": 100,
+            "medianMs": 78.56286800000089,
+            "p95Ms": 140.73534299999938,
+            "maxMs": 174.59629099999984,
+            "finalSimulationTime": 110000.00000000084,
+            "stateSHA256": "142187237900ad9f0d09b278c08aa6c8e4763c862ef70430fcf4cd091e3824cb"
+          },
+          {
+            "name": "adaptive",
+            "requestedSeconds": 0.1,
+            "requests": 100,
+            "medianMs": 0.06579700000111188,
+            "p95Ms": 0.1100719999994908,
+            "maxMs": 0.17073199999867938,
+            "finalSimulationTime": 10.999999999999977,
+            "stateSHA256": "3604875b070cf47e79d332665f9c157b1ec7acfa04dc28905bb4cd8e857ee172"
+          },
+          {
+            "name": "adaptive",
+            "requestedSeconds": 10,
+            "requests": 100,
+            "medianMs": 0.06801999999879627,
+            "p95Ms": 0.46580600000015693,
+            "maxMs": 10.548247000000629,
+            "finalSimulationTime": 1100.0000000000007,
+            "stateSHA256": "2c8d0f5d63faf30a23cab10fbab45fadc0a0908b2063f407f23ada169b3857d8"
+          },
+          {
+            "name": "adaptive",
+            "requestedSeconds": 1000,
+            "requests": 100,
+            "medianMs": 6.381669999998849,
+            "p95Ms": 10.232231999998476,
+            "maxMs": 12.111791000001176,
+            "finalSimulationTime": 110000.00000000116,
+            "stateSHA256": "6172b53e7a28005e38a9362da184ea501d6a5a60dc54bcf1d7e13fceb569927c"
+          }
+        ],
+        "decision": "Retain the existing integration steps, force models, rendering quality and requested warp behavior. Optimize repeated harmonic, tide and Kepler calculations with exact-result regression checks. No automatic step-budget throttling is active. The isolated Wasm component remains a diagnostic experiment, not a flight-engine replacement."
+      }
+    },
+    {
+      "before": {
+        "checkedAt": "2026-11-06T02:15:07.286Z",
+        "runtime": "v24.19.0",
+        "platform": "linux",
+        "scope": "Single-vessel Earth 600 km coasts; 10 warmups then 100 bounded advance calls per setting. Timings include this environment and are not physical-device certification.",
+        "cases": [
+          {
+            "name": "central",
+            "requestedSeconds": 0.1,
+            "requests": 100,
+            "medianMs": 0.03413999999997941,
+            "p95Ms": 0.14267999999992753,
+            "maxMs": 0.2687060000000656,
+            "finalSimulationTime": 10.999999999999977,
+            "stateSHA256": "872f9013720251429625bdda76448c22580090f74f27c8564e9a1c349341d15d"
+          },
+          {
+            "name": "central",
+            "requestedSeconds": 10,
+            "requests": 100,
+            "medianMs": 0.03047500000002401,
+            "p95Ms": 0.06781000000000859,
+            "maxMs": 0.5052140000000236,
+            "finalSimulationTime": 1100,
+            "stateSHA256": "ae058537e852d059896ce3dfe6033e5ada9e1a8ab515808f3dcc3a327d439c14"
+          },
+          {
+            "name": "central",
+            "requestedSeconds": 1000,
+            "requests": 100,
+            "medianMs": 2.0172919999999976,
+            "p95Ms": 3.530691000000047,
+            "maxMs": 6.587734000000069,
+            "finalSimulationTime": 110000.00000000001,
+            "stateSHA256": "899cd897fc8fa01630b927fd4e0f073b1d5369d87b010984d0ad9b8bf3de9907"
+          },
+          {
+            "name": "advanced",
+            "requestedSeconds": 0.1,
+            "requests": 100,
+            "medianMs": 0.6520010000000411,
+            "p95Ms": 1.3504089999998996,
+            "maxMs": 1.653415999999993,
+            "finalSimulationTime": 10.999999999999977,
+            "stateSHA256": "c68444c2d6af29e34e230163b934c15dcdd34a6d3f0e0d95cf0650e545592832"
+          },
+          {
+            "name": "advanced",
+            "requestedSeconds": 10,
+            "requests": 100,
+            "medianMs": 0.6769779999999628,
+            "p95Ms": 2.1432830000001104,
+            "maxMs": 17.66901199999984,
+            "finalSimulationTime": 1100,
+            "stateSHA256": "cce4e85fc35acec5b11804defdc875c11f60790d1bec9bd88172a590d9db0066"
+          },
+          {
+            "name": "advanced",
+            "requestedSeconds": 1000,
+            "requests": 100,
+            "medianMs": 85.53937899999983,
+            "p95Ms": 145.15750099999968,
+            "maxMs": 159.30323300000055,
+            "finalSimulationTime": 110000.00000000084,
+            "stateSHA256": "142187237900ad9f0d09b278c08aa6c8e4763c862ef70430fcf4cd091e3824cb"
+          },
+          {
+            "name": "adaptive",
+            "requestedSeconds": 0.1,
+            "requests": 100,
+            "medianMs": 0.06538600000021688,
+            "p95Ms": 0.09896499999922526,
+            "maxMs": 0.14901000000099884,
+            "finalSimulationTime": 10.999999999999977,
+            "stateSHA256": "3604875b070cf47e79d332665f9c157b1ec7acfa04dc28905bb4cd8e857ee172"
+          },
+          {
+            "name": "adaptive",
+            "requestedSeconds": 10,
+            "requests": 100,
+            "medianMs": 0.06831100000090373,
+            "p95Ms": 0.21460599999954866,
+            "maxMs": 17.028152000000773,
+            "finalSimulationTime": 1100.0000000000007,
+            "stateSHA256": "2c8d0f5d63faf30a23cab10fbab45fadc0a0908b2063f407f23ada169b3857d8"
+          },
+          {
+            "name": "adaptive",
+            "requestedSeconds": 1000,
+            "requests": 100,
+            "medianMs": 6.191301000000749,
+            "p95Ms": 10.244980999999825,
+            "maxMs": 17.651040999999168,
+            "finalSimulationTime": 110000.00000000116,
+            "stateSHA256": "6172b53e7a28005e38a9362da184ea501d6a5a60dc54bcf1d7e13fceb569927c"
+          }
+        ],
+        "decision": "Retain the existing integration steps, force models, rendering quality and requested warp behavior. Optimize repeated harmonic, tide and Kepler calculations with exact-result regression checks. No automatic step-budget throttling is active. The isolated Wasm component remains a diagnostic experiment, not a flight-engine replacement."
+      },
+      "after": {
+        "checkedAt": "2026-11-06T02:15:13.045Z",
+        "runtime": "v24.19.0",
+        "platform": "linux",
+        "scope": "Single-vessel Earth 600 km coasts; 10 warmups then 100 bounded advance calls per setting. Timings include this environment and are not physical-device certification.",
+        "cases": [
+          {
+            "name": "central",
+            "requestedSeconds": 0.1,
+            "requests": 100,
+            "medianMs": 0.029162999999925887,
+            "p95Ms": 0.07828500000005079,
+            "maxMs": 0.11129399999992984,
+            "finalSimulationTime": 10.999999999999977,
+            "stateSHA256": "872f9013720251429625bdda76448c22580090f74f27c8564e9a1c349341d15d"
+          },
+          {
+            "name": "central",
+            "requestedSeconds": 10,
+            "requests": 100,
+            "medianMs": 0.025807999999983622,
+            "p95Ms": 0.06077000000004773,
+            "maxMs": 0.1599060000000918,
+            "finalSimulationTime": 1100,
+            "stateSHA256": "ae058537e852d059896ce3dfe6033e5ada9e1a8ab515808f3dcc3a327d439c14"
+          },
+          {
+            "name": "central",
+            "requestedSeconds": 1000,
+            "requests": 100,
+            "medianMs": 1.3381110000000263,
+            "p95Ms": 2.5214039999999613,
+            "maxMs": 6.300911000000042,
+            "finalSimulationTime": 110000.00000000001,
+            "stateSHA256": "899cd897fc8fa01630b927fd4e0f073b1d5369d87b010984d0ad9b8bf3de9907"
+          },
+          {
+            "name": "advanced",
+            "requestedSeconds": 0.1,
+            "requests": 100,
+            "medianMs": 0.3854980000000978,
+            "p95Ms": 0.5667549999999437,
+            "maxMs": 1.2763100000000804,
+            "finalSimulationTime": 10.999999999999977,
+            "stateSHA256": "c68444c2d6af29e34e230163b934c15dcdd34a6d3f0e0d95cf0650e545592832"
+          },
+          {
+            "name": "advanced",
+            "requestedSeconds": 10,
+            "requests": 100,
+            "medianMs": 0.32831399999997757,
+            "p95Ms": 0.9141960000000608,
+            "maxMs": 8.510134999999991,
+            "finalSimulationTime": 1100,
+            "stateSHA256": "cce4e85fc35acec5b11804defdc875c11f60790d1bec9bd88172a590d9db0066"
+          },
+          {
+            "name": "advanced",
+            "requestedSeconds": 1000,
+            "requests": 100,
+            "medianMs": 31.88727999999992,
+            "p95Ms": 53.63427499999989,
+            "maxMs": 66.55398600000035,
+            "finalSimulationTime": 110000.00000000084,
+            "stateSHA256": "142187237900ad9f0d09b278c08aa6c8e4763c862ef70430fcf4cd091e3824cb"
+          },
+          {
+            "name": "adaptive",
+            "requestedSeconds": 0.1,
+            "requests": 100,
+            "medianMs": 0.05117499999960273,
+            "p95Ms": 0.08297199999924487,
+            "maxMs": 0.1461059999992358,
+            "finalSimulationTime": 10.999999999999977,
+            "stateSHA256": "3604875b070cf47e79d332665f9c157b1ec7acfa04dc28905bb4cd8e857ee172"
+          },
+          {
+            "name": "adaptive",
+            "requestedSeconds": 10,
+            "requests": 100,
+            "medianMs": 0.05454100000042672,
+            "p95Ms": 0.1443330000001879,
+            "maxMs": 1.4653490000000602,
+            "finalSimulationTime": 1100.0000000000007,
+            "stateSHA256": "2c8d0f5d63faf30a23cab10fbab45fadc0a0908b2063f407f23ada169b3857d8"
+          },
+          {
+            "name": "adaptive",
+            "requestedSeconds": 1000,
+            "requests": 100,
+            "medianMs": 4.836363000000347,
+            "p95Ms": 8.55651399999988,
+            "maxMs": 10.097595000000183,
+            "finalSimulationTime": 110000.00000000116,
+            "stateSHA256": "6172b53e7a28005e38a9362da184ea501d6a5a60dc54bcf1d7e13fceb569927c"
+          }
+        ],
+        "decision": "Retain the existing integration steps, force models, rendering quality and requested warp behavior. Optimize repeated harmonic, tide and Kepler calculations with exact-result regression checks. No automatic step-budget throttling is active. The isolated Wasm component remains a diagnostic experiment, not a flight-engine replacement."
+      }
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "name": "education",
+  "command": "npm run test:education:ui",
+  "status": "PASS",
+  "durationMs": 166922,
+  "completedAt": "2026-11-06T02:23:41.881Z",
+  "log": "education.log"
+}

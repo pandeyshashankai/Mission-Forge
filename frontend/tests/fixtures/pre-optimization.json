@@ -1,0 +1,903 @@
+{
+  "scope": "Pre-optimization serialized-state equivalence fixtures; not independent physical reference data.",
+  "records": [
+    {
+      "body": "earth",
+      "options": {},
+      "initialTime": 600,
+      "requests": 6,
+      "seconds": 1000,
+      "state": {
+        "version": 1,
+        "craftId": "pathfinder",
+        "physics": {
+          "j2": false,
+          "relativity": false,
+          "damage": false,
+          "advancedTides": false,
+          "oceanTides": false,
+          "thermalMaterial": "baseline",
+          "tideLag": 0,
+          "ephemeris": "kepler",
+          "harmonicDegree": 0,
+          "tides": false,
+          "thirdBody": false,
+          "srp": false,
+          "integrator": "rk4",
+          "power": false,
+          "communications": false,
+          "atmosphere": "nasa",
+          "f107": 150,
+          "f107a": 150,
+          "ap": 4
+        },
+        "damage": {
+          "temperature": 290,
+          "backTemperature": 290,
+          "shieldKg": 120,
+          "integrity": 1,
+          "absorbedJ": 0,
+          "propertyRangeExceeded": false
+        },
+        "thermalCalibration": null,
+        "rigid": {
+          "q": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "L": [
+            0,
+            0,
+            0
+          ],
+          "half": [
+            1.5,
+            3,
+            1.5
+          ]
+        },
+        "rigidEnabled": false,
+        "debris": [],
+        "dragEnabled": true,
+        "batteryWh": 1200,
+        "t": 6599.999999999999,
+        "r": [
+          -26696077516.580814,
+          144661368948.69925,
+          -37871.09729418477
+        ],
+        "v": [
+          -34962.25104452475,
+          247.44459830212054,
+          0.0014447612815465792
+        ],
+        "fuel": 3200,
+        "primary": "earth",
+        "mode": "prograde",
+        "rcsEnabled": true,
+        "heldDirection": null,
+        "pitch": 0,
+        "yaw": 0,
+        "status": "flying",
+        "visited": [
+          "earth"
+        ],
+        "log": [
+          {
+            "t": 600,
+            "text": "Placed Pathfinder in Earth orbit"
+          }
+        ]
+      }
+    },
+    {
+      "body": "earth",
+      "options": {
+        "harmonicDegree": 8
+      },
+      "initialTime": 600,
+      "requests": 6,
+      "seconds": 1000,
+      "state": {
+        "version": 1,
+        "craftId": "pathfinder",
+        "physics": {
+          "j2": false,
+          "relativity": false,
+          "damage": false,
+          "advancedTides": false,
+          "oceanTides": false,
+          "thermalMaterial": "baseline",
+          "tideLag": 0,
+          "ephemeris": "kepler",
+          "harmonicDegree": 8,
+          "tides": false,
+          "thirdBody": false,
+          "srp": false,
+          "integrator": "rk4",
+          "power": false,
+          "communications": false,
+          "atmosphere": "nasa",
+          "f107": 150,
+          "f107a": 150,
+          "ap": 4
+        },
+        "damage": {
+          "temperature": 290,
+          "backTemperature": 290,
+          "shieldKg": 120,
+          "integrity": 1,
+          "absorbedJ": 0,
+          "propertyRangeExceeded": false
+        },
+        "thermalCalibration": null,
+        "rigid": {
+          "q": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "L": [
+            0,
+            0,
+            0
+          ],
+          "half": [
+            1.5,
+            3,
+            1.5
+          ]
+        },
+        "rigidEnabled": false,
+        "debris": [],
+        "dragEnabled": true,
+        "batteryWh": 1200,
+        "t": 6599.999999999991,
+        "r": [
+          -26696165683.11135,
+          144661461337.90228,
+          -37899.36708683522
+        ],
+        "v": [
+          -35080.010325125244,
+          143.48277741738275,
+          0.08054602029370328
+        ],
+        "fuel": 3200,
+        "primary": "earth",
+        "mode": "prograde",
+        "rcsEnabled": true,
+        "heldDirection": null,
+        "pitch": 0,
+        "yaw": 0,
+        "status": "flying",
+        "visited": [
+          "earth"
+        ],
+        "log": [
+          {
+            "t": 600,
+            "text": "Placed Pathfinder in Earth orbit"
+          }
+        ]
+      }
+    },
+    {
+      "body": "earth",
+      "options": {
+        "oceanTides": true
+      },
+      "initialTime": 600,
+      "requests": 6,
+      "seconds": 1000,
+      "state": {
+        "version": 1,
+        "craftId": "pathfinder",
+        "physics": {
+          "j2": false,
+          "relativity": false,
+          "damage": false,
+          "advancedTides": false,
+          "oceanTides": true,
+          "thermalMaterial": "baseline",
+          "tideLag": 0,
+          "ephemeris": "kepler",
+          "harmonicDegree": 0,
+          "tides": false,
+          "thirdBody": false,
+          "srp": false,
+          "integrator": "rk4",
+          "power": false,
+          "communications": false,
+          "atmosphere": "nasa",
+          "f107": 150,
+          "f107a": 150,
+          "ap": 4
+        },
+        "damage": {
+          "temperature": 290,
+          "backTemperature": 290,
+          "shieldKg": 120,
+          "integrity": 1,
+          "absorbedJ": 0,
+          "propertyRangeExceeded": false
+        },
+        "thermalCalibration": null,
+        "rigid": {
+          "q": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "L": [
+            0,
+            0,
+            0
+          ],
+          "half": [
+            1.5,
+            3,
+            1.5
+          ]
+        },
+        "rigidEnabled": false,
+        "debris": [],
+        "dragEnabled": true,
+        "batteryWh": 1200,
+        "t": 6599.999999999998,
+        "r": [
+          -26696077516.695305,
+          144661368948.80557,
+          -37871.056421955414
+        ],
+        "v": [
+          -34962.25119575759,
+          247.4444795764366,
+          0.0013819364613787235
+        ],
+        "fuel": 3200,
+        "primary": "earth",
+        "mode": "prograde",
+        "rcsEnabled": true,
+        "heldDirection": null,
+        "pitch": 0,
+        "yaw": 0,
+        "status": "flying",
+        "visited": [
+          "earth"
+        ],
+        "log": [
+          {
+            "t": 600,
+            "text": "Placed Pathfinder in Earth orbit"
+          }
+        ]
+      }
+    },
+    {
+      "body": "earth",
+      "options": {
+        "j2": true,
+        "harmonicDegree": 8,
+        "thirdBody": true,
+        "srp": true,
+        "tides": true,
+        "advancedTides": true,
+        "oceanTides": true,
+        "relativity": true,
+        "power": true,
+        "communications": true,
+        "damage": true
+      },
+      "initialTime": 600,
+      "requests": 6,
+      "seconds": 1000,
+      "state": {
+        "version": 1,
+        "craftId": "pathfinder",
+        "physics": {
+          "j2": true,
+          "relativity": true,
+          "damage": true,
+          "advancedTides": true,
+          "oceanTides": true,
+          "thermalMaterial": "baseline",
+          "tideLag": 0,
+          "ephemeris": "kepler",
+          "harmonicDegree": 8,
+          "tides": true,
+          "thirdBody": true,
+          "srp": true,
+          "integrator": "rk4",
+          "power": true,
+          "communications": true,
+          "atmosphere": "nasa",
+          "f107": 150,
+          "f107a": 150,
+          "ap": 4
+        },
+        "damage": {
+          "temperature": 342.5664722095087,
+          "backTemperature": 290,
+          "shieldKg": 120,
+          "integrity": 1,
+          "absorbedJ": 28903225.43732233,
+          "propertyRangeExceeded": false
+        },
+        "thermalCalibration": null,
+        "rigid": {
+          "q": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "L": [
+            0,
+            0,
+            0
+          ],
+          "half": [
+            1.5,
+            3,
+            1.5
+          ]
+        },
+        "rigidEnabled": false,
+        "debris": [],
+        "dragEnabled": true,
+        "batteryWh": 1193.2359527423403,
+        "t": 6600.000000000011,
+        "r": [
+          -26696165679.715405,
+          144661461334.37735,
+          -37899.35740403337
+        ],
+        "v": [
+          -35080.00600847314,
+          143.4873522632579,
+          0.07994435419436005
+        ],
+        "fuel": 3200,
+        "primary": "earth",
+        "mode": "prograde",
+        "rcsEnabled": true,
+        "heldDirection": null,
+        "pitch": 0,
+        "yaw": 0,
+        "status": "flying",
+        "visited": [
+          "earth"
+        ],
+        "log": [
+          {
+            "t": 600,
+            "text": "Placed Pathfinder in Earth orbit"
+          }
+        ]
+      }
+    },
+    {
+      "body": "earth",
+      "options": {
+        "j2": true,
+        "harmonicDegree": 8,
+        "thirdBody": true,
+        "srp": true,
+        "tides": true,
+        "advancedTides": true,
+        "oceanTides": true,
+        "relativity": true,
+        "power": true,
+        "communications": true,
+        "damage": true,
+        "integrator": "accurate"
+      },
+      "initialTime": 600,
+      "requests": 6,
+      "seconds": 1000,
+      "state": {
+        "version": 1,
+        "craftId": "pathfinder",
+        "physics": {
+          "j2": true,
+          "relativity": true,
+          "damage": true,
+          "advancedTides": true,
+          "oceanTides": true,
+          "thermalMaterial": "baseline",
+          "tideLag": 0,
+          "ephemeris": "kepler",
+          "harmonicDegree": 8,
+          "tides": true,
+          "thirdBody": true,
+          "srp": true,
+          "integrator": "accurate",
+          "power": true,
+          "communications": true,
+          "atmosphere": "nasa",
+          "f107": 150,
+          "f107a": 150,
+          "ap": 4
+        },
+        "damage": {
+          "temperature": 342.56647119016765,
+          "backTemperature": 290,
+          "shieldKg": 120,
+          "integrity": 1,
+          "absorbedJ": 28903224.913130186,
+          "propertyRangeExceeded": false
+        },
+        "thermalCalibration": null,
+        "rigid": {
+          "q": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "L": [
+            0,
+            0,
+            0
+          ],
+          "half": [
+            1.5,
+            3,
+            1.5
+          ]
+        },
+        "rigidEnabled": false,
+        "debris": [],
+        "dragEnabled": true,
+        "batteryWh": 1193.235952785916,
+        "t": 6600.000000000005,
+        "r": [
+          -26696165679.706966,
+          144661461334.3692,
+          -37899.35740765792
+        ],
+        "v": [
+          -35080.0059965459,
+          143.48736220329283,
+          0.07994435451636497
+        ],
+        "fuel": 3200,
+        "primary": "earth",
+        "mode": "prograde",
+        "rcsEnabled": true,
+        "heldDirection": null,
+        "pitch": 0,
+        "yaw": 0,
+        "status": "flying",
+        "visited": [
+          "earth"
+        ],
+        "log": [
+          {
+            "t": 600,
+            "text": "Placed Pathfinder in Earth orbit"
+          }
+        ]
+      }
+    },
+    {
+      "body": "earth",
+      "options": {
+        "j2": true,
+        "harmonicDegree": 8,
+        "thirdBody": true,
+        "srp": true,
+        "tides": true,
+        "advancedTides": true,
+        "oceanTides": true,
+        "relativity": true,
+        "power": true,
+        "communications": true,
+        "damage": true,
+        "ephemeris": "de421",
+        "tideLag": 60
+      },
+      "initialTime": 600,
+      "requests": 6,
+      "seconds": 1000,
+      "state": {
+        "version": 1,
+        "craftId": "pathfinder",
+        "physics": {
+          "j2": true,
+          "relativity": true,
+          "damage": true,
+          "advancedTides": true,
+          "oceanTides": true,
+          "thermalMaterial": "baseline",
+          "tideLag": 60,
+          "ephemeris": "de421",
+          "harmonicDegree": 8,
+          "tides": true,
+          "thirdBody": true,
+          "srp": true,
+          "integrator": "rk4",
+          "power": true,
+          "communications": true,
+          "atmosphere": "nasa",
+          "f107": 150,
+          "f107a": 150,
+          "ap": 4
+        },
+        "damage": {
+          "temperature": 342.56645851116946,
+          "backTemperature": 290,
+          "shieldKg": 120,
+          "integrity": 1,
+          "absorbedJ": 28903219.20140133,
+          "propertyRangeExceeded": false
+        },
+        "thermalCalibration": null,
+        "rigid": {
+          "q": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "L": [
+            0,
+            0,
+            0
+          ],
+          "half": [
+            1.5,
+            3,
+            1.5
+          ]
+        },
+        "rigidEnabled": false,
+        "debris": [],
+        "dragEnabled": true,
+        "batteryWh": 1193.234986560399,
+        "t": 6599.999999999999,
+        "r": [
+          -26690808804.821556,
+          144665592925.84857,
+          -609977.523042308
+        ],
+        "v": [
+          -35087.95594452382,
+          152.82630270817754,
+          0.2783734667095191
+        ],
+        "fuel": 3200,
+        "primary": "earth",
+        "mode": "prograde",
+        "rcsEnabled": true,
+        "heldDirection": null,
+        "pitch": 0,
+        "yaw": 0,
+        "status": "flying",
+        "visited": [
+          "earth"
+        ],
+        "log": [
+          {
+            "t": 600,
+            "text": "Placed Pathfinder in Earth orbit"
+          }
+        ]
+      }
+    },
+    {
+      "body": "moon",
+      "options": {
+        "j2": true,
+        "harmonicDegree": 8,
+        "thirdBody": true,
+        "srp": true,
+        "tides": true,
+        "advancedTides": true,
+        "oceanTides": true,
+        "relativity": true,
+        "power": true,
+        "communications": true,
+        "damage": true
+      },
+      "initialTime": 600,
+      "requests": 6,
+      "seconds": 1000,
+      "state": {
+        "version": 1,
+        "craftId": "pathfinder",
+        "physics": {
+          "j2": true,
+          "relativity": true,
+          "damage": true,
+          "advancedTides": true,
+          "oceanTides": true,
+          "thermalMaterial": "baseline",
+          "tideLag": 0,
+          "ephemeris": "kepler",
+          "harmonicDegree": 8,
+          "tides": true,
+          "thirdBody": true,
+          "srp": true,
+          "integrator": "rk4",
+          "power": true,
+          "communications": true,
+          "atmosphere": "nasa",
+          "f107": 150,
+          "f107a": 150,
+          "ap": 4
+        },
+        "damage": {
+          "temperature": 254.17614964869,
+          "backTemperature": 290,
+          "shieldKg": 120,
+          "integrity": 1,
+          "absorbedJ": 0,
+          "propertyRangeExceeded": false
+        },
+        "thermalCalibration": null,
+        "rigid": {
+          "q": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "L": [
+            0,
+            0,
+            0
+          ],
+          "half": [
+            1.5,
+            3,
+            1.5
+          ]
+        },
+        "rigidEnabled": false,
+        "debris": [],
+        "dragEnabled": true,
+        "batteryWh": 1200,
+        "t": 6599.9999999999945,
+        "r": [
+          -26989589654.738693,
+          144380626322.85254,
+          35456510.47197445
+        ],
+        "v": [
+          -27578.813218097643,
+          -5914.288112557588,
+          -9.612490114376405
+        ],
+        "fuel": 3200,
+        "primary": "moon",
+        "mode": "prograde",
+        "rcsEnabled": true,
+        "heldDirection": null,
+        "pitch": 0,
+        "yaw": 0,
+        "status": "flying",
+        "visited": [
+          "moon"
+        ],
+        "log": [
+          {
+            "t": 600,
+            "text": "Placed Pathfinder in Moon orbit"
+          }
+        ]
+      }
+    },
+    {
+      "body": "mars",
+      "options": {
+        "j2": true,
+        "harmonicDegree": 8,
+        "thirdBody": true,
+        "srp": true,
+        "tides": true,
+        "advancedTides": true,
+        "oceanTides": true,
+        "relativity": true,
+        "power": true,
+        "communications": true,
+        "damage": true
+      },
+      "initialTime": 600,
+      "requests": 6,
+      "seconds": 1000,
+      "state": {
+        "version": 1,
+        "craftId": "pathfinder",
+        "physics": {
+          "j2": true,
+          "relativity": true,
+          "damage": true,
+          "advancedTides": true,
+          "oceanTides": true,
+          "thermalMaterial": "baseline",
+          "tideLag": 0,
+          "ephemeris": "kepler",
+          "harmonicDegree": 8,
+          "tides": true,
+          "thirdBody": true,
+          "srp": true,
+          "integrator": "rk4",
+          "power": true,
+          "communications": true,
+          "atmosphere": "nasa",
+          "f107": 150,
+          "f107a": 150,
+          "ap": 4
+        },
+        "damage": {
+          "temperature": 254.17614975107384,
+          "backTemperature": 290,
+          "shieldKg": 120,
+          "integrity": 1,
+          "absorbedJ": 0,
+          "propertyRangeExceeded": false
+        },
+        "thermalCalibration": null,
+        "rigid": {
+          "q": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "L": [
+            0,
+            0,
+            0
+          ],
+          "half": [
+            1.5,
+            3,
+            1.5
+          ]
+        },
+        "rigidEnabled": false,
+        "debris": [],
+        "dragEnabled": true,
+        "batteryWh": 1180.522733593602,
+        "t": 6600.000000000006,
+        "r": [
+          208051616784.26984,
+          -1831622053.2087104,
+          -5151881341.685401
+        ],
+        "v": [
+          2966.152775575988,
+          29220.664853824237,
+          522.748458698361
+        ],
+        "fuel": 3200,
+        "primary": "mars",
+        "mode": "prograde",
+        "rcsEnabled": true,
+        "heldDirection": null,
+        "pitch": 0,
+        "yaw": 0,
+        "status": "flying",
+        "visited": [
+          "mars"
+        ],
+        "log": [
+          {
+            "t": 600,
+            "text": "Placed Pathfinder in Mars orbit"
+          }
+        ]
+      }
+    },
+    {
+      "body": "titan",
+      "options": {
+        "j2": true,
+        "harmonicDegree": 8,
+        "thirdBody": true,
+        "srp": true,
+        "tides": true,
+        "advancedTides": true,
+        "oceanTides": true,
+        "relativity": true,
+        "power": true,
+        "communications": true,
+        "damage": true
+      },
+      "initialTime": 600,
+      "requests": 6,
+      "seconds": 1000,
+      "state": {
+        "version": 1,
+        "craftId": "pathfinder",
+        "physics": {
+          "j2": true,
+          "relativity": true,
+          "damage": true,
+          "advancedTides": true,
+          "oceanTides": true,
+          "thermalMaterial": "baseline",
+          "tideLag": 0,
+          "ephemeris": "kepler",
+          "harmonicDegree": 8,
+          "tides": true,
+          "thirdBody": true,
+          "srp": true,
+          "integrator": "rk4",
+          "power": true,
+          "communications": true,
+          "atmosphere": "nasa",
+          "f107": 150,
+          "f107a": 150,
+          "ap": 4
+        },
+        "damage": {
+          "temperature": 254.17614966979434,
+          "backTemperature": 290,
+          "shieldKg": 120,
+          "integrity": 1,
+          "absorbedJ": 0,
+          "propertyRangeExceeded": false
+        },
+        "thermalCalibration": null,
+        "rigid": {
+          "q": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "L": [
+            0,
+            0,
+            0
+          ],
+          "half": [
+            1.5,
+            3,
+            1.5
+          ]
+        },
+        "rigidEnabled": false,
+        "debris": [],
+        "dragEnabled": true,
+        "batteryWh": 1040.86552332944,
+        "t": 6600.000000000002,
+        "r": [
+          958502527780.7706,
+          978634550351.4452,
+          -55226233004.80221
+        ],
+        "v": [
+          -4006.27235342128,
+          450.401114481323,
+          148.82427028346004
+        ],
+        "fuel": 3200,
+        "primary": "titan",
+        "mode": "prograde",
+        "rcsEnabled": true,
+        "heldDirection": null,
+        "pitch": 0,
+        "yaw": 0,
+        "status": "flying",
+        "visited": [
+          "titan"
+        ],
+        "log": [
+          {
+            "t": 600,
+            "text": "Placed Pathfinder in Titan orbit"
+          }
+        ]
+      }
+    }
+  ]
+}

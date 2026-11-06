@@ -1,0 +1,33 @@
+{
+  "source": "https://raw.githubusercontent.com/liberfa/erfa/1a8044cde5b7763295d472a6443387239127c6c8/src/t_erfa_c.c",
+  "sha256": "8a92d0099c48df31ca566bea881c19497dc295dba58dba7136cc2f8443c31f15",
+  "function": "t_c2t06a",
+  "model": "IAU 2006/2000A celestial to terrestrial matrix",
+  "input": {
+    "tta": 2400000.5,
+    "ttb": 53736,
+    "uta": 2400000.5,
+    "utb": 53736,
+    "xp": 2.55060238e-07,
+    "yp": 1.860359247e-06
+  },
+  "matrix": [
+    [
+      -0.18103321283058973,
+      0.9834769806938592,
+      6.555550962998436e-05
+    ],
+    [
+      -0.9834768134136215,
+      -0.1810332203649131,
+      0.0005749800844905594
+    ],
+    [
+      0.0005773474024748546,
+      3.9618168296326906e-05,
+      0.9999998325501748
+    ]
+  ],
+  "tolerance": 1e-12,
+  "notice": "Published ERFA C reference-test values. This is an artificial reference case, not observed Earth orientation at a current date."
+}

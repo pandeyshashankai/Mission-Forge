@@ -1,0 +1,132 @@
+{
+  "receivedOn": "2026-11-05",
+  "files": [
+    {
+      "file": "AIAA-SciTech-2022-Abstract-Monk-etal-v6.docx",
+      "sha256": "3cda0d664fdc902f846b5e5cb574b15bc9c329464530f62331863f8c38925f48",
+      "bytes": 26517,
+      "classification": "Abstract and references; no numerical validation dataset"
+    },
+    {
+      "file": "AW2022_Identification_and_Study_of_Validation_Level_Test_Cases.pdf",
+      "sha256": "74438775362e56abc8b18865f5105316e940070170b86ec6391897ad59150fa3",
+      "bytes": 602511,
+      "classification": "Short paper with FiberForm boundary-condition/response plots"
+    },
+    {
+      "file": "20190028635.pdf",
+      "sha256": "85f156c0d99cefc266932b0b20ef0f2277415bf0320190c38a61b785060b6f86",
+      "bytes": 2035758,
+      "classification": "PICA-NuSil presentation with test-condition tables and response imagery"
+    },
+    {
+      "file": "AIAA_2022_Monk.pdf",
+      "sha256": "9f9b7f4c92738219f434d227feb1638cabb5d0f0b477d42649364fa06657ad5e",
+      "bytes": 1447819,
+      "classification": "14-page material-response paper; public tables and plots; elevated-temperature PICA properties explicitly omitted"
+    }
+  ],
+  "monkTable4": [
+    {
+      "facility": "IHF",
+      "testId": 362,
+      "material": "PICA",
+      "targetHotWallFluxWm2": 1760000,
+      "targetColdWallFluxWm2": 2100000,
+      "estimatedStagnationPressurePa": 17000,
+      "exposureSeconds": 33,
+      "source": "AIAA_2022_Monk.pdf Table 4",
+      "classification": "Target conditions, not measured time histories"
+    },
+    {
+      "facility": "IHF",
+      "testId": 362,
+      "material": "PICA",
+      "targetHotWallFluxWm2": 660000,
+      "targetColdWallFluxWm2": 810000,
+      "estimatedStagnationPressurePa": 20000,
+      "exposureSeconds": 84,
+      "source": "AIAA_2022_Monk.pdf Table 4",
+      "classification": "Target conditions, not measured time histories"
+    },
+    {
+      "facility": "AHF",
+      "testId": 350,
+      "material": "PICA",
+      "targetHotWallFluxWm2": 650000,
+      "targetColdWallFluxWm2": 810000,
+      "estimatedStagnationPressurePa": 4000,
+      "exposureSeconds": 25,
+      "source": "AIAA_2022_Monk.pdf Table 4",
+      "classification": "Target conditions, not measured time histories"
+    },
+    {
+      "facility": "AHF",
+      "testId": 350,
+      "material": "PICA",
+      "targetHotWallFluxWm2": 500000,
+      "targetColdWallFluxWm2": 630000,
+      "estimatedStagnationPressurePa": 3000,
+      "exposureSeconds": 25,
+      "source": "AIAA_2022_Monk.pdf Table 4",
+      "classification": "Target conditions, not measured time histories"
+    },
+    {
+      "facility": "PTF",
+      "testId": 162,
+      "material": "SLA-561V",
+      "targetHotWallFluxWm2": 43000.0,
+      "targetColdWallFluxWm2": 54000.0,
+      "estimatedStagnationPressurePa": 200.0,
+      "exposureSeconds": 63,
+      "source": "AIAA_2022_Monk.pdf Table 4",
+      "classification": "Target conditions, not measured time histories"
+    },
+    {
+      "facility": "PTF",
+      "testId": 162,
+      "material": "SLA-561V",
+      "targetHotWallFluxWm2": 86000.0,
+      "targetColdWallFluxWm2": 97000.0,
+      "estimatedStagnationPressurePa": 800.0,
+      "exposureSeconds": 25,
+      "source": "AIAA_2022_Monk.pdf Table 4",
+      "classification": "Target conditions, not measured time histories"
+    }
+  ],
+  "monkTable3": [
+    {
+      "model": "Heritage",
+      "virginDensityKgM3": 274,
+      "roomTemperatureConductivityWmK": {
+        "virginAt1Atm": 0.174,
+        "charAt1Atm": 0.224,
+        "virginAt0001Atm": 0.52,
+        "charAt0001Atm": 0.202
+      },
+      "source": "AIAA_2022_Monk.pdf Table 3, PDF page 4; visually checked",
+      "limits": "Exact room temperature not specified. Table pressure is 0.001 atm, while surrounding methods text mentions 0.01 atm. Preserve this discrepancy; do not silently interpolate."
+    },
+    {
+      "model": "MEDLI2",
+      "virginDensityKgM3": 292,
+      "roomTemperatureConductivityWmK": {
+        "virginAt1Atm": 0.169,
+        "charAt1Atm": 0.169,
+        "virginAt0001Atm": 0.127,
+        "charAt0001Atm": 0.143
+      },
+      "source": "AIAA_2022_Monk.pdf Table 3, PDF page 4; visually checked",
+      "limits": "Exact room temperature not specified. Table pressure is 0.001 atm, while surrounding methods text mentions 0.01 atm. Preserve this discrepancy; do not silently interpolate."
+    }
+  ],
+  "experimentalTimeHistoriesTranscribed": false,
+  "figuresDigitized": false,
+  "calibrationApplied": false,
+  "limits": [
+    "Cold-wall and hot-wall target fluxes are distinct; neither is automatically absorbed flux for the current inverse fitter.",
+    "MEDLI2 flight-lot PICA is not interchangeable with earlier TPSX generic properties.",
+    "Paper explicitly omits elevated-temperature PICA property data.",
+    "No full high-temperature curve or measured time history inferred from table targets."
+  ]
+}

@@ -1,0 +1,46 @@
+name: Validate release
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+        working-directory: frontend
+      - name: Start isolated browser and static server
+        run: |
+          python3 -m http.server 8080 --directory frontend/build > /tmp/mission-forge-http.log 2>&1 &
+          CHROME=$(command -v google-chrome || command -v chromium || command -v chromium-browser)
+          "$CHROME" --headless --no-sandbox --disable-dev-shm-usage --enable-unsafe-swiftshader --remote-debugging-port=9222 --user-data-dir=/tmp/mission-forge-chromium about:blank > /tmp/mission-forge-chromium.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:9222/json/version > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          exit 1
+      - name: Run complete production audit
+        run: npm run audit:release -- --extended
+        working-directory: frontend
+        env:
+          MF_AUDIT_OUTPUT: /tmp/mission-forge-release-audit
+          CI: "false"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: release-validation
+          path: |
+            /tmp/mission-forge-release-audit
+            /tmp/mission-forge-ui-screens
+            /tmp/mission-forge-*-browser.json
+            /tmp/mission-forge-http.log
+            /tmp/mission-forge-chromium.log

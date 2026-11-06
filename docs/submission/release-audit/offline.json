@@ -1,0 +1,8 @@
+{
+  "name": "offline",
+  "command": "npm run test:offline",
+  "status": "PASS",
+  "durationMs": 89874,
+  "completedAt": "2026-11-06T02:39:04.164Z",
+  "log": "offline.log"
+}

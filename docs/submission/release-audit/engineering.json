@@ -1,0 +1,8 @@
+{
+  "name": "engineering",
+  "command": "npm run test:engineering:ui",
+  "status": "PASS",
+  "durationMs": 32260,
+  "completedAt": "2026-11-06T02:19:12.439Z",
+  "log": "engineering.log"
+}

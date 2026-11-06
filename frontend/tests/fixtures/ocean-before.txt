@@ -1,0 +1,75 @@
+import data from "../../science/data/ocean-tides.json";
+import { harmonicAcceleration } from "./harmonics";
+export { data as oceanTideData };
+const arc = Math.PI / (180 * 3600),
+  tau = 2 * Math.PI;
+export function tidalArguments(seconds) {
+  const T = seconds / (36525 * 86400),
+    poly = (a) => a.reduce((s, x, i) => s + x * T ** i, 0) * arc;
+  const l = poly([
+    485868.249036, 1717915923.2178, 31.8792, 0.051635, -0.0002447,
+  ]);
+  const lp = poly([
+    1287104.793048, 129596581.0481, -0.5532, 0.000136, -0.00001149,
+  ]);
+  const F = poly([
+    335779.526232, 1739527262.8478, -12.7512, -0.001037, 0.00000417,
+  ]);
+  const D = poly([
+    1072260.703692, 1602961601.209, -6.3706, 0.006593, -0.00003169,
+  ]);
+  const O = poly([450160.398036, -6962890.5431, 7.4722, 0.007702, -0.00005939]);
+  const gamma =
+    tau * (0.779057273264 + (1.00273781191135448 * seconds) / 86400) +
+    poly([
+      0.014506, 4612.156534, 1.3915817, -0.00000044, -0.000029956,
+      -0.0000000368,
+    ]) +
+    Math.PI;
+  return { gamma, l, lp, F, D, O };
+}
+export function wavePhase(code, a) {
+  const d = String(code).padStart(6, "0").split("").map(Number);
+  for (let i = 1; i < 6; i++) d[i] -= 5;
+  const [t, s, h, p, n, ps] = d;
+  return (
+    t * a.gamma -
+    p * a.l -
+    ps * a.lp +
+    (-t + s + h + p + ps) * a.F +
+    (-h - ps) * a.D +
+    (-t + s + h + p - n + ps) * a.O
+  );
+}
+export function oceanCoefficients(seconds) {
+  if (!Number.isFinite(seconds) || Math.abs(seconds) > 36525 * 86400)
+    throw Error("Ocean tide epoch out of supported range");
+  const arguments_ = tidalArguments(seconds),
+    phases = new Map(),
+    terms = new Map();
+  for (const r of data.rows) {
+    if (r.n < 2) continue;
+    let phase = phases.get(r.doodson);
+    if (!phase) {
+      const x = wavePhase(r.doodson, arguments_);
+      phase = [Math.cos(x), Math.sin(x)];
+      phases.set(r.doodson, phase);
+    }
+    const key = r.n + ":" + r.m,
+      term = terms.get(key) || { n: r.n, m: r.m, c: 0, s: 0 };
+    term.c += (r.cp + r.cm) * phase[0] + (r.sp + r.sm) * phase[1];
+    term.s += (r.sp - r.sm) * phase[0] - (r.cp - r.cm) * phase[1];
+    terms.set(key, term);
+  }
+  return [...terms.values()];
+}
+export function oceanAcceleration(r, mu, seconds, rotation) {
+  return harmonicAcceleration(
+    r,
+    mu,
+    seconds,
+    rotation,
+    8,
+    oceanCoefficients(seconds),
+  );
+}

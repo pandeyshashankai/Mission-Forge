@@ -1,0 +1,31 @@
+{
+  "package": "@tsastro/tsofa",
+  "version": "18.1.0",
+  "tarball": "https://registry.npmjs.org/@tsastro/tsofa/-/tsofa-18.1.0.tgz",
+  "integrity": "sha512-P9PSt8KGlA8azf+3181IewkkbcmhvbpsKXRhjqw5qoRgcTYGhfGW80xnm3FWcA0rUGdfB5sPvmE2J/kOLX5AGQ==",
+  "license": "SOFA-derived conditions; see unchanged LICENSE.txt (package metadata says MIT)",
+  "modifications": "None. Original JavaScript distribution files preserved.",
+  "files": [
+    {
+      "file": "TSOFA.js",
+      "sha256": "6b7894195bf6868144e0f2d87e826531d34964af2dc3db1470099596fddb9809"
+    },
+    {
+      "file": "TSOFAException.js",
+      "sha256": "7fee0c5ee83e4d95b3d6ad1b035e844cb7a2f9c3ef0cfe87190d82eaf080e420"
+    },
+    {
+      "file": "TSOFAFailedConvergenceException.js",
+      "sha256": "6a11cef80c84944db9f35be4144b399ad96ebcd8183530a2819a3f441c5146dd"
+    },
+    {
+      "file": "TSOFAIllegalParameter.js",
+      "sha256": "708e6cd005ceeb98757bfde71459d52b2010ff0946b83ad33669f494e557400b"
+    },
+    {
+      "file": "TSOFAInternalError.js",
+      "sha256": "e7ac08f9fbaa9373eff716875d6042759464722e2bd5fc63d5e812a01109a83c"
+    }
+  ],
+  "notice": "Contains computations derived from IAU SOFA via TSOFA. MissionForge is not supplied or endorsed by SOFA."
+}

@@ -1,20 +1,48 @@
+import {readLocalContent,validateLocalMissions} from "./advanced/localContent";
 import { EARTH, LAUNCH_SITES, DEG } from "./constants";
 
 export const DIFFICULTIES = {
-  amateur: { id: "amateur", label: "Amateur", budgetMult: 1.5, hints: "full", guidance: true, desc: "Larger budgets, good starting presets, full guidance and detailed explanations. No random faults." },
-  intermediate: { id: "intermediate", label: "Intermediate", budgetMult: 1.0, hints: "some", guidance: true, desc: "Standard budgets, fewer hints, guidance computer available. No random faults." },
-  expert: { id: "expert", label: "Expert", budgetMult: 0.8, hints: "minimal", guidance: true, desc: "Tight budgets and minimal hints. Full engineering data. Frequent faults (0.4 per day after orbit)." },
+  amateur: {
+    id: "amateur",
+    label: "Amateur",
+    budgetMult: 1.5,
+    hints: "full",
+    guidance: true,
+    desc: "Larger budgets, good starting presets, full guidance and detailed explanations. No random faults.",
+  },
+  intermediate: {
+    id: "intermediate",
+    label: "Intermediate",
+    budgetMult: 1.0,
+    hints: "some",
+    guidance: true,
+    desc: "Standard budgets, fewer hints, guidance computer available. No random faults.",
+  },
+  expert: {
+    id: "expert",
+    label: "Expert",
+    budgetMult: 0.8,
+    hints: "minimal",
+    guidance: true,
+    desc: "Tight budgets and minimal hints. Full engineering data. Frequent faults (0.4 per day after orbit).",
+  },
 };
 export const MISSIONS = [
   {
     id: "first_orbit",
     name: "First Orbit",
-    inspiredBy: "Inspired by early orbital launch demonstrations (e.g. Explorer 1 era); figures approximate",
+    inspiredBy:
+      "Inspired by early orbital launch demonstrations (e.g. Explorer 1 era); figures approximate",
     destination: "Earth orbit",
     crewed: false,
     available: true,
     site: "cape",
-    target: { altitude: 200000, tolerance: 25000, inclination: 28.6, incTolerance: 2 },
+    target: {
+      altitude: 200000,
+      tolerance: 25000,
+      inclination: 28.6,
+      incTolerance: 2,
+    },
     baseBudget: 70,
     massLimit: 600000,
     reserve: 0.05,
@@ -26,22 +54,33 @@ export const MISSIONS = [
       "Inclination within ±2° of 28.6°",
       "Total cost within budget",
     ],
-    constraints: ["Liftoff mass ≤ 600 t (pad limit)", "Liftoff thrust-to-weight ≥ 1.2 recommended"],
+    constraints: [
+      "Liftoff mass ≤ 600 t (pad limit)",
+      "Liftoff thrust-to-weight ≥ 1.2 recommended",
+    ],
   },
   {
     id: "earth_observer",
     name: "Earth Observer",
-    inspiredBy: "Inspired by Landsat-class Earth observation missions; figures approximate",
+    inspiredBy:
+      "Inspired by Landsat-class Earth observation missions; figures approximate",
     destination: "Sun-synchronous Earth orbit",
     crewed: false,
     available: true,
     site: "vandenberg",
-    target: { altitude: 700000, tolerance: 25000, inclination: 98.2, incTolerance: 0.5, parkingAltitude: 200000 },
+    target: {
+      altitude: 700000,
+      tolerance: 25000,
+      inclination: 98.2,
+      incTolerance: 0.5,
+      parkingAltitude: 200000,
+    },
     payload: "sat_medium",
     baseBudget: 100,
     massLimit: 600000,
     reserve: 0.05,
-    duration: "≈ 1–2 hours: ascent to a 200 km parking orbit + two-burn Hohmann transfer",
+    duration:
+      "≈ 1–2 hours: ascent to a 200 km parking orbit + two-burn Hohmann transfer",
     timeScore: { basis: "end", full: 4000, zero: 12000 },
     objectives: [
       "Place a controllable spacecraft in a stable orbit (periapsis ≥ 140 km)",
@@ -52,27 +91,39 @@ export const MISSIONS = [
       "Sun-synchronous: J2 node drift within ±0.05°/day of the Sun's 0.9856°/day",
     ],
     sso: true,
-    constraints: ["Launch south from Vandenberg (retrograde orbit — Earth's rotation works against you)", "Use maneuver nodes on the Orbital Map to raise the orbit", "Liftoff mass ≤ 600 t"],
+    constraints: [
+      "Launch south from Vandenberg (retrograde orbit — Earth's rotation works against you)",
+      "Use maneuver nodes on the Orbital Map to raise the orbit",
+      "Liftoff mass ≤ 600 t",
+    ],
   },
   {
     id: "lunar_orbiter",
     kind: "lunar_orbit",
     name: "Lunar Orbiter",
-    inspiredBy: "Inspired by the Lunar Reconnaissance Orbiter (LRO); figures approximate",
+    inspiredBy:
+      "Inspired by the Lunar Reconnaissance Orbiter (LRO); figures approximate",
     destination: "Lunar orbit",
     crewed: false,
     available: true,
     site: "cape",
     preset: "lunar_orbiter",
-    target: { altitude: 185000, tolerance: 1e9, inclination: 28.6, incTolerance: 90, parkingAltitude: 185000 },
+    target: {
+      altitude: 185000,
+      tolerance: 1e9,
+      inclination: 28.6,
+      incTolerance: 90,
+      parkingAltitude: 185000,
+    },
     lunar: { altitude: 100000, tolerance: 75000 },
     moon: { phase: 40 },
     payload: "sat_lunar",
     baseBudget: 110,
-    massLimit: 600000,
+    massLimit: 700000,
     reserve: 0.05,
     durationDays: 6,
-    duration: "≈ 4–5 days: parking orbit, trans-lunar injection, mid-course correction, lunar orbit insertion",
+    duration:
+      "≈ 4–5 days: parking orbit, trans-lunar injection, mid-course correction, lunar orbit insertion",
     timeScore: { basis: "lunar", full: 5.5 * 86400, zero: 10 * 86400 },
     objectives: [
       "Reach a 185 km parking orbit and perform trans-lunar injection",
@@ -81,27 +132,40 @@ export const MISSIONS = [
       "Total cost within budget",
       "Deliver the Lunar Orbiter Bus 1.2 t",
     ],
-    constraints: ["Moon moves on its real tilted orbit (28.6° to the equator here) — timing of TLI matters", "Patched-conic gravity: Earth outside, Moon inside its 66,000 km sphere of influence", "Spacecraft needs its own engine for lunar orbit insertion"],
+    constraints: [
+      "Moon moves on its real tilted orbit (28.6° to the equator here) — timing of TLI matters",
+      "Patched-conic gravity: Earth outside, Moon inside its 66,000 km sphere of influence",
+      "Spacecraft needs its own engine for lunar orbit insertion",
+      "Heavy launch pad: liftoff mass ≤ 700 t",
+    ],
   },
   {
     id: "crewed_lunar_flyby",
     kind: "lunar_flyby",
     name: "Crewed Lunar Flyby & Return",
-    inspiredBy: "Inspired by Artemis II (crewed lunar flyby, free return); figures approximate",
+    inspiredBy:
+      "Inspired by Artemis II (crewed lunar flyby, free return); figures approximate",
     destination: "Moon flyby, Earth return & splashdown",
     crewed: true,
     crew: 3,
     available: true,
     site: "cape",
     preset: "crewed_flyby",
-    target: { altitude: 185000, tolerance: 1e9, inclination: 28.6, incTolerance: 90, parkingAltitude: 185000 },
+    target: {
+      altitude: 185000,
+      tolerance: 1e9,
+      inclination: 28.6,
+      incTolerance: 90,
+      parkingAltitude: 185000,
+    },
     flyby: { maxAlt: 15000000, periAlt: 7000000, apogeeFactor: 1.14 },
     moon: { phase: 40 },
     baseBudget: 250,
     massLimit: 3000000,
     reserve: 0.05,
     durationDays: 10,
-    duration: "≈ 8–10 days: parking orbit, TLI, free-return flyby behind the Moon, return correction, re-entry, splashdown",
+    duration:
+      "≈ 8–10 days: parking orbit, TLI, free-return flyby behind the Moon, return correction, re-entry, splashdown",
     timeScore: { basis: "end", full: 9 * 86400, zero: 14 * 86400 },
     objectives: [
       "Fly within 15,000 km of the lunar surface",
@@ -110,7 +174,12 @@ export const MISSIONS = [
       "Consumables (O2, water, food) never run out",
       "Total cost within budget",
     ],
-    constraints: ["3 crew in a capsule with a heat shield below and parachutes above", "Separate the service module before re-entry", "Entry corridor ≈ −5.5° to −7.5° at 122 km (vacuum perigee ≈ 20–60 km)", "Super-heavy pad: liftoff mass ≤ 3,000 t"],
+    constraints: [
+      "3 crew in a capsule with a heat shield below and parachutes above",
+      "Separate the service module before re-entry",
+      "Entry corridor ≈ −5.5° to −7.5° at 122 km (vacuum perigee ≈ 20–60 km)",
+      "Super-heavy pad: liftoff mass ≤ 3,000 t",
+    ],
   },
 ];
 export const isLunar = (m) => !!m.kind && m.kind.startsWith("lunar");
@@ -121,7 +190,9 @@ export function missionBudget(mission, difficulty) {
 }
 
 export const LOSS_ALLOWANCE = 1500;
-const MOON_MU = 4.9048695e12, MOON_R = 1737400, MOON_A = 384400e3;
+const MOON_MU = 4.9048695e12,
+  MOON_R = 1737400,
+  MOON_A = 384400e3;
 
 // Beyond-LEO budget: trans-lunar injection (vis-viva), corrections, and lunar orbit insertion where needed.
 function lunarSteps(mission, r) {
@@ -131,13 +202,27 @@ function lunarSteps(mission, r) {
   const tli = vTli - vc;
   const va = Math.sqrt(mu * (2 / MOON_A - 2 / (r + MOON_A)));
   const vinf = Math.sqrt(mu / MOON_A) - va;
-  const items = [{ name: "Trans-lunar injection", value: tli, step: `TLI = √(μ(2/r − 2/(r + a_Moon))) − √(μ/r) = ${vTli.toFixed(0)} − ${vc.toFixed(0)} = ${tli.toFixed(0)} m/s` }];
-  items.push({ name: "Mid-course / return corrections", value: mission.kind === "lunar_flyby" ? 100 : 50, step: `Correction allowance = ${mission.kind === "lunar_flyby" ? 100 : 50} m/s (assumed)` });
+  const items = [
+    {
+      name: "Trans-lunar injection",
+      value: tli,
+      step: `TLI = √(μ(2/r − 2/(r + a_Moon))) − √(μ/r) = ${vTli.toFixed(0)} − ${vc.toFixed(0)} = ${tli.toFixed(0)} m/s`,
+    },
+  ];
+  items.push({
+    name: "Mid-course / return corrections",
+    value: mission.kind === "lunar_flyby" ? 100 : 50,
+    step: `Correction allowance = ${mission.kind === "lunar_flyby" ? 100 : 50} m/s (assumed)`,
+  });
   if (mission.kind === "lunar_orbit") {
     const rp = MOON_R + mission.lunar.altitude;
     const vp = Math.sqrt(vinf * vinf + (2 * MOON_MU) / rp);
     const loi = vp - Math.sqrt(MOON_MU / rp);
-    items.push({ name: "Lunar orbit insertion", value: loi, step: `v∞ ≈ v_Moon − v_apogee = ${vinf.toFixed(0)} m/s; LOI = √(v∞² + 2μ_M/r_p) − √(μ_M/r_p) = ${loi.toFixed(0)} m/s` });
+    items.push({
+      name: "Lunar orbit insertion",
+      value: loi,
+      step: `v∞ ≈ v_Moon − v_apogee = ${vinf.toFixed(0)} m/s; LOI = √(v∞² + 2μ_M/r_p) − √(μ_M/r_p) = ${loi.toFixed(0)} m/s`,
+    });
   }
   return items;
 }
@@ -152,7 +237,10 @@ export function requiredDeltaV(mission) {
   const inc = Math.max(mission.target.inclination, site.lat);
   const assist = vEq * Math.cos(inc * DEG);
   const ascent = dvEnergy - assist + LOSS_ALLOWANCE;
-  const extra = mission.kind && mission.kind.startsWith("lunar") ? lunarSteps(mission, r) : [];
+  const extra =
+    mission.kind && mission.kind.startsWith("lunar")
+      ? lunarSteps(mission, r)
+      : [];
   const value = ascent + extra.reduce((a, x) => a + x.value, 0);
   return {
     value,
@@ -161,21 +249,58 @@ export function requiredDeltaV(mission) {
     dvEnergy,
     assist,
     calc: {
-      formula: extra.length ? "Δv_req = [√(2·(μ/R − μ/2r)) − ωR·cos(i) + Δv_losses] + Δv_TLI + Δv_corrections (+ Δv_LOI)" : "Δv_req = √(2·(μ/R − μ/2r)) − ωR·cos(i) + Δv_losses",
+      formula: extra.length
+        ? "Δv_req = [√(2·(μ/R − μ/2r)) − ωR·cos(i) + Δv_losses] + Δv_TLI + Δv_corrections (+ Δv_LOI)"
+        : "Δv_req = √(2·(μ/R − μ/2r)) − ωR·cos(i) + Δv_losses",
       inputs: [
-        { name: "μ (Earth gravitational parameter)", value: mu.toExponential(6), unit: "m³/s²", source: EARTH.source },
-        { name: "R (Earth mean radius)", value: R.toLocaleString(), unit: "m", source: EARTH.source },
-        { name: "r (target orbit radius)", value: r.toLocaleString(), unit: "m", source: "Mission target altitude + R" },
-        { name: "ω (Earth rotation rate)", value: w.toExponential(7), unit: "rad/s", source: "IERS" },
-        { name: "i (target inclination)", value: inc.toFixed(1), unit: "°", source: "Mission target (≥ site latitude)" },
-        { name: "Δv_losses (gravity + drag + steering)", value: LOSS_ALLOWANCE.toLocaleString(), unit: "m/s", source: "Assumed allowance; typical published LEO ascent losses 1.3–1.8 km/s" },
+        {
+          name: "μ (Earth gravitational parameter)",
+          value: mu.toExponential(6),
+          unit: "m³/s²",
+          source: EARTH.source,
+        },
+        {
+          name: "R (Earth mean radius)",
+          value: R.toLocaleString(),
+          unit: "m",
+          source: EARTH.source,
+        },
+        {
+          name: "r (target orbit radius)",
+          value: r.toLocaleString(),
+          unit: "m",
+          source: "Mission target altitude + R",
+        },
+        {
+          name: "ω (Earth rotation rate)",
+          value: w.toExponential(7),
+          unit: "rad/s",
+          source: "IERS",
+        },
+        {
+          name: "i (target inclination)",
+          value: inc.toFixed(1),
+          unit: "°",
+          source: "Mission target (≥ site latitude)",
+        },
+        {
+          name: "Δv_losses (gravity + drag + steering)",
+          value: LOSS_ALLOWANCE.toLocaleString(),
+          unit: "m/s",
+          source:
+            "Assumed allowance; typical published LEO ascent losses 1.3–1.8 km/s",
+        },
       ],
       steps: [
         `Ideal energy Δv from surface to circular orbit = ${dvEnergy.toFixed(0)} m/s`,
         `Earth-rotation assist = ${vEq.toFixed(1)} × cos(${inc.toFixed(1)}°) = ${assist.toFixed(0)} m/s`,
         `Δv_ascent = ${dvEnergy.toFixed(0)} − ${assist.toFixed(0)} + ${LOSS_ALLOWANCE} = ${ascent.toFixed(0)} m/s`,
         ...extra.map((x) => `${x.name}: ${x.step}`),
-        ...(extra.length ? [`Δv_req = ${ascent.toFixed(0)} + ${extra.map((x) => x.value.toFixed(0)).join(" + ")} = ${value.toFixed(0)} m/s`] : []),
+        ...(extra.length
+          ? [
+              `Δv_req = ${ascent.toFixed(0)} + ${extra.map((x) => x.value.toFixed(0)).join(" + ")} = ${value.toFixed(0)} m/s`,
+            ]
+          : []),
       ],
       assumptions: [
         "Energy-equivalent ideal Δv (includes climb to altitude) plus a fixed loss allowance.",
@@ -185,3 +310,11 @@ export function requiredDeltaV(mission) {
     },
   };
 }
+
+export function installLocalMissions(records){
+ const checked=validateLocalMissions(records),template=MISSIONS.find(m=>m.id==='first_orbit');
+ for(let i=MISSIONS.length-1;i>=0;i--)if(MISSIONS[i].custom)MISSIONS.splice(i,1);
+ for(const c of checked)MISSIONS.push({...template,id:c.id,name:c.name,custom:true,inspiredBy:'Locally authored challenge; not a historical NASA mission.',target:{...template.target,altitude:c.altitude,inclination:c.inclination},baseBudget:c.budget,objectives:['Reach a controllable stable Earth orbit',`Apoapsis and periapsis within 25 km of ${c.altitude/1000} km`,`Inclination within 2° of ${c.inclination}°`,'Total cost within budget']});
+ return checked;
+}
+try { installLocalMissions(readLocalContent().missions||[]); } catch { /* Keep standard missions available. */ }

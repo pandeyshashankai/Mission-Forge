@@ -1,25 +1,66 @@
 import { EARTH, G0, LAUNCH_SITES, DEG, STABLE_PERIAPSIS } from "./constants";
 import { add, cross, dot, len, norm, scale, sub, clamp } from "./vec";
 import { atmosphere, dragCoefficient, ATMOS_TOP } from "./atmosphere";
-import { applyEvent, createRuntime, describeEvent, buildSections, frontalArea, runtimeMass, thrustState, consume, activeSources, dropsOf, deltaVFromRuntime } from "./design";
+import {
+  applyEvent,
+  createRuntime,
+  describeEvent,
+  buildSections,
+  frontalArea,
+  runtimeMass,
+  thrustState,
+  consume,
+  activeSources,
+  dropsOf,
+  deltaVFromRuntime,
+} from "./design";
 import { orbitalElements } from "./orbit";
 import { AscentGuidance, launchAzimuth } from "./guidance";
-import { vehicleConfig, attitudeStep, attitudeCoarse, MAX_RATE } from "./attitude";
+import {
+  vehicleConfig,
+  attitudeStep,
+  attitudeCoarse,
+  MAX_RATE,
+} from "./attitude";
 import { ManeuverExec } from "./maneuver";
-import { gravity, primaryOf, regionOf, dynStep, rk4, moonState, lunarEphemeris, sunDirAt, MOON } from "./bodies";
+import {
+  gravity,
+  primaryOf,
+  regionOf,
+  dynStep,
+  rk4,
+  moonState,
+  lunarEphemeris,
+  sunDirAt,
+  MOON,
+} from "./bodies";
 import { initLifeSupport, lifeSupportStep } from "./crew";
 import { newSystems, systemsStep, applyFaultFactors } from "./systems";
-import { aeroConfig, newEntryState, capsuleAero, entryUpdate, sensedAccelG, SPLASH_SPEED } from "./entry";
+import {
+  aeroConfig,
+  newEntryState,
+  capsuleAero,
+  entryUpdate,
+  sensedAccelG,
+  SPLASH_SPEED,
+} from "./entry";
 
 const OMEGA = [0, 0, EARTH.rotationRate];
 export const DT_FAST = 0.02;
 export const DT_COAST = 0.1;
 export const DT_COAST_MAX = 2;
 const RAD = 180 / Math.PI;
-const srcKey = (s) => (s.kind === "section" ? `S${s.s}-${s.prop}` : `R-${s.uid}`);
+const srcKey = (s) =>
+  s.kind === "section" ? `S${s.s}-${s.prop}` : `R-${s.uid}`;
 
 export class FlightSim {
-  constructor({ design, mission, profile, guidanceOn = true, difficulty = "amateur" }) {
+  constructor({
+    design,
+    mission,
+    profile,
+    guidanceOn = true,
+    difficulty = "amateur",
+  }) {
     this.sys = newSystems(mission.id, difficulty);
     this.sunAU = 1;
     this.design = design;
@@ -29,14 +70,21 @@ export class FlightSim {
     this.site = LAUNCH_SITES[mission.site];
     const lat = this.site.lat * DEG;
     const lon = this.site.lon * DEG;
-    this.padUnit = [Math.cos(lat) * Math.cos(lon), Math.cos(lat) * Math.sin(lon), Math.sin(lat)];
+    this.padUnit = [
+      Math.cos(lat) * Math.cos(lon),
+      Math.cos(lat) * Math.sin(lon),
+      Math.sin(lat),
+    ];
     this.padRadius = EARTH.radius + 2;
     this.t = 0;
     this.r = scale(this.padUnit, this.padRadius);
     this.v = cross(OMEGA, this.r);
     this.status = "prelaunch";
     this.clamped = true;
-    this.azimuth = launchAzimuth(this.site, profile?.targetInclination ?? mission.target.inclination);
+    this.azimuth = launchAzimuth(
+      this.site,
+      profile?.targetInclination ?? mission.target.inclination,
+    );
     this.att = { pitch: 90, heading: this.azimuth };
     this.cmd = { ...this.att };
     this.input = { pitch: 0, yaw: 0 };
@@ -68,7 +116,9 @@ export class FlightSim {
     this.node = null;
     this.checkpointQueue = [];
     this.lastAutoCkpt = 0;
-    this.eph = mission.moon ? lunarEphemeris(this.site, mission.moon.phase) : null;
+    this.eph = mission.moon
+      ? lunarEphemeris(this.site, mission.moon.phase)
+      : null;
     this.sunLon0 = lon + 25 * DEG;
     this.region = "earth";
     this.ls = initLifeSupport(design);
@@ -97,7 +147,12 @@ export class FlightSim {
   }
 
   requestCheckpoint(label) {
-    this.checkpointQueue.push({ label, auto: true, t: this.t, state: this.serialize() });
+    this.checkpointQueue.push({
+      label,
+      auto: true,
+      t: this.t,
+      state: this.serialize(),
+    });
   }
 
   ctx() {
@@ -113,16 +168,26 @@ export class FlightSim {
 
   onRegionChange(region) {
     this.region = region;
-    const d = (len(sub(this.r, moonState(this.t, this.eph).r)) / 1000).toFixed(0);
-    this.addLog("info", region === "moon" ? `Entered the Moon's sphere of influence (${d} km) — Moon gravity now governs the path` : `Left the Moon's sphere of influence — Earth gravity governs the path`);
-    this.requestCheckpoint(region === "moon" ? "Lunar arrival (SOI)" : "Lunar departure (SOI)");
+    const d = (len(sub(this.r, moonState(this.t, this.eph).r)) / 1000).toFixed(
+      0,
+    );
+    this.addLog(
+      "info",
+      region === "moon"
+        ? `Entered the Moon's sphere of influence (${d} km) — Moon gravity now governs the path`
+        : `Left the Moon's sphere of influence — Earth gravity governs the path`,
+    );
+    this.requestCheckpoint(
+      region === "moon" ? "Lunar arrival (SOI)" : "Lunar departure (SOI)",
+    );
   }
 
   trackMoon() {
     if (!this.eph) return;
     const m = moonState(this.t, this.eph);
     const d = len(sub(this.r, m.r));
-    if (!this.moonClosest || d < this.moonClosest.d) this.moonClosest = { d, alt: d - MOON.radius, t: this.t };
+    if (!this.moonClosest || d < this.moonClosest.d)
+      this.moonClosest = { d, alt: d - MOON.radius, t: this.t };
   }
 
   setAttMode(mode) {
@@ -133,25 +198,45 @@ export class FlightSim {
   }
 
   planManeuver(node) {
+    if (node && this.guidance) this.guidance.disengaged = true;
     this.node = node;
     this.maneuver = node ? new ManeuverExec(this, node) : null;
-    if (node) this.addLog("info", `Guidance armed for maneuver at T+${node.t.toFixed(0)} s — ${this.maneuver.dvTot.toFixed(1)} m/s, burn ≈ ${this.maneuver.burnTime.toFixed(0)} s`);
+    if (node)
+      this.addLog(
+        "info",
+        `Guidance armed for maneuver at T+${node.t.toFixed(0)} s — ${this.maneuver.dvTot.toFixed(1)} m/s, burn ≈ ${this.maneuver.burnTime.toFixed(0)} s`,
+      );
   }
 
   targetDir() {
     if (this.maneuver && !this.maneuver.done) return this.maneuver.target();
-    if (this.attMode === "auto" && this.guidance && !this.guidance.disengaged && !this.guidance.done) return this.dirFromAtt(this.cmd);
-    const r = this.r, v = this.v;
+    if (
+      this.attMode === "auto" &&
+      this.guidance &&
+      !this.guidance.disengaged &&
+      !this.guidance.done
+    )
+      return this.dirFromAtt(this.cmd);
+    const { r, v } = primaryOf(this.r, this.v, this.t, this.eph);
     switch (this.attMode === "auto" ? "prograde" : this.attMode) {
-      case "hold": return this.holdDir;
-      case "prograde": return norm(v);
-      case "retrograde": return scale(norm(v), -1);
-      case "normal": return norm(cross(r, v));
-      case "antinormal": return scale(norm(cross(r, v)), -1);
-      case "radialOut": return norm(r);
-      case "radialIn": return scale(norm(r), -1);
-      case "sun": return this.sunDir;
-      default: return null;
+      case "hold":
+        return this.holdDir;
+      case "prograde":
+        return norm(v);
+      case "retrograde":
+        return scale(norm(v), -1);
+      case "normal":
+        return norm(cross(r, v));
+      case "antinormal":
+        return scale(norm(cross(r, v)), -1);
+      case "radialOut":
+        return norm(r);
+      case "radialIn":
+        return scale(norm(r), -1);
+      case "sun":
+        return this.sunDir;
+      default:
+        return null;
     }
   }
 
@@ -163,19 +248,31 @@ export class FlightSim {
     const active = this.input.pitch !== 0 || this.input.yaw !== 0;
     let rateCmd = null;
     if (active) {
-      const up = norm(this.r);
+      const up = norm(this.prim ? this.prim.r : this.r);
       let a = cross(this.dir, up);
       a = len(a) < 1e-6 ? norm(cross([0, 0, 1], up)) : norm(a);
-      rateCmd = add(scale(a, this.input.pitch * MAX_RATE * 0.5), scale(up, -this.input.yaw * MAX_RATE * 0.5));
+      rateCmd = add(
+        scale(a, this.input.pitch * MAX_RATE * 0.5),
+        scale(up, -this.input.yaw * MAX_RATE * 0.5),
+      );
       this.attMode = "hold";
     } else if (this.inputActive) this.holdDir = [...this.dir];
     this.inputActive = active;
-    attitudeStep(this, dt, { F, m, target: active ? null : this.targetDir(), rateCmd, vRel, q, area });
+    attitudeStep(this, dt, {
+      F,
+      m,
+      target: active ? null : this.targetDir(),
+      rateCmd,
+      vRel,
+      q,
+      area,
+    });
   }
 
   totalProp() {
     let p = 0;
-    for (const s of this.rt.sections) if (s.attached) for (const k in s.tanks) p += s.tanks[k];
+    for (const s of this.rt.sections)
+      if (s.attached) for (const k in s.tanks) p += s.tanks[k];
     for (const r of this.rt.radials) if (r.attached) p += r.fuel;
     return p;
   }
@@ -217,8 +314,14 @@ export class FlightSim {
     const vr = dot(p.v, f.up);
     const vhVec = sub(p.v, scale(f.up, vr));
     const vh = len(vhVec);
-    const sAtt = surfSpeed > 1 ? this.attFromDir(norm(vRel), f) : { pitch: 90, heading: this.azimuth };
-    const oAtt = vh > 1 ? this.attFromDir(norm(vhVec), f) : { pitch: 0, heading: this.azimuth };
+    const sAtt =
+      surfSpeed > 1
+        ? this.attFromDir(norm(vRel), f)
+        : { pitch: 90, heading: this.azimuth };
+    const oAtt =
+      vh > 1
+        ? this.attFromDir(norm(vhVec), f)
+        : { pitch: 0, heading: this.azimuth };
     const el = orbitalElements(p.r, p.v, mu, R);
     return {
       ...f,
@@ -242,7 +345,7 @@ export class FlightSim {
       mass,
       Fmax: ts.Fmax,
       F: this.clamped && this.status === "prelaunch" ? 0 : tsNow.F,
-      accel: tsNow.F / mass,
+      accel: mass > 0 ? tsNow.F / mass : 0,
       el,
     };
   }
@@ -263,9 +366,19 @@ export class FlightSim {
     if (!id) return false;
     const dropped = dropsOf(this.rt, id);
     if (dropped.length) {
-      const fuel = dropped.reduce((a, s) => a + (s.kind === "section" ? this.rt.sections[s.s].tanks[s.prop] : this.rt.radials.find((r) => r.uid === s.uid).fuel), 0);
+      const fuel = dropped.reduce(
+        (a, s) =>
+          a +
+          (s.kind === "section"
+            ? this.rt.sections[s.s].tanks[s.prop]
+            : this.rt.radials.find((r) => r.uid === s.uid).fuel),
+        0,
+      );
       this.prematureStaging.push({ t: this.t, id, fuel });
-      this.addLog("warn", `Staged with ${(fuel / 1000).toFixed(1)} t of propellant still in the dropped stage`);
+      this.addLog(
+        "warn",
+        `Staged with ${(fuel / 1000).toFixed(1)} t of propellant still in the dropped stage`,
+      );
     }
     applyEvent(this.rt, id);
     this.rt.eventIndex++;
@@ -274,13 +387,18 @@ export class FlightSim {
     applyFaultFactors(this);
     this.pcfg = null;
     // Momentum stored in jettisoned wheels leaves with them.
-    if (cap0 > 0 && this.config.wheelMomentum < cap0) this.wheelH = scale(this.wheelH, this.config.wheelMomentum / cap0);
+    if (cap0 > 0 && this.config.wheelMomentum < cap0)
+      this.wheelH = scale(this.wheelH, this.config.wheelMomentum / cap0);
     this.aero = aeroConfig(this);
     if (id !== "ignite-0") {
       this.addLog("stage", describeEvent(id, this.sections).label);
       this.stagedAt.push({ t: this.t, id });
     }
     this.prevSources = new Set(activeSources(this.rt).map(srcKey));
+    if (runtimeMass(this.rt) <= 0) {
+      this.nav = this.computeNav();
+      this.end("crashed", "All vehicle structure has been jettisoned");
+    }
     return true;
   }
 
@@ -291,12 +409,33 @@ export class FlightSim {
   }
 
   isEnded() {
-    return this.status === "crashed" || this.status === "ended" || this.status === "splashdown";
+    return (
+      this.status === "crashed" ||
+      this.status === "ended" ||
+      this.status === "splashdown"
+    );
   }
 
   stepSize() {
-    const powered = (this.nav && this.nav.F > 0) || (this.maneuver && this.maneuver.phase === "burn" && !this.maneuver.done);
-    return powered || this.clamped || (this.nav.body === "earth" && this.nav.alt < ATMOS_TOP) ? DT_FAST : DT_COAST;
+    const powered =
+      (this.nav && this.nav.F > 0) ||
+      (this.maneuver && this.maneuver.phase === "burn" && !this.maneuver.done);
+    const guiding =
+      this.guidance && !this.guidance.done && !this.guidance.disengaged;
+    const next = this.rt.events[this.rt.eventIndex];
+    const staging =
+      this.autoStage &&
+      next &&
+      (next.startsWith("fair-")
+        ? this.nav.alt > 100000
+        : dropsOf(this.rt, next).length === 0);
+    return powered ||
+      guiding ||
+      staging ||
+      this.clamped ||
+      (this.nav.body === "earth" && this.nav.alt < ATMOS_TOP)
+      ? DT_FAST
+      : DT_COAST;
   }
 
   coastDt() {
@@ -309,20 +448,42 @@ export class FlightSim {
     while (steps < maxSteps && !this.isEnded()) {
       const dt = this.stepSize();
       if (this.acc < dt) break;
-      const stopAt = this.maneuver && !this.maneuver.done ? this.maneuver.tStart - 10 : Infinity;
+      const stopAt =
+        this.maneuver && !this.maneuver.done
+          ? this.maneuver.tStart - 10
+          : Infinity;
       if (dt === DT_COAST && this.t < stopAt) {
-        while (steps < maxSteps * 20 && !this.inAtmo() && this.t < stopAt && !this.isEnded()) {
-          const h = Math.min(this.coastDt(), Math.max(DT_COAST, stopAt - this.t));
+        while (
+          steps < maxSteps * 20 &&
+          !this.inAtmo() &&
+          this.t < stopAt &&
+          !this.isEnded()
+        ) {
+          const h = Math.min(
+            this.coastDt(),
+            Math.max(DT_COAST, stopAt - this.t),
+          );
           if (this.acc < h) break;
           this.coastStep(h);
           this.acc -= h;
           steps++;
-          if (this.region !== regionOf(this.r, this.t, this.eph) || (this.region === "moon" && this.moonClosest && this.moonClosest.alt < 0)) break;
+          if (
+            this.region !== regionOf(this.r, this.t, this.eph) ||
+            (this.region === "moon" &&
+              this.moonClosest &&
+              this.moonClosest.alt < 0)
+          )
+            break;
         }
         this.nav = this.computeNav();
         this.att = this.attFromDir(this.dir, this.nav);
         this.postStep(this.nav);
-        if (this.acc < this.coastDt() && this.stepSize() === DT_COAST && this.t < stopAt) break;
+        if (
+          this.acc < this.coastDt() &&
+          this.stepSize() === DT_COAST &&
+          this.t < stopAt
+        )
+          break;
         continue;
       }
       this.step(dt);
@@ -375,13 +536,35 @@ export class FlightSim {
     if (this.isEnded()) return;
     let nav = (this.nav = this.computeNav());
     if (this.status !== "prelaunch") {
-      if (this.maneuver && !this.maneuver.done) this.maneuver.update(this, nav, dt);
-      else if (this.guidance && !this.guidance.disengaged) this.guidance.update(this, nav, dt);
+      if (this.maneuver && !this.maneuver.done)
+        this.maneuver.update(this, nav, dt);
+      else if (this.guidance && !this.guidance.disengaged)
+        this.guidance.update(this, nav, dt);
       this.autoStageCheck(nav, dt);
+      if (this.isEnded()) return;
     }
-    const ts = this.status === "prelaunch" ? { F: 0, flows: [] } : thrustState(this.rt, this.sys.powerOut ? 0 : this.throttle, nav.pRatio);
+    const ts =
+      this.status === "prelaunch"
+        ? { F: 0, flows: [] }
+        : thrustState(
+            this.rt,
+            this.sys.powerOut ? 0 : this.throttle,
+            nav.pRatio,
+          );
     systemsStep(this, dt, this.ionFiring(ts));
-    const pulse = this.maneuver && this.maneuver.phase === "burn" && !this.maneuver.done ? this.maneuver.pulse : 1;
+    const maneuverBurn =
+      this.maneuver && this.maneuver.phase === "burn" && !this.maneuver.done;
+    const fineInsertion =
+      !maneuverBurn &&
+      this.guidance &&
+      !this.guidance.disengaged &&
+      this.guidance.phase === "insert";
+    // Pulse the last insertion corrections when the commanded thrust is below an engine's minimum throttle.
+    const pulse = maneuverBurn
+      ? this.maneuver.pulse
+      : fineInsertion && ts.F > 0
+        ? Math.min(1, (nav.Fmax * this.throttle) / ts.F)
+        : 1;
     if (pulse < 1) {
       ts.F *= pulse;
       ts.flows = ts.flows.map((f) => ({ ...f, mdot: f.mdot * pulse }));
@@ -393,13 +576,28 @@ export class FlightSim {
       const g = EARTH.mu / (this.padRadius * this.padRadius);
       if (ts.F > m * g && this.status === "flight") {
         this.clamped = false;
-        this.addLog("info", `Liftoff — thrust-to-weight ${(ts.F / (m * g)).toFixed(2)}`);
+        this.addLog(
+          "info",
+          `Liftoff — thrust-to-weight ${(ts.F / (m * g)).toFixed(2)}`,
+        );
       } else {
         const th = EARTH.rotationRate * this.t;
         const p = this.padUnit;
-        this.r = scale([p[0] * Math.cos(th) - p[1] * Math.sin(th), p[0] * Math.sin(th) + p[1] * Math.cos(th), p[2]], this.padRadius);
+        this.r = scale(
+          [
+            p[0] * Math.cos(th) - p[1] * Math.sin(th),
+            p[0] * Math.sin(th) + p[1] * Math.cos(th),
+            p[2],
+          ],
+          this.padRadius,
+        );
         this.v = cross(OMEGA, this.r);
-        if (this.status === "flight" && this.t > 10 && activeSources(this.rt).length === 0) this.end("crashed", "Engines could not lift the vehicle off the pad");
+        if (
+          this.status === "flight" &&
+          this.t > 10 &&
+          activeSources(this.rt).length === 0
+        )
+          this.end("crashed", "Engines could not lift the vehicle off the pad");
       }
       this.dir = norm(this.r);
       this.nav = this.computeNav();
@@ -409,7 +607,15 @@ export class FlightSim {
     if (this.aero.blunt && nav.q > 20 && nav.body === "earth") {
       this.dir = scale(norm(sub(this.v, cross(OMEGA, this.r))), -1);
       this.omega = [0, 0, 0];
-    } else this.controlAttitude(dt, ts.F, m, sub(this.v, cross(OMEGA, this.r)), nav.q, area);
+    } else
+      this.controlAttitude(
+        dt,
+        ts.F,
+        m,
+        sub(this.v, cross(OMEGA, this.r)),
+        nav.q,
+        area,
+      );
     const dir = this.dir;
     this.att = this.attFromDir(dir, nav);
     const F = ts.F;
@@ -418,14 +624,23 @@ export class FlightSim {
     const t0 = this.t;
     const k1v = this.accel(r0, v0, dir, F, m, area, t0);
     const k1r = v0;
-    const r2 = add(r0, scale(k1r, dt / 2)), v2 = add(v0, scale(k1v, dt / 2));
+    const r2 = add(r0, scale(k1r, dt / 2)),
+      v2 = add(v0, scale(k1v, dt / 2));
     const k2v = this.accel(r2, v2, dir, F, m, area, t0 + dt / 2);
-    const r3 = add(r0, scale(v2, dt / 2)), v3 = add(v0, scale(k2v, dt / 2));
+    const r3 = add(r0, scale(v2, dt / 2)),
+      v3 = add(v0, scale(k2v, dt / 2));
     const k3v = this.accel(r3, v3, dir, F, m, area, t0 + dt / 2);
-    const r4 = add(r0, scale(v3, dt)), v4 = add(v0, scale(k3v, dt));
+    const r4 = add(r0, scale(v3, dt)),
+      v4 = add(v0, scale(k3v, dt));
     const k4v = this.accel(r4, v4, dir, F, m, area, t0 + dt);
-    this.r = add(r0, scale(add(add(v0, scale(v2, 2)), add(scale(v3, 2), v4)), dt / 6));
-    this.v = add(v0, scale(add(add(k1v, scale(k2v, 2)), add(scale(k3v, 2), k4v)), dt / 6));
+    this.r = add(
+      r0,
+      scale(add(add(v0, scale(v2, 2)), add(scale(v3, 2), v4)), dt / 6),
+    );
+    this.v = add(
+      v0,
+      scale(add(add(k1v, scale(k2v, 2)), add(scale(k3v, 2), k4v)), dt / 6),
+    );
     consume(this.rt, ts.flows, dt);
     if (this.maneuver) this.maneuver.record(dir, F, m, dt);
     this.t += dt;
@@ -433,7 +648,10 @@ export class FlightSim {
     this.trackMoon();
     nav = this.nav = this.computeNav();
     const mNow = runtimeMass(this.rt);
-    const sensed = add(scale(dir, F / m), this.aeroAccel(this.r, this.v, mNow, area));
+    const sensed = add(
+      scale(dir, F / m),
+      this.aeroAccel(this.r, this.v, mNow, area),
+    );
     if (!this.isEnded()) entryUpdate(this, nav, dt, sensedAccelG(sensed));
     if (this.isEnded()) return;
     this.postStep(nav);
@@ -443,7 +661,11 @@ export class FlightSim {
     if (!this.autoStage || this.clamped) return;
     const id = this.rt.events[this.rt.eventIndex];
     if (!id) return;
-    if (id.startsWith("fair-") ? nav.alt > 100000 : dropsOf(this.rt, id).length === 0) {
+    if (
+      id.startsWith("fair-")
+        ? nav.alt > 100000
+        : dropsOf(this.rt, id).length === 0
+    ) {
       this.stageDelay += dt;
       if (this.stageDelay >= 1) {
         this.stageDelay = 0;
@@ -456,8 +678,18 @@ export class FlightSim {
     const now = new Set(activeSources(this.rt).map(srcKey));
     for (const k of this.prevSources) {
       if (!now.has(k)) {
-        const label = k.startsWith("R-") ? "Solid boosters burnout" : `Stage ${+k.split("-")[0].slice(1) + 1} flameout — propellant depleted`;
-        this.flameouts.push({ t: this.t, key: k, label, alt: nav.alt, apo: nav.el.apoapsis, peri: nav.el.periapsis, speed: nav.speed });
+        const label = k.startsWith("R-")
+          ? "Solid boosters burnout"
+          : `Stage ${+k.split("-")[0].slice(1) + 1} flameout — propellant depleted`;
+        this.flameouts.push({
+          t: this.t,
+          key: k,
+          label,
+          alt: nav.alt,
+          apo: nav.el.apoapsis,
+          peri: nav.el.periapsis,
+          speed: nav.speed,
+        });
         this.lastBurnEnergy = nav.el.energy;
         this.addLog(k.startsWith("R-") ? "info" : "stage", label);
       }
@@ -466,8 +698,17 @@ export class FlightSim {
     if (nav.q > this.maxQ.q) this.maxQ = { q: nav.q, t: this.t, alt: nav.alt };
     if (nav.el.apoapsis > this.maxApo) this.maxApo = nav.el.apoapsis;
     this.maxAlt = Math.max(this.maxAlt, nav.alt);
-    const interval = this.t < 1500 || (this.entry.ei && nav.alt < 160000) ? 1 : this.t < 86400 ? 30 : 600;
-    if (this.telemetry.length > 4000) this.telemetry = [...this.telemetry.slice(0, 1500), ...this.telemetry.slice(1500).filter((_, i) => i % 2 === 0)];
+    const interval =
+      this.t < 1500 || (this.entry.ei && nav.alt < 160000)
+        ? 1
+        : this.t < 86400
+          ? 30
+          : 600;
+    if (this.telemetry.length > 4000)
+      this.telemetry = [
+        ...this.telemetry.slice(0, 1500),
+        ...this.telemetry.slice(1500).filter((_, i) => i % 2 === 0),
+      ];
     if (this.t - this.lastSample >= interval) {
       this.lastSample = this.t;
       this.telemetry.push({
@@ -486,7 +727,11 @@ export class FlightSim {
         flux: +(this.entry.flux / 1e6).toFixed(3),
       });
     }
-    if (this.status === "orbit" && !this.eph && this.t - this.lastAutoCkpt > 86400) {
+    if (
+      this.status === "orbit" &&
+      !this.eph &&
+      this.t - this.lastAutoCkpt > 86400
+    ) {
       this.lastAutoCkpt = this.t;
       this.requestCheckpoint("Long coast (24 h)");
     }
@@ -495,40 +740,137 @@ export class FlightSim {
       if (reg !== this.region) this.onRegionChange(reg);
     }
     if (nav.alt < 0) {
-      if (nav.body === "moon") this.end("crashed", `Vehicle impacted the lunar surface at ${nav.surfSpeed.toFixed(0)} m/s`);
-      else if (this.aero.blunt && nav.surfSpeed <= SPLASH_SPEED) this.end("splashdown", `Splashdown at ${nav.surfSpeed.toFixed(1)} m/s${this.aero.crew ? " — crew recovered" : ""}`);
-      else this.end("crashed", `Vehicle impacted the surface at ${nav.surfSpeed.toFixed(0)} m/s`);
+      if (nav.body === "moon")
+        this.end(
+          "crashed",
+          `Vehicle impacted the lunar surface at ${nav.surfSpeed.toFixed(0)} m/s`,
+        );
+      else if (this.aero.blunt && nav.surfSpeed <= SPLASH_SPEED)
+        this.end(
+          "splashdown",
+          `Splashdown at ${nav.surfSpeed.toFixed(1)} m/s${this.aero.crew ? " — crew recovered" : ""}`,
+        );
+      else
+        this.end(
+          "crashed",
+          `Vehicle impacted the surface at ${nav.surfSpeed.toFixed(0)} m/s`,
+        );
       if (this.status === "crashed" && this.aero.crew) this.crewLost = true;
       return;
     }
-    if (nav.body === "moon" && !this.lunarOrbitAt && nav.F === 0 && nav.el.e < 1 && nav.el.periapsis > 15000 && nav.el.ra < MOON.soi * 0.9) {
+    if (
+      nav.body === "moon" &&
+      !this.lunarOrbitAt &&
+      nav.F === 0 &&
+      nav.el.e < 1 &&
+      nav.el.periapsis > 15000 &&
+      nav.el.ra < MOON.soi * 0.9
+    ) {
       this.lunarOrbitAt = this.t;
       this.requestCheckpoint("Lunar orbit");
-      this.addLog("success", `Lunar orbit achieved — ${(nav.el.apoapsis / 1000).toFixed(1)} × ${(nav.el.periapsis / 1000).toFixed(1)} km, i = ${(nav.el.inc / DEG).toFixed(1)}°`);
+      this.addLog(
+        "success",
+        `Lunar orbit achieved — ${(nav.el.apoapsis / 1000).toFixed(1)} × ${(nav.el.periapsis / 1000).toFixed(1)} km, i = ${(nav.el.inc / DEG).toFixed(1)}°`,
+      );
     }
-    if (nav.body === "earth" && nav.el.periapsis >= STABLE_PERIAPSIS && nav.F === 0 && !this.orbitAt) {
+    if (
+      nav.body === "earth" &&
+      nav.el.periapsis >= STABLE_PERIAPSIS &&
+      nav.F === 0 &&
+      !this.orbitAt
+    ) {
       this.orbitAt = this.t;
       // Launch-window assumption: the Moon's orbit plane passes through the parking-orbit node line.
-      if (this.eph) this.eph = { ...this.eph, raan: nav.el.raan / DEG, frame: undefined };
+      if (this.eph)
+        this.eph = { ...this.eph, raan: nav.el.raan / DEG, frame: undefined };
       this.status = "orbit";
       this.requestCheckpoint("Orbit reached");
-      this.addLog("success", `Stable orbit achieved — ${(nav.el.apoapsis / 1000).toFixed(1)} × ${(nav.el.periapsis / 1000).toFixed(1)} km, i = ${(nav.el.inc / DEG).toFixed(2)}°`);
+      this.addLog(
+        "success",
+        `Stable orbit achieved — ${(nav.el.apoapsis / 1000).toFixed(1)} × ${(nav.el.periapsis / 1000).toFixed(1)} km, i = ${(nav.el.inc / DEG).toFixed(2)}°`,
+      );
     }
   }
 
   serialize() {
     const g = this.guidance;
     const mv = this.maneuver;
-    return JSON.parse(JSON.stringify({
-      t: this.t, r: this.r, v: this.v, dir: this.dir, omega: this.omega, wheelH: this.wheelH, rt: this.rt, status: this.status, clamped: this.clamped,
-      att: this.att, cmd: this.cmd, throttle: this.throttle, attMode: this.attMode, holdDir: this.holdDir, rcsEnabled: this.rcsEnabled, autoStage: this.autoStage,
-      log: this.log, telemetry: this.telemetry, flameouts: this.flameouts, prematureStaging: this.prematureStaging, stagedAt: this.stagedAt,
-      maxQ: this.maxQ, maxApo: this.maxApo, maxAlt: this.maxAlt, lastSample: this.lastSample, orbitAt: this.orbitAt, lastAutoCkpt: this.lastAutoCkpt,
-      lastBurnEnergy: this.lastBurnEnergy ?? null, stageDelay: this.stageDelay, acc: this.acc || 0, node: this.node, wheelsSaturated: !!this.wheelsSaturated, rcsEmptyLogged: !!this.rcsEmptyLogged,
-      sys: this.sys, region: this.region, eph: this.eph ? { raan: this.eph.raan, argp: this.eph.argp, M0: this.eph.M0 } : null, sunAU: this.sunAU, ls: this.ls, entry: this.entry, moonClosest: this.moonClosest, lunarOrbitAt: this.lunarOrbitAt, crewLost: this.crewLost, lossReason: this.lossReason, endReason: this.endReason, input: this.input, inputActive: this.inputActive,
-      guidance: g ? { p: g.p, phase: g.phase, phaseT: g.phaseT, done: g.done, frozenDir: g.frozenDir, disengaged: !!g.disengaged } : null,
-      maneuver: mv ? { node: mv.node, dvVec: mv.dvVec, dvTot: mv.dvTot, burnTime: mv.burnTime, tStart: mv.tStart, delivered: mv.delivered, phase: mv.phase, done: mv.done } : null,
-    }));
+    return JSON.parse(
+      JSON.stringify({
+        t: this.t,
+        r: this.r,
+        v: this.v,
+        dir: this.dir,
+        omega: this.omega,
+        wheelH: this.wheelH,
+        rt: this.rt,
+        status: this.status,
+        clamped: this.clamped,
+        att: this.att,
+        cmd: this.cmd,
+        throttle: this.throttle,
+        attMode: this.attMode,
+        holdDir: this.holdDir,
+        rcsEnabled: this.rcsEnabled,
+        autoStage: this.autoStage,
+        log: this.log,
+        telemetry: this.telemetry,
+        flameouts: this.flameouts,
+        prematureStaging: this.prematureStaging,
+        stagedAt: this.stagedAt,
+        maxQ: this.maxQ,
+        maxApo: this.maxApo,
+        maxAlt: this.maxAlt,
+        lastSample: this.lastSample,
+        orbitAt: this.orbitAt,
+        lastAutoCkpt: this.lastAutoCkpt,
+        lastBurnEnergy: this.lastBurnEnergy ?? null,
+        stageDelay: this.stageDelay,
+        acc: this.acc || 0,
+        node: this.node,
+        wheelsSaturated: !!this.wheelsSaturated,
+        rcsEmptyLogged: !!this.rcsEmptyLogged,
+        sys: this.sys,
+        region: this.region,
+        eph: this.eph
+          ? { raan: this.eph.raan, argp: this.eph.argp, M0: this.eph.M0 }
+          : null,
+        sunAU: this.sunAU,
+        ls: this.ls,
+        entry: this.entry,
+        moonClosest: this.moonClosest,
+        lunarOrbitAt: this.lunarOrbitAt,
+        crewLost: this.crewLost,
+        lossReason: this.lossReason,
+        endReason: this.endReason,
+        input: this.input,
+        inputActive: this.inputActive,
+        guidance: g
+          ? {
+              p: g.p,
+              phase: g.phase,
+              phaseT: g.phaseT,
+              done: g.done,
+              frozenDir: g.frozenDir,
+              disengaged: !!g.disengaged,
+            }
+          : null,
+        maneuver: mv
+          ? {
+              node: mv.node,
+              dvVec: mv.dvVec,
+              dvTot: mv.dvTot,
+              burnTime: mv.burnTime,
+              tStart: mv.tStart,
+              delivered: mv.delivered,
+              phase: mv.phase,
+              done: mv.done,
+              pulse: mv.pulse,
+              failed: !!mv.failed,
+            }
+          : null,
+      }),
+    );
   }
 
   restore(st) {
@@ -566,7 +908,9 @@ export class FlightSim {
 
   // Deterministic state digest for checkpoint/consistency checks.
   digest() {
-    return [this.t, ...this.r, ...this.v, runtimeMass(this.rt)].map((x) => x.toFixed(6)).join("|");
+    return [this.t, ...this.r, ...this.v, runtimeMass(this.rt)]
+      .map((x) => x.toFixed(6))
+      .join("|");
   }
 }
 
