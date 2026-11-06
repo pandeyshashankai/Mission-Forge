@@ -25,3 +25,15 @@ A deployment is not verified merely because the repository passed its local audi
 Physical-device checks, hosted-origin behavior and participant usability results
 are not replaced by local emulation. The release evidence identifies the exact
 locally tested implementation commit; later evidence-only commits can differ.
+
+## Strict CI builds
+
+Cloudflare sets `CI=true`, which makes Create React App reject lint warnings.
+Reproduce that behavior with `CI=true npm run build` from `frontend`. The release
+workflow enforces the same setting. Hook dependencies and input-condition grouping
+must remain warning-free; disabling CI warning checks hides deployment failures.
+
+The 6 November build-log failure was fixed by capturing the command palette's
+actual effect dependencies, removing an unused lint global declaration and
+parenthesizing existing input conditions without changing their precedence.
+See `docs/submission/cloudflare-build-fix.json` for the follow-up build evidence.

@@ -110,5 +110,6 @@
   "stationLoadingConstituents": 342,
   "stationReferenceHours": 48,
   "extraLabLayoutChecks": 9,
-  "extraLabLayoutReport": "milestones-extra-layouts.json"
+  "extraLabLayoutReport": "milestones-extra-layouts.json",
+  "followUpValidation": "cloudflare-build-fix.json"
 }

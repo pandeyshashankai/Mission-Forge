@@ -1,0 +1,493 @@
+
+> mission-forge@1.0.0 test
+> node tests/physics.test.cjs && node tests/exploration.test.cjs && node tests/fleet.test.cjs && node tests/appearance.test.cjs && node tests/controls.test.cjs && node tests/science.test.cjs && node tests/engineering.test.cjs && node tests/visuals.test.cjs && node tests/roadmap.test.cjs && node tests/advanced.test.cjs && node tests/precision.test.cjs && node tests/damage.test.cjs && node tests/contact.test.cjs && node tests/tpsx.test.cjs && node tests/thermalBench.test.cjs && node tests/import-integrity.test.cjs && node tests/persistence.test.cjs && node tests/backlog.test.cjs && node tests/optimization.test.cjs && node tests/education.test.cjs && node tests/milestones.test.cjs
+
+✔ guided launch reaches target orbit with automatic staging (381.333742ms)
+✔ batched advance completes ascent without stalling at vacuum staging (590.234911ms)
+✔ checkpoint restoration preserves deterministic motion (42.177239ms)
+✔ lunar prograde and radial attitude modes use Moon-relative state (1.022912ms)
+✔ arming a maneuver hands control away from ascent guidance (22.794736ms)
+✔ burn-time estimate rejects an impossible burn (2.169862ms)
+✔ fuel exhaustion reports a failed maneuver with its residual (0.760563ms)
+✔ RK4 conserves two-body orbital energy over ten orbits (4.808036ms)
+✔ duplicating creates a unique part and resets custom staging (0.517652ms)
+✔ deleting the last stack part cannot leave an invalid empty design (0.37614ms)
+✔ Aster-M methane booster completes a guided launch (239.974375ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1317.081568
+✔ all eight planets and three moons have finite, time-dependent ephemerides (2.283684ms)
+✔ starting mercury orbit remains bound during a full period (21.168483ms)
+✔ starting venus orbit remains bound during a full period (67.601792ms)
+✔ starting earth orbit remains bound during a full period (84.449505ms)
+✔ starting mars orbit remains bound during a full period (9.657489ms)
+✔ starting jupiter orbit remains bound during a full period (12.47238ms)
+✔ starting saturn orbit remains bound during a full period (68.185206ms)
+✔ starting uranus orbit remains bound during a full period (64.773796ms)
+✔ starting neptune orbit remains bound during a full period (13.991534ms)
+✔ starting moon orbit remains bound during a full period (11.97146ms)
+✔ starting europa orbit remains bound during a full period (14.166325ms)
+✔ starting titan orbit remains bound during a full period (17.770368ms)
+✔ prograde finite burn raises apoapsis and consumes the expected fuel (3.848072ms)
+✔ retrograde burn lowers periapsis (1.413447ms)
+✔ time warp cannot multiply a powered burn (0.256296ms)
+✔ fuel depletion cuts engine and never provides negative fuel (0.631825ms)
+✔ heliocentric escape transfers the governing frame continuously (0.399251ms)
+✔ surface crossing registers impact instead of tunnelling at high warp (0.58679ms)
+✔ slow airless descent registers touchdown (0.232001ms)
+✔ save roundtrip preserves orbit and restores with engines off (2.180683ms)
+✔ malformed, impossible and unknown saves are rejected (0.821346ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 441.268349
+✔ recommended First Orbit rocket is launchable from preflight (34.090018ms)
+✔ recommended Earth Observer rocket is launchable from preflight (3.199447ms)
+✔ recommended Lunar Orbiter rocket is launchable from preflight (5.097925ms)
+✔ recommended Crewed Lunar Flyby & Return rocket is launchable from preflight (363.653581ms)
+✔ Aster-M validates and behaves according to its role (218.062782ms)
+✔ Orbiter-9 validates and behaves according to its role (341.445295ms)
+✔ Orbiter-9 EO validates and behaves according to its role (235.652398ms)
+✔ Hydro-Boost validates and behaves according to its role (423.316963ms)
+✔ Selene-1 validates and behaves according to its role (275.202013ms)
+✔ Odyssey validates and behaves according to its role (225.749297ms)
+✔ Empty validates and behaves according to its role (2.818489ms)
+✔ Pathfinder flies, burns and restores at Mercury (7.96344ms)
+✔ Pathfinder flies, burns and restores at Venus (2.048417ms)
+✔ Pathfinder flies, burns and restores at Earth (2.466525ms)
+✔ Pathfinder flies, burns and restores at Mars (2.028179ms)
+✔ Pathfinder flies, burns and restores at Jupiter (1.525746ms)
+✔ Pathfinder flies, burns and restores at Saturn (1.241637ms)
+✔ Pathfinder flies, burns and restores at Uranus (1.441109ms)
+✔ Pathfinder flies, burns and restores at Neptune (1.424438ms)
+✔ Pathfinder flies, burns and restores at Moon (2.235204ms)
+✔ Pathfinder flies, burns and restores at Europa (1.901654ms)
+✔ Pathfinder flies, burns and restores at Titan (1.311648ms)
+✔ Wayfarer flies, burns and restores at Mercury (1.387458ms)
+✔ Wayfarer flies, burns and restores at Venus (1.451077ms)
+✔ Wayfarer flies, burns and restores at Earth (3.051661ms)
+✔ Wayfarer flies, burns and restores at Mars (6.044424ms)
+✔ Wayfarer flies, burns and restores at Jupiter (2.850367ms)
+✔ Wayfarer flies, burns and restores at Saturn (0.894983ms)
+✔ Wayfarer flies, burns and restores at Uranus (0.928165ms)
+✔ Wayfarer flies, burns and restores at Neptune (1.370618ms)
+✔ Wayfarer flies, burns and restores at Moon (1.091609ms)
+✔ Wayfarer flies, burns and restores at Europa (1.127065ms)
+✔ Wayfarer flies, burns and restores at Titan (0.931963ms)
+✔ Pioneer flies, burns and restores at Mercury (1.346432ms)
+✔ Pioneer flies, burns and restores at Venus (1.072774ms)
+✔ Pioneer flies, burns and restores at Earth (0.999187ms)
+✔ Pioneer flies, burns and restores at Mars (0.988578ms)
+✔ Pioneer flies, burns and restores at Jupiter (0.857404ms)
+✔ Pioneer flies, burns and restores at Saturn (0.807932ms)
+✔ Pioneer flies, burns and restores at Uranus (0.879876ms)
+✔ Pioneer flies, burns and restores at Neptune (0.881028ms)
+✔ Pioneer flies, burns and restores at Moon (1.222332ms)
+✔ Pioneer flies, burns and restores at Europa (0.922925ms)
+✔ Pioneer flies, burns and restores at Titan (0.890405ms)
+✔ display preferences have safe defaults and preserve known choices (0.845843ms)
+✔ corrupt saved-list shapes do not crash the main menu (0.348468ms)
+✔ undo history is pure when React invokes the reducer twice (0.294637ms)
+✔ redo and loading another rocket cannot leak old history (0.18298ms)
+ℹ tests 48
+ℹ suites 0
+ℹ pass 48
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2200.344857
+✔ orbital text and primary buttons meet 4.5:1 contrast (1.696563ms)
+✔ nebula text and primary buttons meet 4.5:1 contrast (1.73774ms)
+✔ daylight text and primary buttons meet 4.5:1 contrast (0.658794ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 13.183633
+✔ default controls use WASD and conventional nearby flight keys (2.449934ms)
+✔ rebinding a duplicate swaps actions without disabling either one (0.630812ms)
+✔ arrow-key preset is complete and leaves common actions unchanged (0.157704ms)
+✔ malformed saved bindings cannot introduce invalid codes or collisions (0.305047ms)
+✔ physical codes, letter fallbacks and both modifier sides normalize (0.487927ms)
+✔ browser and accessibility keys are not bindable (0.167442ms)
+✔ one released pointer does not release another pointer or keyboard hold (0.204149ms)
+✔ simultaneous steering and throttle are independent (0.353347ms)
+✔ opposite steering inputs cancel instead of producing an invalid command (0.394583ms)
+✔ repeated key press is idempotent and clearing releases every source (0.416163ms)
+✔ control preferences roundtrip and invalid saved choices fall back safely (0.937943ms)
+✔ exploration RCS off holds burn direction and survives save/restore (4.181631ms)
+✔ old expedition saves enable attitude control by default (0.43085ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 42.898749
+✔ original NASA files match pinned hashes and generated public data (4.641336ms)
+✔ Sun: simulation uses imported spherical radius and identified gravity (0.197427ms)
+✔ Mercury: simulation uses imported spherical radius and identified gravity (0.110265ms)
+✔ Venus: simulation uses imported spherical radius and identified gravity (0.118801ms)
+✔ Earth: simulation uses imported spherical radius and identified gravity (0.154367ms)
+✔ Mars: simulation uses imported spherical radius and identified gravity (0.157283ms)
+✔ Jupiter: simulation uses imported spherical radius and identified gravity (0.09703ms)
+✔ Saturn: simulation uses imported spherical radius and identified gravity (0.093685ms)
+✔ Uranus: simulation uses imported spherical radius and identified gravity (0.210852ms)
+✔ Neptune: simulation uses imported spherical radius and identified gravity (0.240607ms)
+✔ Moon: simulation uses imported spherical radius and identified gravity (0.224357ms)
+✔ Europa: simulation uses imported spherical radius and identified gravity (0.098183ms)
+✔ Titan: simulation uses imported spherical radius and identified gravity (0.134069ms)
+✔ scored Earth and Moon use the imported gravity; Earth radius has documented km rounding (0.227173ms)
+✔ Earth: independent analytic benchmark and full-orbit closure/energy checks pass (0.219478ms)
+✔ Moon: independent analytic benchmark and full-orbit closure/energy checks pass (0.112399ms)
+✔ Mars: independent analytic benchmark and full-orbit closure/energy checks pass (0.092632ms)
+✔ learning prediction rejects invalid choices and non-finite speeds (0.720229ms)
+✔ learning report uses recorded telemetry and preserves incorrect predictions (0.532429ms)
+✔ reaching space without periapsis clearance gives an orbital-speed explanation (0.310497ms)
+✔ no telemetry does not fabricate a measured comparison or attach to another mission (0.183791ms)
+✔ learning journal stores reflections, deduplicates predictions, and tolerates malformed/full storage (0.804997ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 291.594665
+✔ earth: every imported density band is used with correct SI units and range (2.713163ms)
+✔ mars: every imported density band is used with correct SI units and range (0.948784ms)
+✔ inter-band atmospheric densities match independent Decimal references (0.243502ms)
+✔ scored upper atmosphere uses imported density and blends continuously at 86 km (0.521178ms)
+✔ all worlds use the signed NAIF linear rotation rates, including retrograde Venus/Uranus (0.218195ms)
+✔ earth: imported atmospheric drag removes orbital energy compared with the same vacuum trajectory (15.956727ms)
+✔ mars: imported atmospheric drag removes orbital energy compared with the same vacuum trajectory (13.642464ms)
+✔ two-burn and rocket-equation calculations match independent high-precision fixtures (0.807381ms)
+✔ Mercury/Pathfinder: finite raising transfer completes without placement or refuelling (31.739279ms)
+✔ Mercury/Pathfinder: finite lowering transfer completes without placement or refuelling (11.648229ms)
+✔ Mercury/Wayfarer: finite raising transfer completes without placement or refuelling (14.366741ms)
+✔ Mercury/Wayfarer: finite lowering transfer completes without placement or refuelling (7.943924ms)
+✔ Mercury/Pioneer: finite raising transfer completes without placement or refuelling (7.124532ms)
+✔ Mercury/Pioneer: finite lowering transfer completes without placement or refuelling (8.580447ms)
+✔ Venus/Pathfinder: finite raising transfer completes without placement or refuelling (10.429814ms)
+✔ Venus/Pathfinder: finite lowering transfer completes without placement or refuelling (10.774314ms)
+✔ Venus/Wayfarer: finite raising transfer completes without placement or refuelling (30.849965ms)
+✔ Venus/Wayfarer: finite lowering transfer completes without placement or refuelling (6.558068ms)
+✔ Venus/Pioneer: finite raising transfer completes without placement or refuelling (6.439886ms)
+✔ Venus/Pioneer: finite lowering transfer completes without placement or refuelling (9.423694ms)
+✔ Earth/Pathfinder: finite raising transfer completes without placement or refuelling (13.40305ms)
+✔ Earth/Pathfinder: finite lowering transfer completes without placement or refuelling (11.93404ms)
+✔ Earth/Wayfarer: finite raising transfer completes without placement or refuelling (12.739436ms)
+✔ Earth/Wayfarer: finite lowering transfer completes without placement or refuelling (12.21399ms)
+✔ Earth/Pioneer: finite raising transfer completes without placement or refuelling (25.833392ms)
+✔ Earth/Pioneer: finite lowering transfer completes without placement or refuelling (10.142921ms)
+✔ Mars/Pathfinder: finite raising transfer completes without placement or refuelling (9.977483ms)
+✔ Mars/Pathfinder: finite lowering transfer completes without placement or refuelling (9.918594ms)
+✔ Mars/Wayfarer: finite raising transfer completes without placement or refuelling (11.254727ms)
+✔ Mars/Wayfarer: finite lowering transfer completes without placement or refuelling (11.001266ms)
+✔ Mars/Pioneer: finite raising transfer completes without placement or refuelling (9.95953ms)
+✔ Mars/Pioneer: finite lowering transfer completes without placement or refuelling (9.600964ms)
+✔ Jupiter/Pathfinder: finite raising transfer completes without placement or refuelling (93.344042ms)
+✔ Jupiter/Pathfinder: finite lowering transfer completes without placement or refuelling (77.561581ms)
+✔ Jupiter/Wayfarer: finite raising transfer completes without placement or refuelling (65.967122ms)
+✔ Jupiter/Wayfarer: finite lowering transfer completes without placement or refuelling (58.305432ms)
+✔ Jupiter/Pioneer: finite raising transfer completes without placement or refuelling (42.68991ms)
+✔ Jupiter/Pioneer: finite lowering transfer completes without placement or refuelling (36.726407ms)
+✔ Saturn/Pathfinder: finite raising transfer completes without placement or refuelling (29.482183ms)
+✔ Saturn/Pathfinder: finite lowering transfer completes without placement or refuelling (44.068943ms)
+✔ Saturn/Wayfarer: finite raising transfer completes without placement or refuelling (29.747116ms)
+✔ Saturn/Wayfarer: finite lowering transfer completes without placement or refuelling (44.972563ms)
+✔ Saturn/Pioneer: finite raising transfer completes without placement or refuelling (53.869018ms)
+✔ Saturn/Pioneer: finite lowering transfer completes without placement or refuelling (71.780105ms)
+✔ Uranus/Pathfinder: finite raising transfer completes without placement or refuelling (21.653424ms)
+✔ Uranus/Pathfinder: finite lowering transfer completes without placement or refuelling (17.924794ms)
+✔ Uranus/Wayfarer: finite raising transfer completes without placement or refuelling (36.536553ms)
+✔ Uranus/Wayfarer: finite lowering transfer completes without placement or refuelling (17.622102ms)
+✔ Uranus/Pioneer: finite raising transfer completes without placement or refuelling (22.28639ms)
+✔ Uranus/Pioneer: finite lowering transfer completes without placement or refuelling (16.656367ms)
+✔ Neptune/Pathfinder: finite raising transfer completes without placement or refuelling (13.395927ms)
+✔ Neptune/Pathfinder: finite lowering transfer completes without placement or refuelling (13.444778ms)
+✔ Neptune/Wayfarer: finite raising transfer completes without placement or refuelling (14.664334ms)
+✔ Neptune/Wayfarer: finite lowering transfer completes without placement or refuelling (13.829773ms)
+✔ Neptune/Pioneer: finite raising transfer completes without placement or refuelling (14.005069ms)
+✔ Neptune/Pioneer: finite lowering transfer completes without placement or refuelling (13.511853ms)
+✔ Moon/Pathfinder: finite raising transfer completes without placement or refuelling (6.621597ms)
+✔ Moon/Pathfinder: finite lowering transfer completes without placement or refuelling (6.225891ms)
+✔ Moon/Wayfarer: finite raising transfer completes without placement or refuelling (6.995151ms)
+✔ Moon/Wayfarer: finite lowering transfer completes without placement or refuelling (6.096059ms)
+✔ Moon/Pioneer: finite raising transfer completes without placement or refuelling (5.365232ms)
+✔ Moon/Pioneer: finite lowering transfer completes without placement or refuelling (5.249616ms)
+✔ Europa/Pathfinder: finite raising transfer completes without placement or refuelling (6.596179ms)
+✔ Europa/Pathfinder: finite lowering transfer completes without placement or refuelling (5.871162ms)
+✔ Europa/Wayfarer: finite raising transfer completes without placement or refuelling (6.879486ms)
+✔ Europa/Wayfarer: finite lowering transfer completes without placement or refuelling (5.973422ms)
+✔ Europa/Pioneer: finite raising transfer completes without placement or refuelling (5.194504ms)
+✔ Europa/Pioneer: finite lowering transfer completes without placement or refuelling (5.28883ms)
+✔ Titan/Pathfinder: finite raising transfer completes without placement or refuelling (5.470067ms)
+✔ Titan/Pathfinder: finite lowering transfer completes without placement or refuelling (5.755938ms)
+✔ Titan/Wayfarer: finite raising transfer completes without placement or refuelling (8.34511ms)
+✔ Titan/Wayfarer: finite lowering transfer completes without placement or refuelling (5.802885ms)
+✔ Titan/Pioneer: finite raising transfer completes without placement or refuelling (6.300599ms)
+✔ Titan/Pioneer: finite lowering transfer completes without placement or refuelling (5.372685ms)
+✔ assistance cancels safely and restored saves never re-arm an active burn (1.174362ms)
+✔ invalid targets, eccentric starts, insufficient fuel, and oversized transfers are rejected (0.383212ms)
+✔ powered assisted flight remains at real-time speed under a high warp request (0.343108ms)
+ℹ tests 77
+ℹ suites 0
+ℹ pass 77
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1355.084885
+✔ pathfinder: finite geometry, bounded detail and complete disposal (41.454215ms)
+✔ voyager: finite geometry, bounded detail and complete disposal (15.084826ms)
+✔ lander: finite geometry, bounded detail and complete disposal (5.451502ms)
+✔ craft have distinct silhouettes and aft-facing exhaust (16.510726ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 87.976297
+✔ recorded command replay reproduces all numerical checkpoints (825.367341ms)
+✔ circular orbit: ten periods conserve radius, energy and angular momentum (120.894749ms)
+✔ elliptical orbit: twenty periods preserve apsides within 0.2% (151.903598ms)
+✔ orbital angle singularities are explicit and an inclined eccentric case reconstructs (0.609814ms)
+✔ burn card matches fuel use and decreases estimated remaining time (1.840912ms)
+✔ 10,000 seeded valid orbit states propagate without NaN or infinity (365.302156ms)
+✔ invariants reject nonfinite initial values (0.300348ms)
+✔ integrated Earth J2 node regression agrees with first-order secular estimate (3.706248ms)
+✔ attitude display projects ahead/behind markers and handles radial pointing (6.360812ms)
+✔ saved stage insertion remaps all IDs, preserves boosters and leaves original untouched (7.806729ms)
+✔ bundled original sources match all seven published checksums (4.694935ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1497.791025
+✔ J2 modular acceleration agrees with existing campaign force (14.632606ms)
+✔ third-body differential force removes acceleration of the reference origin (0.2526ms)
+✔ solar pressure is inverse-square, inverse-mass and zero in eclipse (0.325545ms)
+✔ Dormand-Prince controls error for a circular two-body orbit (3.036794ms)
+✔ all optional forces integrate, serialize and restore without arming thrust (12.105368ms)
+✔ power conserves bounded energy and blackout prevents ignition (0.895484ms)
+✔ parked fleet vessels propagate at the active simulation epoch and survive export/import (2.360908ms)
+✔ rendezvous controller closes a 100 metre separation using real propellant (40.396819ms)
+✔ docking, fuel transfer and undocking conserve mass and momentum (1.578825ms)
+✔ invalid docking and malicious fleet links reject without mutation (1.441218ms)
+✔ Lambert solver recovers a quarter-period circular orbit (6.611187ms)
+✔ telemetry remains bounded and exports explicit SI columns (4.755578ms)
+✔ manual control trace replays finite burns, steering and physics changes exactly (16.463448ms)
+✔ ordered automation uses bounded data blocks and manual takeover disarms it (1.649897ms)
+✔ CR3BP Lagrange equilibria have zero acceleration and bounded Jacobi drift (11.871354ms)
+✔ body-fixed transforms preserve position and velocity on a round trip (0.382691ms)
+✔ data packages create flyable worlds and usable parts without changing standard records (1.692015ms)
+✔ atmospheric preview computes a dissipative pass without modifying the live vessel (449.05873ms)
+✔ normalized zonal harmonic gradient agrees with analytic J2 and tesseral terms rotate (1.083414ms)
+✔ elastic tidal response scales linearly with Love number and inversely with source distance cubed (0.204661ms)
+✔ error-controlled propagator matches four actual Orekit trajectories (181.193073ms)
+✔ browser NRLMSISE WASM matches independently compiled native C fixtures (16.8903ms)
+✔ standards-frame matrix matches published ERFA values and preserves round trips (33.652856ms)
+✔ local campaign missions validate constraints and install without altering standard mission goals (0.385095ms)
+✔ builder mass markers agree with wet/dry engineering totals (101.187282ms)
+✔ coast encounter forecast is bounded and does not mutate the live state (16.470486ms)
+✔ bundled gravity and empirical/standards models retain pinned source hashes (10.787805ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 972.542794
+✔ finite solar disks resolve full light, umbra, annular and partial eclipses continuously (4.106029ms)
+✔ all 27 finite-Sun cases and five relativistic forces match independent Orekit runs (0.954183ms)
+✔ Earth and Mercury-like relativistic trajectories match Orekit over three periods (364.211052ms)
+✔ physical Sun/Earth geometry gives both eclipse contacts, gradual sunlight and a bounded step (1.780899ms)
+✔ 1PN option survives save/load and applied-control replay with power enabled (10.9084ms)
+✔ 48 local and interplanetary Lambert transfers reach their propagated endpoints (93.931362ms)
+✔ rotating-atmosphere drag dissipates relative kinetic energy across altitude and velocity directions (0.515518ms)
+✔ Earth and Mars atmospheric-pass ensembles converge with finer pressure sampling and preserve the live vessel (12082.092045ms)
+✔ six-vessel mixed-craft fleet coasts synchronize and repeated docking fuel cycles conserve propellant (66.408642ms)
+✔ high-warp penumbra power integration converges with small requested steps (62.34511ms)
+✔ planet and moon fleets retain independent primary frames during synchronized coasts (13.745537ms)
+✔ atmospheric forecast reports work truncation and rejects unbounded sampling inputs (6.328522ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 12716.50789
+✔ thermal balance cools, heats, ablates and fails under sustained overload (3.093048ms)
+✔ swept collision catches tunnelling; paired fragments conserve mass and momentum (0.50535ms)
+✔ JPL DE421 Hermite states match independently sampled kernel midpoints within 2 m (0.727973ms)
+✔ ephemeris switch preserves local orbit and damage persists through saves (5.059052ms)
+✔ geometric docking rejects misalignment and accepts opposed coincident ports (1.448241ms)
+✔ degree-three tide is odd under opposite source and falls as source distance to fourth power (0.340663ms)
+✔ collision settings persist and a swept vessel collision causes actual loss (3.734911ms)
+✔ actual atmospheric flight loses a vehicle under enabled thermal/pressure damage (1.821826ms)
+✔ moving fragments can destroy a surviving spacecraft (0.876359ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 50.303079
+✔ elastic head-on hull impulse conserves momentum and kinetic energy (2.4806ms)
+✔ off-centre friction contact transfers spin and dissipates energy (0.572584ms)
+✔ torque-free orientation preserves angular momentum, quaternion norm and bounded energy (9.740328ms)
+✔ oriented-box separation and invalid rotational saves are rejected (0.453543ms)
+✔ ocean coefficient variations match three actual Orekit wave evaluations (58.285224ms)
+✔ published aluminium thermodynamic fit produces physical temperature-dependent heat capacity (14.945898ms)
+✔ thermal inverse fit recovers known parameters, withholds observations and rejects unidentifiable data (0.899362ms)
+✔ rigid fleet contact and rotational saves integrate without destroying a slow-touching pair (529.244762ms)
+✔ thermal calibration round-trips through a vessel save by refitting retained observations (0.835393ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 646.559608
+✔ screenshot transcription preserves virgin/char values and uncertain source labels (2.267595ms)
+✔ AVCOAT effective ablation energy is SI and PICA missing recession data is not invented (0.267697ms)
+✔ two-node conduction conserves thermal energy and radiation at equilibrium (0.912476ms)
+✔ heat transfer remains finite for a nearly exhausted shield and phase choices persist (5.671601ms)
+✔ PICA has no implied ablation; AVCOAT uses the provided energy budget above assumed onset (0.734314ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 38.5846
+✔ published hot/cold conditions remain distinct and produce the stated nominal exposure (18.206698ms)
+✔ all published exposures and available phases finish with finite bounded thermal state (87.137607ms)
+✔ thermal bench rejects unsupported geometry and exports explicit SI CSV (3.923672ms)
+✔ implicit thermal comparison converges under step refinement (8.922412ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 125.867538
+✔ craft import requires unique part identifiers across axial and radial groups (1.278857ms)
+✔ craft import rejects empty identifiers and radial-only parts on the axial stack (0.178271ms)
+✔ craft import rejects invalid radial counts, unknown parents and unknown part IDs (0.239706ms)
+✔ calibrated fleet companions retain independent observations and survive whole-world reload (466.629721ms)
+✔ collision switches stay consistent with rotational contact mode (0.449145ms)
+✔ jettisoning a fairing-only vehicle ends cleanly with finite navigation (244.114266ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 769.490579
+✔ verified backup round trips canonical payload with stable SHA-256 (133.446303ms)
+✔ tampering and future backup schemas fail before import (14.741497ms)
+✔ unsafe keys, nonfinite numbers, excessive depth and oversized values fail (0.6187ms)
+✔ backup rejects duplicate and foreign keys and malformed JSON (0.253441ms)
+✔ craft archive rejects unknown parts, oversized stacks and duplicate IDs (1.6521ms)
+✔ archive rejects unknown custom schemas and invalid flight or exploration state (0.741498ms)
+✔ campaign recovery accepts a real state and rejects schema or method replacement (257.775722ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 416.406219
+✔ command search matches all terms and unique real workspaces (1.925929ms)
+✔ seeded challenges repeat across sessions and canonical Unicode (5.221735ms)
+✔ controller mappings normalize invalid values and swap conflicts (0.46832ms)
+✔ controller sampling applies deadzone, inversion, held axes and button releases (0.493437ms)
+✔ logbook handles legacy history and compares nullable metrics honestly (1.095496ms)
+✔ replay archive validates supported headers without executing payloads (0.298375ms)
+✔ WebAssembly gravity matches independent axis values and JavaScript vectors (22.424046ms)
+✔ central orbit experiment closes analytically and preserves invariants (2.604941ms)
+✔ adaptive frame work limits keep integration and replay consistent (968.400482ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1084.401113
+✔ optimized harmonics and ocean coefficients retain exact IEEE-754 outputs (55.713625ms)
+✔ ocean optimization preserves fresh values and observes coefficient and topology edits (17.946244ms)
+✔ optimized trajectories match all pre-change serialized states exactly (3055.425483ms)
+✔ Kepler convergence shortcut preserves exact positions and velocities for all worlds and epochs (14.746317ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3182.812125
+✔ five Academy experiments obey their physical relationships and preserve predictions (5.936994ms)
+✔ restricted Hangar adapter conserves mass, vacuum thrust/flow and electrical capacity (11.536221ms)
+✔ adapter rejects unsupported structures, fuel mixtures and malformed saves (1.265071ms)
+✔ Hangar craft survives fleet cargo recalculation, backup validation and file roundtrip (4.521093ms)
+✔ debrief distinguishes altitude from orbit without inventing horizontal speed or event causality (0.879585ms)
+✔ model comparison has identical initial states/times, zero control, deterministic J2 and guarded bounds (203.21408ms)
+✔ compatible liquid propulsion works across all worlds and rejects mixed-propellant fleet transfer (15.111124ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 292.415635
+✔ all 342 loading constituents match both 24-hour HARDISP reference series (29.078033ms)
+✔ BLQ import preserves units/lag conventions and rejects truncation, duplicates and invalid coordinates (1.281582ms)
+✔ natural admittance splines interpolate and clamp; ECEF transform preserves displacement length (1.87781ms)
+✔ station loading is explicit in ground-link physics and unsafe reference geography cannot be selected (5.086814ms)
+✔ deterministic convex fracture conserves mass, COM, linear/angular momentum and prescribed energy (45.172535ms)
+✔ fracture meshes are closed and malformed/open/non-convex or oversized hulls are rejected (22.018041ms)
+✔ convex contacts conserve impulse momentum and elastic energy; friction dissipates energy (2.780608ms)
+✔ mesh spin preserves angular momentum and keeps bounded rotational energy drift (124.692863ms)
+✔ gameplay fractures real hulls, advances terminal debris and restores meshes without changing legacy defaults (96.119271ms)
+✔ complete Wasm campaign executes staging, guidance, resources and safe save/restore (1741.034262ms)
+✔ complete Wasm fleet matches JavaScript across every built-in world and spacecraft (329.415251ms)
+✔ full Wasm advanced forces, native atmosphere bridge, programmes and mesh contacts retain parity (909.371606ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3318.964899

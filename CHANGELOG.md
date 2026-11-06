@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-11-06 — Cloudflare build fix
+
+- Fix lint warnings that Cloudflare treats as build errors under `CI=true`.
+- Make release CI enforce strict production builds, preserving input behavior.
+
 ## 2026-11-06 — learning and advanced simulation
 
 - Connect five Academy lessons, NASA Data Explorer, interactive debriefs and optional first-flight guidance.
