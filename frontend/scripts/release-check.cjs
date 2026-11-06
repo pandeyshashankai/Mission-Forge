@@ -18,6 +18,8 @@ for (const [name, script] of tasks) {
   const start = Date.now();
   const run = spawnSync(process.platform === 'win32' ? 'npm.cmd' : 'npm', ['run', script], {
     cwd: frontend,
+    // The release output is a directory; older leaf audits use this name for a file.
+    env: Object.fromEntries(Object.entries(process.env).filter(([key]) => key !== 'MF_AUDIT_OUTPUT')),
     shell: process.platform === 'win32',
     encoding: 'utf8',
     maxBuffer: 32 * 1024 * 1024
