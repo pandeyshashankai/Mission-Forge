@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-11-07 — clear mobile flight views
+
+- Reserve a real camera window above/beside the primary touch controls, keeping spacecraft centred in the unobstructed area.
+- Move secondary mobile instruments into accessible scrollable drawers; retain compact flight readings and all primary inputs.
+- Add camera/control-intersection, small-screen, orientation and notch regression coverage.
+
 ## 2026-11-06 — Cloudflare build fix
 
 - Fix lint warnings that Cloudflare treats as build errors under `CI=true`.

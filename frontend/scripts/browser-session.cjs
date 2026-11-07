@@ -27,13 +27,18 @@ async function browserSession() {
         }, 30000);
       pending.set(n, (m) => {
         clearTimeout(timer);
-        m.error ? reject(Error(method+": "+JSON.stringify(m.error))) : resolve(m.result);
+        m.error
+          ? reject(Error(method + ": " + JSON.stringify(m.error)))
+          : resolve(m.result);
       });
       ws.send(JSON.stringify({ id: n, method, params }));
     });
   const evaluate = async (expression) => {
     const r = await call("Runtime.evaluate", {
-      expression: expression.replace(/(?<![\w.$])localStorage(?=\s*\.)/g, '(window.missionForgeData||window.localStorage)'),
+      expression: expression.replace(
+        /(?<![\w.$])localStorage(?=\s*\.)/g,
+        "(window.missionForgeData||window.localStorage)",
+      ),
       returnByValue: true,
       awaitPromise: true,
     });
@@ -54,14 +59,19 @@ async function browserSession() {
   const exists = (id) =>
     `Boolean(document.querySelector('[data-testid="${id}"]'))`;
   const revealInspector = async (selector) => {
-    const hidden = await evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(selector)}),p=e?.closest('.explore-inspector');return !!p && getComputedStyle(p).display==='none' && !!document.querySelector('[data-testid=explore-instruments-toggle]');})()`);
-    if (hidden) await clickSelector('[data-testid=explore-instruments-toggle]');
+    const hidden = await evaluate(
+      `(()=>{const e=document.querySelector(${JSON.stringify(selector)}),p=e?.closest('.explore-inspector');return !!p && getComputedStyle(p).display==='none' && !!document.querySelector('[data-testid=explore-instruments-toggle]');})()`,
+    );
+    if (hidden) await clickSelector("[data-testid=explore-instruments-toggle]");
   };
   const clickSelector = async (selector) => {
     await wait(`Boolean(document.querySelector(${JSON.stringify(selector)}))`);
     // Follow the mobile drawer navigation before operating its controls.
-    const closeDrawer = await evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(selector)}),w=document.querySelector('.explore-workspace');return w?.dataset.panel==='open' && !e?.closest('.explore-inspector') && e?.dataset.testid!=='explore-instruments-toggle' && document.querySelector('[data-testid=explore-instruments-toggle]')?.offsetWidth>0;})()`);
-    if (closeDrawer) await clickSelector('[data-testid=explore-instruments-toggle]');
+    const closeDrawer = await evaluate(
+      `(()=>{const e=document.querySelector(${JSON.stringify(selector)}),w=document.querySelector('.explore-workspace');return w?.dataset.panel==='open' && !e?.closest('.explore-inspector') && e?.dataset.testid!=='explore-instruments-toggle' && document.querySelector('[data-testid=explore-instruments-toggle]')?.offsetWidth>0;})()`,
+    );
+    if (closeDrawer)
+      await clickSelector("[data-testid=explore-instruments-toggle]");
     await revealInspector(selector);
     await evaluate(
       `document.querySelector(${JSON.stringify(selector)}).scrollIntoView({block:'center',inline:'center',behavior:'instant'})`,

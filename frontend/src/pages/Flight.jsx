@@ -1,4 +1,4 @@
-import {localData} from "../persistence/localData";
+import { localData } from "../persistence/localData";
 import { PhysicsBadge } from "../components/instruments/PhysicsBadge";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -176,7 +176,8 @@ export default function Flight() {
   const pausedRef = useRef(false);
   const modalOpenRef = useRef(false);
   modalOpenRef.current = ckOpen || endConfirm || g.settingsOpen;
-  pausedRef.current = paused || ckOpen || endConfirm || g.settingsOpen || g.overlayOpen;
+  pausedRef.current =
+    paused || ckOpen || endConfirm || g.settingsOpen || g.overlayOpen;
   const [cam, setCam] = useState(g.settings.camera || "chase");
   const [snap, setSnap] = useState(null);
   const simRef = useRef(null);
@@ -228,7 +229,7 @@ export default function Flight() {
       const ck = {
         id: `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
         label,
-        schemaVersion:1,
+        schemaVersion: 1,
         auto,
         at: new Date().toISOString(),
         missionId: mission.id,
@@ -240,17 +241,63 @@ export default function Flight() {
         simT: state ? state.t : sim.t,
         state: state || sim.serialize(),
       };
-      if (storage.saveCheckpoint(ck)){try{await localData.flush();toast.success(`Checkpoint saved — ${label}`);}catch(e){toast.error(e.message)}}
-      else toast.error("Browser storage is full — delete old checkpoints");
+      if (storage.saveCheckpoint(ck)) {
+        try {
+          await localData.flush();
+          toast.success(`Checkpoint saved — ${label}`);
+        } catch (e) {
+          toast.error(e.message);
+        }
+      } else toast.error("Browser storage is full — delete old checkpoints");
     },
     [g.profile, g.difficulty, mission],
   );
 
-  useEffect(()=>{
-    const preserve=()=>{const sim=simRef.current;if(phaseRef.current!=='flight')return;try{if(sim.isEnded()){localData.removeItem('mf.recovery-flight');return;}localData.setItem('mf.recovery-flight',JSON.stringify({id:'recovery-flight',schemaVersion:1,label:'Automatic recovery',auto:true,at:new Date().toISOString(),missionId:mission.id,missionName:mission.name,difficulty:g.difficulty,design:sim.design,designName:sim.design.name,profile:g.profile,simT:sim.t,state:sim.serialize()}));}catch{/* The storage status banner reports failures. */}};
-    preserve();const timer=setInterval(preserve,15000),hidden=()=>{if(document.hidden)preserve()};window.addEventListener('pagehide',preserve);document.addEventListener('visibilitychange',hidden);
-    return()=>{clearInterval(timer);preserve();window.removeEventListener('pagehide',preserve);document.removeEventListener('visibilitychange',hidden)};
-  },[phase,mission.id,mission.name,g.difficulty,g.profile]);
+  useEffect(() => {
+    const preserve = () => {
+      const sim = simRef.current;
+      if (phaseRef.current !== "flight") return;
+      try {
+        if (sim.isEnded()) {
+          localData.removeItem("mf.recovery-flight");
+          return;
+        }
+        localData.setItem(
+          "mf.recovery-flight",
+          JSON.stringify({
+            id: "recovery-flight",
+            schemaVersion: 1,
+            label: "Automatic recovery",
+            auto: true,
+            at: new Date().toISOString(),
+            missionId: mission.id,
+            missionName: mission.name,
+            difficulty: g.difficulty,
+            design: sim.design,
+            designName: sim.design.name,
+            profile: g.profile,
+            simT: sim.t,
+            state: sim.serialize(),
+          }),
+        );
+      } catch {
+        /* The storage status banner reports failures. */
+      }
+    };
+    preserve();
+    const timer = setInterval(preserve, 15000),
+      hidden = () => {
+        if (document.hidden) preserve();
+      };
+    window.addEventListener("pagehide", preserve);
+    document.addEventListener("visibilitychange", hidden);
+    return () => {
+      clearInterval(timer);
+      preserve();
+      window.removeEventListener("pagehide", preserve);
+      document.removeEventListener("visibilitychange", hidden);
+    };
+  }, [phase, mission.id, mission.name, g.difficulty, g.profile]);
 
   const restoreCheckpoint = (ck) => {
     const sim = new FlightSim({
@@ -335,11 +382,14 @@ export default function Flight() {
   };
 
   const input = useFlightInput({
-    settings:g.settings,
+    settings: g.settings,
     bindings: g.settings.bindings,
     onMenu: () => g.setSettingsOpen(true),
     enabled:
-      !g.overlayOpen && phase === "flight" && !modalOpenRef.current && !simRef.current.isEnded(),
+      !g.overlayOpen &&
+      phase === "flight" &&
+      !modalOpenRef.current &&
+      !simRef.current.isEnded(),
     moving: !paused,
     onManual: () => {
       disengage();
@@ -455,14 +505,23 @@ export default function Flight() {
       className="flight-screen relative h-full w-full overflow-hidden bg-black"
     >
       <div className="flight-camera-window">
-      <FlightView
-        simRef={simRef}
-        cameraMode={cam}
-        quality={g.settings.graphics}
-        onFrame={onFrame}
-      />
+        <FlightView
+          simRef={simRef}
+          cameraMode={cam}
+          quality={g.settings.graphics}
+          onFrame={onFrame}
+        />
       </div>
-      {s && <div className="mobile-flight-summary" data-testid="mobile-flight-summary"><span>Alt {(s.alt / 1000).toFixed(1)} km</span><span>Speed {Math.round(s.speed)} m/s</span><span>Throttle {Math.round(simRef.current.throttle * 100)}%</span></div>}
+      {s && (
+        <div
+          className="mobile-flight-summary"
+          data-testid="mobile-flight-summary"
+        >
+          <span>Alt {(s.alt / 1000).toFixed(1)} km</span>
+          <span>Speed {Math.round(s.speed)} m/s</span>
+          <span>Throttle {Math.round(simRef.current.throttle * 100)}%</span>
+        </div>
+      )}
 
       <header className="flight-bar">
         <div className="flight-identity">
@@ -527,13 +586,20 @@ export default function Flight() {
               >
                 {CAMS.map((c) => (
                   <option key={c} value={c}>
-                    {touchVisible ? ({chase: "Rocket", map: "Orbit", free: "Free", cinematic: "Cinema"}[c]) : c === "chase"
-                      ? "Follow rocket"
-                      : c === "map"
-                        ? "Orbital map"
-                        : c === "free"
-                          ? "Free camera"
-                          : "Cinematic"}
+                    {touchVisible
+                      ? {
+                          chase: "Rocket",
+                          map: "Orbit",
+                          free: "Free",
+                          cinematic: "Cinema",
+                        }[c]
+                      : c === "chase"
+                        ? "Follow rocket"
+                        : c === "map"
+                          ? "Orbital map"
+                          : c === "free"
+                            ? "Free camera"
+                            : "Cinematic"}
                   </option>
                 ))}
               </select>
@@ -611,49 +677,51 @@ export default function Flight() {
       {phase === "flight" && s && (
         <>
           <div className="flight-instrument-panels">
-          <div className="flight-telemetry">
-            <TelemetryPanel s={s} detailed={showEngineering} />
-          </div>
-          <div className="flight-orbit scroll-thin">
-            <OrbitPanel s={s} detailed={showEngineering} />
-            <div className="mobile-physics-model"><PhysicsBadge /></div>
-            {showEngineering && <SystemsPanel s={s} sim={simRef.current} />}
-            {s.crew > 0 && <CrewPanel s={s} sim={simRef.current} />}
-            {showEngineering && (
-              <AttitudePanel
-                s={s}
-                sim={simRef.current}
-                rcsKey={keyLabel(g.settings.bindings.rcs)}
-              />
-            )}
-          </div>
-          {(cam === "map" || s.hasNode) &&
-            s.status !== "prelaunch" &&
-            !s.clamped && (
-              <div className="flight-maneuver">
-                <ManeuverPanel
+            <div className="flight-telemetry">
+              <TelemetryPanel s={s} detailed={showEngineering} />
+            </div>
+            <div className="flight-orbit scroll-thin">
+              <OrbitPanel s={s} detailed={showEngineering} />
+              <div className="mobile-physics-model">
+                <PhysicsBadge />
+              </div>
+              {showEngineering && <SystemsPanel s={s} sim={simRef.current} />}
+              {s.crew > 0 && <CrewPanel s={s} sim={simRef.current} />}
+              {showEngineering && (
+                <AttitudePanel
                   s={s}
                   sim={simRef.current}
-                  mission={mission}
-                  targetAlt={mission.target.altitude}
-                  onWarpTo={() => setWarp(20000)}
+                  rcsKey={keyLabel(g.settings.bindings.rcs)}
                 />
-              </div>
-            )}
-          <div className="flight-propulsion">
-            <PropulsionPanel
-              s={s}
-              stageKey={keyLabel(g.settings.bindings.stage)}
-              onStage={stage}
-              onThrottle={(value) => {
-                disengage();
-                simRef.current.throttle = value;
-              }}
-            />
-          </div>
-          <div className="flight-events">
-            <EventLog log={s.log} />
-          </div>
+              )}
+            </div>
+            {(cam === "map" || s.hasNode) &&
+              s.status !== "prelaunch" &&
+              !s.clamped && (
+                <div className="flight-maneuver">
+                  <ManeuverPanel
+                    s={s}
+                    sim={simRef.current}
+                    mission={mission}
+                    targetAlt={mission.target.altitude}
+                    onWarpTo={() => setWarp(20000)}
+                  />
+                </div>
+              )}
+            <div className="flight-propulsion">
+              <PropulsionPanel
+                s={s}
+                stageKey={keyLabel(g.settings.bindings.stage)}
+                onStage={stage}
+                onThrottle={(value) => {
+                  disengage();
+                  simRef.current.throttle = value;
+                }}
+              />
+            </div>
+            <div className="flight-events">
+              <EventLog log={s.log} />
+            </div>
           </div>
           <div className="flight-alarms">
             <AlarmPanel

@@ -46,6 +46,7 @@ const report = {
         await b.select('explore-craft-select', craft.id);
         for (const body of BODIES.filter(b => b.parent)) {
           const label = `${name}/${craft.id}/${body.id}`;
+          if (await b.evaluate("(()=>{const e=document.querySelector('[data-testid=explore-instruments-toggle]');return !!e?.offsetWidth && e.getAttribute('aria-expanded')==='false'})()")) await b.click('explore-instruments-toggle');
           if (await b.evaluate(`!!document.querySelector('[data-testid=explore-destination-select]')?.offsetWidth`)) await b.select('explore-destination-select', body.id);else await b.click('destination-' + body.id);
           await b.click('explore-start-orbit');
           await b.wait(`document.querySelector('[data-testid=exploration-viewport]')?.dataset.craft===${JSON.stringify(craft.id)}`);

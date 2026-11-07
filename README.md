@@ -83,6 +83,9 @@ from checks that must be performed on the final hosted origin.
 | System map in exploration | M |
 | Coast warp | Comma / period |
 
+Phone flight reserves a clear camera area, with primary controls in a separate
+deck and secondary instruments in a drawer. See [mobile flight layout](docs/mobile-flight-layout.md).
+
 Settings allow remapping. Touch layouts provide steering, throttle, staging and
 RCS controls. See the in-game Controls panel for mode-specific bindings and
 [the controls guide](docs/controls.md) for the complete reference.

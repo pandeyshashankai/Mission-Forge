@@ -3933,9 +3933,9 @@ html[data-text-size="large"] .difficulty-explanation {
   .explore-workspace[data-touch="on"] .mobile-instruments-toggle { top: 63px; }
   .explore-workspace[data-touch="on"] .explore-inspector { top: 102px; bottom: 8px; }
   .flight-screen[data-touch="on"] { --mobile-top: 104px; }
-  .flight-screen[data-touch="on"] .flight-camera-window { right: 312px; bottom: 36px; }
-  .flight-screen[data-touch="on"] .touch-flight-controls { left: auto; right: 4px; width: 304px; top: 104px; bottom: 0; min-height: 0; }
-  .flight-screen[data-touch="on"] .mobile-flight-summary { right: 312px; bottom: 0; flex-wrap: wrap; }
+  .flight-screen[data-touch="on"] .flight-camera-window { left: env(safe-area-inset-left); right: calc(312px + env(safe-area-inset-right)); bottom: 36px; }
+  .flight-screen[data-touch="on"] .touch-flight-controls { left: auto; right: max(4px, env(safe-area-inset-right)); width: 304px; top: 104px; bottom: 0; min-height: 0; }
+  .flight-screen[data-touch="on"] .mobile-flight-summary { left: env(safe-area-inset-left); right: calc(312px + env(safe-area-inset-right)); bottom: 0; flex-wrap: wrap; }
   .flight-screen[data-touch="on"][data-instruments="detailed"] .flight-instrument-panels { bottom: 8px; }
 }
 

@@ -36,13 +36,7 @@ import { keyLabel, steeringAxes } from "../input/bindings";
 import { TouchFlightControls } from "../components/game/TouchFlightControls";
 import { DisplayButton } from "../components/app/Appearance";
 import { useGame } from "../game/GameContext";
-import {
-  PLANETS,
-  MOONS,
-  BODY_BY_ID,
-  AU,
-  DAY,
-} from "../sim/solarSystem";
+import { PLANETS, MOONS, BODY_BY_ID, AU, DAY } from "../sim/solarSystem";
 import { ExplorationSim, EXPLORERS, FLIGHT_MODES } from "../sim/exploration";
 import { ExplorationTransfer } from "../components/game/ExplorationTransfer";
 import { BodyScience } from "../components/science/BodyScience";
@@ -268,10 +262,14 @@ export default function Explore() {
   const [effectiveWarp, setEffectiveWarp] = useState(0);
   const touchVisible = useTouchControlsVisible(g.settings.touchControls);
   const input = useFlightInput({
-    settings:g.settings,
+    settings: g.settings,
     bindings: g.settings.bindings,
     onMenu: () => g.setSettingsOpen(true),
-    enabled: !g.overlayOpen && !g.settingsOpen && !help && (simRef.current.status === "flying" || fleetRef.current.hasMeshDebris),
+    enabled:
+      !g.overlayOpen &&
+      !g.settingsOpen &&
+      !help &&
+      (simRef.current.status === "flying" || fleetRef.current.hasMeshDebris),
     moving: !paused,
     onManual: () => {
       simRef.current.cancelTransfer();
@@ -320,7 +318,7 @@ export default function Explore() {
         );
         return;
       }
-      if (paused || sim.status!=="flying") return;
+      if (paused || sim.status !== "flying") return;
       if (["fullThrottle", "rcs"].includes(action)) sim.cancelTransfer();
       if (action === "fullThrottle") {
         sim.throttle = 1;
@@ -342,10 +340,7 @@ export default function Explore() {
         "mf.fleet-world",
         JSON.stringify(fleetRef.current.serialize()),
       );
-      localData.setItem(
-        SAVE_KEY,
-        JSON.stringify(simRef.current.serialize()),
-      );
+      localData.setItem(SAVE_KEY, JSON.stringify(simRef.current.serialize()));
       await localData.flush();
       if (notify) toast.success("Expedition saved to this browser");
     } catch {
@@ -364,7 +359,10 @@ export default function Explore() {
         c = control.current;
       let advanced = 0;
       fleetRef.current.replaceActive(sim);
-      if (!c.paused && (sim.status === "flying" || fleetRef.current.hasMeshDebris)) {
+      if (
+        !c.paused &&
+        (sim.status === "flying" || fleetRef.current.hasMeshDebris)
+      ) {
         const controls = inputRef.current;
         const axes = steeringAxes(controls.active);
         if (sim.rcsEnabled) {
@@ -401,7 +399,7 @@ export default function Explore() {
           fleetRef.current.approachReady = null;
         }
       }
-      if(c.paused)fleetRef.current.syncOthers();
+      if (c.paused) fleetRef.current.syncOthers();
       ui += dt;
       saveTime += dt;
       if (ui >= 0.15) {
@@ -444,7 +442,15 @@ export default function Explore() {
       toast.error("Undock before placing a new orbit.");
       return;
     }
-    simRef.current = new ExplorationSim(selectedId, craftId, sim.t, undefined, craftId === 'hangar' ? {hangarDesign:sim.baseCraft.design,power:true} : {});
+    simRef.current = new ExplorationSim(
+      selectedId,
+      craftId,
+      sim.t,
+      undefined,
+      craftId === "hangar"
+        ? { hangarDesign: sim.baseCraft.design, power: true }
+        : {},
+    );
     input.clear();
     setPaused(true);
     setWarp(1);
@@ -774,17 +780,29 @@ export default function Explore() {
               </li>
             </ol>
             <p className="mt-4 text-[11px] leading-relaxed text-slate-500">
-              Sandbox model: patched-conic exploration with selectable ephemerides,
-              gravity and integration models. Systems includes optional thermal
-              damage; Fleet offers rendezvous and docking; Plan provides transfer
-              assistance. Terrain is not simulated. Use scored missions for
-              detailed ascent, crew and re-entry objectives.
+              Sandbox model: patched-conic exploration with selectable
+              ephemerides, gravity and integration models. Systems includes
+              optional thermal damage; Fleet offers rendezvous and docking; Plan
+              provides transfer assistance. Terrain is not simulated. Use scored
+              missions for detailed ascent, crew and re-entry objectives.
             </p>
           </div>
         )}
       </main>
-      <button className="explore-chip mobile-instruments-toggle" data-testid="explore-instruments-toggle" aria-expanded={mobilePanel} onClick={() => setMobilePanel(v => !v)}>{mobilePanel ? "Close instruments" : "Instruments & destinations"}</button>
-      <aside className="explore-inspector scroll-thin" aria-label="Expedition instruments">
+      <button
+        className="explore-chip mobile-instruments-toggle"
+        data-testid="explore-instruments-toggle"
+        aria-controls="exploration-instruments"
+        aria-expanded={mobilePanel}
+        onClick={() => setMobilePanel((v) => !v)}
+      >
+        {mobilePanel ? "Close instruments" : "Instruments & destinations"}
+      </button>
+      <aside
+        id="exploration-instruments"
+        className="explore-inspector scroll-thin"
+        aria-label="Expedition instruments"
+      >
         <label className="explore-mobile-destination">
           Choose a destination
           <select
@@ -1005,7 +1023,9 @@ export default function Explore() {
             }}
           />
           <div className="mt-1 flex justify-between font-mono text-[9px] text-slate-500">
-            <span data-testid="explore-fuel" data-kg={sim.fuel}>{number(sim.fuel, 0)} KG PROPELLANT</span>
+            <span data-testid="explore-fuel" data-kg={sim.fuel}>
+              {number(sim.fuel, 0)} KG PROPELLANT
+            </span>
             <span>{number((sim.fuel / sim.craft.fuel) * 100, 0)}%</span>
           </div>
           <div className="mt-2 h-1 overflow-hidden rounded-full bg-slate-800">
@@ -1045,7 +1065,11 @@ export default function Explore() {
             value={craftId}
             onChange={(e) => setCraftId(e.target.value)}
           >
-            {sim.baseCraft?.id === 'hangar' && <option value="hangar">{sim.baseCraft.name} · Hangar design</option>}
+            {sim.baseCraft?.id === "hangar" && (
+              <option value="hangar">
+                {sim.baseCraft.name} · Hangar design
+              </option>
+            )}
             {EXPLORERS.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.name} · {c.role}
@@ -1068,7 +1092,13 @@ export default function Explore() {
       <TouchFlightControls
         controls={input}
         visible={touchVisible}
-        disabled={paused || g.settingsOpen || help || g.overlayOpen || sim.status !== "flying"}
+        disabled={
+          paused ||
+          g.settingsOpen ||
+          help ||
+          g.overlayOpen ||
+          sim.status !== "flying"
+        }
         settings={g.settings}
         throttle={sim.throttle}
         rcs={sim.rcsEnabled}
