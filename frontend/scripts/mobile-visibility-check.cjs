@@ -6,7 +6,7 @@ const { browserSession } = require("./browser-session.cjs");
     cases = [];
   const geometry = async (selector, mode, w, h) => {
     const result = await b.evaluate(
-      `(()=>{const e=document.querySelector(${JSON.stringify(selector)}),r=e.getBoundingClientRect(),hit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);const controls=[...document.querySelectorAll('[data-testid=touch-flight-controls] button')].map(e=>{const q=e.getBoundingClientRect(),p=document.elementFromPoint(q.x+q.width/2,q.y+q.height/2);return {id:e.dataset.testid,w:q.width,h:q.height,visible:q.x>=0&&q.y>=0&&q.right<=innerWidth+1&&q.bottom<=innerHeight+1,hit:p===e||e.contains(p),overlapsCamera:q.left<r.right&&q.right>r.left&&q.top<r.bottom&&q.bottom>r.top}});return {width:r.width,height:r.height,center:hit?.tagName,controls,overflow:document.documentElement.scrollWidth>innerWidth};})()`,
+      `(()=>{const e=document.querySelector(${JSON.stringify(selector)}),r=e.getBoundingClientRect(),hit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);const controls=[...document.querySelectorAll('[data-testid=touch-flight-controls] button, .explore-view-tabs button, [data-testid=explore-capture]')].map(e=>{const q=e.getBoundingClientRect(),p=document.elementFromPoint(q.x+q.width/2,q.y+q.height/2);return {id:e.dataset.testid,w:q.width,h:q.height,visible:q.x>=0&&q.y>=0&&q.right<=innerWidth+1&&q.bottom<=innerHeight+1,hit:p===e||e.contains(p),overlapsCamera:q.left<r.right&&q.right>r.left&&q.top<r.bottom&&q.bottom>r.top}});return {width:r.width,height:r.height,center:hit?.tagName,controls,overflow:document.documentElement.scrollWidth>innerWidth};})()`,
     );
     assert.equal(
       result.center,
