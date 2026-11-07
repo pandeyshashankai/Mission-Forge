@@ -454,12 +454,15 @@ export default function Flight() {
       data-instruments={showEngineering ? "detailed" : "simple"}
       className="flight-screen relative h-full w-full overflow-hidden bg-black"
     >
+      <div className="flight-camera-window">
       <FlightView
         simRef={simRef}
         cameraMode={cam}
         quality={g.settings.graphics}
         onFrame={onFrame}
       />
+      </div>
+      {s && <div className="mobile-flight-summary" data-testid="mobile-flight-summary"><span>Alt {(s.alt / 1000).toFixed(1)} km</span><span>Speed {Math.round(s.speed)} m/s</span><span>Throttle {Math.round(simRef.current.throttle * 100)}%</span></div>}
 
       <header className="flight-bar">
         <div className="flight-identity">
@@ -524,7 +527,7 @@ export default function Flight() {
               >
                 {CAMS.map((c) => (
                   <option key={c} value={c}>
-                    {c === "chase"
+                    {touchVisible ? ({chase: "Rocket", map: "Orbit", free: "Free", cinematic: "Cinema"}[c]) : c === "chase"
                       ? "Follow rocket"
                       : c === "map"
                         ? "Orbital map"
@@ -607,6 +610,7 @@ export default function Flight() {
 
       {phase === "flight" && s && (
         <>
+          <div className="flight-instrument-panels">
           <div className="flight-telemetry">
             <TelemetryPanel s={s} detailed={showEngineering} />
           </div>
@@ -649,6 +653,7 @@ export default function Flight() {
           </div>
           <div className="flight-events">
             <EventLog log={s.log} />
+          </div>
           </div>
           <div className="flight-alarms">
             <AlarmPanel

@@ -3849,3 +3849,119 @@ html[data-text-size="large"] .difficulty-explanation {
 @media(max-width:700px){.education-grid,.education-inputs{grid-template-columns:1fr}.first-flight-guide{align-items:flex-start;font-size:11px;padding:6px 10px}.education-layout .showcase-actions{flex-wrap:wrap}.education-layout .ui-button{white-space:normal}}
 .education-layout{flex:1;min-height:0;width:100%;box-sizing:border-box;overflow-y:auto;align-content:start;margin:0 auto}
 .education-screen .workflow-header{height:auto;min-height:56px;gap:8px}.education-screen .workflow-header>strong{font-size:clamp(12px,2vw,16px);min-width:0;overflow-wrap:anywhere}
+
+/* A dedicated camera window and control deck keep mobile craft unobstructed. */
+.flight-camera-window { position: absolute; inset: 0; }
+.flight-instrument-panels { display: contents; }
+.mobile-flight-summary, .mobile-instruments-toggle { display: none; }
+@media (max-width: 950px) {
+  .explore-workspace[data-touch="on"] {
+    height: 100%; min-height: 0; overflow: hidden;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 76px minmax(0, 1fr) auto 48px;
+  }
+  .explore-workspace[data-touch="on"] .explore-header {
+    grid-column: 1; grid-row: 1; padding: 4px 8px; gap: 2px; flex-wrap: wrap;
+  }
+  .explore-workspace[data-touch="on"] .explore-header > div:nth-child(2) > div:last-child { display: none; }
+  .explore-workspace[data-touch="on"] .explore-header > .ml-auto { width: auto; margin-left: auto; gap: 3px; }
+  .explore-workspace[data-touch="on"] .explore-header button { min-height: 32px; }
+  .explore-workspace[data-touch="on"] .explore-destinations { display: none; }
+  .explore-workspace[data-touch="on"] .explore-scene { grid-column: 1; grid-row: 2; min-height: 0; }
+  .explore-workspace[data-touch="on"] > .touch-flight-controls {
+    grid-column: 1; grid-row: 3; position: relative; inset: auto; flex-wrap: nowrap;
+    padding: 8px max(6px, env(safe-area-inset-right)) 8px max(6px, env(safe-area-inset-left));
+    background: var(--ui-panel); border-top: 1px solid var(--ui-line);
+    --touch-button: 44px;
+  }
+  .explore-workspace[data-touch="on"] > .touch-flight-controls.size-large { --touch-button: 50px; }
+  .explore-workspace[data-touch="on"] .explore-footer {
+    grid-column: 1; grid-row: 4; min-height: 0; padding: 4px 8px max(4px, env(safe-area-inset-bottom)); gap: 2px;
+  }
+  .explore-workspace[data-touch="on"] .explore-footer > .mx-3 { margin-inline: 4px; }
+  .explore-workspace[data-touch="on"] .explore-footer .explore-warp { padding: 4px; }
+  .explore-workspace[data-touch="on"] .mobile-instruments-toggle {
+    display: block; position: absolute; top: 76px; right: 8px; z-index: 10; min-height: 36px;
+  }
+  .explore-workspace[data-touch="on"] .explore-view-tabs { top: 40px; left: 6px; padding: 2px; }
+  .explore-workspace[data-touch="on"] .explore-view-tabs button { padding: 5px 7px; min-height: 32px; }
+  .explore-workspace[data-touch="on"] .explore-inspector {
+    display: none; position: absolute; top: 114px; bottom: 230px; left: 8px; right: 8px;
+    z-index: 9; min-height: 0; padding-bottom: 0; border: 1px solid var(--ui-line); border-radius: 10px;
+    background: var(--ui-bg); overflow: auto;
+  }
+  .explore-workspace[data-touch="on"][data-panel="open"] .explore-inspector { display: block; }
+  .flight-screen[data-touch="on"] { --mobile-deck: 200px; --mobile-top: 126px; }
+  .flight-screen[data-touch="on"] .flight-camera-window { top: var(--mobile-top); bottom: calc(var(--mobile-deck) + 36px + env(safe-area-inset-bottom)); }
+  .flight-screen[data-touch="on"] .touch-flight-controls,
+  .flight-screen[data-touch="on"] .touch-flight-controls.size-large {
+    bottom: env(safe-area-inset-bottom); left: max(6px,env(safe-area-inset-left)); right: max(6px,env(safe-area-inset-right));
+    min-height: var(--mobile-deck); padding: 8px 0; align-items: center;
+  }
+  .flight-screen[data-touch="on"] .touch-flight-controls { --touch-button: 44px; }
+  .flight-screen[data-touch="on"] .touch-flight-controls.size-large { --touch-button: 50px; }
+  .flight-screen[data-touch="on"] .touch-steering > .touch-control-label { display: none; }
+  .flight-screen[data-touch="on"] .touch-flight-actions { position: static; transform: none; width: 66px; flex-direction: column; }
+  .flight-screen[data-touch="on"] .touch-flight-actions button { min-width: 0; min-height: 44px; flex-direction: column; padding: 4px; }
+  .flight-screen[data-touch="on"] .touch-thrust { width: 94px; grid-template-columns: 1fr 1fr; }
+  .flight-screen[data-touch="on"] .touch-thrust > .touch-control-label,
+  .flight-screen[data-touch="on"] .touch-thrust-hold { grid-column: 1/-1; }
+  .flight-screen[data-touch="on"] .touch-thrust > .touch-flight-button { min-height: 44px; flex-direction: column; gap: 2px; }
+  .flight-screen[data-touch="on"] .mobile-flight-summary {
+    display: flex; justify-content: space-around; gap: 4px; position: absolute; inset-inline: 0;
+    bottom: calc(var(--mobile-deck) + env(safe-area-inset-bottom)); height: 36px; align-items: center;
+    font-size: 11px; background: var(--ui-panel); border-block: 1px solid var(--ui-line);
+  }
+  .flight-screen[data-touch="on"] .flight-instrument-panels { display: none; }
+  .flight-screen[data-touch="on"][data-instruments="detailed"] .flight-instrument-panels {
+    display: grid; position: absolute; top: var(--mobile-top); bottom: calc(var(--mobile-deck) + 36px + env(safe-area-inset-bottom));
+    left: 6px; right: 6px; z-index: 9; overflow: auto; background: var(--ui-bg); border: 1px solid var(--ui-line); padding: 8px; gap: 8px;
+  }
+  .flight-screen[data-touch="on"] .flight-instrument-panels > div {
+    position: static; display: block; width: 100%; max-height: none; transform: none;
+  }
+  .flight-screen[data-touch="on"] .flight-instrument-panels .panel { width: 100%; }
+}
+@media (max-width: 950px) and (orientation: landscape) {
+  .explore-workspace[data-touch="on"] {
+    grid-template-columns: minmax(0, 1fr) 312px; grid-template-rows: 62px minmax(0, 1fr) 44px;
+  }
+  .explore-workspace[data-touch="on"] .explore-header { grid-column: 1/-1; }
+  .explore-workspace[data-touch="on"] .explore-scene { grid-column: 1; grid-row: 2 / span 2; }
+  .explore-workspace[data-touch="on"] > .touch-flight-controls { grid-column: 2; grid-row: 2; }
+  .explore-workspace[data-touch="on"] .explore-footer { grid-column: 2; grid-row: 3; }
+  .explore-workspace[data-touch="on"] .mobile-instruments-toggle { top: 63px; }
+  .explore-workspace[data-touch="on"] .explore-inspector { top: 102px; bottom: 8px; }
+  .flight-screen[data-touch="on"] { --mobile-top: 104px; }
+  .flight-screen[data-touch="on"] .flight-camera-window { right: 312px; bottom: 36px; }
+  .flight-screen[data-touch="on"] .touch-flight-controls { left: auto; right: 4px; width: 304px; top: 104px; bottom: 0; min-height: 0; }
+  .flight-screen[data-touch="on"] .mobile-flight-summary { right: 312px; bottom: 0; flex-wrap: wrap; }
+  .flight-screen[data-touch="on"][data-instruments="detailed"] .flight-instrument-panels { bottom: 8px; }
+}
+
+@media (max-width: 360px) {
+  .flight-screen[data-touch="on"] .touch-flight-controls.size-large,
+  .explore-workspace[data-touch="on"] > .touch-flight-controls.size-large { --touch-button: 44px; }
+}
+@media (max-width: 950px) and (orientation: portrait) {
+  .flight-screen[data-touch="on"] .flight-bar { top: 4px; padding: 4px; gap: 4px; display: flex; flex-wrap: wrap; }
+  .flight-screen[data-touch="on"] .flight-identity { width: calc(100% - 48px); flex: none; height: 30px; }
+  .flight-screen[data-touch="on"] .flight-identity [data-testid="flight-design-name"],
+  .flight-screen[data-touch="on"] .flight-bar > [data-testid="physics-badge"] { display: none; }
+  .flight-screen[data-touch="on"] .flight-actions { display: flex; width: 100%; gap: 3px; padding: 0; border: 0; }
+  .flight-screen[data-touch="on"] .flight-actions > .ui-button { font-size: 0; min-width: 44px; min-height: 44px; padding: 6px; flex: 1; }
+  .flight-screen[data-touch="on"] .flight-camera-controls { flex: 0 0 76px; }
+  .flight-screen[data-touch="on"] .flight-camera-controls button { display: none; }
+  .flight-screen[data-touch="on"] .flight-camera-controls select { display: block; min-width: 0; width: 76px; min-height: 44px; font-size: 10px; }
+  .flight-screen[data-touch="on"] .flight-bar > [data-testid="display-settings-btn"] { position: absolute; top: 4px; right: 4px; }
+  .flight-screen[data-touch="on"] .flight-context-bar { top: 96px; height: 30px; flex-wrap: nowrap; gap: 3px; }
+  .flight-screen[data-touch="on"] .flight-guidance button { font-size: 0; padding: 4px; }
+  .flight-screen[data-touch="on"] .flight-guidance button > span:last-child { display: none; }
+  .flight-screen[data-touch="on"] .flight-warp { width: auto; flex: 1; padding: 3px; gap: 2px; }
+  .flight-screen[data-touch="on"] .flight-warp > span { display: none; }
+  .flight-screen[data-touch="on"] .flight-warp button { padding: 4px; }
+}
+@media (max-width: 950px) {
+  .explore-workspace[data-touch="on"] .explore-inspector { grid-area: auto; }
+  .explore-workspace[data-touch="on"] .explore-mobile-destination { display: flex; flex-direction: column; gap: 8px; padding: 12px; }
+}

@@ -264,6 +264,7 @@ export default function Explore() {
   const [paused, setPaused] = useState(true);
   const [warp, setWarp] = useState(1);
   const [help, setHelp] = useState(false);
+  const [mobilePanel, setMobilePanel] = useState(false);
   const [effectiveWarp, setEffectiveWarp] = useState(0);
   const touchVisible = useTouchControlsVisible(g.settings.touchControls);
   const input = useFlightInput({
@@ -491,6 +492,7 @@ export default function Explore() {
         if (e.detail > 0) e.target.closest?.("button")?.blur();
       }}
       data-touch={touchVisible ? "on" : "off"}
+      data-panel={mobilePanel ? "open" : "closed"}
       className="explore-workspace"
       data-testid="explore-workspace"
       data-frame={tick}
@@ -781,7 +783,8 @@ export default function Explore() {
           </div>
         )}
       </main>
-      <aside className="explore-inspector scroll-thin">
+      <button className="explore-chip mobile-instruments-toggle" data-testid="explore-instruments-toggle" aria-expanded={mobilePanel} onClick={() => setMobilePanel(v => !v)}>{mobilePanel ? "Close instruments" : "Instruments & destinations"}</button>
+      <aside className="explore-inspector scroll-thin" aria-label="Expedition instruments">
         <label className="explore-mobile-destination">
           Choose a destination
           <select

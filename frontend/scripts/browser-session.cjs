@@ -53,8 +53,16 @@ async function browserSession() {
   };
   const exists = (id) =>
     `Boolean(document.querySelector('[data-testid="${id}"]'))`;
+  const revealInspector = async (selector) => {
+    const hidden = await evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(selector)}),p=e?.closest('.explore-inspector');return !!p && getComputedStyle(p).display==='none' && !!document.querySelector('[data-testid=explore-instruments-toggle]');})()`);
+    if (hidden) await clickSelector('[data-testid=explore-instruments-toggle]');
+  };
   const clickSelector = async (selector) => {
     await wait(`Boolean(document.querySelector(${JSON.stringify(selector)}))`);
+    // Follow the mobile drawer navigation before operating its controls.
+    const closeDrawer = await evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(selector)}),w=document.querySelector('.explore-workspace');return w?.dataset.panel==='open' && !e?.closest('.explore-inspector') && e?.dataset.testid!=='explore-instruments-toggle' && document.querySelector('[data-testid=explore-instruments-toggle]')?.offsetWidth>0;})()`);
+    if (closeDrawer) await clickSelector('[data-testid=explore-instruments-toggle]');
+    await revealInspector(selector);
     await evaluate(
       `document.querySelector(${JSON.stringify(selector)}).scrollIntoView({block:'center',inline:'center',behavior:'instant'})`,
     );
@@ -83,6 +91,7 @@ async function browserSession() {
   const click = (id) => clickSelector(`[data-testid="${id}"]`);
   const select = async (id, value) => {
     await wait(exists(id));
+    await revealInspector(`[data-testid="${id}"]`);
     await evaluate(
       `(()=>{const e=document.querySelector('[data-testid="${id}"]');if(!e||!e.offsetWidth)throw Error('Hidden select');e.value=${JSON.stringify(value)};e.dispatchEvent(new Event('change',{bubbles:true}));})()`,
     );
