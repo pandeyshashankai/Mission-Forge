@@ -713,7 +713,7 @@ export default function Explore() {
           ))}
         </div>
         {paused && sim.status === "flying" && (
-          <span className="absolute right-5 top-5 rounded-full border border-amber-300/20 bg-amber-300/5 px-3 py-1 font-mono text-[10px] tracking-widest text-amber-200">
+          <span className="explore-paused absolute right-5 top-5 rounded-full border border-amber-300/20 bg-amber-300/5 px-3 py-1 font-mono text-[10px] tracking-widest text-amber-200">
             PAUSED
           </span>
         )}
