@@ -1,0 +1,5 @@
+
+> mission-forge@1.0.0 test:mobile-visibility:ui
+> node scripts/mobile-visibility-check.cjs
+
+PASS: 14 camera/control layouts including safe areas, instrument drawers and desktop layout

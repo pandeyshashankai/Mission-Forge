@@ -1,0 +1,1 @@
+PASS: small-phone 320x568, 33 world/craft starts, save readback and both maps

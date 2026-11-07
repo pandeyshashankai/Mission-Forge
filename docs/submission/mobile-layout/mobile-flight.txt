@@ -1,0 +1,5 @@
+
+> mission-forge@1.0.0 test:mobile:ui
+> node scripts/mobile-flight-check.cjs
+
+PASS: phone builder panels, selection/duplicate/undo, preflight, countdown, flight controls, map, finish/cancel, results, themes, larger text and exploration; no uncaught errors

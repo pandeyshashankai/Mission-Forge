@@ -1,0 +1,15 @@
+
+> mission-forge@1.0.0 test:controls
+> node scripts/controls-check.cjs
+
+PASS: remapping persists; duplicate keys swap; Escape cancels capture without closing Settings
+PASS: builder pinch/rotate gestures do not accidentally select a part or open its inspector
+PASS: two real touch pointers steer and throttle together; releasing one and cancelling gestures clears only the right inputs
+PASS: full/cut commands work and a second-finger RCS tap triggers exactly once while steering
+PASS: only remapped keys steer; blur clears held keys; remapped pause and Escape Settings work without leaking input behind dialogs
+PASS: remapped staging replaces Space; touch staging advances one event and disables at the last stage
+PASS: portrait, landscape and tablet touch targets remain reachable; handedness and larger buttons work
+PASS: notch and home-indicator safe areas keep flight buttons reachable in both orientations
+PASS: arrow and WASD presets work in flight; both Shift keys and mouse-held buttons release independently
+PASS: exploration shares keyboard/touch controls, RCS holds direction, single-stage craft cannot stage, and desktop Auto/Always/Keyboard-only settings work
+PASS: short-phone failure report stays above disabled flight controls and opens with a real touch tap

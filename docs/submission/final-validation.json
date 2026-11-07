@@ -111,5 +111,6 @@
   "stationReferenceHours": 48,
   "extraLabLayoutChecks": 9,
   "extraLabLayoutReport": "milestones-extra-layouts.json",
-  "followUpValidation": "cloudflare-build-fix.json"
+  "followUpValidation": "cloudflare-build-fix.json",
+  "mobileLayoutFollowUp": "mobile-layout-validation.json"
 }
