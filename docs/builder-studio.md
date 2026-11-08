@@ -18,7 +18,9 @@ beginner rocket-building video.
   around the pointer. Two fingers pan/zoom on touchscreens. The corner +/− and
   Fit controls are available on every device. Adding or moving parts preserves
   the camera; Fit is an explicit action.
-- Snap finds nearby top, bottom and side connections; otherwise it uses a
+- Snap finds nearby top, bottom and side connections. Existing parts and groups also
+  pull into nearby connections while dragging; the preview and release match.
+  Otherwise it uses a
   quarter-metre grid. Turn Snap off for exact free placement. Existing equipment
   stays where it was placed instead of being pushed into one vertical column.
 - **1 | 2** mirrors new side equipment about the central axis. Add a side fuel
@@ -27,7 +29,8 @@ beginner rocket-building video.
   Shift-drag also selects a rectangle; Shift-click adds/removes a selection.
   Drag the group, copy it, rotate 90°, flip horizontally/vertically, inspect or
   delete it. Attached children travel with their parent. Ctrl+D copies,
-  Delete removes, Ctrl+Z undoes and Ctrl+Shift+Z/Ctrl+Y redoes.
+  A thin black border marks selection in the grid; the 3D preview uses thin
+  black edges. Delete removes, Ctrl+Z undoes and Ctrl+Shift+Z/Ctrl+Y redoes.
 - The upper-right view menu opens the 3D preview, fairing interior, mass/thrust
   markers, solid-booster copy counts and detailed staging/science panels.
   Mass, thrust and thrust/weight stay visible beneath the rocket.
@@ -112,3 +115,17 @@ Dragging uses the workspace scale throughout: the preview and placed part have
 the same dimensions, and dropping does not change zoom. Palette silhouettes are
 thumbnail illustrations. Use +/− or pinch to inspect physically small parts. A
 stationary tap does not show a floating preview or place equipment.
+
+## Launch complex
+
+The launch station now has an open cross-braced service gantry with work floors
+and umbilical arms, a marked exhaust trench and deflector, concrete panels, an
+access road, cryogenic tanks, feed pipes, a deluge reservoir and floodlights.
+Grass and concrete textures are generated locally. The original procedural
+scenery uses 13 instanced material/geometry batches plus the ground surface,
+with fewer cylinder segments and smaller textures at low graphics quality.
+It uses the existing ground and flight model.
+
+![Launch station on desktop](images/launch-station-desktop.png)
+
+![Magnetic assembly on phone](images/magnetic-builder-phone.png)

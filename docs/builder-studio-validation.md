@@ -9,7 +9,7 @@ existing part/flight models.
 
 | Check | Result |
 | --- | --- |
-| `npm test` | 339 passed: 329 existing checks and 10 studio/landing/rotation checks |
+| `npm test` | 343 passed: 329 existing checks and 14 studio/landing/rotation/scenery checks |
 | `CI=true npm run build` | Passed with warnings treated as errors; simulation VM artifacts regenerated |
 | `npm run test:studio:ui` | Native reference-style build from a blank draft; stable camera; mirrored real propulsion; deployed gear; group copy/rotate/undo/delete; five device layouts; notch-safe controls; 3D preview; empty and completed design resume |
 | `npm run test:assembly:mobile` | Native palette pickup/carry/drop, two-finger zoom without edits, tall-rocket Fit, zoom/scroll pan and assistive selection |
@@ -21,7 +21,7 @@ existing part/flight models.
 | `npm run test:catalogue:ui` | All 41 individual parts, 40 grouped non-radial parts and three solid-booster symmetry configurations rendered: 84 assemblies; two invalid grouped imports rejected; no uncaught exceptions |
 | `node scripts/mission-check.cjs first_orbit` | Existing stock orbital mission completed with the updated simulation |
 
-The ten added unit cases cover empty drafts across all missions, absolute
+The initial ten added unit cases cover empty drafts across all missions, absolute
 position preservation, mirrored propulsion, group graph copying/transforms,
 rotated/reversed thrust, new-part save validation, soft/hard/folded-gear landing
 outcomes, mixed legacy/editor poses, safe solid-group deletion, exploration
@@ -56,3 +56,19 @@ real build identities on one origin: the update prompt appeared, the installed
 package stayed consistent until applied, the new page reloaded, the previous
 cache was removed and the saved rocket was preserved. Both offline audits are
 part of the browser release pipeline.
+
+## Magnetic connections and launch-station update
+
+Four further unit cases verify assembly snapping with an unsnapped override,
+reconnection of a side engine to a new tank, and finite instanced station
+geometry under a bounded batch budget, and black-edge selection without
+accumulating outlines across frames. The complete 343-check suite passed.
+The final texture build passed with warnings treated as errors, and all 14
+studio tests passed again.
+
+`test:magnets:ui` uses real mouse and finger drags to verify that attraction is
+visible before release, tank edges meet after release, attached engines retain
+their relative positions, and selection is a one-pixel black unfilled border.
+The detailed station renders in phone and desktop flight views without uncaught
+errors. The full reference-build studio audit and mobile gesture audit passed.
+The magnetic browser check is included in the release pipeline.

@@ -60,3 +60,20 @@ test('lunar touchdown uses the Moon-relative surface normal',()=>{
  const {moonState,MOON}=require('../src/sim/bodies'),{add}=require('../src/sim/vec');const d=rocket();d.stack.push({uid:'lunar-foot-a',partId:'landing_leg',deployed:true},{uid:'lunar-foot-b',partId:'landing_leg',deployed:true});
  const s=new FlightSim({design:d,mission:MISSIONS.find(m=>m.moon),guidanceOn:false});const moon=moonState(0,s.eph);s.status='flight';s.clamped=false;s.throttle=0;s.r=add(moon.r,[0,MOON.radius-.1,0]);s.v=add(moon.v,[0,-1,0]);s.dir=[0,1,0];s.nav=s.computeNav();assert.equal(s.nav.body,'moon');s.step(.01);assert.equal(s.status,'landed');
 });
+test('magnetic moves snap edge-to-edge, preserve children and allow an exact unsnapped override',()=>{
+ const {magneticTranslation,magnetMove}=require('../src/game/studioOps');let d=rocket();const anchor=editorLayout(d).items.find(n=>n.partId==='tank_k_37_s'),r=drop(d,'tank_k_37_s',12,anchor.y+4);d=r.design;const e=drop(d,'eng_k1',12,anchor.y+4-PARTS.eng_k1.height);d=e.design;
+ const move=magneticTranslation(d,[r.uid],-8, -3.7);assert.ok(move.targetUid);const moved=magnetMove(d,[r.uid],-8,-3.7),items=editorLayout(moved).items,tank=items.find(n=>n.uid===r.uid),engine=items.find(n=>n.uid===e.uid);
+ assert.ok(Math.abs(tank.x-3.7)<1e-9);assert.equal(tank.y,anchor.y);assert.equal(engine.x,tank.x);assert.ok(Math.abs(engine.y+engine.height-tank.y)<1e-9);assert.ok(isValidDesign(moved));
+ const free=magnetMove(d,[r.uid],-8,-3.7,false);assert.equal(editorLayout(free).items.find(n=>n.uid===r.uid).x,4);assert.equal(magneticTranslation(d,d.stack.map(n=>n.uid),1.2,2.3).dx,1.2);
+});
+test('a side engine moved to another tank magnetically reconnects to that tank',()=>{
+ const {magnetMove}=require('../src/game/studioOps');let d=rocket(),a=drop(d,'tank_k_37_s',10,10);d=a.design;const b=drop(d,'tank_k_37_s',20,10);d=b.design;const e=drop(d,'eng_k1',10,10-PARTS.eng_k1.height);d=e.design;
+ const moved=magnetMove(d,[e.uid],9.6,.2);assert.equal(moved.stack.find(n=>n.uid===e.uid).mount.parentUid,b.uid);assert.equal(editorLayout(moved).items.find(n=>n.uid===e.uid).x,20);assert.ok(isValidDesign(moved));
+});
+test('launch scenery uses finite instanced geometry with a small draw-call budget',()=>{
+ const {buildLaunchStation}=require('../src/three/launchStation');for(const quality of ['low','high']){const site=buildLaunchStation(85,quality);assert.ok(site.userData.instancedBatches<=20);let count=0;site.traverse(o=>{if(o.isInstancedMesh){count+=o.count;assert.ok([...o.instanceMatrix.array].every(Number.isFinite));}});assert.ok(count>150);site.traverse(o=>{o.geometry?.dispose();o.material?.dispose();});}
+});
+test('3D selection uses black edges without a glow or accumulating outlines across frames',()=>{
+ const THREE=require('three'),{setHighlight}=require('../src/three/partMeshes');const root=new THREE.Group(),mesh=new THREE.Mesh(new THREE.BoxGeometry(1,2,1),new THREE.MeshStandardMaterial());mesh.userData.uid='selected';root.add(mesh);
+ setHighlight(root,'selected');assert.equal(mesh.children.length,1);assert.equal(mesh.children[0].material.color.getHex(),0x111111);assert.equal(mesh.material.emissiveIntensity,0);const outline=mesh.children[0];setHighlight(root,'selected');assert.equal(mesh.children[0],outline);setHighlight(root,null);assert.equal(mesh.children.length,0);mesh.geometry.dispose();mesh.material.dispose();
+});

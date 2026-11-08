@@ -15,7 +15,7 @@ Choose **First Orbit** for an assisted launch or **Mission Control Academy** for
 a predict–fly–reflect lesson. **NASA Data Explorer** shows which source values
 affect gravity, orbital speed and atmosphere. Advanced laboratories are optional.
 
-- **Engineering:** full-grid construction with free placement, pan/zoom, mirrored
+- **Engineering:** full-grid construction with free placement, magnetic snapping, pan/zoom, mirrored
   side tanks and engines, group editing, deployed landing legs,
   41 parts, seven presets, staging, readiness checks,
   fuel and delta-v calculations, three difficulties and mission reports.

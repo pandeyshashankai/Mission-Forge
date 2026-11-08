@@ -414,10 +414,16 @@ export function disposeObject(obj) {
 }
 
 export function setHighlight(root, uid) {
-  root.traverse((o) => {
-    if (o.isMesh && o.material.emissive) {
-      o.material.emissive.set(o.userData.uid === uid ? "#0e7490" : "#000000");
-      o.material.emissiveIntensity = o.userData.uid === uid ? 0.9 : 0;
+  if(root.userData.selectedUid===uid)return;
+  root.userData.selectedUid=uid;
+  const outlines=[],meshes=[];
+  root.traverse(o=>{if(o.name==='selection-outline')outlines.push(o);else if(o.isMesh)meshes.push(o);});
+  for(const line of outlines){line.parent.remove(line);line.geometry.dispose();line.material.dispose();}
+  for(const mesh of meshes){
+    if(mesh.material.emissive){mesh.material.emissive.set('#000000');mesh.material.emissiveIntensity=0;}
+    if(mesh.userData.uid===uid){
+      const line=new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry,35),new THREE.LineBasicMaterial({color:'#111111',transparent:true,opacity:.85}));
+      line.name='selection-outline';line.userData.uid=uid;mesh.add(line);
     }
-  });
+  }
 }

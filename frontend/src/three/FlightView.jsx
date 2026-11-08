@@ -3,7 +3,8 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
-import { buildRocket, disposeObject } from "./partMeshes";
+import {buildLaunchStation} from "./launchStation";
+import { buildRocket, disposeObject,layoutDesign } from "./partMeshes";
 import { EARTH, DEG } from "../sim/constants";
 import { predictPath, nodePrediction } from "../sim/maneuver";
 import { moonState, MOON } from "../sim/bodies";
@@ -265,33 +266,9 @@ export const FlightView = ({
     const cap = groundCap(earthTex, lat, lon, 5, q.cap);
     earthSpin.add(cap);
     const padUp = ecef(lat, lon, 1).normalize();
-    const padSite = new THREE.Group();
+    const padSite = buildLaunchStation(layoutDesign(sim0.design).height,quality);
     padSite.position.copy(ecef(lat, lon, R));
     padSite.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), padUp);
-    const land = new THREE.Mesh(
-      new THREE.CircleGeometry(2500, 64),
-      new THREE.MeshStandardMaterial({ color: "#46553a", roughness: 1 }),
-    );
-    land.rotation.x = -Math.PI / 2;
-    land.position.y = 0.5;
-    const concrete = new THREE.Mesh(
-      new THREE.CylinderGeometry(70, 80, 2, 48),
-      new THREE.MeshStandardMaterial({ color: "#8b8a84", roughness: 0.9 }),
-    );
-    concrete.position.y = 1;
-    const tower = new THREE.Mesh(
-      new THREE.BoxGeometry(8, 95, 8),
-      new THREE.MeshStandardMaterial({
-        color: "#6b2f22",
-        roughness: 0.7,
-        metalness: 0.4,
-        wireframe: false,
-      }),
-    );
-    tower.position.set(16, 2 + 47.5, 0);
-    const arm = new THREE.Mesh(new THREE.BoxGeometry(12, 2, 3), tower.material);
-    arm.position.set(9, 70, 0);
-    padSite.add(land, concrete, tower, arm);
     earthSpin.add(padSite);
     const starGeo = new THREE.BufferGeometry();
     const sp = [];
@@ -740,6 +717,7 @@ export const FlightView = ({
             m.dispose(),
           );
       });
+      padSite.userData.textures?.forEach(texture=>texture.dispose());
       scene.environment?.dispose();
       pm.dispose();
       earthTex.dispose();

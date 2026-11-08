@@ -1,7 +1,7 @@
 import {useEffect,useRef,useState} from 'react';
 import {PARTS} from '../../sim/parts';
 import {editorLayout} from '../../sim/assemblyLayout';
-import {expandSelection,snapPosition} from '../../game/studioOps';
+import {expandSelection,snapPosition,magneticTranslation} from '../../game/studioOps';
 import {PartDrawing,MetalGradient} from './PartDrawing';
 
 function bounds(item,design){
@@ -62,7 +62,7 @@ export function Blueprint({design,selectedUid,selectedUids=[],onSelect,onSelectM
     if(after.length===2){const dist=a=>Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y),mid=a=>({x:(a[0].x+a[1].x)/2,y:(a[0].y+a[1].y)/2});const old=mid(before),next=mid(after);zoom(dist(after)/Math.max(1,dist(before)),next);const v=frameRef.current;put({...v,x:v.x-(next.x-old.x)/v.zoom,y:v.y+(next.y-old.y)/v.zoom});if(g)g.multi=true;return;}
     if(!g||g.multi)return;
     if(g.area)setBox({a:g.start,b:world(e)});
-    else if(g.uid&&!heldPart)setDrag({ids:new Set(g.ids),x:(e.clientX-g.startX)/g.zoom,y:-(e.clientY-g.startY)/g.zoom});
+    else if(g.uid&&!heldPart){const d=magneticTranslation(design,g.ids,(e.clientX-g.startX)/g.zoom,-(e.clientY-g.startY)/g.zoom,snap);setDrag({ids:new Set(g.ids),x:d.dx,y:d.dy});}
     else if(!heldPart){const v=frameRef.current||view;put({...v,x:v.x-(e.clientX-g.lastX)/v.zoom,y:v.y+(e.clientY-g.lastY)/v.zoom});}
     g.lastX=e.clientX;g.lastY=e.clientY;
    }} onPointerUp={finish} onPointerCancel={finish}>
@@ -74,12 +74,12 @@ export function Blueprint({design,selectedUid,selectedUids=[],onSelect,onSelectM
      onClick={e=>{if(e.detail===0)onSelect(n.uid);}} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();onSelect(n.uid,e.shiftKey);}}} style={{cursor:'grab'}}>
      <rect x={-w/2} y={-h} width={w} height={h} fill="transparent"/>
      <PartDrawing part={p} height={h} deployed={node.deployed} flipX={node.flipX}/>
-     {selected.has(n.uid)&&<rect x={-w/2-.08} y={-h-.08} width={w+.16} height={h+.16} fill="none" stroke="#fff" strokeWidth="1.5" vectorEffect="non-scaling-stroke"/>}
+     {selected.has(n.uid)&&<rect data-testid="part-selection-border" x={-w/2} y={-h} width={w} height={h} fill="none" stroke="#111" strokeWidth="1" vectorEffect="non-scaling-stroke"/>}
     </g>;
    })}
-   {ghost&&<g data-testid="assembly-drag-preview" pointerEvents="none" opacity=".65" transform={`translate(${ghost.x} ${-ghost.y})`}><PartDrawing part={PARTS[heldPart]}/><rect x={-PARTS[heldPart].diameter/2} y={-PARTS[heldPart].height} width={PARTS[heldPart].diameter} height={PARTS[heldPart].height} fill="none" stroke="#b6efff" strokeWidth="1" vectorEffect="non-scaling-stroke"/></g>}
+   {ghost&&<g data-testid="assembly-drag-preview" pointerEvents="none" opacity=".65" transform={`translate(${ghost.x} ${-ghost.y})`}><PartDrawing part={PARTS[heldPart]}/><rect x={-PARTS[heldPart].diameter/2} y={-PARTS[heldPart].height} width={PARTS[heldPart].diameter} height={PARTS[heldPart].height} fill="none" stroke="#111" strokeWidth="1" vectorEffect="non-scaling-stroke"/></g>}
    {ghost&&mirror&&Math.abs(ghost.x-lay.anchorX)>1&&<g pointerEvents="none" opacity=".35" transform={`translate(${2*lay.anchorX-ghost.x} ${-ghost.y})`}><PartDrawing part={PARTS[heldPart]} flipX/></g>}
-   {box&&<rect x={Math.min(box.a.x,box.b.x)} y={-Math.max(box.a.y,box.b.y)} width={Math.abs(box.a.x-box.b.x)} height={Math.abs(box.a.y-box.b.y)} fill="#b6ddff22" stroke="#fff" strokeWidth="1" vectorEffect="non-scaling-stroke" pointerEvents="none"/>}
+   {box&&<rect x={Math.min(box.a.x,box.b.x)} y={-Math.max(box.a.y,box.b.y)} width={Math.abs(box.a.x-box.b.x)} height={Math.abs(box.a.y-box.b.y)} fill="none" stroke="#111" strokeWidth="1" vectorEffect="non-scaling-stroke" pointerEvents="none"/>}
   </svg>
   {!design.stack.length&&<div className="studio-empty" data-testid="empty-build-grid"><strong>Build your rocket</strong><span>Drag a part from the left onto the grid.</span><small>Pinch or scroll to explore the workspace.</small></div>}
  </div>;

@@ -12,8 +12,8 @@ export function freezeLayout(design){
 export function snapPosition(design,partId,point,enabled=true){
  if(!enabled)return point;
  const p=PARTS[partId],l=editorLayout(design);
- const targets=l.items.filter(n=>!PARTS[n.partId].fairing).flatMap(n=>[{x:n.x,y:n.y+n.height},{x:n.x,y:n.y-p.height},{x:n.x+(PARTS[n.partId].diameter+p.diameter)/2,y:n.y},{x:n.x-(PARTS[n.partId].diameter+p.diameter)/2,y:n.y}]).sort((a,b)=>Math.hypot(a.x-point.x,a.y-point.y)-Math.hypot(b.x-point.x,b.y-point.y));
- return targets[0]&&Math.hypot(targets[0].x-point.x,targets[0].y-point.y)<Math.max(.8,p.diameter*.35)?targets[0]:{x:Math.round(point.x*4)/4,y:Math.round(point.y*4)/4};
+ const targets=l.items.filter(n=>!PARTS[n.partId].fairing).flatMap(n=>[{x:n.x,y:n.y+n.height},{x:n.x,y:n.y-p.height},...[-1,1].flatMap(side=>[n.y,n.y+(n.height-p.height)/2,n.y+n.height-p.height].map(y=>({x:n.x+side*(PARTS[n.partId].diameter+p.diameter)/2,y}))) ]).sort((a,b)=>Math.hypot(a.x-point.x,a.y-point.y)-Math.hypot(b.x-point.x,b.y-point.y));
+ return targets[0]&&Math.hypot(targets[0].x-point.x,targets[0].y-point.y)<Math.max(1.1,Math.min(2.5,p.diameter*.5))?targets[0]:{x:Math.round(point.x*4)/4,y:Math.round(point.y*4)/4};
 }
 export function studioDrop(design,partId,point,mirror=false,boosterCount=2,snap=true){
  point=snapPosition(design,partId,point,snap);
@@ -45,6 +45,36 @@ export function expandSelection(design,ids,children=true){
 export function moveSelection(design,ids,dx,dy,children=true){
  const d=freezeLayout(design),selected=expandSelection(d,ids,children);
  return {...d,stack:d.stack.map(n=>selected.has(n.uid)?{...n,position:{...n.position,x:n.position.x+dx,y:n.position.y+dy}}:n)};
+}
+// Translate a whole assembly onto the nearest outside connection, without
+// snapping its children against each other or changing their relative spacing.
+export function magneticTranslation(design,ids,dx,dy,enabled=true){
+ if(!enabled)return {dx,dy};
+ const selected=expandSelection(design,ids),items=editorLayout(design).items,nodes=new Map(design.stack.map(n=>[n.uid,n]));
+ const bounds=n=>{const p=PARTS[n.partId],sideways=(nodes.get(n.uid)?.rotation||0)%180!==0,w=sideways?n.height:p.diameter,h=sideways?p.diameter:n.height,cx=n.x,cy=n.y+n.height/2;return {left:cx-w/2,right:cx+w/2,bottom:cy-h/2,top:cy+h/2,cx,cy};};
+ const fixed=items.filter(n=>!selected.has(n.uid)&&!PARTS[n.partId].fairing);
+ let best=null;
+ for(const moving of items.filter(n=>selected.has(n.uid))){
+  const p=PARTS[moving.partId],m=bounds(moving),radius=Math.max(1.1,Math.min(2.5,p.diameter*.5));
+  for(const target of fixed){
+   const t=bounds(target),vertical=[{x:t.cx-m.cx,y:t.top-m.bottom},{x:t.cx-m.cx,y:t.bottom-m.top}];
+   const sides=[t.right-m.left,t.left-m.right].flatMap(x=>[t.bottom-m.bottom,t.cy-m.cy,t.top-m.top].map(y=>({x,y})));
+   for(const point of [...vertical,...sides]){const distance=Math.hypot(point.x-dx,point.y-dy);
+    if(distance<radius&&(!best||distance<best.distance))best={dx:point.x,dy:point.y,distance,movingUid:moving.uid,targetUid:target.uid};
+   }
+  }
+ }
+ return best||{dx,dy};
+}
+export function magnetMove(design,ids,dx,dy,enabled=true){
+ const snap=magneticTranslation(design,ids,dx,dy,enabled),next=moveSelection(design,ids,snap.dx,snap.dy);
+ const moving=next.stack.find(n=>n.uid===snap.movingUid),selected=expandSelection(next,ids);
+ if(moving?.mount&&!selected.has(moving.mount.parentUid)&&snap.targetUid){
+  const target=next.stack.find(n=>n.uid===snap.targetUid);
+  const changed={...next,stack:next.stack.map(n=>n.uid===moving.uid?{...n,mount:{parentUid:target.uid,x:n.position.x-target.position.x,y:n.position.y-target.position.y,z:n.position.z-target.position.z}}:n)};
+  if(validMounts(changed))return changed;
+ }
+ return next;
 }
 export function copySelection(design,ids){
  const d=freezeLayout(design),set=expandSelection(d,ids),nodes=d.stack.filter(n=>set.has(n.uid));

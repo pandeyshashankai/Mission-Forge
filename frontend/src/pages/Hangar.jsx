@@ -1,4 +1,4 @@
-import {newBlueprint,studioDrop,moveSelection,copySelection,deleteSelection,transformSelection} from "../game/studioOps";
+import {newBlueprint,studioDrop,magnetMove,copySelection,deleteSelection,transformSelection} from "../game/studioOps";
 import {BuildToExplore} from '../components/education/BuildToExplore';
 import { Subassemblies } from "../components/game/Subassemblies";
 import { DesignEngineering } from "../components/instruments/EngineeringInspector";
@@ -122,7 +122,7 @@ export default function Hangar() {
     if(result.error){toast.error(result.error);setHeldPart(null);setCursor(null);return;}
     setDesign(result.design);selectMany([result.uid||result.design.stack[0]?.uid].filter(Boolean));setHeldPart(null);setCursor(null);
   };
-  const onMoveGroup=(ids,dx,dy)=>{setDesign(moveSelection(design,ids,dx,dy));selectMany(ids);};
+  const onMoveGroup=(ids,dx,dy)=>{setDesign(magnetMove(design,ids,dx,dy,snap));selectMany(ids);};
   useEffect(()=>{
     const move=e=>{if(heldPart&&pickup.current?.pointerId===e.pointerId&&Math.hypot(e.clientX-pickup.current.x,e.clientY-pickup.current.y)>=6)setCursor({x:e.clientX,y:e.clientY});};
     const up=e=>{
