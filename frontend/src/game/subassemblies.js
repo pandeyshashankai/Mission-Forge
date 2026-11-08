@@ -1,3 +1,4 @@
+import {editorLayout} from "../sim/assemblyLayout";
 import { localData } from "../persistence/localData";
 import { buildSections,newUid } from "../sim/design";
 import { isValidDesign } from "../sim/storage";
@@ -16,8 +17,10 @@ export function appendSubassembly(design,assembly){
  for(const n of [...assembly.stack,...assembly.radials]){
    let uid;do{uid=newUid();}while(occupied.has(uid));occupied.add(uid);remap.set(n.uid,uid);
  }
+ const target=editorLayout(design),source=editorLayout(assembly);
+ const shiftX=target.anchorX-source.anchorX,shiftY=Math.min(0,...target.items.map(n=>n.y))-Math.max(0,...source.items.map(n=>n.y+n.height));
  return {...design,events:undefined,
-  stack:[...design.stack,...assembly.stack.map(n=>({...n,uid:remap.get(n.uid),...(n.mount?{mount:{...n.mount,parentUid:remap.get(n.mount.parentUid)}}:{})}))],
+  stack:[...design.stack,...assembly.stack.map(n=>({...n,uid:remap.get(n.uid),...(n.position?{position:{...n.position,x:n.position.x+shiftX,y:n.position.y+shiftY}}:{}),...(n.mount?{mount:{...n.mount,parentUid:remap.get(n.mount.parentUid)}}:{})}))],
   radials:[...(design.radials||[]),...assembly.radials.map(n=>({...n,uid:remap.get(n.uid),parentUid:remap.get(n.parentUid)}))]};
 }
 export function readSubassemblies(){try{const list=JSON.parse(localData.getItem('mf.subassemblies')||'[]');return Array.isArray(list)?list.filter(validSubassembly).slice(0,12):[];}catch{return [];}}

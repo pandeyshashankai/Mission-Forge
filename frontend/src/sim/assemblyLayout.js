@@ -40,6 +40,7 @@ export function layoutDesign(design) {
       y += p.height;
     }
   }
+  for(const item of items){const node=stack.find(n=>n.uid===item.uid);if(node?.position)Object.assign(item,node.position);}
   const byUid = Object.fromEntries(items.map((it) => [it.uid, it]));
   let pending = design.stack.filter(n => n.mount);
   while (pending.length) {
@@ -49,13 +50,16 @@ export function layoutDesign(design) {
       if (!parent) return true;
       const item = {uid:n.uid, partId:n.partId, height:PARTS[n.partId].height,
         x:(parent.x || 0) + n.mount.x, y:parent.y + n.mount.y, z:(parent.z || 0) + n.mount.z};
+      if(n.position)Object.assign(item,n.position);
       items.push(item); byUid[n.uid] = item; progress = true; return false;
     });
     if (!progress) throw Error('Unconnected or cyclic side assembly');
   }
-  const minY = Math.min(0, ...items.map(i => i.y));
+  const anchorX = items.find(i=>i.uid===stack[0]?.uid)?.x || 0;
+  const minY = design.editorLayout&&items.length?Math.min(...items.map(i=>i.y)):Math.min(0, ...items.map(i => i.y));
+  for(const item of items)item.x=(item.x||0)-anchorX;
   for (const item of items) item.y -= minY;
-  y = Math.max(y, ...items.map(i => i.y + i.height));
+  y = Math.max(design.editorLayout?0:y, ...items.map(i => i.y + i.height));
   const radials = [];
   for (const r of design.radials || []) {
     const parent = byUid[r.parentUid];
@@ -75,15 +79,20 @@ export function layoutDesign(design) {
       });
     }
   }
-  return { items, radials, height: y };
+  return { items, radials, height: y, anchorX, minY };
 }
 
 
 // Mounts are stage-connected parts, with offsets in metres from the parent's base.
 export function validMounts(design, lookup = id => PARTS[id]) {
   const nodes = new Map(design.stack.map(n => [n.uid, n]));
+  if (!design.stack.length)return design.editorDraft===true;
   if (!design.stack.some(n => !n.mount)) return false;
   for (const node of design.stack) {
+    if(node.position && (!['x','y','z'].every(k=>Number.isFinite(node.position[k])&&Math.abs(node.position[k])<=10000)))return false;
+    if(node.rotation!==undefined && (!Number.isFinite(node.rotation)||node.rotation%90!==0||Math.abs(node.rotation)>3600))return false;
+    if(node.deployed!==undefined && typeof node.deployed!=='boolean')return false;
+    if(node.flipX!==undefined && typeof node.flipX!=='boolean')return false;
     if (!node.mount) continue;
     const m = node.mount;
     if (lookup(node.partId)?.decoupler || !m || typeof m !== 'object' || Array.isArray(m) ||
@@ -100,3 +109,5 @@ export function validMounts(design, lookup = id => PARTS[id]) {
   }
   return true;
 }
+
+export function editorLayout(design){const l=layoutDesign(design);return {...l,items:l.items.map(n=>({...n,x:(n.x||0)+l.anchorX,y:n.y+l.minY})),radials:l.radials.map(n=>({...n,x:n.x+l.anchorX,y:n.y+l.minY}))};}

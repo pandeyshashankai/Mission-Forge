@@ -72,7 +72,7 @@ export function evaluateFlight(sim, design, mission, difficulty) {
   const ls = lifeSupportStatus(sim);
   const gF = clamp01((CREW_G_LIMIT - sim.entry.maxG) / 4);
   const lsF = clamp01(ls.daysLeft);
-  const safe = crewed && !sim.crewLost && sim.status === "splashdown";
+  const safe = crewed && !sim.crewLost && ["splashdown", "landed"].includes(sim.status);
   const score = [
     { name: "Objectives", points: W.obj * (metCount / objectives.length), max: W.obj, basis: `${metCount} of ${objectives.length} objectives met × ${fmt(W.obj / objectives.length, 1)}` },
     { name: "Cost efficiency", points: stats.cost <= budget ? W.cost * clamp01(1.5 - stats.cost / budget) : 0, max: W.cost, basis: stats.cost <= budget ? `${W.cost} × clamp(1.5 − ${fmt(stats.cost, 1)}/${fmt(budget, 1)})` : "Over budget → 0" },

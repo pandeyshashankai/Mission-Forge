@@ -1,5 +1,8 @@
 # Pickup/drop assembly and desktop controls validation
 
+The later full-grid studio redesign and its current test results are documented
+in [Construction studio validation](builder-studio-validation.md).
+
 ## Behaviour
 
 Parts are picked up from the palette and dropped onto the build grid. Attachment

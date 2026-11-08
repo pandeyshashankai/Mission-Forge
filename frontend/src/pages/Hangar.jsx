@@ -1,3 +1,4 @@
+import {newBlueprint,studioDrop,moveSelection,copySelection,deleteSelection,transformSelection} from "../game/studioOps";
 import {BuildToExplore} from '../components/education/BuildToExplore';
 import { Subassemblies } from "../components/game/Subassemblies";
 import { DesignEngineering } from "../components/instruments/EngineeringInspector";
@@ -11,8 +12,6 @@ import {
   Download,
   Upload,
   ClipboardCheck,
-  Eye,
-  EyeOff,
   Rocket,
   Copy,
   Trash2,
@@ -24,9 +23,8 @@ import { useGame } from "../game/GameContext";
 import { MissionSteps } from "../components/app/MissionSteps";
 import { DisplayButton } from "../components/app/Appearance";
 import { Blueprint } from "../components/game/Blueprint";
-import { dropPart, movePlacedPart, duplicatePart } from "../game/designOps";
+
 import { HangarView } from "../three/HangarView";
-import {PartIcon} from "../components/game/PartIcon";
 import { PartCatalog } from "../components/game/PartCatalog";
 import {
   StackList,
@@ -36,7 +34,6 @@ import {
 import { AdvisorPanel } from "../components/game/AdvisorPanel";
 import { GoNoGo, Stat } from "../components/game/Status";
 import {
-  removePart,
   movePart,
   setSymmetry,
   findNode,
@@ -83,6 +80,9 @@ export default function Hangar() {
   const [toolsOpen,setToolsOpen]=useState(false);
   const [statsOpen,setStatsOpen]=useState(false);
   const [selected, setSelected] = useState(null);
+  const [selection,setSelection]=useState([]);
+  const [mirror,setMirror]=useState(false),[snap,setSnap]=useState(true),[areaMode,setAreaMode]=useState(false);
+  const [propertiesOpen,setPropertiesOpen]=useState(false);
   const [rightTab, setRightTab] = useState("stack");
   const [heldPart,setHeldPart] = useState(null);
   const [cursor,setCursor] = useState(null);
@@ -93,7 +93,7 @@ export default function Hangar() {
   const [xray, setXray] = useState(false);
   const [overlays,setOverlays]=useState(false);
   const [smallPane, setSmallPane] = useState("build");
-  const [workspace, setWorkspace] = useState("3d");
+  const [workspace, setWorkspace] = useState("blueprint");
   const fileRef = useRef(null);
 
   const review = useMemo(
@@ -103,13 +103,15 @@ export default function Hangar() {
   const advice = useMemo(() => adviseDesign(design, review), [design, review]);
   const s = review.stats;
 
-  const selectPart = (uid) => {
-    setSelected(uid);
-    if (uid) {
-      setRightTab("inspect");
-
-    }
+  const selectMany=ids=>{setSelection(ids);setSelected(ids[0]||null);};
+  const selectPart = (uid,toggle=false) => {
+    const next=toggle?(selection.includes(uid)?selection.filter(id=>id!==uid):[...selection,uid]):uid?[uid]:[];
+    selectMany(next);if(uid)setRightTab('inspect');
   };
+  const duplicateSelection=()=>{const r=copySelection(design,selection.length?selection:selected?[selected]:[]);setDesign(r.design);selectMany(r.ids);};
+  const transform=kind=>setDesign(transformSelection(design,selection.length?selection:selected?[selected]:[],kind));
+  const resetView=()=>setViewCommand(v=>({action:'fit',id:v.id+1}));
+  const startNew=()=>{setDesign(newBlueprint());selectMany([]);setHeldPart(null);setToolsOpen(false);setWorkspace('blueprint');resetView();};
 
   const onAdd = (partId) => {
     if(Date.now()-lastDrop.current<300)return;
@@ -117,14 +119,11 @@ export default function Hangar() {
   };
   const onPlace = position => {
     if(!heldPart)return;
-    const result=dropPart(design,heldPart,position,symmetry);
+    const result=studioDrop(design,heldPart,position,mirror,symmetry,snap);
     if(result.error){toast.error(result.error);return;}
-    setDesign(result.design);setSelected(result.uid);setHeldPart(null);setCursor(null);lastDrop.current=Date.now();
+    setDesign(result.design);selectMany([result.uid||result.design.stack[0]?.uid].filter(Boolean));setHeldPart(null);setCursor(null);lastDrop.current=Date.now();
   };
-  const onMove = (uid,position) => {
-    const result=movePlacedPart(design,uid,position);
-    if(result.error)toast.error(result.error);else{setDesign(result.design);setSelected(uid);}
-  };
+  const onMoveGroup=(ids,dx,dy)=>{setDesign(moveSelection(design,ids,dx,dy));selectMany(ids);};
   useEffect(()=>{
     const move=e=>{if(heldPart)setCursor({x:e.clientX,y:e.clientY});};
     const up=e=>{
@@ -140,13 +139,7 @@ export default function Hangar() {
     return()=>{window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',up);window.removeEventListener('keydown',cancel);};
   });
 
-  const onRemove = useCallback(
-    (uid) => {
-      setDesign((d) => removePart(d, uid));
-      setSelected(null);
-    },
-    [setDesign],
-  );
+  const onRemove = useCallback(uid=>{setDesign(d=>deleteSelection(d,selection.includes(uid)?selection:[uid]));setSelected(null);setSelection([]);},[setDesign,selection]);
 
   useEffect(() => {
     const onKey = (e) => {
@@ -163,15 +156,13 @@ export default function Hangar() {
         selected
       ) {
         e.preventDefault();
-        const result = duplicatePart(design, selected);
-        setDesign(result.design);
-        setSelected(result.uid);
+        duplicateSelection();
       } else if ((e.key === "Delete" || e.key === "Backspace") && selected)
         onRemove(selected);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [g, selected, onRemove, design, setDesign]);
+  });
 
   const onImport = async (e) => {
     const f = e.target.files[0];
@@ -181,7 +172,7 @@ export default function Hangar() {
       const d = await readJSONFile(f);
       if (!isValidDesign(d) || d.stack.some((n) => !PARTS[n.partId]))
         throw new Error();
-      g.loadDesign(d);
+      g.loadDesign(d);selectMany([]);resetView();
       toast.success(`Imported "${d.name}"`);
     } catch {
       toast.error("Not a valid MissionForge design file.");
@@ -192,10 +183,19 @@ export default function Hangar() {
 
   return (
     <div
-      className="builder-screen flex h-full w-full flex-col"
+      className="builder-screen studio-builder flex h-full w-full flex-col"
       data-builder-tools={toolsOpen?"open":"closed"}
       data-builder-pane={smallPane}
+      data-properties={propertiesOpen?"open":"closed"}
     >
+          <button
+            data-testid="open-readiness-btn"
+            onClick={() => g.go("review")}
+            className="ui-button studio-launch"
+            disabled={!design.stack.length}
+          >
+            <ClipboardCheck size={15} /> Launch
+          </button>
       <div className="workflow-header">
         <button
           className="ui-button ui-button-quiet"
@@ -205,7 +205,7 @@ export default function Hangar() {
           <ArrowLeft size={16} /> Missions
         </button>
         <MissionSteps current={1} />
-        <DisplayButton compact />
+
       </div>
       <header className="builder-toolbar">
         <button className="ui-button builder-tools-toggle" data-testid="builder-tools-toggle" aria-label="Builder tools and saves" aria-expanded={toolsOpen} onClick={()=>setToolsOpen(v=>!v)}><Menu size={20}/><span>Tools</span></button>
@@ -215,7 +215,7 @@ export default function Hangar() {
           className="mr-2 flex items-center gap-1 text-sm text-slate-400 hover:text-white"
         >
           <ArrowLeft size={16} />
-          <span className="sr-only">Back to missions</span>
+          <span>Back to missions</span>
         </button>
         <label className="builder-name-label" htmlFor="rocket-name">
           Your rocket
@@ -230,7 +230,9 @@ export default function Hangar() {
           }
           className="builder-name border border-slate-800 bg-slate-950 px-2 py-1 font-mono text-xs outline-none focus:border-cyan-500/60"
         />
-        <div className="builder-actions">
+        <p className="studio-help">Drag parts onto the grid. Drag empty space to pan; pinch or Ctrl + scroll to zoom. Use the rectangle tool to select a group, then copy, move, rotate or delete it. Mirror adds balanced side pairs.</p>
+        <div className="builder-actions"><DisplayButton compact />
+          <button className="ui-button" data-testid="new-blueprint" onClick={startNew}>New blank rocket</button>
           <HdrBtn
             icon={Undo2}
             label="Undo"
@@ -253,7 +255,7 @@ export default function Hangar() {
               const p = PRESETS.find((x) => x.id === e.target.value);
               if (p) {
                 setDesign(p.make());
-                setSelected(null);
+                selectMany([]);resetView();
               }
             }}
             className="builder-presets border border-slate-800 bg-slate-950 px-2 py-1.5 text-xs text-slate-300"
@@ -299,13 +301,7 @@ export default function Hangar() {
             onChange={onImport}
             data-testid="hangar-import-input"
           />
-          <button
-            data-testid="open-readiness-btn"
-            onClick={() => g.go("review")}
-            className="ui-button ui-button-primary"
-          >
-            <ClipboardCheck size={15} /> Launch
-          </button>
+
         </div>
       </header>
 
@@ -328,7 +324,7 @@ export default function Hangar() {
       </nav>
       <div className="assembly-workspace grid min-h-0 flex-1">
         <aside className="assembly-catalog min-h-0 border-r border-slate-800 bg-slate-950/80">
-          <PartCatalog onAdd={onAdd} onPickup={(partId,e)=>{if(e.button>0)return;e.currentTarget.setPointerCapture(e.pointerId);pickup.current={x:e.clientX,y:e.clientY};setCursor({x:e.clientX,y:e.clientY});onAdd(partId);}} />
+          <PartCatalog onCancelPickup={()=>{pickup.current=null;setHeldPart(null);setCursor(null);}} compact={smallPane!=="parts"} onAdd={onAdd} onPickup={(partId,e)=>{if(e.button>0)return;e.currentTarget.setPointerCapture(e.pointerId);pickup.current={x:e.clientX,y:e.clientY};setCursor({x:e.clientX,y:e.clientY});onAdd(partId);}} />
         </aside>
 
         <main className="assembly-viewport relative min-h-0">
@@ -337,7 +333,9 @@ export default function Hangar() {
               design={design}
               selectedUid={selected}
               onSelect={selectPart}
-              heldPart={heldPart} onPlace={onPlace} onMove={onMove}
+              selectedUids={selection} onSelectMany={selectMany}
+              heldPart={heldPart} cursor={cursor} mirror={mirror} snap={snap} areaMode={areaMode} onAreaDone={()=>setAreaMode(false)}
+              onPlace={onPlace} onMoveGroup={onMoveGroup} viewCommand={viewCommand}
             />
           ) : (
             <HangarView
@@ -350,45 +348,17 @@ export default function Hangar() {
               panMode={pan3D} viewCommand={viewCommand}
             />
           )}
-          <div
-            className="panel absolute left-3 top-3 flex items-center gap-1 rounded-sm p-1"
-            data-testid="attach-toolbar"
-          >
-            {["3d", "blueprint"].map((w) => (
-              <button
-                key={w}
-                data-testid={`workspace-${w}`}
-                onClick={() => setWorkspace(w)}
-                className={`px-2 py-1 font-mono text-[11px] uppercase ${workspace === w ? "bg-cyan-500/20 text-cyan-200" : "text-slate-400"}`}
-              >
-                {w === "3d" ? "3D" : "Build grid"}
-              </button>
-            ))}
-            <span className="mx-1 h-4 w-px bg-slate-700" />
-            <details className="assembly-view-options"><summary>Options</summary><div>            <span className="eyebrow px-1 !text-[9px]">Radial sym</span>
-            {[2, 3, 4].map((n) => (
-              <button
-                key={n}
-                data-testid={`symmetry-${n}`}
-                onClick={() => setSym(n)}
-                className={`px-2 py-1 font-mono text-[11px] ${symmetry === n ? "bg-cyan-500/20 text-cyan-200" : "text-slate-400 hover:text-white"}`}
-              >
-                ×{n}
-              </button>
-            ))}
-            <span className="mx-1 h-4 w-px bg-slate-700" />
-            <button
-              data-testid="xray-toggle"
-              onClick={() => setXray(!xray)}
-              className="flex items-center gap-1 px-2 py-1 font-mono text-[11px] text-slate-400 hover:text-white"
-            >
-              {xray ? <EyeOff size={12} /> : <Eye size={12} />} fairing
-            </button>
-</div></details>
-          </div>
-          {workspace==='3d'&&<div className="assembly-navigation assembly-navigation-3d"><button className="ui-button" data-testid="hangar-pan" aria-pressed={pan3D} onClick={()=>setPan3D(v=>!v)}>{pan3D?'Pan':'Rotate'}</button>{['out','fit','in'].map(action=><button key={action} data-testid={`hangar-view-${action}`} onClick={()=>setViewCommand(v=>({action,id:v.id+1}))}>{action==='fit'?'Fit':action==='in'?'+':'−'}</button>)}</div>}
+          <details className="studio-view-menu assembly-view-options" data-testid="attach-toolbar" onClick={e=>{if(e.target.closest("button"))e.currentTarget.open=false;}}><summary aria-label="View and building options"><Menu size={22}/></summary><div>
+            <button className="ui-button" data-testid="workspace-blueprint" onClick={()=>setWorkspace('blueprint')}>Build grid</button>
+            <button className="ui-button" data-testid="workspace-3d" onClick={()=>setWorkspace('3d')}>3D preview</button>
+            <button className="ui-button" data-testid="xray-toggle" aria-pressed={xray} onClick={()=>setXray(v=>!v)}>{xray?'Hide':'Show'} fairing interior</button>
+            <button className="ui-button mass-overlay-toggle" data-testid="mass-overlay-toggle" aria-pressed={overlays} onClick={()=>{setOverlays(!overlays);setWorkspace("3d");}}>Mass & thrust</button>
+            <span>Solid booster copies</span>{[2,3,4].map(n=><button key={n} className="ui-button" data-testid={`symmetry-${n}`} aria-pressed={symmetry===n} onClick={()=>setSym(n)}>×{n}</button>)}
+            <button className="ui-button" onClick={()=>setSmallPane('details')}>Staging, parts & science</button>
+          </div></details>
+          {workspace==='3d'&&<div className="assembly-navigation assembly-navigation-3d"><button className="ui-button" data-testid="hangar-pan" aria-pressed={pan3D} onClick={()=>setPan3D(v=>!v)}>{pan3D?'Pan':'Rotate'}</button></div>}
           {heldPart&&<div className="held-part-banner" data-testid="held-part"><strong>{PARTS[heldPart].name}</strong><span>Drag or tap the grid to place</span><button className="ui-button" data-testid="cancel-held-part" onClick={()=>{setHeldPart(null);setCursor(null);}}>Cancel</button></div>}
-          {heldPart&&cursor&&<div className="held-part-ghost" style={{left:cursor.x+14,top:cursor.y+14}}><PartIcon part={PARTS[heldPart]}/></div>}
+
           <div className="pointer-events-none absolute right-3 top-28 text-right font-mono text-[10px] text-slate-500">
             Pick a part, then drag it onto the grid. Drag placed parts to move.
             <br />
@@ -397,28 +367,25 @@ export default function Hangar() {
           {selNode && (
             <div className="selected-part-actions panel">
               <span>{PARTS[selNode.partId].name}</span>
-              <button
-                className="ui-button"
-                data-testid="duplicate-selected-btn"
-                onClick={() => {
-                  const r = duplicatePart(design, selected);
-                  setDesign(r.design);
-                  setSelected(r.uid);
-                }}
-              >
-                <Copy size={14} /> Duplicate
-              </button>
-              <button
-                className="ui-button"
-                data-testid="remove-selected-btn"
-                disabled={!selNode.parentUid && design.stack.length === 1}
-                onClick={() => onRemove(selected)}
-              >
-                <Trash2 size={14} /> Remove
-              </button>
+              <button className="ui-button" data-testid="inspect-selection" aria-label="Part properties" onClick={()=>{setPropertiesOpen(v=>!v);setRightTab('inspect');setSmallPane(v=>v==='details'?'build':'details');}}><SlidersHorizontal size={20}/></button>
+              <button className="ui-button" data-testid="duplicate-selected-btn" aria-label="Copy selected assembly" onClick={duplicateSelection}><Copy size={20}/></button>
+              <button className="ui-button" data-testid="rotate-selected" aria-label="Rotate selection 90 degrees" onClick={()=>transform('rotate')}>↻</button>
+              <button className="ui-button" data-testid="mirror-selected" aria-label="Flip selection horizontally" onClick={()=>transform('horizontal')}>◀▶</button>
+              <button className="ui-button" data-testid="flip-selected" aria-label="Flip selection vertically" onClick={()=>transform('vertical')}>↕</button>
+              <button className="ui-button" data-testid="remove-selected-btn" aria-label="Delete selected assembly" onClick={()=>onRemove(selected)}><Trash2 size={20}/></button>
             </div>
           )}
-          <button className="ui-button mass-overlay-toggle" data-testid="mass-overlay-toggle" aria-pressed={overlays} onClick={()=>{setOverlays(!overlays);setWorkspace("3d");}}>Mass & thrust</button>
+          <div className="studio-left-tools">
+            <button className="ui-button" data-testid="studio-symmetry" aria-label="Mirror new side parts" aria-pressed={mirror} onClick={()=>setMirror(v=>!v)}>{mirror?'1 | 2':'1'}</button>
+            <button className="ui-button" data-testid="studio-select-area" aria-label="Select multiple parts with a rectangle" aria-pressed={areaMode} onClick={()=>setAreaMode(v=>!v)}>▢</button>
+            <button className="ui-button" data-testid="studio-snap" aria-label="Snap to grid and connections" aria-pressed={snap} onClick={()=>setSnap(v=>!v)}>⌁</button>
+          </div>
+          <div className="studio-view-controls">
+            <button className="ui-button" data-testid="assembly-zoom-out" aria-label="Zoom out" onClick={()=>setViewCommand(v=>({action:'out',id:v.id+1}))}>−</button>
+            <button className="ui-button" data-testid="assembly-fit" aria-label="Fit whole rocket" onClick={resetView}>Fit</button>
+            <button className="ui-button" data-testid="assembly-zoom-in" aria-label="Zoom in" onClick={()=>setViewCommand(v=>({action:'in',id:v.id+1}))}>+</button>
+          </div>
+          <button className="ui-button studio-undo" data-testid="studio-undo" aria-label="Undo last edit" disabled={!g.canUndo} onClick={g.undo}>↶</button>
           {overlays&&workspace==='3d'&&<p className="mass-overlay-legend">Cyan: wet mass centre · Violet: dry mass centre · Amber: side-area centre (proxy) · Green: combined engine axis. Uniform part masses; all engine positions, not a flight-stage force solution.</p>}
           <div
             className="assembly-stats panel absolute bottom-3 left-3 right-3 grid grid-cols-3 xl:grid-cols-6 gap-2 rounded-sm p-2"
@@ -533,6 +500,8 @@ export default function Hangar() {
               </TabsContent>
               <TabsContent value="inspect">
                 <Inspector node={selNode} />
+                {selNode&&PARTS[selNode.partId].landingLeg&&<label className="studio-leg-option">Deploy landing legs<input type="checkbox" data-testid="leg-deployed" checked={!!selNode.deployed} onChange={e=>{const value=e.target.checked,group=selNode.mirrorGroup;setDesign({...design,stack:design.stack.map(n=>selection.includes(n.uid)||(mirror&&group&&n.mirrorGroup===group)?{...n,deployed:value}:n)});}}/></label>}
+                <p className="studio-model-note">Rotated engines change thrust direction. Keep ascent engines facing down and use balanced side assemblies.</p>
                 <Subassemblies design={design} selectedUid={selected} onInsert={setDesign} />
                 {selNode && (
                   <div className="inspector-part-actions">
@@ -540,16 +509,14 @@ export default function Hangar() {
                       className="ui-button"
                       data-testid="duplicate-inspected-btn"
                       onClick={() => {
-                        const r = duplicatePart(design, selected);
-                        setDesign(r.design);
-                        setSelected(r.uid);
+                        duplicateSelection();
                       }}
                     >
                       <Copy size={14} /> Duplicate
                     </button>
                     <button
                       className="ui-button"
-                      disabled={!selNode.parentUid && design.stack.length === 1}
+
                       data-testid="remove-inspected-btn"
                       onClick={() => onRemove(selected)}
                     >

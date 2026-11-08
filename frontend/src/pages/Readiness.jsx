@@ -222,6 +222,7 @@ export default function Readiness() {
               <>
                 <button
                   data-testid="launch-anyway-btn"
+                  disabled={!g.design.stack.length}
                   className="test-flight-link"
                   onClick={() => setConfirm((v) => !v)}
                 >
@@ -236,6 +237,7 @@ export default function Readiness() {
                     <button
                       className="ui-button"
                       data-testid="launch-anyway-confirm-btn"
+                      disabled={!g.design.stack.length}
                       onClick={() => g.go("flight")}
                     >
                       Launch with known issues

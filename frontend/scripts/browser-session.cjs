@@ -78,6 +78,9 @@ async function browserSession() {
     const openDetails = await evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(selector)});return !!e?.closest('.assembly-details')&&!e.offsetWidth;})()`);
     if(openDetails)await clickSelector('[data-testid="builder-panel-details"]');
 
+    const hiddenCatalogControl = await evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(selector)});return !!e?.closest('[data-testid=part-catalog]')&&!e.offsetWidth;})()`);
+    if(hiddenCatalogControl)await clickSelector('[data-testid="builder-panel-parts"]');
+
     const optionsClosed = await evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(selector)}),d=e?.closest('.assembly-view-options');return !!d&&!d.open&&!e.matches('summary')})()`);
     if(optionsClosed)await clickSelector('.assembly-view-options > summary');
 

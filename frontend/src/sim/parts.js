@@ -570,6 +570,12 @@ const list = [
     desc: "Encloses the parts directly below it until the next tank or decoupler. Jettisoned above 100 km by auto-staging.",
     source: "Approx. composite fairing class",
   }),
+  P({id:'nose_37',name:'Nose Cone 3.7 m',category:'structure',diameter:3.7,height:3.2,dryMass:180,cost:.12,look:'nose',desc:'Aerodynamic cap for a liquid booster. No propellant.',source:'Educational composite nose-cone approximation'}),
+  P({id:'nose_slanted_37',name:'Slanted Booster Nose',category:'structure',diameter:3.7,height:3.2,dryMass:180,cost:.12,look:'nose_slanted',desc:'Offset nose for side boosters. Mirror it for the opposite side.',source:'Educational composite nose-cone approximation'}),
+  P({id:'landing_leg',name:'Deployable Landing Leg',category:'recovery',diameter:.5,height:2.8,dryMass:250,cost:.25,look:'leg',landingLeg:{maxSpeed:6},desc:'Place a mirrored pair. Deployed legs permit an upright low-speed touchdown; not a high-speed impact shield.',source:'Educational deployable landing-gear approximation'}),
+  P({id:'rcs_block',name:'Compact RCS Block',category:'control',diameter:.4,height:.5,dryMass:18,cost:.15,look:'rcs_block',attitude:{rcsThrust:220},desc:'A compact attitude-control block. Requires hydrazine in the attached vehicle.',source:'Approximate 220 N hydrazine thruster class'}),
+  P({id:'truss_separator_37',name:'Open Truss Separator 3.7 m',category:'structure',diameter:3.7,height:2.4,dryMass:320,cost:.4,look:'truss',decoupler:true,desc:'Open interstage with separation, placed between central stages.',source:'Educational open-interstage approximation'}),
+
 ];
 
 export const PARTS = Object.fromEntries(list.map((p) => [p.id, p]));

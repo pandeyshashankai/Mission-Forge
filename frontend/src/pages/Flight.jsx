@@ -805,14 +805,14 @@ export default function Flight() {
                 </button>
               </div>
             )}
-          {s.status === "splashdown" && (
+          {["splashdown", "landed"].includes(s.status) && (
             <div
               className="absolute inset-0 flex items-center justify-center bg-black/40"
               data-testid="splashdown-overlay"
             >
               <div className="panel rounded-sm border-emerald-500/60 p-6 text-center">
                 <div className="flex items-center justify-center gap-2 font-display text-3xl font-bold uppercase tracking-widest text-emerald-400">
-                  <CheckCircle2 /> Splashdown
+                  <CheckCircle2 /> {s.status === "landed" ? "Touchdown" : "Splashdown"}
                 </div>
                 <div className="mt-1 font-mono text-xs text-slate-400">
                   {simRef.current.endReason}

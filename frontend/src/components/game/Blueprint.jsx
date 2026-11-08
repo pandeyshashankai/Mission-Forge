@@ -1,78 +1,86 @@
-import {useEffect, useRef, useState} from 'react';
+import {useEffect,useRef,useState} from 'react';
 import {PARTS} from '../../sim/parts';
-import {layoutDesign} from '../../sim/assemblyLayout';
+import {editorLayout} from '../../sim/assemblyLayout';
+import {expandSelection,snapPosition} from '../../game/studioOps';
+import {PartDrawing,MetalGradient} from './PartDrawing';
 
-export function Blueprint({design, selectedUid, onSelect, onPlace, onMove, heldPart}) {
-  const mount = useRef(null), svg = useRef(null), pointers = useRef(new Map()), gesture = useRef(null);
-  const [size,setSize] = useState({width:300,height:500});
-  const [camera,setCamera] = useState(null), [preview,setPreview] = useState(null);
-  const layout = layoutDesign(design);
-  const all = [...layout.items, ...layout.radials];
-  const fit = () => {
-    const left=Math.min(-4,...all.map(n=>(n.x||0)-PARTS[n.partId].diameter/2));
-    const right=Math.max(4,...all.map(n=>(n.x||0)+PARTS[n.partId].diameter/2));
-    const low=Math.min(0,...all.map(n=>n.y)), high=Math.max(8,...all.map(n=>n.y+n.height));
-    return {x:(left+right)/2,y:-(low+high)/2,zoom:Math.max(.1,Math.min(size.width/(right-left+4),size.height/(high-low+6))*.85)};
-  };
-  const view=camera || fit();
-  const point=e=>{const p=svg.current.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.current.getScreenCTM().inverse());};
-  const zoom=f=>setCamera(v=>({...view,...v,zoom:Math.max(.1,Math.min(200,(v||view).zoom*f))}));
-  useEffect(()=>{const ro=new ResizeObserver(([e])=>setSize({width:e.contentRect.width,height:e.contentRect.height}));ro.observe(mount.current);return()=>ro.disconnect();},[]);
-  useEffect(()=>{const el=mount.current;const wheel=e=>{e.preventDefault();if(e.ctrlKey||e.metaKey)zoom(Math.exp(-e.deltaY*.003));else setCamera(v=>({...view,...v,x:(v||view).x+e.deltaX/view.zoom,y:(v||view).y+e.deltaY/view.zoom}));};el.addEventListener('wheel',wheel,{passive:false});return()=>el.removeEventListener('wheel',wheel);});
-  const finish=e=>{
-    const g=gesture.current; pointers.current.delete(e.pointerId);
-    const bounds=svg.current.getBoundingClientRect(),inside=e.clientX>=bounds.left&&e.clientX<=bounds.right&&e.clientY>=bounds.top&&e.clientY<=bounds.bottom;
-    if(g && !g.multi && inside && e.type==='pointerup') {
-      const p=point(e), moved=Math.hypot(e.clientX-g.startX,e.clientY-g.startY)>5;
-      if(heldPart)onPlace?.({x:p.x,y:-p.y});
-      else if(g.uid && moved)onMove?.(g.uid,{x:g.baseX+(e.clientX-g.startX)/view.zoom,y:g.baseY-(e.clientY-g.startY)/view.zoom});
-      else if(g.uid)onSelect(g.uid);
-    }
-    if(!pointers.current.size)gesture.current=null;
-    setPreview(null);
-  };
-  return <div ref={mount} className="blueprint-canvas absolute inset-0" data-testid="blueprint-workspace">
-    <div className="assembly-navigation" aria-label="Assembly view controls">
-      <button type="button" data-testid="assembly-zoom-out" aria-label="Zoom out" onClick={()=>zoom(1/1.25)}>−</button>
-      <button type="button" data-testid="assembly-fit" onClick={()=>{setCamera(null);setPreview(null);}}>Fit</button>
-      <button type="button" data-testid="assembly-zoom-in" aria-label="Zoom in" onClick={()=>zoom(1.25)}>+</button>
-      <span>Drag parts to move · drag grid / scroll to pan · pinch to zoom</span>
-    </div>
-    <svg ref={svg} data-testid="assembly-placement-grid" aria-label="Rocket assembly placement grid" className="h-full w-full" style={{touchAction:'none'}}
-      viewBox={`${view.x-size.width/(2*view.zoom)} ${view.y-size.height/(2*view.zoom)} ${size.width/view.zoom} ${size.height/view.zoom}`}
-      onPointerDown={e=>{
-        if(e.button>0)return;
-        svg.current.setPointerCapture(e.pointerId);
-        pointers.current.set(e.pointerId,{x:e.clientX,y:e.clientY});
-        const uid=e.target.closest('[data-assembly-uid]')?.dataset.assemblyUid, n=all.find(n=>n.uid===uid);
-        if(pointers.current.size>1){if(gesture.current)gesture.current.multi=true;return;}
-        gesture.current={uid:n?.uid,startX:e.clientX,startY:e.clientY,lastX:e.clientX,lastY:e.clientY,baseX:n?.x||0,baseY:n?.y||0,multi:false};
-      }}
-      onPointerMove={e=>{
-        if(!pointers.current.has(e.pointerId))return;
-        const before=[...pointers.current.values()];pointers.current.set(e.pointerId,{x:e.clientX,y:e.clientY});
-        const after=[...pointers.current.values()],g=gesture.current;
-        if(after.length===2){const distance=a=>Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);zoom(distance(after)/Math.max(1,distance(before)));if(g)g.multi=true;return;}
-        if(!g||g.multi)return;
-        if(g.uid&&!heldPart)setPreview({uid:g.uid,x:(e.clientX-g.startX)/view.zoom,y:(e.clientY-g.startY)/view.zoom});
-        else if(!heldPart){const dx=e.clientX-g.lastX,dy=e.clientY-g.lastY;setCamera(v=>({...view,...v,x:(v||view).x-dx/view.zoom,y:(v||view).y-dy/view.zoom}));}
-        g.lastX=e.clientX;g.lastY=e.clientY;
-      }} onPointerUp={finish} onPointerCancel={finish}>
-      <defs><pattern id="assembly-grid" width={view.zoom<3?10:1} height={view.zoom<3?10:1} patternUnits="userSpaceOnUse"><path d={view.zoom<3?"M10 0H0V10":"M1 0H0V1"} stroke="#7598b0" strokeWidth=".025" fill="none" opacity=".45"/></pattern><linearGradient id="assembly-metal"><stop stopColor="#8198aa"/><stop offset=".35" stopColor="#eef5f8"/><stop offset=".6" stopColor="#fff"/><stop offset="1" stopColor="#688398"/></linearGradient></defs>
-      <rect x={view.x-size.width/view.zoom} y={view.y-size.height/view.zoom} width={2*size.width/view.zoom} height={2*size.height/view.zoom} fill="url(#assembly-grid)"/>
-      {all.map((n,i)=>{
-        const p=PARTS[n.partId],w=Math.max(.25,p.diameter),h=Math.max(.2,n.height),x=(n.x||0)-w/2,y=-n.y-h;
-        let carried=preview?.uid===n.uid, ancestor=design.stack.find(v=>v.uid===n.uid);
-        for(let k=0;preview&&ancestor?.mount&&k<512;k++){if(ancestor.mount.parentUid===preview.uid){carried=true;break;}const parentUid=ancestor.mount.parentUid;ancestor=design.stack.find(v=>v.uid===parentUid);}
-        const cone=['fairing','capsule','nose'].some(k=>(p.look||'').includes(k));
-        return <g key={`${n.uid}-${i}`} role="button" tabIndex="0" aria-label={`Select ${p.name}`} data-assembly-uid={n.uid} data-testid={`${i<layout.items.length?'blueprint-part':'blueprint-radial'}-${n.uid}`} transform={carried?`translate(${preview.x} ${preview.y})`:undefined}
-          onClick={e=>{if(e.detail===0)onSelect(n.uid);}}
-          onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();onSelect(n.uid);}}} style={{cursor:'grab'}}>
-          {cone?<path d={`M${x} ${y+h}Q${x+w*.05} ${y+h*.35} ${x+w/2} ${y}Q${x+w*.95} ${y+h*.35} ${x+w} ${y+h}Z`} fill="url(#assembly-metal)" stroke="#173047" strokeWidth=".07"/>:<rect x={x} y={y} width={w} height={h} rx=".12" fill="url(#assembly-metal)" stroke="#173047" strokeWidth=".07"/>}
-          {p.engine&&<path d={`M${x+w*.3} ${y+h*.2}H${x+w*.7}L${x+w} ${y+h}H${x}Z`} fill="#34414c" stroke="#bca487" strokeWidth=".06"/>}
-          {selectedUid===n.uid&&<rect x={x-.12} y={y-.12} width={w+.24} height={h+.24} fill="none" stroke="#5de2ff" strokeWidth=".1" strokeDasharray=".3 .2"/>}
-        </g>;
-      })}
-    </svg>
-  </div>;
+function bounds(item,design){
+ const node=design.stack.find(n=>n.uid===item.uid),p=PARTS[item.partId];
+ const sideways=Math.abs(node?.rotation||0)%180===90;
+ const halfWidth=(sideways?item.height:p.diameter)/2,halfHeight=(sideways?p.diameter:item.height)/2;
+ return {left:(item.x||0)-halfWidth,right:(item.x||0)+halfWidth,low:item.y+item.height/2-halfHeight,high:item.y+item.height/2+halfHeight};
+}
+
+export function Blueprint({design,selectedUid,selectedUids=[],onSelect,onSelectMany,onPlace,onMoveGroup,heldPart,cursor,mirror=false,snap=true,areaMode=false,onAreaDone,viewCommand}){
+ const mount=useRef(null),svg=useRef(null),pointers=useRef(new Map()),gesture=useRef(null),frameRef=useRef(null),measured=useRef(false),designRef=useRef(design);
+ const [size,setSize]=useState({width:0,height:0}),[frame,setFrame]=useState(null),[drag,setDrag]=useState(null),[box,setBox]=useState(null);
+ designRef.current=design;
+ const lay=editorLayout(design),all=[...lay.items,...lay.radials],nodes=new Map(design.stack.map(n=>[n.uid,n]));
+ const fit=(d=design,s=size)=>{
+  const l=editorLayout(d),items=l.items,w=s.width||390,h=s.height||700;
+  if(!items.length)return {x:-1,y:8,zoom:Math.min(26,(w-100)/10)};
+  const extents=items.map(n=>bounds(n,d));
+  const left=Math.min(...extents.map(n=>n.left)),right=Math.max(...extents.map(n=>n.right));
+  const low=Math.min(...extents.map(n=>n.low)),high=Math.max(...extents.map(n=>n.high));
+  const z=Math.max(.08,Math.min((w-140)/(right-left+3),(h-160)/(high-low+5),40)*.9);
+  return {x:(left+right)/2-16/z,y:(low+high)/2-8/z,zoom:z};
+ };
+ const view=frame||fit(),width=size.width||390,height=size.height||700;
+ const put=next=>{frameRef.current=next;setFrame(next);};
+ const world=e=>{const p=svg.current.createSVGPoint();p.x=e.clientX;p.y=e.clientY;const q=p.matrixTransform(svg.current.getScreenCTM().inverse());return {x:q.x,y:-q.y};};
+ const zoom=(factor,screen)=>{
+  const v=frameRef.current||view,z=Math.max(.08,Math.min(160,v.zoom*factor));
+  if(screen){const r=svg.current.getBoundingClientRect(),px=screen.x-r.left-width/2,py=screen.y-r.top-height/2;put({x:v.x+px/v.zoom-px/z,y:v.y-py/v.zoom+py/z,zoom:z});}
+  else put({...v,zoom:z});
+ };
+ useEffect(()=>{const ro=new ResizeObserver(([e])=>{const s={width:e.contentRect.width,height:e.contentRect.height};setSize(s);if(!measured.current&&s.width&&s.height){measured.current=true;const f=fit(designRef.current,s);frameRef.current=f;setFrame(f);}});ro.observe(mount.current);return()=>ro.disconnect();},[]); // eslint-disable-line react-hooks/exhaustive-deps
+ useEffect(()=>{if(!viewCommand)return;if(viewCommand.action==='fit')put(fit());else if(viewCommand.action==='in')zoom(1.25);else if(viewCommand.action==='out')zoom(.8);},[viewCommand]); // eslint-disable-line react-hooks/exhaustive-deps
+ useEffect(()=>{const el=mount.current;const wheel=e=>{e.preventDefault();const v=frameRef.current||view;if(e.ctrlKey||e.metaKey)zoom(Math.exp(-e.deltaY*.003),{x:e.clientX,y:e.clientY});else put({...v,x:v.x+e.deltaX/v.zoom,y:v.y-e.deltaY/v.zoom});};el.addEventListener('wheel',wheel,{passive:false});return()=>el.removeEventListener('wheel',wheel);});
+ const finish=e=>{
+  const g=gesture.current;pointers.current.delete(e.pointerId);
+  const r=svg.current.getBoundingClientRect(),inside=e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom;
+  if(g&&!g.multi&&inside&&e.type==='pointerup'){
+   const p=world(e),moved=Math.hypot(e.clientX-g.startX,e.clientY-g.startY)>5;
+   if(heldPart)onPlace?.(p);
+   else if(g.area){const a=g.start,b=p;const ids=all.filter(n=>{const r=bounds(n,design);return r.right>=Math.min(a.x,b.x)&&r.left<=Math.max(a.x,b.x)&&r.high>=Math.min(a.y,b.y)&&r.low<=Math.max(a.y,b.y);}).map(n=>n.uid);onSelectMany?.([...new Set(ids)]);onAreaDone?.();}
+   else if(g.uid&&moved)onMoveGroup?.(g.ids,(e.clientX-g.startX)/g.zoom,-(e.clientY-g.startY)/g.zoom);
+   else if(g.uid)onSelect(g.uid,e.shiftKey);
+   else if(!moved)onSelectMany?.([]);
+  }
+  if(!pointers.current.size)gesture.current=null;setDrag(null);setBox(null);
+ };
+ const selected=new Set(selectedUids.length?selectedUids:selectedUid?[selectedUid]:[]);
+ let ghost=null;
+ if(heldPart&&cursor&&svg.current){const r=svg.current.getBoundingClientRect();if(cursor.x>r.left&&cursor.x<r.right&&cursor.y>r.top&&cursor.y<r.bottom)ghost=snapPosition(design,heldPart,world({clientX:cursor.x,clientY:cursor.y}),snap);}
+ return <div ref={mount} className="blueprint-canvas studio-grid absolute inset-0" data-testid="blueprint-workspace">
+  <svg ref={svg} data-testid="assembly-placement-grid" aria-label="Rocket build grid: drag parts, drag empty space to pan, pinch to zoom" className="h-full w-full" style={{touchAction:'none'}}
+   viewBox={`${view.x-width/(2*view.zoom)} ${-view.y-height/(2*view.zoom)} ${width/view.zoom} ${height/view.zoom}`}
+   onPointerDown={e=>{if(e.button>0)return;svg.current.setPointerCapture(e.pointerId);pointers.current.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pointers.current.size>1){if(gesture.current)gesture.current.multi=true;return;}
+    const uid=e.target.closest('[data-assembly-uid]')?.dataset.assemblyUid;const ids=uid&&selected.has(uid)?[...selected]:uid?[uid]:[];
+    gesture.current={uid,ids:[...expandSelection(design,ids)],zoom:view.zoom,startX:e.clientX,startY:e.clientY,lastX:e.clientX,lastY:e.clientY,start:world(e),area:!heldPart&&(areaMode||(e.shiftKey&&!uid)),multi:false};}}
+   onPointerMove={e=>{if(!pointers.current.has(e.pointerId))return;const before=[...pointers.current.values()];pointers.current.set(e.pointerId,{x:e.clientX,y:e.clientY});const after=[...pointers.current.values()],g=gesture.current;
+    if(after.length===2){const dist=a=>Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y),mid=a=>({x:(a[0].x+a[1].x)/2,y:(a[0].y+a[1].y)/2});const old=mid(before),next=mid(after);zoom(dist(after)/Math.max(1,dist(before)),next);const v=frameRef.current;put({...v,x:v.x-(next.x-old.x)/v.zoom,y:v.y+(next.y-old.y)/v.zoom});if(g)g.multi=true;return;}
+    if(!g||g.multi)return;
+    if(g.area)setBox({a:g.start,b:world(e)});
+    else if(g.uid&&!heldPart)setDrag({ids:new Set(g.ids),x:(e.clientX-g.startX)/g.zoom,y:-(e.clientY-g.startY)/g.zoom});
+    else if(!heldPart){const v=frameRef.current||view;put({...v,x:v.x-(e.clientX-g.lastX)/v.zoom,y:v.y+(e.clientY-g.lastY)/v.zoom});}
+    g.lastX=e.clientX;g.lastY=e.clientY;
+   }} onPointerUp={finish} onPointerCancel={finish}>
+   <defs><MetalGradient/><pattern id="studio-grid-fine" width={view.zoom<3?5:1} height={view.zoom<3?5:1} patternUnits="userSpaceOnUse"><path d={view.zoom<3?'M5 0H0V5':'M1 0H0V1'} fill="none" stroke="#86a2c4" strokeWidth=".04" opacity=".4"/></pattern><pattern id="studio-grid-major" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M10 0H0V10" fill="none" stroke="#173f70" strokeWidth=".08" opacity=".65"/></pattern></defs>
+   <rect x={view.x-width/view.zoom} y={-view.y-height/view.zoom} width={2*width/view.zoom} height={2*height/view.zoom} fill="url(#studio-grid-fine)"/><rect x={view.x-width/view.zoom} y={-view.y-height/view.zoom} width={2*width/view.zoom} height={2*height/view.zoom} fill="url(#studio-grid-major)" pointerEvents="none"/>
+   {all.map((n,i)=>{const p=PARTS[n.partId],node=nodes.get(n.uid)||{},dx=drag?.ids.has(n.uid)?drag.x:0,dy=drag?.ids.has(n.uid)?drag.y:0,w=p.diameter,h=n.height;
+    return <g key={`${n.uid}-${i}`} role="button" tabIndex="0" aria-label={`Select ${p.name}`} data-assembly-uid={n.uid} data-testid={`${i<lay.items.length?'blueprint-part':'blueprint-radial'}-${n.uid}`}
+     transform={`translate(${(n.x||0)+dx} ${-n.y-dy-h/2}) rotate(${-(node.rotation||0)}) translate(0 ${h/2})`}
+     onClick={e=>{if(e.detail===0)onSelect(n.uid);}} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();onSelect(n.uid,e.shiftKey);}}} style={{cursor:'grab'}}>
+     <rect x={-w/2} y={-h} width={w} height={h} fill="transparent"/>
+     <PartDrawing part={p} height={h} deployed={node.deployed} flipX={node.flipX}/>
+     {selected.has(n.uid)&&<rect x={-w/2-.08} y={-h-.08} width={w+.16} height={h+.16} fill="none" stroke="#fff" strokeWidth="1.5" vectorEffect="non-scaling-stroke"/>}
+    </g>;
+   })}
+   {ghost&&<g pointerEvents="none" opacity=".65" transform={`translate(${ghost.x} ${-ghost.y})`}><PartDrawing part={PARTS[heldPart]}/><rect x={-PARTS[heldPart].diameter/2} y={-PARTS[heldPart].height} width={PARTS[heldPart].diameter} height={PARTS[heldPart].height} fill="none" stroke="#b6efff" strokeWidth="1" vectorEffect="non-scaling-stroke"/></g>}
+   {ghost&&mirror&&Math.abs(ghost.x-lay.anchorX)>1&&<g pointerEvents="none" opacity=".35" transform={`translate(${2*lay.anchorX-ghost.x} ${-ghost.y})`}><PartDrawing part={PARTS[heldPart]} flipX/></g>}
+   {box&&<rect x={Math.min(box.a.x,box.b.x)} y={-Math.max(box.a.y,box.b.y)} width={Math.abs(box.a.x-box.b.x)} height={Math.abs(box.a.y-box.b.y)} fill="#b6ddff22" stroke="#fff" strokeWidth="1" vectorEffect="non-scaling-stroke" pointerEvents="none"/>}
+  </svg>
+  {!design.stack.length&&<div className="studio-empty" data-testid="empty-build-grid"><strong>Build your rocket</strong><span>Drag a part from the left onto the grid.</span><small>Pinch or scroll to explore the workspace.</small></div>}
+ </div>;
 }

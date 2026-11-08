@@ -12,6 +12,7 @@ const { browserSession } = require("./browser-session.cjs");
     await b.click("menu-new-mission-btn");
     await b.click("mission-card-first_orbit");
     await b.click("planner-open-hangar-btn");
+    await b.click("workspace-3d");
     const importDesign = async (design) => {
       fs.writeFileSync(
         "/tmp/mission-forge-catalogue-case.json",

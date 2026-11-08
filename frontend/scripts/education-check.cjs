@@ -147,7 +147,7 @@ const input = (id, value, area = false) =>
     await b.click("palette-open");
     await b.evaluate(input("command-search", "rocket builder"));
     await b.key("Enter");
-    await b.wait(b.exists("hangar-3d-viewport"));
+    await b.wait(b.exists("assembly-placement-grid"));
     await b.click("tab-staging");
     await b.clickSelector("[data-testid=build-to-exploration]>summary");
     await b.wait(b.exists("bridge-incompatible"));

@@ -25,6 +25,7 @@ function massToRemove(design, target) {
 }
 
 export function adviseDesign(design, review) {
+  if (!design.stack.length) return [{id:"adv-empty",severity:"fail",title:"Start with a capsule, probe or fuel tank",problems:["The blueprint is empty."],fixes:["Drag parts from the palette onto the grid, then add matching fuel and engines."]}];
   const items = [];
   const byId = Object.fromEntries(review.checks.map((c) => [c.id, c]));
   const { stats } = review;

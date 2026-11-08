@@ -20,7 +20,7 @@ export function validateArchive(entries) {
     missionIds = new Set([...MISSIONS.filter(m => !m.custom), ...missions].map(m => m.id)),
     bodyIds = new Set([...BODIES.filter(b => !b.custom), ...bodies].map(b => b.id));
   const craft = d => {
-    if (!d || typeof d.name !== 'string' || d.name.length > 160 || !Array.isArray(d.stack) || d.stack.length < 1 || d.stack.length > 512 || !Array.isArray(d.radials || []) || (d.radials || []).length > 128) throw Error('Invalid or oversized craft in backup');
+    if (!d || typeof d.name !== 'string' || d.name.length > 160 || !Array.isArray(d.stack) || (d.stack.length < 1 && d.editorDraft !== true) || d.stack.length > 512 || !Array.isArray(d.radials || []) || (d.radials || []).length > 128) throw Error('Invalid or oversized craft in backup');
     const ids = new Set();
     for (const n of [...d.stack, ...(d.radials || [])]) {
       if (!n || typeof n.uid !== 'string' || !n.uid || n.uid.length > 128 || ids.has(n.uid) || !partMap.has(n.partId)) throw Error('Invalid craft identifiers in backup');

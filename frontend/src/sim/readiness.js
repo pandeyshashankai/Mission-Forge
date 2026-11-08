@@ -91,7 +91,7 @@ function upperTwrCheck(stats) {
 export function upperAttitude(stats) {
   const top = stats.sections[stats.sections.length - 1];
   let L = 0, maxD = 0, wheelTorque = 0, wheelMomentum = 0, rcsThrust = 0, mass = 0;
-  for (const n of top.parts) {
+  for (const n of top?.parts || []) {
     const p = PARTS[n.partId];
     L += p.height;
     maxD = Math.max(maxD, p.diameter);
@@ -103,7 +103,7 @@ export function upperAttitude(stats) {
     }
   }
   const cfg = { L: Math.max(1, L), R: maxD / 2, wheelTorque, wheelMomentum, rcsThrust };
-  const hasMono = (top.tanks.monoprop || 0) > 0;
+  const hasMono = (top?.tanks.monoprop || 0) > 0;
   const rcs = hasMono ? rcsTorque(cfg) : 0;
   return { cfg, mass, rcs, hasMono, avail: wheelTorque + rcs, req: attitudeRequirement(mass, cfg, 90, 60) };
 }
@@ -154,6 +154,7 @@ export function runReadiness(design, mission, difficulty) {
   const stats = designStats(design);
   const req = requiredDeltaV(mission);
   const budget = missionBudget(mission, difficulty);
+  if (!design.stack.length) return {stats,req,budget,overall:"NO-GO",checks:[simple("empty","Blueprint",false, "Add a command part, fuel and engines before launch.","A launch vehicle needs equipment",[],[])]};
   const checks = [propulsionCheck(stats, mission, req), twrCheck(stats)];
   checks.push(attitudeCheck(stats));
   const up = upperTwrCheck(stats);

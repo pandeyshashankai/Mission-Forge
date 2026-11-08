@@ -157,7 +157,7 @@ export function isValidDesign(d) {
     !!d &&
     typeof d.name === "string" &&
     Array.isArray(d.stack) &&
-    d.stack.length > 0 &&
+    (d.stack.length > 0 || d.editorDraft === true) &&
     d.stack.length <= 512 &&
     d.name.length <= 160 &&
     d.stack.every((n) => validNode(n) && !PARTS[n.partId].radialOnly) &&

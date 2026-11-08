@@ -98,6 +98,7 @@ const { browserSession } = require("./browser-session.cjs");
     enabled: true,
     maxTouchPoints: 5,
   });
+  await click("workspace-3d");
   const pinch = await evaluate(
     `(()=>{const c=document.querySelector('[data-testid="hangar-3d-viewport"] canvas'),r=c.getBoundingClientRect();return [{x:r.x+r.width*.35,y:r.y+r.height*.4,id:6,radiusX:5,radiusY:5,force:1},{x:r.x+r.width*.65,y:r.y+r.height*.4,id:7,radiusX:5,radiusY:5,force:1}]})()`,
   );

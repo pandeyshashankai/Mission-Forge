@@ -1,5 +1,8 @@
 # Picking up and placing rocket parts
 
+The full-grid studio now adds symmetry, group editing, stable framing and new
+equipment. See the [current builder guide](builder-studio.md).
+
 Choose an item from the palette to pick it up, then drag it onto the grid or tap
 where it should go. You can also drag directly from the palette with a mouse.
 There is no Above/Below/Beside choice. Nearby connection points snap into place;
@@ -19,7 +22,7 @@ a parent removes its attached children. Stage separation removes that stage's
 side equipment too. Side liquid engines have their own visible exhaust.
 
 This is a 2D placement grid with a 3D preview. Attachment links define an ideal
-rigid assembly with common compatible stage fuel, parallel engine thrust and
+rigid assembly with common compatible stage fuel, orientation-dependent engine thrust and
 common throttle. Placement is not a mesh-contact/weld solver: off-axis torque,
 individual engine plumbing and independently staged side branches are not
 resolved by this builder. Stage separators belong in the central stack; the

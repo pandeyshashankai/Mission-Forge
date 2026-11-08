@@ -30,6 +30,7 @@ function visibleDesign(sim) {
     rt.radials.filter((r) => r.attached).map((r) => r.uid),
   );
   return {
+    editorLayout: sim.design.editorLayout,
     stack: sim.design.stack.filter((n) => uids.has(n.uid) && !gone.has(n.uid)),
     radials: (sim.design.radials || []).filter((r) =>
       attachedRadials.has(r.uid),
@@ -458,7 +459,7 @@ export const FlightView = ({
         plume.position.y = offset;
         rocketHolder.add(rocket);
         for(const p of sidePlumes){rocketHolder.remove(p.mesh);disposeObject(p.mesh);}sidePlumes.length=0;
-        for(const n of nowVis.stack)if(n.mount&&PARTS[n.partId].engine){const mesh=makePlume();rocketHolder.add(mesh);sidePlumes.push({uid:n.uid,def:PARTS[n.partId].engine,mesh});}
+        for(const n of nowVis.stack)if((n.mount||n.rotation)&&PARTS[n.partId].engine){const mesh=makePlume();rocketHolder.add(mesh);sidePlumes.push({uid:n.uid,def:PARTS[n.partId].engine,rotation:n.rotation||0,height:PARTS[n.partId].height,mesh});}
         visKey = key;
       }
       const rPos = toThree(sim.r);
@@ -487,6 +488,8 @@ export const FlightView = ({
         const burning=stage&&(stage.tanks[p.def.propellant]||0)>0&&sim.throttle>0;
         p.mesh.visible=!!burning;
         if(burning){const child=rocket.children.find(c=>c.userData.uid===p.uid);p.mesh.position.copy(child.position);p.mesh.position.y+=rocket.position.y;
+          const angle=p.rotation*Math.PI/180;p.mesh.rotation.z=angle;
+          p.mesh.position.x+=Math.sin(angle)*p.height/2;p.mesh.position.y+=(1-Math.cos(angle))*p.height/2;
           const force=p.def.thrustVac*Math.max(p.def.minThrottle||0,sim.throttle)*(p.def.ispVac-(p.def.ispVac-p.def.ispSL)*nav.pRatio)/p.def.ispVac;sideForce+=force;
           const factor=Math.sqrt(force/1e6);p.mesh.scale.set(.4+.4*factor,(8+12*factor)*(.95+Math.random()*.1),.4+.4*factor);}
       }

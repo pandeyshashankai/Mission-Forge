@@ -6,7 +6,7 @@ import { CATEGORIES, PART_LIST, PROPELLANTS } from "../../sim/parts";
 const fmt = (x, d = 0) =>
   Number(x).toLocaleString("en-US", { maximumFractionDigits: d });
 
-export const PartCatalog = ({ onAdd, onHover, onPickup }) => {
+export const PartCatalog = ({ onAdd, onHover, onPickup, onCancelPickup, compact=false }) => {
   const [category, setCategory] = useState("all");
   const [q, setQ] = useState("");
   const parts = PART_LIST.filter(
@@ -17,7 +17,7 @@ export const PartCatalog = ({ onAdd, onHover, onPickup }) => {
         .includes(q.toLowerCase()),
   );
   return (
-    <div className="flex h-full flex-col" data-testid="part-catalog">
+    <div className="flex h-full flex-col" data-testid="part-catalog" data-compact={compact}>
       <div className="relative border-b border-slate-800 p-3">
         <Search
           size={13}
@@ -53,7 +53,10 @@ export const PartCatalog = ({ onAdd, onHover, onPickup }) => {
         </p>
       )}
       <div className="flex-1 overflow-y-auto scroll-thin p-3">
-        {CATEGORIES.map((c) => {
+        {compact ? (()=>{
+          const order=['chute_pack','capsule_3','capsule_1','truss_separator_37','decoupler_37','tank_k_37_s','tank_k_37_m','tank_k_37_l','tank_k_18','eng_k9','eng_k1','eng_kv','eng_h10','rcs_block','nose_37','nose_slanted_37','landing_leg'];
+          return parts.slice().sort((a,b)=>(order.indexOf(a.id)<0?99:order.indexOf(a.id))-(order.indexOf(b.id)<0?99:order.indexOf(b.id))).map(p=><button key={p.id} title={p.name} aria-label={`Pick up ${p.name}`} data-testid={`part-catalog-item-${p.id}`} onClick={()=>onAdd(p.id)} onPointerCancel={onCancelPickup} onPointerDown={e=>onPickup?.(p.id,e)} style={{touchAction:'pan-y',height:Math.min(92,Math.max(34,p.height*5+16))}}><PartIcon part={p}/></button>);
+        })() : CATEGORIES.map((c) => {
           const list = parts.filter((p) => p.category === c.id);
           if (!list.length) return null;
           return (
@@ -67,7 +70,7 @@ export const PartCatalog = ({ onAdd, onHover, onPickup }) => {
                     title={p.name}
                     aria-label={`Add ${p.name}`}
                     onClick={() => onAdd(p.id)}
-                    onPointerDown={e=>onPickup?.(p.id,e)}
+                    onPointerCancel={onCancelPickup} onPointerDown={e=>onPickup?.(p.id,e)}
                     style={{touchAction:"pan-y"}}
                     onMouseEnter={() => onHover?.(p.id)}
                     className="group w-full border border-slate-800/80 bg-slate-950/70 px-2.5 py-2 text-left transition-[border-color,background-color,transform] hover:translate-x-0.5 hover:border-cyan-500/50 hover:bg-slate-900"

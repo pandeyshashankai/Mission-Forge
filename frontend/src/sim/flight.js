@@ -61,6 +61,7 @@ export class FlightSim {
     guidanceOn = true,
     difficulty = "amateur",
   }) {
+    if (!design.stack.length) throw new Error("Add parts to the blueprint before launching.");
     this.sys = newSystems(mission.id, difficulty);
     this.sunAU = 1;
     this.design = design;
@@ -412,7 +413,7 @@ export class FlightSim {
     return (
       this.status === "crashed" ||
       this.status === "ended" ||
-      this.status === "splashdown"
+      this.status === "splashdown" || this.status === "landed"
     );
   }
 
@@ -567,6 +568,8 @@ export class FlightSim {
         : 1;
     if (pulse < 1) {
       ts.F *= pulse;
+      ts.axial *= pulse;
+      ts.forceBody = ts.forceBody.map(f => f * pulse);
       ts.flows = ts.flows.map((f) => ({ ...f, mdot: f.mdot * pulse }));
     }
     const m = runtimeMass(this.rt);
@@ -574,7 +577,7 @@ export class FlightSim {
       consume(this.rt, ts.flows, dt);
       this.t += this.status === "prelaunch" ? 0 : dt;
       const g = EARTH.mu / (this.padRadius * this.padRadius);
-      if (ts.F > m * g && this.status === "flight") {
+      if (ts.axial > m * g && this.status === "flight") {
         this.clamped = false;
         this.addLog(
           "info",
@@ -619,20 +622,27 @@ export class FlightSim {
     const dir = this.dir;
     this.att = this.attFromDir(dir, nav);
     const F = ts.F;
+    // Match the body-frame thrust vector to the same attitude used by the renderers.
+    let forceDir=dir;
+    if(ts.directional&&F>0){
+      const qv=[dir[2],0,-dir[0]],qw=1+dir[1],qm=Math.hypot(...qv,qw),v=ts.forceBody;
+      if(qm<1e-8)forceDir=norm([-v[0],-v[1],v[2]]);
+      else{const q=scale(qv,1/qm),t=scale(cross(q,v),2);forceDir=norm(add(add(v,scale(t,qw/qm)),cross(q,t)));}
+    }
     const r0 = this.r;
     const v0 = this.v;
     const t0 = this.t;
-    const k1v = this.accel(r0, v0, dir, F, m, area, t0);
+    const k1v = this.accel(r0, v0, forceDir, F, m, area, t0);
     const k1r = v0;
     const r2 = add(r0, scale(k1r, dt / 2)),
       v2 = add(v0, scale(k1v, dt / 2));
-    const k2v = this.accel(r2, v2, dir, F, m, area, t0 + dt / 2);
+    const k2v = this.accel(r2, v2, forceDir, F, m, area, t0 + dt / 2);
     const r3 = add(r0, scale(v2, dt / 2)),
       v3 = add(v0, scale(k2v, dt / 2));
-    const k3v = this.accel(r3, v3, dir, F, m, area, t0 + dt / 2);
+    const k3v = this.accel(r3, v3, forceDir, F, m, area, t0 + dt / 2);
     const r4 = add(r0, scale(v3, dt)),
       v4 = add(v0, scale(k3v, dt));
-    const k4v = this.accel(r4, v4, dir, F, m, area, t0 + dt);
+    const k4v = this.accel(r4, v4, forceDir, F, m, area, t0 + dt);
     this.r = add(
       r0,
       scale(add(add(v0, scale(v2, 2)), add(scale(v3, 2), v4)), dt / 6),
@@ -740,6 +750,8 @@ export class FlightSim {
       if (reg !== this.region) this.onRegionChange(reg);
     }
     if (nav.alt < 0) {
+      const legs=this.rt.sections.filter(s=>s.attached).reduce((a,s)=>a+(s.legs||0),0);
+      if(legs>=2&&nav.surfSpeed<=6&&dot(this.dir,nav.up)>.9){this.end('landed',`Upright touchdown at ${nav.surfSpeed.toFixed(1)} m/s on deployed landing legs`);return;}
       if (nav.body === "moon")
         this.end(
           "crashed",

@@ -23,6 +23,8 @@ export function hangarCraft(design) {
     );
   if (!parts.some((p) => p.control))
     throw Error("Add a probe or controllable payload.");
+  if (design.stack.some(n=>PARTS[n.partId].engine&&(n.rotation||0)%360!==0))
+    throw Error("Exploration transfer requires aligned engines facing down. Rotate the engines back before transferring.");
   const engines = parts.filter((p) => p.engine).map((p) => p.engine),
     types = new Set(engines.map((e) => e.propellant));
   if (!engines.length || types.size !== 1 || types.has("solid"))
@@ -50,7 +52,8 @@ export function hangarCraft(design) {
     );
   const clean = {
     name: design.name.slice(0, 60),
-    stack: design.stack.map((n) => ({ uid: n.uid, partId: n.partId, ...(n.mount ? {mount:{...n.mount}} : {}) })),
+    editorLayout:!!design.editorLayout,
+    stack: design.stack.map((n) => ({ uid: n.uid, partId: n.partId, ...(n.position?{position:{...n.position}}:{}), ...(n.rotation?{rotation:n.rotation}:{}), ...(n.flipX?{flipX:true}:{}), ...(n.mount ? {mount:{...n.mount}} : {}) })),
     radials: [],
     events: null,
   };

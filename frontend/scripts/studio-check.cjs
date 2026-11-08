@@ -1,0 +1,31 @@
+require('./register.cjs');
+const assert=require('node:assert/strict'),fs=require('node:fs');
+const {browserSession}=require('./browser-session.cjs');
+(async()=>{
+ const b=await browserSession();
+ const mouse=(type,p,more={})=>b.call('Input.dispatchMouseEvent',{type,...p,...more});
+ const saved=async()=>{await b.pause(250);return b.evaluate("(()=>{window.missionForgeData.flush();return JSON.parse(localStorage.getItem('mf.autosave')).design})()");};
+ const world=async(x,y)=>b.evaluate(`(()=>{const s=document.querySelector('[data-testid=assembly-placement-grid]'),p=s.createSVGPoint();p.x=${x};p.y=${-y};const q=p.matrixTransform(s.getScreenCTM());return {x:q.x,y:q.y}})()`);
+ const drag=async(a,z)=>{await mouse('mousePressed',a,{button:'left',clickCount:1});for(let i=1;i<=6;i++){await mouse('mouseMoved',{x:a.x+(z.x-a.x)*i/6,y:a.y+(z.y-a.y)*i/6},{buttons:1,button:'left'});await b.pause(25);}await mouse('mouseReleased',z,{button:'left',clickCount:1});await b.pause(250);};
+ const drop=async(id,x,y)=>{await b.evaluate(`document.querySelector('[data-testid=part-catalog-item-${id}]').scrollIntoView({block:'center'})`);await b.pause(100);const a=await b.evaluate(`(()=>{const r=document.querySelector('[data-testid=part-catalog-item-${id}]').getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2}})()`);await drag(a,await world(x,y));await b.wait("!document.querySelector('[data-testid=held-part]')");};
+ try{
+  await b.viewport(1440,1000);await b.call('Emulation.setTouchEmulationEnabled',{enabled:false});await b.home();await b.evaluate("localStorage.clear();localStorage.setItem('mf.settings',JSON.stringify({graphics:'medium',reduceMotion:true}));window.missionForgeData.flush()");await b.home();await b.click('menu-new-mission-btn');await b.click('mission-card-first_orbit');await b.click('planner-open-hangar-btn');await b.click('new-blueprint');
+  assert.equal((await saved()).stack.length,0);await b.home();await b.click('menu-continue-btn');assert.equal((await saved()).stack.length,0);assert.ok(await b.evaluate("document.querySelector('[data-testid=open-readiness-btn]').disabled"));
+  for(let i=0;i<3;i++)await b.click('assembly-zoom-out');const camera=await b.evaluate("document.querySelector('[data-testid=assembly-placement-grid]').getAttribute('viewBox')");
+  await drop('capsule_1',0,16);await drop('chute_pack',0,18.4);await drop('tank_k_37_s',0,10);await drop('eng_kv',0,6);
+  assert.equal(await b.evaluate("document.querySelector('[data-testid=assembly-placement-grid]').getAttribute('viewBox')"),camera,'Adding equipment must preserve camera');
+  await b.click('studio-symmetry');await drop('landing_leg',2.1,10);await b.click('inspect-selection');await b.click('leg-deployed');await b.click('inspect-selection');assert.equal((await saved()).stack.filter(n=>n.partId==='landing_leg'&&n.deployed).length,2);
+  await drop('truss_separator_37',0,3.6);await drop('tank_k_37_l',0,-18.4);await drop('eng_k9',0,-21.9);await drop('tank_k_37_l',3.7,-18.4);await drop('eng_k1',3.7,-20.9);await drop('nose_slanted_37',3.7,3.6);await drop('rcs_block',1.15,17);await b.click('assembly-fit');
+  let d=await saved();assert.ok(require('../src/sim/design').designStats(d).liftoffTWR>1,'Reference build must lift off');assert.equal(d.stack.filter(n=>n.partId==='tank_k_37_l').length,3);assert.equal(d.stack.filter(n=>n.partId==='eng_k1').length,2);assert.equal(d.stack.filter(n=>n.partId==='nose_slanted_37').length,2);assert.equal(d.stack.filter(n=>n.partId==='rcs_block').length,2);
+  fs.writeFileSync('/tmp/mf-studio-reference-design.json',JSON.stringify(d,null,2));console.log('PASS: complete native reference build from blank grid, stable camera, deployed mirror legs, two stages, paired tanks/engines/noses and RCS');
+  await b.click('studio-select-area');await drag(await world(-7,5),await world(7,-24));const before=d.stack.length;await b.click('duplicate-selected-btn');assert.ok((await saved()).stack.length>before);await b.click('rotate-selected');assert.ok((await saved()).stack.some(n=>n.rotation===270));await b.click('studio-undo');await b.click('remove-selected-btn');assert.equal((await saved()).stack.length,before);
+  console.log('PASS: native rectangle group selection, copy, rotation, undo and delete');
+  for(const [w,h]of [[1440,1000],[390,844],[320,568],[844,390],[768,1024]]){await b.viewport(w,h);await b.click('assembly-fit');const g=await b.evaluate("(()=>{const r=document.querySelector('[data-testid=assembly-placement-grid]').getBoundingClientRect(),p=document.querySelector('.builder-screen').getBoundingClientRect();return {width:r.width,height:r.height,pw:p.width,ph:p.height,overflow:document.documentElement.scrollWidth>innerWidth,hit:document.elementFromPoint(innerWidth/2,innerHeight/2)?.closest('[data-testid=assembly-placement-grid]')!==null}})()");assert.ok(Math.abs(g.width-g.pw)<1&&Math.abs(g.height-g.ph)<1);assert.equal(g.overflow,false);assert.ok(g.hit);await b.screenshot('studio-builder-'+w+'x'+h);}
+  for(const [w,h,insets]of [[390,844,{top:59,bottom:34,left:0,right:0}],[844,390,{top:0,bottom:21,left:44,right:0}]]){
+   await b.viewport(w,h);await b.call('Emulation.setSafeAreaInsetsOverride',{insets});await b.pause(150);
+   for(const id of ['builder-tools-toggle','open-readiness-btn','studio-symmetry','studio-select-area','studio-snap','studio-undo']){const r=await b.evaluate(`(()=>{const r=document.querySelector('[data-testid=${id}]').getBoundingClientRect();return {x:r.x,y:r.y,right:r.right,bottom:r.bottom}})()`);assert.ok(r.x>=insets.left&&r.y>=insets.top&&r.right<=w-insets.right&&r.bottom<=h-insets.bottom,id+' violates safe area');}
+  }
+  await b.call('Emulation.setSafeAreaInsetsOverride',{insets:{top:0,bottom:0,left:0,right:0}});console.log('PASS: empty-draft resume and portrait/landscape cutout-safe builder controls');
+  await b.viewport(1440,1000);await b.click('workspace-3d');await b.wait(b.exists('hangar-3d-viewport'));await b.screenshot('studio-builder-3d');await b.click('workspace-blueprint');await b.click('save-design-btn');await b.home();await b.click('menu-continue-btn');assert.deepEqual(await saved(),d);console.log('PASS: full-size grid on five device layouts, 3D preview, save/resume and original part geometry');assert.deepEqual(b.errors,[]);
+ }finally{b.close();}
+})().catch(e=>{console.error(e);process.exitCode=1;});

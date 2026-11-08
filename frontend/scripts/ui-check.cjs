@@ -64,10 +64,10 @@ const { browserSession } = require("./browser-session.cjs");
     await click("menu-new-mission-btn");
     await click("mission-card-first_orbit");
     await click("planner-open-hangar-btn");
-    await wait(exists("hangar-3d-viewport"));
+    await wait(exists("assembly-placement-grid"));
     if (width < 1000) {
       await b.clickSelector(".builder-mobile-tabs button[aria-pressed=false]");
-      await b.clickSelector(".builder-mobile-tabs button:nth-child(2)");
+      await b.click("builder-panel-parts");
     }
     await click("open-readiness-btn");
     await wait(exists("readiness-checks"));
@@ -94,7 +94,7 @@ const { browserSession } = require("./browser-session.cjs");
     await click("menu-new-mission-btn");
     await click("mission-card-" + mission);
     await click("planner-open-hangar-btn");
-    await wait(exists("hangar-3d-viewport"));
+    await wait(exists("assembly-placement-grid"));
     await click("open-readiness-btn");
     assert.notEqual(
       await evaluate(
@@ -145,6 +145,7 @@ const { browserSession } = require("./browser-session.cjs");
   await click("menu-new-mission-btn");
   await click("mission-card-first_orbit");
   await click("planner-open-hangar-btn");
+  await click("workspace-3d");
   for (const preset of [
     "aster_m",
     "orbiter9",
@@ -211,7 +212,7 @@ const { browserSession } = require("./browser-session.cjs");
   await click("menu-load-btn");
   await wait(exists("load-dialog"));
   await b.clickSelector('[data-testid^="load-design-"]');
-  await wait(exists("hangar-3d-viewport"));
+  await wait(exists("assembly-placement-grid"));
   const design = await evaluate(
     'JSON.parse(localStorage.getItem("mf.autosave")).design',
   );

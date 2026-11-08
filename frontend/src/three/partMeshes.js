@@ -162,6 +162,22 @@ export function buildPartMesh(part, height = part.height) {
   const r = part.diameter / 2;
   const h = height;
   switch (part.look) {
+    case "nose":
+    case "nose_slanted": {
+      const shape=new THREE.ConeGeometry(r,h,32);
+      if(part.look==="nose_slanted"){const p=shape.attributes.position;for(let i=0;i<p.count;i++)p.setX(i,p.getX(i)+r*(p.getY(i)/h+.5));shape.computeVertexNormals();}
+      const mesh=new THREE.Mesh(shape,M.white());mesh.position.y=h/2;g.add(mesh);break;
+    }
+    case "truss": {
+      g.add(cyl(r,r,h*.1,M.white()));g.children[0].position.y=h*.05;
+      const top=cyl(r,r,h*.1,M.white());top.position.y=h*.95;g.add(top);
+      for(let i=0;i<8;i++){const a=i*Math.PI/4;const bar=cyl(.035,.035,h,M.white());bar.position.set(Math.cos(a)*r*.85,h/2,Math.sin(a)*r*.85);g.add(bar);}break;
+    }
+    case "leg": {
+      const bar=cyl(.08,.08,h*.9,M.white());bar.position.y=h/2;g.add(bar);
+      if(part.deployed){const leg=cyl(.07,.07,h*.9,M.white());leg.rotation.z=.6;leg.position.set(h*.24,h*.38,0);g.add(leg);const foot=new THREE.Mesh(new THREE.BoxGeometry(.65,.1,.5),M.white());foot.position.set(h*.5,.05,0);g.add(foot);}break;
+    }
+    case "rcs_block": {const b=new THREE.Mesh(new THREE.BoxGeometry(r*2,h,r),M.white());b.position.y=h/2;g.add(b);break;}
     case "tank_white":
     case "tank_orange": {
       g.add(cyl(r, r, h, part.look === "tank_white" ? M.white() : M.orange()));
@@ -361,7 +377,9 @@ export function buildRocket(design, { xray = false } = {}) {
   const lay = layoutDesign(design);
   for (const it of lay.items) {
     const p = PARTS[it.partId];
-    const m = buildPartMesh(p, it.height);
+    const node=design.stack.find(n=>n.uid===it.uid);
+    let m = buildPartMesh({...p,deployed:node?.deployed}, it.height);
+    if(node?.rotation||node?.flipX){const outer=new THREE.Group(),pivot=new THREE.Group();m.position.y=-it.height/2;pivot.add(m);pivot.position.y=it.height/2;pivot.rotation.z=(node.rotation||0)*Math.PI/180;if(node.flipX)pivot.scale.x=-1;outer.add(pivot);m=outer;}
     m.position.set(it.x || 0, it.y, it.z || 0);
     m.userData.uid = it.uid;
     m.traverse((o) => {

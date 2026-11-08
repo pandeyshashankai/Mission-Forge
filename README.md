@@ -15,8 +15,9 @@ Choose **First Orbit** for an assisted launch or **Mission Control Academy** for
 a predict–fly–reflect lesson. **NASA Data Explorer** shows which source values
 affect gravity, orbital speed and atmosphere. Advanced laboratories are optional.
 
-- **Engineering:** pickup/drop construction with side tanks and liquid engines,
-  36 parts, seven presets, staging, readiness checks,
+- **Engineering:** full-grid construction with free placement, pan/zoom, mirrored
+  side tanks and engines, group editing, deployed landing legs,
+  41 parts, seven presets, staging, readiness checks,
   fuel and delta-v calculations, three difficulties and mission reports.
 - **Learning:** five Academy lessons, first-flight guide, evidence-linked debriefs,
   reflection journal and paired scientific model comparison.
@@ -29,6 +30,10 @@ affect gravity, orbital speed and atmosphere. Advanced laboratories are optional
   fracture and complete simulation sessions inside a WebAssembly interpreter.
 - **Access:** keyboard remapping, touch steering/throttle/stage/RCS, themes, local
   saves and exports, recovery tools and prepared offline play.
+
+[Builder controls and model details](docs/builder-studio.md)
+
+![Rocket construction studio](docs/images/studio-builder-desktop.png)
 
 ![NASA Data Explorer](docs/images/release-nasa-data.png)
 

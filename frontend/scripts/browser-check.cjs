@@ -122,7 +122,7 @@ const pause = (ms) => new Promise((r) => setTimeout(r, ms));
   await click("explore-back");
   await click("menu-new-mission-btn");
   await click("planner-open-hangar-btn");
-  await wait(exists("hangar-3d-viewport"));
+  await wait(exists("assembly-placement-grid"));
   await screen("hangar");
   await click("workspace-blueprint");
   await wait(exists("blueprint-workspace"));

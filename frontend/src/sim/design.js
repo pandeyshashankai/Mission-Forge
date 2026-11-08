@@ -41,7 +41,7 @@ export function buildSections(design) {
       if (p.fairing) fairings.push({ uid: n.uid, mass: p.dryMass, diameter: p.diameter });
       else dryMass += p.dryMass;
       if (p.propellant) tanks[p.propellant.type] = (tanks[p.propellant.type] || 0) + p.propellant.mass;
-      if (p.engine) engines.push({ uid: n.uid, partId: n.partId });
+      if (p.engine) engines.push({ uid: n.uid, partId: n.partId, rotation:n.rotation || 0 });
     }
     const radials = (design.radials || []).filter((r) => uids.has(r.parentUid));
     return { index, parts, uids, tanks, engines, dryMass, cost, maxD, fairings, radials };
@@ -49,6 +49,7 @@ export function buildSections(design) {
 }
 
 export function defaultEvents(sections) {
+  if(!sections.length)return [];
   const fairings = sections.flatMap((s) => s.fairings.map((f) => `fair-${f.uid}`));
   const ev = ["ignite-0"];
   sections.forEach((s, i) => {
@@ -95,12 +96,13 @@ export function createRuntime(design) {
     eventIndex: 0,
     sections: sections.map((s) => ({
       index: s.index,
+      legs:s.parts.filter(n=>PARTS[n.partId].landingLeg && n.deployed).length,
       ...(placed.length ? {placedDisks:placed.filter(n=>s.uids.has(n.uid)&&design.stack.find(p=>p.uid===n.uid)?.mount).map(n=>({x:n.x||0,z:n.z||0,d:PARTS[n.partId].diameter}))} : {}),
       dryMass: s.dryMass,
       maxD: s.maxD,
       tanks: { ...s.tanks },
       tanksFull: { ...s.tanks },
-      engines: s.engines.map((e) => ({ ...e, def: PARTS[e.partId].engine })),
+      engines: s.engines.map((e) => ({ ...e, def: {...PARTS[e.partId].engine,rotation:e.rotation || 0} })),
       fairings: s.fairings.map((f) => ({ ...f, attached: true })),
       attached: true,
       ignited: false,
@@ -183,6 +185,7 @@ export const effThrottle = (def, cmd) => (def.solid ? 1 : cmd <= 0 ? 0 : Math.ma
 export function thrustState(rt, throttle, pRatio) {
   let F = 0;
   let Fmax = 0;
+  let fx=0,fy=0,mx=0,my=0,directional=false;
   const flows = [];
   for (const src of activeSources(rt)) {
     let mdot = 0;
@@ -190,12 +193,13 @@ export function thrustState(rt, throttle, pRatio) {
       const md = d.thrustVac / (G0 * d.ispVac);
       const th = effThrottle(d, throttle);
       mdot += md * th;
-      F += md * th * G0 * ispAt(d, pRatio);
-      Fmax += md * G0 * ispAt(d, pRatio);
+      const f=md*th*G0*ispAt(d,pRatio),fm=md*G0*ispAt(d,pRatio),a=(d.rotation||0)*Math.PI/180;
+      F+=f;Fmax+=fm;fx-=Math.sin(a)*f;fy+=Math.cos(a)*f;mx-=Math.sin(a)*fm;my+=Math.cos(a)*fm;
+      directional ||= !!d.rotation;
     }
     flows.push({ src, mdot });
   }
-  return { F, Fmax, flows };
+  return { F:directional?Math.hypot(fx,fy):F, Fmax:directional?Math.hypot(mx,my):Fmax, flows, axial:directional?fy:F, forceBody:[fx,fy,0], directional };
 }
 
 export function consume(rt, flows, dt) {
@@ -204,7 +208,7 @@ export function consume(rt, flows, dt) {
 
 export function applyEvent(rt, id) {
   if (id === "ignite-0") {
-    rt.sections[0].ignited = true;
+    if(rt.sections[0])rt.sections[0].ignited = true;
     rt.radials.filter((r) => r.section === 0).forEach((r) => (r.ignited = true));
   } else if (id.startsWith("sep-")) {
     const k = +id.slice(4);
@@ -314,8 +318,8 @@ export function designStats(design) {
     launchOpsCost: LAUNCH_OPS_COST,
     cost: cost + LAUNCH_OPS_COST,
     dv,
-    liftoffThrustSL: liftoff.F,
-    liftoffTWR: liftoff.F / (mass * G0),
+    liftoffThrustSL: liftoff.axial,
+    liftoffTWR: liftoff.axial / Math.max(1,mass * G0),
     stageCount: sections.length,
     hasControl,
     crew,
