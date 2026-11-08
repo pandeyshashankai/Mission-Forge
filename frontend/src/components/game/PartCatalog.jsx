@@ -6,7 +6,7 @@ import { CATEGORIES, PART_LIST, PROPELLANTS } from "../../sim/parts";
 const fmt = (x, d = 0) =>
   Number(x).toLocaleString("en-US", { maximumFractionDigits: d });
 
-export const PartCatalog = ({ onAdd, onHover, onPickup, onCancelPickup, compact=false }) => {
+export const PartCatalog = ({ onHover, onPickup, onCancelPickup, compact=false }) => {
   const [category, setCategory] = useState("all");
   const [q, setQ] = useState("");
   const parts = PART_LIST.filter(
@@ -55,7 +55,7 @@ export const PartCatalog = ({ onAdd, onHover, onPickup, onCancelPickup, compact=
       <div className="flex-1 overflow-y-auto scroll-thin p-3">
         {compact ? (()=>{
           const order=['chute_pack','capsule_3','capsule_1','truss_separator_37','decoupler_37','tank_k_37_s','tank_k_37_m','tank_k_37_l','tank_k_18','eng_k9','eng_k1','eng_kv','eng_h10','rcs_block','nose_37','nose_slanted_37','landing_leg'];
-          return parts.slice().sort((a,b)=>(order.indexOf(a.id)<0?99:order.indexOf(a.id))-(order.indexOf(b.id)<0?99:order.indexOf(b.id))).map(p=><button key={p.id} title={p.name} aria-label={`Pick up ${p.name}`} data-testid={`part-catalog-item-${p.id}`} onClick={()=>onAdd(p.id)} onPointerCancel={onCancelPickup} onPointerDown={e=>onPickup?.(p.id,e)} style={{touchAction:'pan-y',height:Math.min(92,Math.max(34,p.height*5+16))}}><PartIcon part={p}/></button>);
+          return parts.slice().sort((a,b)=>(order.indexOf(a.id)<0?99:order.indexOf(a.id))-(order.indexOf(b.id)<0?99:order.indexOf(b.id))).map(p=><button key={p.id} title={p.name} aria-label={`Pick up ${p.name}`} data-testid={`part-catalog-item-${p.id}`} onPointerCancel={onCancelPickup} onPointerDown={e=>onPickup?.(p.id,e)} style={{touchAction:'pan-y',height:Math.min(92,Math.max(34,p.height*5+16))}}><PartIcon part={p}/></button>);
         })() : CATEGORIES.map((c) => {
           const list = parts.filter((p) => p.category === c.id);
           if (!list.length) return null;
@@ -69,7 +69,6 @@ export const PartCatalog = ({ onAdd, onHover, onPickup, onCancelPickup, compact=
                     data-testid={`part-catalog-item-${p.id}`}
                     title={p.name}
                     aria-label={`Add ${p.name}`}
-                    onClick={() => onAdd(p.id)}
                     onPointerCancel={onCancelPickup} onPointerDown={e=>onPickup?.(p.id,e)}
                     style={{touchAction:"pan-y"}}
                     onMouseEnter={() => onHover?.(p.id)}

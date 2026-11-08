@@ -104,6 +104,12 @@ async function browserSession() {
     );
     if (p.disabled || !p.visible || !p.hit)
       throw Error(`Cannot click ${selector}: ${JSON.stringify(p)}`);
+    if(selector.includes('part-catalog-item-')){
+      const end=await evaluate("(()=>{const r=document.querySelector('[data-testid=assembly-placement-grid]').getBoundingClientRect();return {x:r.x+r.width*.72,y:r.y+r.height*.55}})()");
+      await call('Input.dispatchMouseEvent',{type:'mousePressed',button:'left',clickCount:1,x:p.x,y:p.y});
+      for(let i=1;i<=8;i++){await call('Input.dispatchMouseEvent',{type:'mouseMoved',buttons:1,button:'left',x:p.x+(end.x-p.x)*i/8,y:p.y+(end.y-p.y)*i/8});await pause(20);}
+      await call('Input.dispatchMouseEvent',{type:'mouseReleased',button:'left',clickCount:1,...end});await pause(250);return;
+    }
     await call("Input.dispatchMouseEvent", {
       type: "mousePressed",
       button: "left",
@@ -119,13 +125,7 @@ async function browserSession() {
       y: p.y,
     });
     await pause(200);
-    // Palette selection now picks up a part; legacy flow checks complete a real grid drop.
-    if(selector.includes('part-catalog-item-') && await evaluate("!!document.querySelector('[data-testid=held-part]')")) {
-      const p=await evaluate("(()=>{const r=document.querySelector('[data-testid=assembly-placement-grid]').getBoundingClientRect();return {x:r.x+r.width*.72,y:r.y+r.height*.55}})()");
-      await call('Input.dispatchMouseEvent',{type:'mousePressed',button:'left',clickCount:1,...p});
-      await call('Input.dispatchMouseEvent',{type:'mouseReleased',button:'left',clickCount:1,...p});
-      await pause(250);
-    }
+
   };
   const click = (id) => clickSelector(`[data-testid="${id}"]`);
   const select = async (id, value) => {

@@ -3,8 +3,8 @@
 The full-grid studio now adds symmetry, group editing, stable framing and new
 equipment. See the [current builder guide](builder-studio.md).
 
-Choose an item from the palette to pick it up, then drag it onto the grid or tap
-where it should go. You can also drag directly from the palette with a mouse.
+Press and hold a palette part, drag it onto the grid, then release to place it.
+Use one continuous mouse or finger gesture. A tap/click alone does not arm placement.
 There is no Above/Below/Beside choice. Nearby connection points snap into place;
 otherwise the part keeps its chosen position on the grid, rounded to 0.25 m.
 Cancel or Escape puts the held part away without adding it.

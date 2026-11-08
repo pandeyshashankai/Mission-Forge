@@ -10,8 +10,9 @@ beginner rocket-building video.
 - Open the upper-left menu for **New blank rocket**, presets, naming, saves,
   import/export, undo/redo and display settings. Existing recommended mission
   rockets remain available.
-- Drag a palette silhouette directly onto the grid, or tap to pick it up and
-  tap the grid to place it. Escape or Cancel puts it away. Use the bottom-left
+- Press and hold a palette silhouette, drag it onto the grid and release to
+  place it. A tap/click does not arm placement; release outside the grid cancels.
+  Escape or Cancel also puts it away. Use the bottom-left
   Parts button for the searchable catalog and categories.
 - Drag empty grid to pan in any direction. Scroll pans; Ctrl + scroll zooms
   around the pointer. Two fingers pan/zoom on touchscreens. The corner +/− and

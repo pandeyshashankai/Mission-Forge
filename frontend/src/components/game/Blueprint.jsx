@@ -11,7 +11,7 @@ function bounds(item,design){
  return {left:(item.x||0)-halfWidth,right:(item.x||0)+halfWidth,low:item.y+item.height/2-halfHeight,high:item.y+item.height/2+halfHeight};
 }
 
-export function Blueprint({design,selectedUid,selectedUids=[],onSelect,onSelectMany,onPlace,onMoveGroup,heldPart,cursor,mirror=false,snap=true,areaMode=false,onAreaDone,viewCommand}){
+export function Blueprint({design,selectedUid,selectedUids=[],onSelect,onSelectMany,onMoveGroup,heldPart,cursor,mirror=false,snap=true,areaMode=false,onAreaDone,viewCommand}){
  const mount=useRef(null),svg=useRef(null),pointers=useRef(new Map()),gesture=useRef(null),frameRef=useRef(null),measured=useRef(false),designRef=useRef(design);
  const [size,setSize]=useState({width:0,height:0}),[frame,setFrame]=useState(null),[drag,setDrag]=useState(null),[box,setBox]=useState(null);
  designRef.current=design;
@@ -41,7 +41,7 @@ export function Blueprint({design,selectedUid,selectedUids=[],onSelect,onSelectM
   const r=svg.current.getBoundingClientRect(),inside=e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom;
   if(g&&!g.multi&&inside&&e.type==='pointerup'){
    const p=world(e),moved=Math.hypot(e.clientX-g.startX,e.clientY-g.startY)>5;
-   if(heldPart)onPlace?.(p);
+   if(heldPart){ /* Palette drops are committed by the active drag handler. */ }
    else if(g.area){const a=g.start,b=p;const ids=all.filter(n=>{const r=bounds(n,design);return r.right>=Math.min(a.x,b.x)&&r.left<=Math.max(a.x,b.x)&&r.high>=Math.min(a.y,b.y)&&r.low<=Math.max(a.y,b.y);}).map(n=>n.uid);onSelectMany?.([...new Set(ids)]);onAreaDone?.();}
    else if(g.uid&&moved)onMoveGroup?.(g.ids,(e.clientX-g.startX)/g.zoom,-(e.clientY-g.startY)/g.zoom);
    else if(g.uid)onSelect(g.uid,e.shiftKey);

@@ -31,3 +31,12 @@ Browser tests use Chromium with native pointer/touch input and viewport/cutout
 emulation. Physical phone testing remains separate. The builder's attachment,
 staging, shared-fuel and approximate landing-model limits are documented in the
 [studio guide](builder-studio.md).
+
+## Drag-only follow-up
+
+Palette placement requires one continuous mouse/finger drag and release on the
+grid. Tap-to-pick-up/tap-to-place was removed. The phone regression explicitly
+checks that tapping the palette and then the grid does not add equipment, before
+performing a native continuous finger drag. It also checks that releasing
+outside the grid cancels and releasing a second finger cannot drop the active
+finger’s part.

@@ -86,7 +86,7 @@ export default function Hangar() {
   const [rightTab, setRightTab] = useState("stack");
   const [heldPart,setHeldPart] = useState(null);
   const [cursor,setCursor] = useState(null);
-  const pickup = useRef(null), lastDrop = useRef(0);
+  const pickup = useRef(null);
   const [viewCommand,setViewCommand] = useState({action:"fit",id:0});
   const [pan3D,setPan3D] = useState(false);
   const [symmetry, setSym] = useState(2);
@@ -114,24 +114,24 @@ export default function Hangar() {
   const startNew=()=>{setDesign(newBlueprint());selectMany([]);setHeldPart(null);setToolsOpen(false);setWorkspace('blueprint');resetView();};
 
   const onAdd = (partId) => {
-    if(Date.now()-lastDrop.current<300)return;
     setHeldPart(partId); setWorkspace('blueprint'); setSmallPane('build');
   };
   const onPlace = position => {
     if(!heldPart)return;
     const result=studioDrop(design,heldPart,position,mirror,symmetry,snap);
-    if(result.error){toast.error(result.error);return;}
-    setDesign(result.design);selectMany([result.uid||result.design.stack[0]?.uid].filter(Boolean));setHeldPart(null);setCursor(null);lastDrop.current=Date.now();
+    if(result.error){toast.error(result.error);setHeldPart(null);setCursor(null);return;}
+    setDesign(result.design);selectMany([result.uid||result.design.stack[0]?.uid].filter(Boolean));setHeldPart(null);setCursor(null);
   };
   const onMoveGroup=(ids,dx,dy)=>{setDesign(moveSelection(design,ids,dx,dy));selectMany(ids);};
   useEffect(()=>{
-    const move=e=>{if(heldPart)setCursor({x:e.clientX,y:e.clientY});};
+    const move=e=>{if(heldPart&&pickup.current?.pointerId===e.pointerId)setCursor({x:e.clientX,y:e.clientY});};
     const up=e=>{
-      const start=pickup.current;pickup.current=null;
-      if(!heldPart||!start||Math.hypot(e.clientX-start.x,e.clientY-start.y)<5)return;
+      const start=pickup.current;if(start&&start.pointerId!==e.pointerId)return;pickup.current=null;
+      const clear=()=>{setHeldPart(null);setCursor(null);};
+      if(!heldPart||!start||Math.hypot(e.clientX-start.x,e.clientY-start.y)<5){clear();return;}
       const grid=document.querySelector('[data-testid=assembly-placement-grid]');
-      if(!grid||!document.elementFromPoint(e.clientX,e.clientY)?.closest('[data-testid=assembly-placement-grid]'))return;const r=grid.getBoundingClientRect();
-      if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)return;
+      if(!grid||!document.elementFromPoint(e.clientX,e.clientY)?.closest('[data-testid=assembly-placement-grid]')){clear();return;}const r=grid.getBoundingClientRect();
+      if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom){clear();return;}
       const p=grid.createSVGPoint();p.x=e.clientX;p.y=e.clientY;const world=p.matrixTransform(grid.getScreenCTM().inverse());onPlace({x:world.x,y:-world.y});
     };
     const cancel=e=>{if(e.key==='Escape'){setHeldPart(null);setCursor(null);pickup.current=null;}};
@@ -324,7 +324,7 @@ export default function Hangar() {
       </nav>
       <div className="assembly-workspace grid min-h-0 flex-1">
         <aside className="assembly-catalog min-h-0 border-r border-slate-800 bg-slate-950/80">
-          <PartCatalog onCancelPickup={()=>{pickup.current=null;setHeldPart(null);setCursor(null);}} compact={smallPane!=="parts"} onAdd={onAdd} onPickup={(partId,e)=>{if(e.button>0)return;e.currentTarget.setPointerCapture(e.pointerId);pickup.current={x:e.clientX,y:e.clientY};setCursor({x:e.clientX,y:e.clientY});onAdd(partId);}} />
+          <PartCatalog onCancelPickup={e=>{if(pickup.current&&pickup.current.pointerId!==e.pointerId)return;pickup.current=null;setHeldPart(null);setCursor(null);}} compact={smallPane!=="parts"} onPickup={(partId,e)=>{if(e.button>0||pickup.current)return;e.currentTarget.setPointerCapture(e.pointerId);pickup.current={x:e.clientX,y:e.clientY,pointerId:e.pointerId};setCursor({x:e.clientX,y:e.clientY});onAdd(partId);}} />
         </aside>
 
         <main className="assembly-viewport relative min-h-0">
@@ -357,7 +357,7 @@ export default function Hangar() {
             <button className="ui-button" onClick={()=>setSmallPane('details')}>Staging, parts & science</button>
           </div></details>
           {workspace==='3d'&&<div className="assembly-navigation assembly-navigation-3d"><button className="ui-button" data-testid="hangar-pan" aria-pressed={pan3D} onClick={()=>setPan3D(v=>!v)}>{pan3D?'Pan':'Rotate'}</button></div>}
-          {heldPart&&<div className="held-part-banner" data-testid="held-part"><strong>{PARTS[heldPart].name}</strong><span>Drag or tap the grid to place</span><button className="ui-button" data-testid="cancel-held-part" onClick={()=>{setHeldPart(null);setCursor(null);}}>Cancel</button></div>}
+          {heldPart&&<div className="held-part-banner" data-testid="held-part"><strong>{PARTS[heldPart].name}</strong><span>Release on the grid to place</span><button className="ui-button" data-testid="cancel-held-part" onClick={()=>{setHeldPart(null);setCursor(null);}}>Cancel</button></div>}
 
           <div className="pointer-events-none absolute right-3 top-28 text-right font-mono text-[10px] text-slate-500">
             Pick a part, then drag it onto the grid. Drag placed parts to move.
