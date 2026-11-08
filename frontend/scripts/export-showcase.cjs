@@ -7,6 +7,11 @@ const { getMission } = require("../src/sim/missions");
 const { DEFAULT_PROFILE } = require("../src/sim/guidance");
 const { evaluateFlight } = require("../src/sim/scoring");
 const { NASA_DATA } = require("../src/science/catalog");
+const outputPath = process.env.MF_PRIVATE_SHOWCASE_OUTPUT;
+const repository = path.resolve(__dirname, '../..');
+if (!outputPath || path.resolve(outputPath).startsWith(repository + path.sep)) {
+  throw new Error('Set MF_PRIVATE_SHOWCASE_OUTPUT to a file outside the public repository.');
+}
 const mission = getMission("first_orbit");
 const design = presetFalconLike();
 const sim = new FlightSim({
@@ -35,7 +40,7 @@ const output = {
   result,
 };
 fs.writeFileSync(
-  path.resolve(__dirname, "../public/submission/showcase-result.json"),
+  path.resolve(outputPath),
   JSON.stringify(output, null, 2) + "\n",
 );
 console.log(

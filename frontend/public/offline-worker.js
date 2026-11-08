@@ -9,7 +9,7 @@ self.addEventListener("install", event => event.waitUntil((async () => {
   const dataset = await (await fetch("/science/planetary-data.json", {
     cache: "reload"
   })).json();
-  const assets = ["/", "/index.html", "/manifest.webmanifest", "/mission-forge-icon.svg", "/asset-manifest.json", "/build-info.json", ...Object.values(manifest.files).filter(path => /\.(js|css)$/.test(path)), ...MODEL_FILES.map(name => "/science/models/" + name), ...dataset.sources.map(s => "/science/sources/" + s.file), "/science/sources/EGM96.cof", "/science/sources/LICENSE-GMAT.txt", "/science/planetary-data.json", "/science/analysis.csv", "/science/atmospheres.csv", "/science/egm96.json", "/science/advanced-validation-results.json", "/science/orekit-reference.json", "/science/precision-reference.json", "/science/de421.json", "/science/ocean-loading.blq", "/science/ocean-reference.json", "/science/tpsx-user.json", "/science/arcjet-cases.json", "/science/sources/fes2004_Cnm-Snm-8x8.dat", "/science/msis-reference.json", "/science/frame-reference.json", "/science/showcase-replay.json", "/textures/earth_atmos_2048.jpg", "/textures/earth_clouds_1024.png", "/textures/moon_1024.jpg", ...["project-report", "demo-script", "user-testing-protocol", "presentation"].flatMap(name => ["html", "pdf"].map(ext => `/submission/${name}.${ext}`)), "/submission/showcase-replay.html", "/submission/showcase-result.json", "/submission/validation-results.json"];
+  const assets = ["/", "/index.html", "/manifest.webmanifest", "/mission-forge-icon.svg", "/asset-manifest.json", "/build-info.json", ...Object.values(manifest.files).filter(path => /\.(js|css)$/.test(path)), ...MODEL_FILES.map(name => "/science/models/" + name), ...dataset.sources.map(s => "/science/sources/" + s.file), "/science/sources/EGM96.cof", "/science/sources/LICENSE-GMAT.txt", "/science/planetary-data.json", "/science/analysis.csv", "/science/atmospheres.csv", "/science/egm96.json", "/science/advanced-validation-results.json", "/science/orekit-reference.json", "/science/precision-reference.json", "/science/de421.json", "/science/ocean-loading.blq", "/science/ocean-reference.json", "/science/tpsx-user.json", "/science/arcjet-cases.json", "/science/sources/fes2004_Cnm-Snm-8x8.dat", "/science/msis-reference.json", "/science/frame-reference.json", "/science/showcase-replay.json", "/textures/earth_atmos_2048.jpg", "/textures/earth_clouds_1024.png", "/textures/moon_1024.jpg"];
   const cache = await caches.open(CACHE);
   try {
     await cache.addAll([...new Set(assets)]);
@@ -38,6 +38,12 @@ self.addEventListener("activate", event => event.waitUntil((async () => {
 self.addEventListener("fetch", event => {
   if (event.request.method !== "GET" || new URL(event.request.url).origin !== self.location.origin) return;
   event.respondWith((async () => {
+    // Submission handouts are private, including requests from old bookmarks.
+    if (/^\/submission(?:\/|$)/.test(new URL(event.request.url).pathname)) {
+      return new Response("Submission documents are not publicly distributed.", {
+        status: 410, headers: {"Content-Type": "text/plain", "Cache-Control": "no-store"}
+      });
+    }
     const cache = await caches.open(CACHE);
     // Serve a consistent installed build; updates use a new versioned cache.
     const installed = await cache.match(event.request, {

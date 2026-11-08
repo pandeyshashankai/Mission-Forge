@@ -2,6 +2,7 @@
 
 Uses the environment's ReportLab package for PDF output; no runtime game dependency.
 """
+import argparse
 import html
 import re
 from pathlib import Path
@@ -14,7 +15,14 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Preformatted
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / 'frontend/public/submission'
+parser = argparse.ArgumentParser(description='Build private submission handouts outside the repository.')
+parser.add_argument('--source-dir', type=Path, required=True)
+parser.add_argument('--output-dir', type=Path, required=True)
+args = parser.parse_args()
+SOURCE = args.source_dir.expanduser().resolve()
+OUT = args.output_dir.expanduser().resolve()
+if SOURCE.is_relative_to(ROOT) or OUT.is_relative_to(ROOT):
+    parser.error('Keep submission source and output directories outside the public repository.')
 OUT.mkdir(parents=True, exist_ok=True)
 font = Path('/usr/share/fonts/truetype/dejavu')
 pdfmetrics.registerFont(TTFont('ReportSans', str(font / 'DejaVuSans.ttf')))
@@ -82,7 +90,7 @@ def footer(canvas, doc):
 
 CSS = '''body{font:16px/1.75 system-ui,sans-serif;max-width:1000px;margin:40px auto;padding:0 22px;color:#15273d;background:#f6f8fb}h1{font-size:42px;line-height:1.15;color:#0b5362}h2{margin-top:35px;line-height:1.35}p,li{overflow-wrap:anywhere}table{border-collapse:collapse;width:100%;font-size:14px;margin:20px 0}th,td{padding:12px;text-align:left;vertical-align:top;border:1px solid #c9d4e0}th{background:#17354b;color:white}pre{padding:18px;background:#e5edf3;overflow:auto;font-size:13px}a{color:#006b86}nav{display:flex;gap:20px;flex-wrap:wrap;border-bottom:1px solid #c9d4e0;padding-bottom:15px}.table-wrap{overflow:auto}@media print{body{background:white;margin:0;font-size:11pt}nav{display:none}h2{break-after:avoid}tr{break-inside:avoid}a{color:inherit}}'''
 for stem in ['project-report','demo-script','user-testing-protocol']:
-    text = (ROOT / 'docs/submission' / f'{stem}.md').read_text()
+    text = (SOURCE / f'{stem}.md').read_text()
     parsed = list(blocks(text))
     html_parts=[]; story=[]
     for kind,value in parsed:
@@ -111,6 +119,6 @@ for stem in ['project-report','demo-script','user-testing-protocol']:
     SimpleDocTemplate(str(OUT/f'{stem}.pdf'),pagesize=(210*mm,297*mm),rightMargin=18*mm,leftMargin=18*mm,topMargin=18*mm,bottomMargin=20*mm,title=f'Mission Forge — {title}',author='Shashank Pandey').build(story,onFirstPage=footer,onLaterPages=footer)
     print(f'Built {stem}.html and {stem}.pdf')
 
-(OUT / "presentation.html").write_bytes((ROOT / "docs/submission/presentation.html").read_bytes())
+(OUT / "presentation.html").write_bytes((SOURCE / "presentation.html").read_bytes())
 
-(OUT / "validation-results.json").write_bytes((ROOT / "docs/submission/validation-results.json").read_bytes())
+(OUT / "validation-results.json").write_bytes((SOURCE / "validation-results.json").read_bytes())

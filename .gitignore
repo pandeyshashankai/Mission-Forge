@@ -5,3 +5,13 @@ coverage/
 .env.*
 *.log
 .DS_Store
+
+# Submission handouts are maintained privately outside this repository.
+frontend/public/submission/
+docs/submission/*.pdf
+docs/submission/*.pptx
+docs/submission/*.html
+docs/submission/project-report.md
+docs/submission/demo-script.md
+docs/submission/user-testing-protocol.md
+docs/project-status-report-*.md

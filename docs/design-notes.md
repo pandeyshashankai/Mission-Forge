@@ -34,7 +34,7 @@ Atmospheric drag in exploration is deliberately simple. There is no aerothermal 
 
 This is a playable solar-system sandbox and a tested mission update. It is not a complete replacement for a mature spaceflight simulator. The complete planet list does not imply every moon, ring particle, terrain feature, or spacecraft system is simulated. The UI describes those limits without blocking ordinary play.
 
-See the [NASA source audit](../data/nasa/README.md) and [project report](submission/project-report.md) for the verified import channel, transformations, scientific checks, and remaining model limits.
+See the [NASA source audit](../data/nasa/README.md) and [scientific model notes](third-party-science.md) for the verified import channel, transformations, scientific checks, and remaining model limits.
 
 ## Imported atmosphere and assisted-transfer update
 

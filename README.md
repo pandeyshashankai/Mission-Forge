@@ -122,11 +122,12 @@ npm run test:combinations
 npm run test:milestones
 ```
 
-The regression suite contains **321 tests**. The extended release audit runs
+The regression suite contains **321 tests**. The recorded 6 November extended release audit covered
 30 sequential groups including 621,913 generated catalogue/scenario checks,
 12 expected campaign outcomes, 330 emulated device/world/craft cases, learning
 flows, optional models, mesh/Wasm labs and offline recovery. These are finite
 test matrices; they do not prove every possible trajectory or physical device.
+The current audit also includes later mobile-visibility and lab-scrolling checks.
 
 Browser audits need the production build on port 8080 and an isolated Chromium
 CDP session on port 9222. See [test setup](docs/testing.md).
@@ -139,9 +140,8 @@ MF_AUDIT_OUTPUT=/tmp/mission-forge-audit npm run audit:release -- --extended
 [Latest recorded release evidence](docs/submission/final-validation.json) ·
 [Audit manifest](docs/submission/release-audit/manifest.json) ·
 [Strict CI build follow-up](docs/submission/cloudflare-build-fix.json) ·
-[Project report](docs/submission/project-report.md) ·
-[Presentation](docs/submission/presentation.html) ·
-[Three-minute demo](docs/submission/demo-script.md)
+Submission reports, presentation slides and presenter notes are distributed
+privately by the author.
 
 ## Scientific scope and credits
 

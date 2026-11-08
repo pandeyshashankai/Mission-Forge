@@ -31,7 +31,7 @@ export function OfflinePlay() {
         return;
       }
       setBusy(true);
-      setStatus('Caching and verifying game, models and presentation assets…');
+      setStatus('Caching and verifying game, models and source assets…');
       try {
         let previousBuild = null;
         try {

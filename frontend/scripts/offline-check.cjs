@@ -5,7 +5,7 @@ const { browserSession } = require("./browser-session.cjs");
   try {
     await b.viewport(390, 844);
     await b.home();
-    await b.evaluate("caches.open('mission-forge-offline-audit-old').then(c=>c.put('/obsolete-audit',new Response('old')))");
+    await b.evaluate("caches.open('mission-forge-offline-audit-old').then(async c=>{await c.put('/obsolete-audit',new Response('old'));await c.put('/submission/project-report.pdf',new Response('retired private handout'))})");
     await b.click("offline-prepare");
     await b.wait(
       'document.querySelector("[data-testid=offline-status]").textContent.includes("ready")',
@@ -26,9 +26,12 @@ const { browserSession } = require("./browser-session.cjs");
     await b.home();
     await b.wait('document.querySelector("[data-testid=offline-status]").textContent.includes("ready")');
     const assets = await b.evaluate(
-      `Promise.all(['/science/models/full-engine.js','/science/models/full-engine.json','/science/ocean-loading.blq','/science/precision-reference.json','/science/sources/EGM96.cof','/science/models/nrlmsise-browser.mjs','/science/models/tsofa/TSOFA.js','/submission/project-report.pdf','/submission/presentation.pdf','/science/advanced-validation-results.json'].map(async path=>{const r=await fetch(path);return {path,status:r.status,bytes:(await r.arrayBuffer()).byteLength}}))`,
+      `Promise.all(['/science/models/full-engine.js','/science/models/full-engine.json','/science/ocean-loading.blq','/science/precision-reference.json','/science/sources/EGM96.cof','/science/models/nrlmsise-browser.mjs','/science/models/tsofa/TSOFA.js','/science/advanced-validation-results.json'].map(async path=>{const r=await fetch(path);return {path,status:r.status,bytes:(await r.arrayBuffer()).byteLength}}))`,
     );
     assert.ok(assets.every((a) => a.status === 200 && a.bytes > 100));
+    const privateRequests = await b.evaluate("Promise.all(['/submission/project-report.pdf','/submission/presentation.html'].map(async url => (await fetch(url)).status))");
+    assert.deepEqual(privateRequests, [410, 410]);
+    assert.equal(await b.evaluate("caches.keys().then(async keys => (await Promise.all(keys.filter(k=>k.startsWith('mission-forge-offline-')).map(async k=>(await (await caches.open(k)).keys()).some(r=>new URL(r.url).pathname.startsWith('/submission/'))))).some(Boolean))"),false);
     await b.click("menu-data-explorer");
     await b.wait(b.exists("data-comparison"));
     assert.match(await b.evaluate('document.body.textContent'), /NASA Data Explorer/);
@@ -100,7 +103,7 @@ const { browserSession } = require("./browser-session.cjs");
     assert.match(await b.evaluate('document.querySelector("[data-testid=results-outcome]").textContent'),/success/i);
     assert.deepEqual(b.errors, []);
     console.log(
-      "PASS: versioned cache cleanup, persistent offline status, offline First Orbit through successful report, Lambert calculation, lazy standards model, source snapshot, local WASM and submission PDFs",
+      "PASS: versioned cache cleanup, persistent offline status, offline First Orbit through successful report, Lambert calculation, lazy standards model, source snapshot, local WASM and source assets",
       assets.map((a) => a.path),
     );
   } finally {

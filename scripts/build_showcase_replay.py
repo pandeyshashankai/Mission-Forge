@@ -1,9 +1,15 @@
 """Render a clearly labelled recorded example from an actual exported FlightSim result."""
+import argparse
 import html
 import json
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
-folder = ROOT / 'frontend/public/submission'
+parser = argparse.ArgumentParser(description='Render a private recorded-flight handout.')
+parser.add_argument('--directory', type=Path, required=True)
+args = parser.parse_args()
+folder = args.directory.expanduser().resolve()
+if folder.is_relative_to(ROOT):
+    parser.error('Keep submission handouts outside the public repository.')
 data = json.loads((folder / 'showcase-result.json').read_text())
 result = data['result']
 if data['kind'] != 'recorded-simulation-example' or result['outcome'] != 'success':

@@ -6,7 +6,6 @@ import {DeviceSupport} from "./components/app/DeviceSupport";
 import Challenges from "./pages/Challenges";
 import Logbook from "./pages/Logbook";
 import {CommandPalette} from "./components/app/CommandPalette";
-import Evidence from "./pages/Evidence";
 import LocalStorage from "./pages/LocalStorage";
 import {StorageHealth} from "./components/app/StorageHealth";
 import SandboxLab from "./pages/SandboxLab";
@@ -31,7 +30,6 @@ const SCREENS = {
   challenges:Challenges,
   logbook:Logbook,
   storage: LocalStorage,
-  evidence: Evidence,
   sandbox: SandboxLab,
   showcase: Showcase,
   menu: MainMenu,

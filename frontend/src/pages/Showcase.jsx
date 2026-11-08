@@ -21,6 +21,6 @@ export default function Showcase(){
       <div className="showcase-actions"><button className="ui-button ui-button-primary" data-testid="showcase-begin" onClick={()=>g.go("science")}>Begin predict & fly</button><button className="ui-button" data-testid="showcase-verify" disabled={busy} onClick={verify}>{busy?"Replaying…":"Verify recorded First Orbit"}</button></div>
       <p role="status" data-testid="showcase-verification">{status}</p>{replay&&<button className="ui-button" onClick={()=>downloadJSON("mission-forge-replay.json",replay)}>Download commands & checkpoints</button>}
       <p>The verification reruns saved commands with the real FlightSim and compares canonical numerical checkpoints. It is an automated example, not a student flight or learning result.</p><PhysicsBadge />
-      <div className="showcase-actions"><a className="ui-button" href="/submission/project-report.pdf" target="_blank" rel="noreferrer">Project report</a><a className="ui-button" href="/submission/presentation.html" target="_blank" rel="noreferrer">Presentation</a><a className="ui-button" href="/submission/showcase-replay.html" target="_blank" rel="noreferrer">Recorded flight graphs</a></div>
+
     </main></div>;
 }

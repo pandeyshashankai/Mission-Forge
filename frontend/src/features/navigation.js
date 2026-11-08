@@ -27,10 +27,6 @@ export const NAV_COMMANDS = [{
   label: 'Guided showcase',
   hint: 'Presentation route and replay'
 }, {
-  id: 'evidence',
-  label: 'Mission evidence',
-  hint: 'Build identity, report and limitations'
-}, {
   id: 'storage',
   label: 'Data and recovery',
   hint: 'Verified backups and local files'

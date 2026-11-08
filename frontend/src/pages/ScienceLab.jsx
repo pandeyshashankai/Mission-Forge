@@ -484,62 +484,7 @@ export default function ScienceLab() {
             </details>
           </section>
         )}
-        <section
-          className="science-submission"
-          aria-label="Project documentation"
-        >
-          <h2>Project & presentation</h2>
-          <p>
-            Read the implementation, NASA provenance, checks, and model limits.
-            The learner pilot protocol is a plan; no student study is claimed.
-          </p>
-          <div className="science-source-links">
-            <a
-              href="/submission/project-report.html"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Detailed project report ↗
-            </a>
-            <a href="/submission/project-report.pdf" download>
-              Download report PDF
-            </a>
-            <a
-              href="/submission/presentation.html"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Open presentation ↗
-            </a>
-            <a href="/submission/presentation.pdf" download>
-              Download presentation PDF
-            </a>
-            <a
-              href="/submission/demo-script.html"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Showcase presenter guide ↗
-            </a>
-            <a
-              href="/submission/showcase-replay.html"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Open labelled recorded flight example ↗
-            </a>
-            <a href="/submission/validation-results.json" download>
-              Download recorded validation snapshot
-            </a>
-            <a
-              href="/submission/user-testing-protocol.html"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Learner testing protocol ↗
-            </a>
-          </div>
-        </section>
+
       </main>
     </div>
   );

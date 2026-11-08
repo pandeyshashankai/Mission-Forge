@@ -133,12 +133,9 @@ const {
     await b.wait(`document.body.textContent.includes('mf.recovery-flight')`);
     await b.screenshot('local-recovery-phone');
     await b.home();
-    await b.click('menu-evidence-btn');
-    await b.wait(`document.body.textContent.includes('Artifact SHA-256')`);
-    assert.equal(await b.evaluate('document.documentElement.scrollWidth>innerWidth'), false);
-    await b.screenshot('mission-evidence-phone');
+    assert.equal(await b.evaluate("Boolean(document.querySelector('[data-testid=menu-evidence-btn]'))"), false);
     assert.deepEqual(b.errors, []);
-    console.log('PASS: native-to-IndexedDB migration, actual disk persistence, backup preview/merge, tamper rejection, quota failure atomicity, recovery resumed paused, evidence mobile layout');
+    console.log('PASS: native-to-IndexedDB migration, actual disk persistence, backup preview/merge, tamper rejection, quota failure atomicity, recovery resumed paused, no public submission entry point');
   } finally {
     b.close();
   }

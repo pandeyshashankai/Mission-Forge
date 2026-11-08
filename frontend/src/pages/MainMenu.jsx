@@ -58,7 +58,7 @@ export default function MainMenu() {
           </span>
           MissionForge<span className="brand-tag">Spaceflight sandbox</span>
         </div>
-        <div className="showcase-actions"><button className="ui-button" data-testid="palette-open" onClick={()=>g.setOverlayOpen(true)}>Search · Ctrl+K</button><button className="ui-button" data-testid="menu-evidence-btn" onClick={() => g.go("evidence")}>Mission evidence</button><button className="ui-button" data-testid="menu-storage-btn" onClick={() => g.go("storage")}>Data & recovery</button>{recovery && <button className="ui-button" data-testid="resume-recovery" onClick={() => resume(recovery)}>Recover flight (paused)</button>}<button className="ui-button" data-testid="menu-sandbox-btn" onClick={() => g.go("sandbox")}>Sandbox lab</button><button className="ui-button" data-testid="menu-showcase-btn" onClick={() => g.go("showcase")}>Guided showcase</button><DisplayButton /></div>
+        <div className="showcase-actions"><button className="ui-button" data-testid="palette-open" onClick={()=>g.setOverlayOpen(true)}>Search · Ctrl+K</button><button className="ui-button" data-testid="menu-storage-btn" onClick={() => g.go("storage")}>Data & recovery</button>{recovery && <button className="ui-button" data-testid="resume-recovery" onClick={() => resume(recovery)}>Recover flight (paused)</button>}<button className="ui-button" data-testid="menu-sandbox-btn" onClick={() => g.go("sandbox")}>Sandbox lab</button><button className="ui-button" data-testid="menu-showcase-btn" onClick={() => g.go("showcase")}>Guided showcase</button><DisplayButton /></div>
       </header>
       <main className="home-content">
         <div className="home-welcome">

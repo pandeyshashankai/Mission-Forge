@@ -69,7 +69,8 @@
     "test:education:ui": "node scripts/education-check.cjs",
     "test:milestones": "node tests/milestones.test.cjs",
     "test:milestones:ui": "node scripts/milestones-check.cjs",
-    "test:mobile-visibility:ui": "node scripts/mobile-visibility-check.cjs"
+    "test:mobile-visibility:ui": "node scripts/mobile-visibility-check.cjs",
+    "test:labs:ui": "node scripts/mobile-labs-check.cjs"
   },
   "browserslist": {
     "production": [

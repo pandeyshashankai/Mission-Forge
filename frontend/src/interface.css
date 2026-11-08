@@ -3696,7 +3696,16 @@ html[data-text-size="large"] .difficulty-explanation {
 .flight-bar .physics-badge[open] { position: absolute; z-index: 80; top: 6px; right: 60px; max-width: min(360px,calc(100vw - 24px)); box-shadow: 0 6px 24px #0006; }
 .flight-bar .physics-badge:not([open]) summary { min-height: 28px; font-size: 10px; }
 .burn-execution progress { display: block; width: 100%; height: 10px; accent-color: var(--ui-accent); margin: 8px 0; }
-.showcase-layout { width: min(860px,calc(100% - 32px)); margin: 32px auto; padding-bottom: 40px; }
+.showcase-layout {
+  width: min(860px, calc(100% - 32px));
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  margin: 0 auto;
+  padding: 32px 0 calc(40px + env(safe-area-inset-bottom, 0px));
+  -webkit-overflow-scrolling: touch;
+}
 .showcase-layout h1 { font-size: clamp(26px,4vw,42px); line-height: 1.2; margin: 12px 0; }
 .showcase-layout p { color: var(--ui-muted); line-height: 1.7; margin: 12px 0; }
 .showcase-steps { list-style: none; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; }

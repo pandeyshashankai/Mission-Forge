@@ -49,3 +49,13 @@ and 768×1024 and assert `document.documentElement.scrollWidth <= innerWidth`.
 They use `browserSession()` from `scripts/browser-session.cjs`, then `viewport`,
 `home`, `click("menu-sandbox-btn")` and each `sandbox-tab-loading/fracture/engine`.
 The nine results are retained in `docs/submission/milestones-extra-layouts.json`.
+
+## Lab scrolling and private submission boundary
+
+`npm run test:labs:ui` checks Guided Showcase, Mission Lab and all nine Sandbox
+tabs at small-phone, portrait-phone, landscape-phone, tablet and desktop sizes.
+It uses real touch/wheel gestures to reach the bottom and scroll back.
+`npm run test:submission` now checks that handouts are absent from the public build,
+legacy URLs are unavailable and public menus/search do not expose the removed page.
+The offline suite checks retired-document cache cleanup and HTTP 410 responses
+for private submission URLs. These are browser checks, not physical-device proof.
