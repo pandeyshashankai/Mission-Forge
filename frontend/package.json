@@ -74,7 +74,8 @@
     "test:cockpit:ui": "node scripts/compact-cockpit-check.cjs",
     "test:assembly:ui": "node scripts/assembly-controls-check.cjs",
     "test:assembly:mobile": "node scripts/assembly-mobile-check.cjs",
-    "test:studio:ui": "node scripts/studio-check.cjs"
+    "test:studio:ui": "node scripts/studio-check.cjs",
+    "test:offline:update": "node scripts/offline-update-check.cjs"
   },
   "browserslist": {
     "production": [

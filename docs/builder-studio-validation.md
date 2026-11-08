@@ -40,3 +40,19 @@ checks that tapping the palette and then the grid does not add equipment, before
 performing a native continuous finger drag. It also checks that releasing
 outside the grid cancels and releasing a second finger cannot drop the active
 finger’s part.
+
+## Recorded shrinking/tap follow-up
+
+The supplied 17-second recording shows the earlier permanent-header builder.
+The current native drag audit compares every reference-build part's preview and
+placed artwork bounds (within one pixel) while checking an unchanged camera.
+The phone audit verifies no floating preview on a stationary tap, no tap-to-place,
+outside-drop cancellation and independent finger release.
+
+The production build passed with warnings treated as errors. The mobile and
+full-studio audits passed. `test:offline` passed, including a complete offline
+First Orbit and lazy scientific tools. `test:offline:update` served two distinct
+real build identities on one origin: the update prompt appeared, the installed
+package stayed consistent until applied, the new page reloaded, the previous
+cache was removed and the saved rocket was preserved. Both offline audits are
+part of the browser release pipeline.

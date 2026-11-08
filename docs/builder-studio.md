@@ -93,3 +93,22 @@ Browser device layouts are Chromium emulation, not physical-device certification
 ![Desktop construction studio](images/studio-builder-desktop.png)
 
 ![Three-dimensional preview](images/studio-builder-3d.png)
+
+## If an older builder still opens
+
+The current studio fills the screen with a slim silhouette palette and floating
+corner controls. A permanent Missions/name header and bottom Rocket tab identify
+an earlier interface. An old deployment or an installed offline package can
+keep that interface visible.
+
+After the latest `main` build is deployed, open the home screen and use
+**Prepare offline play** once to fetch and verify the new package. Wait for it
+to finish and reload. Saved rockets remain local. In the updated client, an
+already-installed offline package checks for new versions from the home screen
+and shows **Update game** when a verified replacement is ready. Applying it
+reloads the new build.
+
+Dragging uses the workspace scale throughout: the preview and placed part have
+the same dimensions, and dropping does not change zoom. Palette silhouettes are
+thumbnail illustrations. Use +/− or pinch to inspect physically small parts. A
+stationary tap does not show a floating preview or place equipment.

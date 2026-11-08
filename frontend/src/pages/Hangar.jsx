@@ -124,7 +124,7 @@ export default function Hangar() {
   };
   const onMoveGroup=(ids,dx,dy)=>{setDesign(moveSelection(design,ids,dx,dy));selectMany(ids);};
   useEffect(()=>{
-    const move=e=>{if(heldPart&&pickup.current?.pointerId===e.pointerId)setCursor({x:e.clientX,y:e.clientY});};
+    const move=e=>{if(heldPart&&pickup.current?.pointerId===e.pointerId&&Math.hypot(e.clientX-pickup.current.x,e.clientY-pickup.current.y)>=6)setCursor({x:e.clientX,y:e.clientY});};
     const up=e=>{
       const start=pickup.current;if(start&&start.pointerId!==e.pointerId)return;pickup.current=null;
       const clear=()=>{setHeldPart(null);setCursor(null);};
@@ -324,7 +324,7 @@ export default function Hangar() {
       </nav>
       <div className="assembly-workspace grid min-h-0 flex-1">
         <aside className="assembly-catalog min-h-0 border-r border-slate-800 bg-slate-950/80">
-          <PartCatalog onCancelPickup={e=>{if(pickup.current&&pickup.current.pointerId!==e.pointerId)return;pickup.current=null;setHeldPart(null);setCursor(null);}} compact={smallPane!=="parts"} onPickup={(partId,e)=>{if(e.button>0||pickup.current)return;e.currentTarget.setPointerCapture(e.pointerId);pickup.current={x:e.clientX,y:e.clientY,pointerId:e.pointerId};setCursor({x:e.clientX,y:e.clientY});onAdd(partId);}} />
+          <PartCatalog onCancelPickup={e=>{if(pickup.current&&pickup.current.pointerId!==e.pointerId)return;pickup.current=null;setHeldPart(null);setCursor(null);}} compact={smallPane!=="parts"} onPickup={(partId,e)=>{if(e.button>0||pickup.current)return;e.currentTarget.setPointerCapture(e.pointerId);pickup.current={x:e.clientX,y:e.clientY,pointerId:e.pointerId};setCursor(null);onAdd(partId);}} />
         </aside>
 
         <main className="assembly-viewport relative min-h-0">
@@ -357,7 +357,7 @@ export default function Hangar() {
             <button className="ui-button" onClick={()=>setSmallPane('details')}>Staging, parts & science</button>
           </div></details>
           {workspace==='3d'&&<div className="assembly-navigation assembly-navigation-3d"><button className="ui-button" data-testid="hangar-pan" aria-pressed={pan3D} onClick={()=>setPan3D(v=>!v)}>{pan3D?'Pan':'Rotate'}</button></div>}
-          {heldPart&&<div className="held-part-banner" data-testid="held-part"><strong>{PARTS[heldPart].name}</strong><span>Release on the grid to place</span><button className="ui-button" data-testid="cancel-held-part" onClick={()=>{setHeldPart(null);setCursor(null);}}>Cancel</button></div>}
+          {heldPart&&<div className="held-part-banner" data-testid="held-part" style={{visibility:cursor?"visible":"hidden"}} aria-hidden={!cursor}><strong>{PARTS[heldPart].name}</strong><span>Release on the grid to place</span><button className="ui-button" data-testid="cancel-held-part" onClick={()=>{setHeldPart(null);setCursor(null);}}>Cancel</button></div>}
 
           <div className="pointer-events-none absolute right-3 top-28 text-right font-mono text-[10px] text-slate-500">
             Pick a part, then drag it onto the grid. Drag placed parts to move.

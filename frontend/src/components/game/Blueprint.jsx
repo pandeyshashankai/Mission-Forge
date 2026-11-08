@@ -77,7 +77,7 @@ export function Blueprint({design,selectedUid,selectedUids=[],onSelect,onSelectM
      {selected.has(n.uid)&&<rect x={-w/2-.08} y={-h-.08} width={w+.16} height={h+.16} fill="none" stroke="#fff" strokeWidth="1.5" vectorEffect="non-scaling-stroke"/>}
     </g>;
    })}
-   {ghost&&<g pointerEvents="none" opacity=".65" transform={`translate(${ghost.x} ${-ghost.y})`}><PartDrawing part={PARTS[heldPart]}/><rect x={-PARTS[heldPart].diameter/2} y={-PARTS[heldPart].height} width={PARTS[heldPart].diameter} height={PARTS[heldPart].height} fill="none" stroke="#b6efff" strokeWidth="1" vectorEffect="non-scaling-stroke"/></g>}
+   {ghost&&<g data-testid="assembly-drag-preview" pointerEvents="none" opacity=".65" transform={`translate(${ghost.x} ${-ghost.y})`}><PartDrawing part={PARTS[heldPart]}/><rect x={-PARTS[heldPart].diameter/2} y={-PARTS[heldPart].height} width={PARTS[heldPart].diameter} height={PARTS[heldPart].height} fill="none" stroke="#b6efff" strokeWidth="1" vectorEffect="non-scaling-stroke"/></g>}
    {ghost&&mirror&&Math.abs(ghost.x-lay.anchorX)>1&&<g pointerEvents="none" opacity=".35" transform={`translate(${2*lay.anchorX-ghost.x} ${-ghost.y})`}><PartDrawing part={PARTS[heldPart]} flipX/></g>}
    {box&&<rect x={Math.min(box.a.x,box.b.x)} y={-Math.max(box.a.y,box.b.y)} width={Math.abs(box.a.x-box.b.x)} height={Math.abs(box.a.y-box.b.y)} fill="#b6ddff22" stroke="#fff" strokeWidth="1" vectorEffect="non-scaling-stroke" pointerEvents="none"/>}
   </svg>

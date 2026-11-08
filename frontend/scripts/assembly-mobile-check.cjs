@@ -10,7 +10,7 @@ const {browserSession}=require('./browser-session.cjs');
   await b.evaluate("document.querySelector('[data-testid=part-catalog-item-probe_core]').scrollIntoView({block:'center'})");
   const start=await b.evaluate("(()=>{const r=document.querySelector('[data-testid=part-catalog-item-probe_core]').getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2,id:1}})()");
   const end=await b.evaluate("(()=>{const r=document.querySelector('[data-testid=assembly-placement-grid]').getBoundingClientRect();return {x:r.x+r.width*.72,y:r.y+r.height*.55,id:1}})()");
-  await touch('touchStart',[start]);await touch('touchEnd',[]);await b.wait("!document.querySelector('[data-testid=held-part]')");
+  await touch('touchStart',[start]);assert.equal(await b.evaluate("!!document.querySelector('[data-testid=assembly-drag-preview]')"),false,'A stationary tap must not create a floating preview');await touch('touchEnd',[]);await b.wait("!document.querySelector('[data-testid=held-part]')");
   await touch('touchStart',[end]);await touch('touchEnd',[]);assert.deepEqual(await design(),before,'Tap then tap grid must not place a part');
   await touch('touchStart',[start]);await touch('touchMove',[{x:start.x+85,y:start.y,id:1}]);await touch('touchMove',[{x:380,y:30,id:1}]);await touch('touchEnd',[]);await b.wait("!document.querySelector('[data-testid=held-part]')");assert.deepEqual(await design(),before,'Drop outside grid must cancel');
   await touch('touchStart',[start]);await b.wait(b.exists('held-part'));const carry={x:start.x+85,y:start.y,id:1};await touch('touchMove',[carry]);
