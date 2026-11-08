@@ -14,7 +14,7 @@ text remain opaque and readable.
 - Bottom: steering arrows, RCS, guidance, staging and propellant meters.
 - Instruments open over the flight scene and close without resizing it.
   Exploration includes the destination selector and expandable world catalogue.
-- Desktop uses the same flight menu with keyboard controls. Settings can show
+- Desktop Auto shows the same throttle slider, +/−, Full/Cut, Auto guidance, steering and fuel meters, with live key labels beneath the buttons. Settings can show
   or hide touch controls independently of the camera and menu layout.
 
 Handedness mirrors primary controls. Safe-area insets protect buttons from
@@ -25,8 +25,9 @@ Data Explorer, Academy, Sandbox Lab and Mission Lab form a small discovery grid.
 Challenges, Logbook, Guided Showcase, model comparison, data recovery, rocket
 files, difficulty, tutorials, settings and offline preparation remain available.
 
-The phone builder retains a blue drafting workspace, persistent parts rail,
-3D/blueprint selection, quick mass/thrust/TWR values and expandable statistics.
+The builder uses pickup/drop placement instead of Above/Below choices. It retains
+a persistent parts rail, a pannable/zoomable build grid, 3D preview, quick
+mass/thrust/TWR values and expandable statistics. See [free placement](free-placement.md).
 
 ## Verification
 

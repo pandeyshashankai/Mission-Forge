@@ -1128,7 +1128,7 @@ export default function Explore() {
       </aside>
       <TouchFlightControls
         controls={input}
-        visible={touchVisible}
+        visible={touchVisible || g.settings.touchControls !== "off"}
         disabled={
           paused ||
           g.settingsOpen ||

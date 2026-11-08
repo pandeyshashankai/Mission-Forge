@@ -15,7 +15,8 @@ Choose **First Orbit** for an assisted launch or **Mission Control Academy** for
 a predict–fly–reflect lesson. **NASA Data Explorer** shows which source values
 affect gravity, orbital speed and atmosphere. Advanced laboratories are optional.
 
-- **Engineering:** 36 construction parts, seven presets, staging, readiness checks,
+- **Engineering:** pickup/drop construction with side tanks and liquid engines,
+  36 parts, seven presets, staging, readiness checks,
   fuel and delta-v calculations, three difficulties and mission reports.
 - **Learning:** five Academy lessons, first-flight guide, evidence-linked debriefs,
   reflection journal and paired scientific model comparison.
@@ -85,7 +86,10 @@ from checks that must be performed on the final hosted origin.
 
 Flight uses an edge-to-edge camera with translucent controls over the scene.
 The home menu groups flying, NASA data, learning and sandbox tools. The mobile
-builder keeps its part rail and engineering statistics beside the workspace.
+builder keeps its part rail and engineering statistics beside a pannable, zoomable
+placement grid. Desktop Auto shows throttle, guidance, fuel and live key labels.
+See [pickup/drop construction](docs/free-placement.md) and its
+[validation record](docs/assembly-controls-validation.md).
 See [flight layout](docs/mobile-flight-layout.md).
 
 Settings allow remapping. Touch layouts provide steering, throttle, staging and

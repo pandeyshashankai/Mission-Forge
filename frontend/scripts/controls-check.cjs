@@ -335,7 +335,7 @@ const { browserSession } = require("./browser-session.cjs");
   await b.screenshot("controls-exploration-phone");
   await call("Emulation.setTouchEmulationEnabled", { enabled: false });
   await b.viewport(1440, 1000);
-  await wait(`!(${exists("touch-flight-controls")})`);
+  await wait(exists("touch-flight-controls"));
   await keyDown("KeyI", "i");
   await pause(500);
   await keyUp("KeyI", "i");

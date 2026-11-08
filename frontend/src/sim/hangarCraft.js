@@ -50,7 +50,7 @@ export function hangarCraft(design) {
     );
   const clean = {
     name: design.name.slice(0, 60),
-    stack: design.stack.map((n) => ({ uid: n.uid, partId: n.partId })),
+    stack: design.stack.map((n) => ({ uid: n.uid, partId: n.partId, ...(n.mount ? {mount:{...n.mount}} : {}) })),
     radials: [],
     events: null,
   };

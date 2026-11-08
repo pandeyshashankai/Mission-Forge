@@ -1,3 +1,4 @@
+import {PARTS} from "../sim/parts";
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -344,6 +345,7 @@ export const FlightView = ({
     const mode0 = () => camModeRef.current;
     const rocketHolder = new THREE.Group();
     scene.add(rocketHolder);
+    const sidePlumes = [];
     const plume = makePlume();
     rocketHolder.add(plume);
     let rocket = null;
@@ -410,7 +412,7 @@ export const FlightView = ({
       if (key !== visKey) {
         let offset = 0;
         if (rocket) {
-          const bottomUid = nowVis.stack[nowVis.stack.length - 1]?.uid;
+          const bottomUid = nowVis.stack.filter(n=>!n.mount).at(-1)?.uid;
           const child = rocket.children.find(
             (c) => c.userData.uid === bottomUid,
           );
@@ -455,6 +457,8 @@ export const FlightView = ({
         rocket.position.y = offset;
         plume.position.y = offset;
         rocketHolder.add(rocket);
+        for(const p of sidePlumes){rocketHolder.remove(p.mesh);disposeObject(p.mesh);}sidePlumes.length=0;
+        for(const n of nowVis.stack)if(n.mount&&PARTS[n.partId].engine){const mesh=makePlume();rocketHolder.add(mesh);sidePlumes.push({uid:n.uid,def:PARTS[n.partId].engine,mesh});}
         visKey = key;
       }
       const rPos = toThree(sim.r);
@@ -477,9 +481,18 @@ export const FlightView = ({
         dir,
       );
       const thr = nav.F > 0 ? Math.max(0.15, nav.F / Math.max(1, nav.Fmax)) : 0;
-      plume.visible = thr > 0;
+      let sideForce=0;
+      for(const p of sidePlumes){
+        const stage=sim.rt.sections.find(s=>s.attached&&s.ignited&&s.engines.some(e=>e.uid===p.uid));
+        const burning=stage&&(stage.tanks[p.def.propellant]||0)>0&&sim.throttle>0;
+        p.mesh.visible=!!burning;
+        if(burning){const child=rocket.children.find(c=>c.userData.uid===p.uid);p.mesh.position.copy(child.position);p.mesh.position.y+=rocket.position.y;
+          const force=p.def.thrustVac*Math.max(p.def.minThrottle||0,sim.throttle)*(p.def.ispVac-(p.def.ispVac-p.def.ispSL)*nav.pRatio)/p.def.ispVac;sideForce+=force;
+          const factor=Math.sqrt(force/1e6);p.mesh.scale.set(.4+.4*factor,(8+12*factor)*(.95+Math.random()*.1),.4+.4*factor);}
+      }
+      plume.visible = thr > 0 && nav.F>sideForce;
       const vac = 1 - Math.min(1, nav.pRatio);
-      const fmn = Math.sqrt(Math.max(0, nav.F) / 1e6);
+      const fmn = Math.sqrt(Math.max(0, nav.F-sideForce) / 1e6);
       const pr = (0.4 + 0.4 * fmn) * (1 + vac);
       plume.scale.set(
         pr,

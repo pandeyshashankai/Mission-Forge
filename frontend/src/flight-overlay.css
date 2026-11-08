@@ -105,3 +105,15 @@
   max-width: calc(100% - 120px);
   flex-wrap: wrap;
 }
+.flight-key-hint { display: none; }
+@media (pointer: fine) {
+  .flight-key-hint { display: block; font: 10px/1.1 ui-monospace, monospace; color: #e3f4ff; opacity: .9; }
+  .touch-flight-button { flex-direction: column; gap: 2px !important; }
+  .touch-flight-actions .touch-flight-button > svg { display: none; }
+  .touch-direction-pad .touch-flight-button > svg { width: 19px; height: 19px; }
+}
+/* Auto mode on a desktop still exposes mouse controls and its current bindings. */
+:is(.flight-screen, .explore-workspace)[data-input-touch="off"] .flight-key-hint { display: block; font: 10px/1.1 ui-monospace, monospace; color: #e3f4ff; }
+:is(.flight-screen, .explore-workspace)[data-input-touch="off"] .touch-flight-button { flex-direction: column; gap: 2px !important; }
+:is(.flight-screen, .explore-workspace)[data-input-touch="off"] .touch-flight-actions .touch-flight-button > svg { display: none; }
+:is(.flight-screen, .explore-workspace)[data-input-touch="off"] .touch-direction-pad .touch-flight-button > svg { width: 19px; height: 19px; }

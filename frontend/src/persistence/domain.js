@@ -1,3 +1,4 @@
+import {validMounts} from "../sim/assemblyLayout";
 import {hangarCraft} from '../sim/hangarCraft';
 import { PART_LIST } from '../sim/parts';
 import { BODIES } from '../sim/solarSystem';
@@ -25,6 +26,7 @@ export function validateArchive(entries) {
       if (!n || typeof n.uid !== 'string' || !n.uid || n.uid.length > 128 || ids.has(n.uid) || !partMap.has(n.partId)) throw Error('Invalid craft identifiers in backup');
       ids.add(n.uid);
     }
+    if (!validMounts(d, id => partMap.get(id))) throw Error('Invalid placed assembly in backup');
     if (d.stack.some(n => partMap.get(n.partId).radialOnly)) throw Error('Radial-only part in axial stack');
     for (const n of d.radials || []) if (![2, 3, 4].includes(n.symmetry) || !partMap.get(n.partId).radialOnly || !d.stack.some(p => p.uid === n.parentUid)) throw Error('Invalid booster group in backup');
   };

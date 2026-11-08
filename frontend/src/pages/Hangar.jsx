@@ -24,8 +24,9 @@ import { useGame } from "../game/GameContext";
 import { MissionSteps } from "../components/app/MissionSteps";
 import { DisplayButton } from "../components/app/Appearance";
 import { Blueprint } from "../components/game/Blueprint";
-import { duplicatePart } from "../game/designOps";
+import { dropPart, movePlacedPart, duplicatePart } from "../game/designOps";
 import { HangarView } from "../three/HangarView";
+import {PartIcon} from "../components/game/PartIcon";
 import { PartCatalog } from "../components/game/PartCatalog";
 import {
   StackList,
@@ -35,7 +36,6 @@ import {
 import { AdvisorPanel } from "../components/game/AdvisorPanel";
 import { GoNoGo, Stat } from "../components/game/Status";
 import {
-  addPart,
   removePart,
   movePart,
   setSymmetry,
@@ -84,7 +84,11 @@ export default function Hangar() {
   const [statsOpen,setStatsOpen]=useState(false);
   const [selected, setSelected] = useState(null);
   const [rightTab, setRightTab] = useState("stack");
-  const [mode, setMode] = useState("below");
+  const [heldPart,setHeldPart] = useState(null);
+  const [cursor,setCursor] = useState(null);
+  const pickup = useRef(null), lastDrop = useRef(0);
+  const [viewCommand,setViewCommand] = useState({action:"fit",id:0});
+  const [pan3D,setPan3D] = useState(false);
   const [symmetry, setSym] = useState(2);
   const [xray, setXray] = useState(false);
   const [overlays,setOverlays]=useState(false);
@@ -108,19 +112,33 @@ export default function Hangar() {
   };
 
   const onAdd = (partId) => {
-    const target =
-      selected && design.stack.some((n) => n.uid === selected)
-        ? selected
-        : null;
-    const res = addPart(design, partId, target, mode, symmetry);
-    if (res.error) return toast.error(res.error);
-    setDesign(res.design);
-    setSmallPane("build");
-    if (!res.radial) setSelected(res.uid);
-    toast.success(
-      `${PARTS[partId].name} attached${res.radial ? ` ×${symmetry} radially` : ` ${mode} ${target ? "selection" : "stack"}`}`,
-    );
+    if(Date.now()-lastDrop.current<300)return;
+    setHeldPart(partId); setWorkspace('blueprint'); setSmallPane('build');
   };
+  const onPlace = position => {
+    if(!heldPart)return;
+    const result=dropPart(design,heldPart,position,symmetry);
+    if(result.error){toast.error(result.error);return;}
+    setDesign(result.design);setSelected(result.uid);setHeldPart(null);setCursor(null);lastDrop.current=Date.now();
+  };
+  const onMove = (uid,position) => {
+    const result=movePlacedPart(design,uid,position);
+    if(result.error)toast.error(result.error);else{setDesign(result.design);setSelected(uid);}
+  };
+  useEffect(()=>{
+    const move=e=>{if(heldPart)setCursor({x:e.clientX,y:e.clientY});};
+    const up=e=>{
+      const start=pickup.current;pickup.current=null;
+      if(!heldPart||!start||Math.hypot(e.clientX-start.x,e.clientY-start.y)<5)return;
+      const grid=document.querySelector('[data-testid=assembly-placement-grid]');
+      if(!grid||!document.elementFromPoint(e.clientX,e.clientY)?.closest('[data-testid=assembly-placement-grid]'))return;const r=grid.getBoundingClientRect();
+      if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)return;
+      const p=grid.createSVGPoint();p.x=e.clientX;p.y=e.clientY;const world=p.matrixTransform(grid.getScreenCTM().inverse());onPlace({x:world.x,y:-world.y});
+    };
+    const cancel=e=>{if(e.key==='Escape'){setHeldPart(null);setCursor(null);pickup.current=null;}};
+    window.addEventListener('pointermove',move);window.addEventListener('pointerup',up);window.addEventListener('keydown',cancel);
+    return()=>{window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',up);window.removeEventListener('keydown',cancel);};
+  });
 
   const onRemove = useCallback(
     (uid) => {
@@ -310,7 +328,7 @@ export default function Hangar() {
       </nav>
       <div className="assembly-workspace grid min-h-0 flex-1">
         <aside className="assembly-catalog min-h-0 border-r border-slate-800 bg-slate-950/80">
-          <PartCatalog onAdd={onAdd} />
+          <PartCatalog onAdd={onAdd} onPickup={(partId,e)=>{if(e.button>0)return;e.currentTarget.setPointerCapture(e.pointerId);pickup.current={x:e.clientX,y:e.clientY};setCursor({x:e.clientX,y:e.clientY});onAdd(partId);}} />
         </aside>
 
         <main className="assembly-viewport relative min-h-0">
@@ -319,6 +337,7 @@ export default function Hangar() {
               design={design}
               selectedUid={selected}
               onSelect={selectPart}
+              heldPart={heldPart} onPlace={onPlace} onMove={onMove}
             />
           ) : (
             <HangarView
@@ -328,6 +347,7 @@ export default function Hangar() {
               xray={xray}
               overlays={overlays}
               quality={g.settings.graphics}
+              panMode={pan3D} viewCommand={viewCommand}
             />
           )}
           <div
@@ -341,23 +361,11 @@ export default function Hangar() {
                 onClick={() => setWorkspace(w)}
                 className={`px-2 py-1 font-mono text-[11px] uppercase ${workspace === w ? "bg-cyan-500/20 text-cyan-200" : "text-slate-400"}`}
               >
-                {w === "3d" ? "3D" : "Blueprint"}
+                {w === "3d" ? "3D" : "Build grid"}
               </button>
             ))}
             <span className="mx-1 h-4 w-px bg-slate-700" />
-            <span className="eyebrow px-2 !text-[9px]">Attach</span>
-            {["above", "below"].map((m) => (
-              <button
-                key={m}
-                data-testid={`attach-mode-${m}`}
-                onClick={() => setMode(m)}
-                className={`px-2 py-1 font-mono text-[11px] uppercase ${mode === m ? "bg-cyan-500/20 text-cyan-200" : "text-slate-400 hover:text-white"}`}
-              >
-                {m}
-              </button>
-            ))}
-            <span className="mx-1 h-4 w-px bg-slate-700" />
-            <span className="eyebrow px-1 !text-[9px]">Radial sym</span>
+            <details className="assembly-view-options"><summary>Options</summary><div>            <span className="eyebrow px-1 !text-[9px]">Radial sym</span>
             {[2, 3, 4].map((n) => (
               <button
                 key={n}
@@ -376,9 +384,13 @@ export default function Hangar() {
             >
               {xray ? <EyeOff size={12} /> : <Eye size={12} />} fairing
             </button>
+</div></details>
           </div>
+          {workspace==='3d'&&<div className="assembly-navigation assembly-navigation-3d"><button className="ui-button" data-testid="hangar-pan" aria-pressed={pan3D} onClick={()=>setPan3D(v=>!v)}>{pan3D?'Pan':'Rotate'}</button>{['out','fit','in'].map(action=><button key={action} data-testid={`hangar-view-${action}`} onClick={()=>setViewCommand(v=>({action,id:v.id+1}))}>{action==='fit'?'Fit':action==='in'?'+':'−'}</button>)}</div>}
+          {heldPart&&<div className="held-part-banner" data-testid="held-part"><strong>{PARTS[heldPart].name}</strong><span>Drag or tap the grid to place</span><button className="ui-button" data-testid="cancel-held-part" onClick={()=>{setHeldPart(null);setCursor(null);}}>Cancel</button></div>}
+          {heldPart&&cursor&&<div className="held-part-ghost" style={{left:cursor.x+14,top:cursor.y+14}}><PartIcon part={PARTS[heldPart]}/></div>}
           <div className="pointer-events-none absolute right-3 top-28 text-right font-mono text-[10px] text-slate-500">
-            Select a part to edit it. Drag the view to rotate.
+            Pick a part, then drag it onto the grid. Drag placed parts to move.
             <br />
             Ctrl+Z / Ctrl+Y · Ctrl+D duplicates · Del removes
           </div>

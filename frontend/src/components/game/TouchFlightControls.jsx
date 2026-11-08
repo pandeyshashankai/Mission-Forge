@@ -1,3 +1,4 @@
+import {keyLabel} from "../../input/bindings";
 import { useRef } from "react";
 import {
   ArrowUp,
@@ -140,7 +141,7 @@ export function TouchFlightControls({
             label="Pitch forward"
             className="touch-north"
           >
-            <ArrowUp size={23} />
+            <ArrowUp size={23} /><kbd className="flight-key-hint">{keyLabel(settings.bindings.pitchForward)}</kbd>
           </HoldButton>
           <HoldButton
             action="yawLeft"
@@ -149,7 +150,7 @@ export function TouchFlightControls({
             label="Turn left"
             className="touch-west"
           >
-            <ArrowLeft size={23} />
+            <ArrowLeft size={23} /><kbd className="flight-key-hint">{keyLabel(settings.bindings.yawLeft)}</kbd>
           </HoldButton>
           <span className="touch-pad-center" aria-hidden="true">
             <Navigation size={17} />
@@ -161,7 +162,7 @@ export function TouchFlightControls({
             label="Turn right"
             className="touch-east"
           >
-            <ArrowRight size={23} />
+            <ArrowRight size={23} /><kbd className="flight-key-hint">{keyLabel(settings.bindings.yawRight)}</kbd>
           </HoldButton>
           <HoldButton
             action="pitchBack"
@@ -170,7 +171,7 @@ export function TouchFlightControls({
             label="Pitch back"
             className="touch-south"
           >
-            <ArrowDown size={23} />
+            <ArrowDown size={23} /><kbd className="flight-key-hint">{keyLabel(settings.bindings.pitchBack)}</kbd>
           </HoldButton>
         </div>
       </div>
@@ -183,7 +184,7 @@ export function TouchFlightControls({
           pressed={rcs}
         >
           <Crosshair size={18} />
-          <span>RCS {rcs ? "on" : "off"}</span>
+          <span>RCS {rcs ? "on" : "off"}</span><kbd className="flight-key-hint">{keyLabel(settings.bindings.rcs)}</kbd>
         </ActionButton>
         {!exploration && (
           <ActionButton
@@ -194,7 +195,7 @@ export function TouchFlightControls({
             pressed={guidance}
           >
             <Navigation size={17} />
-            <span>{guidance ? "Auto" : "Manual"}</span>
+            <span>{guidance ? "Auto" : "Manual"}</span><kbd className="flight-key-hint">{keyLabel(settings.bindings.guidance)}</kbd>
           </ActionButton>
         )}
         <ActionButton
@@ -205,7 +206,7 @@ export function TouchFlightControls({
           title={stageLabel || "This spacecraft has no further stages"}
         >
           <Layers size={19} />
-          <span>{exploration ? "Single stage" : "Stage"}</span>
+          <span>{exploration ? "Single stage" : "Stage"}</span><kbd className="flight-key-hint">{keyLabel(settings.bindings.stage)}</kbd>
         </ActionButton>
       </div>
       <div className="touch-thrust">
@@ -220,7 +221,7 @@ export function TouchFlightControls({
             disabled={disabled}
             label="Increase throttle"
           >
-            <Plus size={23} />
+            <Plus size={23} /><kbd className="flight-key-hint">{keyLabel(settings.bindings.throttleUp)}</kbd>
           </HoldButton>
           <HoldButton
             action="throttleDown"
@@ -228,7 +229,7 @@ export function TouchFlightControls({
             disabled={disabled}
             label="Decrease throttle"
           >
-            <Minus size={23} />
+            <Minus size={23} /><kbd className="flight-key-hint">{keyLabel(settings.bindings.throttleDown)}</kbd>
           </HoldButton>
         </div>
         <ActionButton
@@ -237,7 +238,7 @@ export function TouchFlightControls({
           disabled={disabled}
         >
           <Gauge size={17} />
-          <span>Full</span>
+          <span>Full</span><kbd className="flight-key-hint">{keyLabel(settings.bindings.fullThrottle)}</kbd>
         </ActionButton>
         <ActionButton
           action="cutThrottle"
@@ -246,7 +247,7 @@ export function TouchFlightControls({
           disabled={disabled}
         >
           <Octagon size={16} />
-          <span>Cut</span>
+          <span>Cut</span><kbd className="flight-key-hint">{keyLabel(settings.bindings.cutThrottle)}</kbd>
         </ActionButton>
       </div>
     </section>

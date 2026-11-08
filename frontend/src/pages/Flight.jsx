@@ -765,7 +765,7 @@ export default function Flight() {
           </details>
           <TouchFlightControls
             controls={input}
-            visible={touchVisible}
+            visible={touchVisible || g.settings.touchControls !== "off"}
             disabled={
               paused || modalOpenRef.current || simRef.current.isEnded()
             }

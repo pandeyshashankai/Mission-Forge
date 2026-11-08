@@ -1,3 +1,4 @@
+import {layoutDesign} from "../sim/assemblyLayout";
 import * as THREE from "three";
 import { PARTS } from "../sim/parts";
 
@@ -353,68 +354,7 @@ export function buildPartMesh(part, height = part.height) {
   return g;
 }
 
-const ENCLOSABLE = new Set(["payload", "command"]);
-
-// Positions for every part: stack from the bottom up; fairings enclose payload/command parts beneath them.
-export function layoutDesign(design) {
-  const stack = design.stack;
-  const items = new Array(stack.length);
-  const enclosedBy = {};
-  stack.forEach((n, i) => {
-    if (!PARTS[n.partId].fairing) return;
-    let j = i + 1;
-    while (j < stack.length && ENCLOSABLE.has(PARTS[stack[j].partId].category))
-      j++;
-    enclosedBy[i] = j - 1;
-  });
-  const bottomOf = {};
-  let y = 0;
-  for (let i = stack.length - 1; i >= 0; i--) {
-    const p = PARTS[stack[i].partId];
-    if (p.fairing) {
-      const lastEnclosed = enclosedBy[i];
-      const baseY = lastEnclosed > i ? bottomOf[lastEnclosed] : y;
-      const h = y - baseY + p.height;
-      items[i] = {
-        uid: stack[i].uid,
-        partId: stack[i].partId,
-        y: baseY,
-        height: h,
-      };
-      y = baseY + h;
-    } else {
-      items[i] = {
-        uid: stack[i].uid,
-        partId: stack[i].partId,
-        y,
-        height: p.height,
-      };
-      bottomOf[i] = y;
-      y += p.height;
-    }
-  }
-  const byUid = Object.fromEntries(items.map((it) => [it.uid, it]));
-  const radials = [];
-  for (const r of design.radials || []) {
-    const parent = byUid[r.parentUid];
-    if (!parent) continue;
-    const pp = PARTS[parent.partId];
-    const bp = PARTS[r.partId];
-    const rad = pp.diameter / 2 + bp.diameter / 2 + 0.05;
-    for (let k = 0; k < r.symmetry; k++) {
-      const a = (k / r.symmetry) * Math.PI * 2 + Math.PI / 2;
-      radials.push({
-        uid: r.uid,
-        partId: r.partId,
-        y: Math.max(0, parent.y - 1.5),
-        height: bp.height,
-        x: Math.cos(a) * rad,
-        z: Math.sin(a) * rad,
-      });
-    }
-  }
-  return { items, radials, height: y };
-}
+export { layoutDesign } from "../sim/assemblyLayout";
 
 export function buildRocket(design, { xray = false } = {}) {
   const root = new THREE.Group();
@@ -422,7 +362,7 @@ export function buildRocket(design, { xray = false } = {}) {
   for (const it of lay.items) {
     const p = PARTS[it.partId];
     const m = buildPartMesh(p, it.height);
-    m.position.y = it.y;
+    m.position.set(it.x || 0, it.y, it.z || 0);
     m.userData.uid = it.uid;
     m.traverse((o) => {
       o.userData.uid = it.uid;

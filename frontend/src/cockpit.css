@@ -1004,3 +1004,16 @@
     bottom: 154px;
   }
 }
+.assembly-navigation { position: absolute; z-index: 5; left: 8px; top: 4px; display: flex; gap: 4px; align-items: center; max-width: calc(100% - 16px); }
+.assembly-navigation button { min-width: 40px; height: 40px; border: 1px solid #7897b2; background: #15314acc; color: #fff; border-radius: 5px; }
+.assembly-navigation span { font-size: 10px; color: #d4e5f2; padding: 4px; }
+.held-part-banner { position: absolute; z-index: 10; top: 60px; left: 8px; right: 8px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px; background: #122941ed; color: white; font-size: 12px; border: 1px solid #60d9ef; border-radius: 6px; pointer-events: none; }
+.held-part-banner button { pointer-events: auto; margin-left: auto; }
+.held-part-ghost { position: fixed; z-index: 60; pointer-events: none; opacity: .75; }
+.held-part-ghost svg { width: 44px; height: 64px; }
+@media(max-width:999px) { .assembly-navigation span { display: none; } }
+.assembly-viewport > .blueprint-canvas { top: 54px; bottom: 154px; }
+.assembly-navigation-3d { top: 56px; }
+.assembly-view-options > summary { cursor: pointer; padding: 8px; min-height: 36px; font-size: 12px; }
+.assembly-view-options > div { position: absolute; z-index: 35; top: 48px; left: 4px; padding: 10px; display: flex; flex-wrap: wrap; gap: 6px; max-width: calc(100% - 8px); background: var(--ui-panel); border: 1px solid var(--ui-line); border-radius: 6px; }
+.assembly-view-options button { min-height: 40px; min-width: 40px; }

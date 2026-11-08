@@ -1,173 +1,78 @@
-import {useEffect,useRef,useState} from "react";
-import { PARTS } from "../../sim/parts";
+import {useEffect, useRef, useState} from 'react';
+import {PARTS} from '../../sim/parts';
+import {layoutDesign} from '../../sim/assemblyLayout';
 
-export function Blueprint({ design, selectedUid, onSelect }) {
-  const mount=useRef(null),[compact,setCompact]=useState(false);
-  useEffect(()=>{const o=new ResizeObserver(([e])=>setCompact(e.contentRect.width<520));o.observe(mount.current);return()=>o.disconnect();},[]);
-  const totalHeight = design.stack.reduce(
-    (h, n) => h + PARTS[n.partId].height,
-    0,
-  );
-  const scale = Math.min(8, 460 / Math.max(1, totalHeight));
-  let y = 65;
-  const nodes = design.stack.map((n) => {
-    const p = PARTS[n.partId],
-      h = Math.max(5, p.height * scale),
-      top = y;
-    y += h;
-    return { n, p, h, y: top, w: Math.max(14, p.diameter * scale) };
-  });
-  return (
-    <div
-      ref={mount}
-      data-compact={compact}
-      className="blueprint-canvas absolute inset-0 overflow-auto scroll-thin"
-      data-testid="blueprint-workspace"
-    >
-      <svg
-        viewBox={`${compact?180:0} 0 ${compact?240:600} ${Math.max(620, y + 70)}`}
-        className="h-full min-h-0 w-full"
-        aria-label="Rocket assembly blueprint"
-      >
-        <defs>
-          <linearGradient id="blueprint-metal"><stop stopColor="#718da3"/><stop offset=".25" stopColor="#e5edf3"/><stop offset=".52" stopColor="#ffffff"/><stop offset="1" stopColor="#829cad"/></linearGradient>
-          <linearGradient id="blueprint-tank"><stop stopColor="#825b36"/><stop offset=".5" stopColor="#ddb57a"/><stop offset="1" stopColor="#906336"/></linearGradient>
-          <pattern
-            id="blueprint-grid"
-            width="20"
-            height="20"
-            patternUnits="userSpaceOnUse"
-          >
-            <path
-              d="M20 0H0V20"
-              fill="none"
-              stroke="#23455a"
-              strokeWidth=".5"
-            />
-          </pattern>
-        </defs>
-        <rect width="600" height="100%" fill="url(#blueprint-grid)" />
-        <path
-          d={`M300 40V${y + 25}`}
-          stroke="#4d8da5"
-          strokeDasharray="5 6"
-          opacity=".5"
-        />
-        <text x="25" y="35" fill="#598399" fontSize="9" letterSpacing="2">
-          VEHICLE ASSEMBLY / ELEVATION
-        </text>
-        {nodes.map(({ n, p, h, y, w }, index) => (
-          <g
-            key={n.uid}
-            role="button"
-            tabIndex="0"
-            aria-label={`Select ${p.name}`}
-            data-testid={`blueprint-part-${n.uid}`}
-            onClick={() => onSelect(n.uid)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                onSelect(n.uid);
-              }
-            }}
-            className="cursor-pointer"
-          >
-            {['fairing','capsule','nose'].some(kind=>(p.look||'').includes(kind)) ? <path d={`M${300-w/2} ${y+h}Q${300-w*.4} ${y+h*.45} 300 ${y}Q${300+w*.4} ${y+h*.45} ${300+w/2} ${y+h}Z`} fill="url(#blueprint-metal)" stroke={selectedUid===n.uid?'#a5f3fc':'#56839a'} strokeWidth={selectedUid===n.uid?1.8:.7}/> : (
-            <rect
-              x={300 - w / 2}
-              y={y}
-              width={w}
-              height={h}
-              rx={p.category === "tank" ? 3 : 1}
-              fill={selectedUid===n.uid?"#8bd9f1":p.category==="tank"&&p.look!=="tank_white"?"url(#blueprint-tank)":"url(#blueprint-metal)"}
-              stroke={selectedUid === n.uid ? "#a5f3fc" : "#56839a"}
-              strokeWidth={selectedUid === n.uid ? 1.8 : 0.7}
-            />
-            )}
-            {p.engine && (
-              <path
-                d={`M${300 - w * 0.2} ${y + h * 0.4}L${300 - w * 0.5} ${y + h}H${300 + w * 0.5}L${300 + w * 0.2} ${y + h * 0.4}Z`}
-                fill="#0c1723"
-                stroke="#b89467"
-                strokeWidth=".8"
-              />
-            )}
-            <path
-              className="blueprint-leader"
-              d={`M${300 + w / 2 + 4} ${y + h / 2}H${index % 2 ? 210 : 385}`}
-              stroke="#436377"
-              strokeWidth=".6"
-            />
-            <text
-              x={index % 2 ? 205 : 390}
-              y={y + h / 2 + 3}
-              textAnchor={index % 2 ? "end" : "start"}
-              fill={selectedUid === n.uid ? "#a5f3fc" : "#8aabbc"}
-              fontSize="7"
-            >
-              {p.name.length > 30 ? p.name.slice(0, 28) + "…" : p.name}
-            </text>
-            {(design.radials || [])
-              .filter((r) => r.parentUid === n.uid)
-              .map((r) => {
-                const booster = PARTS[r.partId],
-                  bh = booster.height * scale;
-                return (
-                  <g
-                    key={r.uid}
-                    data-testid={`blueprint-radial-${r.uid}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onSelect(r.uid);
-                    }}
-                  >
-                    {[-1, 1].map((side) => (
-                      <rect
-                        key={side}
-                        x={
-                          300 +
-                          side * (w / 2 + booster.diameter * scale) -
-                          (booster.diameter * scale) / 2
-                        }
-                        y={y + h - bh}
-                        width={booster.diameter * scale}
-                        height={bh}
-                        rx="3"
-                        fill={selectedUid === r.uid ? "#22647a" : "#3c4147"}
-                        stroke="#71919f"
-                        strokeWidth=".8"
-                      />
-                    ))}
-                  </g>
-                );
-              })}
-          </g>
-        ))}
-        <path
-          d={`M130 65H120V${y}H130M120 65H110M120 ${y}H110`}
-          stroke="#5b879b"
-          fill="none"
-        />
-        <text
-          x="103"
-          y={(y + 65) / 2}
-          textAnchor="middle"
-          fill="#a5cadb"
-          fontSize="10"
-          transform={`rotate(-90 103 ${(y + 65) / 2})`}
-        >
-          {totalHeight.toFixed(1)} m STACK HEIGHT
-        </text>
-        <text
-          x="25"
-          y={Math.max(590, y + 45)}
-          fill="#598399"
-          fontSize="9"
-          letterSpacing="1"
-        >
-          SELECT A PART TO INSPECT · BLUEPRINT IS AN ASSEMBLY GUIDE
-        </text>
-      </svg>
+export function Blueprint({design, selectedUid, onSelect, onPlace, onMove, heldPart}) {
+  const mount = useRef(null), svg = useRef(null), pointers = useRef(new Map()), gesture = useRef(null);
+  const [size,setSize] = useState({width:300,height:500});
+  const [camera,setCamera] = useState(null), [preview,setPreview] = useState(null);
+  const layout = layoutDesign(design);
+  const all = [...layout.items, ...layout.radials];
+  const fit = () => {
+    const left=Math.min(-4,...all.map(n=>(n.x||0)-PARTS[n.partId].diameter/2));
+    const right=Math.max(4,...all.map(n=>(n.x||0)+PARTS[n.partId].diameter/2));
+    const low=Math.min(0,...all.map(n=>n.y)), high=Math.max(8,...all.map(n=>n.y+n.height));
+    return {x:(left+right)/2,y:-(low+high)/2,zoom:Math.max(.1,Math.min(size.width/(right-left+4),size.height/(high-low+6))*.85)};
+  };
+  const view=camera || fit();
+  const point=e=>{const p=svg.current.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.current.getScreenCTM().inverse());};
+  const zoom=f=>setCamera(v=>({...view,...v,zoom:Math.max(.1,Math.min(200,(v||view).zoom*f))}));
+  useEffect(()=>{const ro=new ResizeObserver(([e])=>setSize({width:e.contentRect.width,height:e.contentRect.height}));ro.observe(mount.current);return()=>ro.disconnect();},[]);
+  useEffect(()=>{const el=mount.current;const wheel=e=>{e.preventDefault();if(e.ctrlKey||e.metaKey)zoom(Math.exp(-e.deltaY*.003));else setCamera(v=>({...view,...v,x:(v||view).x+e.deltaX/view.zoom,y:(v||view).y+e.deltaY/view.zoom}));};el.addEventListener('wheel',wheel,{passive:false});return()=>el.removeEventListener('wheel',wheel);});
+  const finish=e=>{
+    const g=gesture.current; pointers.current.delete(e.pointerId);
+    const bounds=svg.current.getBoundingClientRect(),inside=e.clientX>=bounds.left&&e.clientX<=bounds.right&&e.clientY>=bounds.top&&e.clientY<=bounds.bottom;
+    if(g && !g.multi && inside && e.type==='pointerup') {
+      const p=point(e), moved=Math.hypot(e.clientX-g.startX,e.clientY-g.startY)>5;
+      if(heldPart)onPlace?.({x:p.x,y:-p.y});
+      else if(g.uid && moved)onMove?.(g.uid,{x:g.baseX+(e.clientX-g.startX)/view.zoom,y:g.baseY-(e.clientY-g.startY)/view.zoom});
+      else if(g.uid)onSelect(g.uid);
+    }
+    if(!pointers.current.size)gesture.current=null;
+    setPreview(null);
+  };
+  return <div ref={mount} className="blueprint-canvas absolute inset-0" data-testid="blueprint-workspace">
+    <div className="assembly-navigation" aria-label="Assembly view controls">
+      <button type="button" data-testid="assembly-zoom-out" aria-label="Zoom out" onClick={()=>zoom(1/1.25)}>−</button>
+      <button type="button" data-testid="assembly-fit" onClick={()=>{setCamera(null);setPreview(null);}}>Fit</button>
+      <button type="button" data-testid="assembly-zoom-in" aria-label="Zoom in" onClick={()=>zoom(1.25)}>+</button>
+      <span>Drag parts to move · drag grid / scroll to pan · pinch to zoom</span>
     </div>
-  );
+    <svg ref={svg} data-testid="assembly-placement-grid" aria-label="Rocket assembly placement grid" className="h-full w-full" style={{touchAction:'none'}}
+      viewBox={`${view.x-size.width/(2*view.zoom)} ${view.y-size.height/(2*view.zoom)} ${size.width/view.zoom} ${size.height/view.zoom}`}
+      onPointerDown={e=>{
+        if(e.button>0)return;
+        svg.current.setPointerCapture(e.pointerId);
+        pointers.current.set(e.pointerId,{x:e.clientX,y:e.clientY});
+        const uid=e.target.closest('[data-assembly-uid]')?.dataset.assemblyUid, n=all.find(n=>n.uid===uid);
+        if(pointers.current.size>1){if(gesture.current)gesture.current.multi=true;return;}
+        gesture.current={uid:n?.uid,startX:e.clientX,startY:e.clientY,lastX:e.clientX,lastY:e.clientY,baseX:n?.x||0,baseY:n?.y||0,multi:false};
+      }}
+      onPointerMove={e=>{
+        if(!pointers.current.has(e.pointerId))return;
+        const before=[...pointers.current.values()];pointers.current.set(e.pointerId,{x:e.clientX,y:e.clientY});
+        const after=[...pointers.current.values()],g=gesture.current;
+        if(after.length===2){const distance=a=>Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);zoom(distance(after)/Math.max(1,distance(before)));if(g)g.multi=true;return;}
+        if(!g||g.multi)return;
+        if(g.uid&&!heldPart)setPreview({uid:g.uid,x:(e.clientX-g.startX)/view.zoom,y:(e.clientY-g.startY)/view.zoom});
+        else if(!heldPart){const dx=e.clientX-g.lastX,dy=e.clientY-g.lastY;setCamera(v=>({...view,...v,x:(v||view).x-dx/view.zoom,y:(v||view).y-dy/view.zoom}));}
+        g.lastX=e.clientX;g.lastY=e.clientY;
+      }} onPointerUp={finish} onPointerCancel={finish}>
+      <defs><pattern id="assembly-grid" width={view.zoom<3?10:1} height={view.zoom<3?10:1} patternUnits="userSpaceOnUse"><path d={view.zoom<3?"M10 0H0V10":"M1 0H0V1"} stroke="#7598b0" strokeWidth=".025" fill="none" opacity=".45"/></pattern><linearGradient id="assembly-metal"><stop stopColor="#8198aa"/><stop offset=".35" stopColor="#eef5f8"/><stop offset=".6" stopColor="#fff"/><stop offset="1" stopColor="#688398"/></linearGradient></defs>
+      <rect x={view.x-size.width/view.zoom} y={view.y-size.height/view.zoom} width={2*size.width/view.zoom} height={2*size.height/view.zoom} fill="url(#assembly-grid)"/>
+      {all.map((n,i)=>{
+        const p=PARTS[n.partId],w=Math.max(.25,p.diameter),h=Math.max(.2,n.height),x=(n.x||0)-w/2,y=-n.y-h;
+        let carried=preview?.uid===n.uid, ancestor=design.stack.find(v=>v.uid===n.uid);
+        for(let k=0;preview&&ancestor?.mount&&k<512;k++){if(ancestor.mount.parentUid===preview.uid){carried=true;break;}const parentUid=ancestor.mount.parentUid;ancestor=design.stack.find(v=>v.uid===parentUid);}
+        const cone=['fairing','capsule','nose'].some(k=>(p.look||'').includes(k));
+        return <g key={`${n.uid}-${i}`} role="button" tabIndex="0" aria-label={`Select ${p.name}`} data-assembly-uid={n.uid} data-testid={`${i<layout.items.length?'blueprint-part':'blueprint-radial'}-${n.uid}`} transform={carried?`translate(${preview.x} ${preview.y})`:undefined}
+          onClick={e=>{if(e.detail===0)onSelect(n.uid);}}
+          onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();onSelect(n.uid);}}} style={{cursor:'grab'}}>
+          {cone?<path d={`M${x} ${y+h}Q${x+w*.05} ${y+h*.35} ${x+w/2} ${y}Q${x+w*.95} ${y+h*.35} ${x+w} ${y+h}Z`} fill="url(#assembly-metal)" stroke="#173047" strokeWidth=".07"/>:<rect x={x} y={y} width={w} height={h} rx=".12" fill="url(#assembly-metal)" stroke="#173047" strokeWidth=".07"/>}
+          {p.engine&&<path d={`M${x+w*.3} ${y+h*.2}H${x+w*.7}L${x+w} ${y+h}H${x}Z`} fill="#34414c" stroke="#bca487" strokeWidth=".06"/>}
+          {selectedUid===n.uid&&<rect x={x-.12} y={y-.12} width={w+.24} height={h+.24} fill="none" stroke="#5de2ff" strokeWidth=".1" strokeDasharray=".3 .2"/>}
+        </g>;
+      })}
+    </svg>
+  </div>;
 }

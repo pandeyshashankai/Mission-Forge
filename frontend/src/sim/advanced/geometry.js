@@ -1,7 +1,7 @@
 import { PARTS } from "../parts";
 export function geometryAnalysis(design, layout) {
   const all = [
-    ...layout.items.map((i) => ({ ...i, x: 0, z: 0 })),
+    ...layout.items,
     ...layout.radials,
   ];
   let wet = 0,

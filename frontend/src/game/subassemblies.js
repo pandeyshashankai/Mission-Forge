@@ -17,7 +17,7 @@ export function appendSubassembly(design,assembly){
    let uid;do{uid=newUid();}while(occupied.has(uid));occupied.add(uid);remap.set(n.uid,uid);
  }
  return {...design,events:undefined,
-  stack:[...design.stack,...assembly.stack.map(n=>({...n,uid:remap.get(n.uid)}))],
+  stack:[...design.stack,...assembly.stack.map(n=>({...n,uid:remap.get(n.uid),...(n.mount?{mount:{...n.mount,parentUid:remap.get(n.mount.parentUid)}}:{})}))],
   radials:[...(design.radials||[]),...assembly.radials.map(n=>({...n,uid:remap.get(n.uid),parentUid:remap.get(n.parentUid)}))]};
 }
 export function readSubassemblies(){try{const list=JSON.parse(localData.getItem('mf.subassemblies')||'[]');return Array.isArray(list)?list.filter(validSubassembly).slice(0,12):[];}catch{return [];}}

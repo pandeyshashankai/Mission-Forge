@@ -6,7 +6,7 @@ import { CATEGORIES, PART_LIST, PROPELLANTS } from "../../sim/parts";
 const fmt = (x, d = 0) =>
   Number(x).toLocaleString("en-US", { maximumFractionDigits: d });
 
-export const PartCatalog = ({ onAdd, onHover }) => {
+export const PartCatalog = ({ onAdd, onHover, onPickup }) => {
   const [category, setCategory] = useState("all");
   const [q, setQ] = useState("");
   const parts = PART_LIST.filter(
@@ -67,6 +67,8 @@ export const PartCatalog = ({ onAdd, onHover }) => {
                     title={p.name}
                     aria-label={`Add ${p.name}`}
                     onClick={() => onAdd(p.id)}
+                    onPointerDown={e=>onPickup?.(p.id,e)}
+                    style={{touchAction:"pan-y"}}
                     onMouseEnter={() => onHover?.(p.id)}
                     className="group w-full border border-slate-800/80 bg-slate-950/70 px-2.5 py-2 text-left transition-[border-color,background-color,transform] hover:translate-x-0.5 hover:border-cyan-500/50 hover:bg-slate-900"
                   >

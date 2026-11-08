@@ -14,6 +14,8 @@ export const HangarView = ({
   xray,
   overlays=false,
   quality = "medium",
+  panMode = false,
+  viewCommand,
 }) => {
   const mountRef = useRef(null);
   const ctx = useRef({});
@@ -39,14 +41,14 @@ export const HangarView = ({
       40,
       el.clientWidth / el.clientHeight,
       0.1,
-      1000,
+      20000,
     );
     camera.position.set(38, 22, 38);
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.maxPolarAngle = Math.PI * 0.495;
     controls.minDistance = 4;
-    controls.maxDistance = 180;
+    controls.maxDistance = 20000;
     scene.add(new THREE.HemisphereLight("#bcd4ff", "#1a1410", 0.55));
     const key = new THREE.DirectionalLight("#fff4e0", 2.2);
     key.position.set(30, 60, 25);
@@ -193,18 +195,30 @@ export const HangarView = ({
       c.scene.add(group);c.overlay=group;
     }
     const h = rocket.userData.height;
-    if (c.lastHeight === undefined || Math.abs(c.lastHeight - h) > 4) {
-      c.controls.target.set(0, h / 2, 0);
-      const d = Math.max(22, h * 1.9);
-      c.camera.position.set(d * 0.7, h * 0.55 + 4, d * 0.7);
+    const bounds=new THREE.Box3().setFromObject(rocket),size=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3());
+    const extent=Math.max(h,size.x,size.z);
+    c.scene.fog.near=Math.max(90,extent*4);c.scene.fog.far=Math.max(260,extent*20);
+    if (c.lastHeight === undefined || Math.abs(c.lastHeight-h)>4 || Math.abs((c.lastWidth||0)-size.x)>4) {
+      c.controls.target.copy(center);
+      const d=Math.max(22,h*1.9,size.x*2/Math.max(.1,c.camera.aspect));
+      c.camera.position.copy(center).add(new THREE.Vector3(d*.7,d*.12,d*.7));
     }
-    c.lastHeight = h;
+    c.lastHeight=h;c.lastWidth=size.x;
     setHighlight(rocket, selectedUid);
   }, [design, xray, quality, overlays]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (ctx.current.rocket) setHighlight(ctx.current.rocket, selectedUid);
   }, [selectedUid]);
+
+  useEffect(()=>{const c=ctx.current;if(!c.controls)return;c.controls.mouseButtons.LEFT=panMode?THREE.MOUSE.PAN:THREE.MOUSE.ROTATE;c.controls.touches.ONE=panMode?THREE.TOUCH.PAN:THREE.TOUCH.ROTATE;},[panMode]);
+  useEffect(()=>{const c=ctx.current;if(!c.camera||!c.rocket)return;
+    if(viewCommand?.action==='fit'){
+      const box=new THREE.Box3().setFromObject(c.rocket),center=box.getCenter(new THREE.Vector3()),size=box.getSize(new THREE.Vector3());
+      const d=Math.max(12,size.y*1.8,size.x*2/Math.max(.1,c.camera.aspect));c.controls.target.copy(center);c.camera.position.copy(center).add(new THREE.Vector3(d*.7,d*.15,d*.7));
+    }else if(viewCommand?.action){const v=c.camera.position.clone().sub(c.controls.target);v.multiplyScalar(viewCommand.action==='in'?.8:1.25);c.camera.position.copy(c.controls.target).add(v);}
+    c.controls.update();
+  },[viewCommand]);
 
   return (
     <div

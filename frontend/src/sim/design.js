@@ -1,3 +1,4 @@
+import {layoutDesign} from "./assemblyLayout";
 import { PARTS, engineSL } from "./parts";
 import { G0, LAUNCH_OPS_COST } from "./constants";
 
@@ -6,7 +7,7 @@ export const newUid = () => Math.random().toString(36).slice(2, 10);
 export function buildSections(design) {
   const top = [];
   let cur = [];
-  for (const n of design.stack) {
+  for (const n of design.stack.filter(n => !n.mount)) {
     if (PARTS[n.partId].decoupler && cur.length) {
       top.push(cur);
       cur = [];
@@ -15,6 +16,16 @@ export function buildSections(design) {
   }
   if (cur.length) top.push(cur);
   const ordered = top.reverse();
+  let pending = design.stack.filter(n => n.mount);
+  while (pending.length) {
+    let progress = false;
+    pending = pending.filter(n => {
+      const section = ordered.find(parts => parts.some(p => p.uid === n.mount.parentUid));
+      if (!section) return true;
+      section.push(n); progress = true; return false;
+    });
+    if (!progress) throw Error('Unconnected or cyclic side assembly');
+  }
   return ordered.map((parts, index) => {
     const uids = new Set(parts.map((p) => p.uid));
     const tanks = {};
@@ -78,11 +89,13 @@ export function describeEvent(id, sections) {
 
 export function createRuntime(design) {
   const sections = buildSections(design);
+  const placed = design.stack.some(n=>n.mount) ? layoutDesign(design).items : [];
   return {
     events: getEvents(design, sections),
     eventIndex: 0,
     sections: sections.map((s) => ({
       index: s.index,
+      ...(placed.length ? {placedDisks:placed.filter(n=>s.uids.has(n.uid)&&design.stack.find(p=>p.uid===n.uid)?.mount).map(n=>({x:n.x||0,z:n.z||0,d:PARTS[n.partId].diameter}))} : {}),
       dryMass: s.dryMass,
       maxD: s.maxD,
       tanks: { ...s.tanks },
@@ -121,6 +134,13 @@ export function frontalArea(rt) {
   let extra = 0;
   for (const s of rt.sections) if (s.attached) d = Math.max(d, s.maxD);
   for (const r of rt.radials) if (r.attached) extra += r.n * Math.PI * (r.diameter / 2) ** 2;
+  const disks = new Map();
+  for(const s of rt.sections)if(s.attached)for(const disk of s.placedDisks || []) {
+    if(Math.hypot(disk.x,disk.z)+disk.d/2<=d/2)continue;
+    const key=disk.x+','+disk.z;
+    disks.set(key,Math.max(disks.get(key)||0,disk.d));
+  }
+  for(const diameter of disks.values())extra+=Math.PI*(diameter/2)**2;
   return Math.PI * (d / 2) ** 2 + extra;
 }
 

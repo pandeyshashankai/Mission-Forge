@@ -1,3 +1,4 @@
+import {validMounts} from "./assemblyLayout";
 import {normalizeGamepad} from "../input/gamepad";
 import { localData } from "../persistence/localData";
 import { getMission, DIFFICULTIES } from "./missions";
@@ -160,6 +161,7 @@ export function isValidDesign(d) {
     d.stack.length <= 512 &&
     d.name.length <= 160 &&
     d.stack.every((n) => validNode(n) && !PARTS[n.partId].radialOnly) &&
+    validMounts(d) &&
     new Set(d.stack.map((n) => n.uid)).size === d.stack.length &&
     (d.radials === undefined ||
       (Array.isArray(d.radials) && d.radials.length <= 128 &&
