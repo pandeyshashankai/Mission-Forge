@@ -1,3 +1,4 @@
+import {PartIcon} from "./PartIcon";
 import { useState } from "react";
 import { Search } from "lucide-react";
 import { CATEGORIES, PART_LIST, PROPELLANTS } from "../../sim/parts";
@@ -63,10 +64,13 @@ export const PartCatalog = ({ onAdd, onHover }) => {
                   <button
                     key={p.id}
                     data-testid={`part-catalog-item-${p.id}`}
+                    title={p.name}
+                    aria-label={`Add ${p.name}`}
                     onClick={() => onAdd(p.id)}
                     onMouseEnter={() => onHover?.(p.id)}
                     className="group w-full border border-slate-800/80 bg-slate-950/70 px-2.5 py-2 text-left transition-[border-color,background-color,transform] hover:translate-x-0.5 hover:border-cyan-500/50 hover:bg-slate-900"
                   >
+                    <PartIcon part={p}/><span className="part-rail-name">{p.name}</span>
                     <div className="text-xs font-medium text-slate-200 group-hover:text-white">
                       {p.name}
                     </div>

@@ -28,10 +28,10 @@ Use the mouse to orbit the 3D view and the wheel to zoom. Builder selection and 
 
 Touch controls appear automatically on coarse-pointer devices and narrow windows. **Touch controls** can also be forced on or hidden on a laptop or tablet with a keyboard. Choose left- or right-side steering, normal or large buttons, and steering sensitivity in Settings.
 
-- Hold the arrow pad to steer. Hold **+ / −** to adjust throttle; **Full / Cut** set it immediately.
+- Hold the arrow pad to steer. Drag the vertical throttle upwards to increase thrust, or hold **+ / −**. **Full / Cut** set it immediately.
 - Tap **Stage**, **RCS**, and **Auto / Manual** for mission actions. Stage becomes unavailable after the last stage.
 - Steering, throttle, and action taps work together with multiple fingers. Releasing or cancelling one pointer leaves the others active.
-- Pause, map, camera, time speed, saves, and instruments remain available in the flight interface.
+- Use the corner shortcuts for Map, pause, Instruments and time speed. Menu opens camera options, saves and the remaining flight tools.
 - Pinch and drag to inspect a rocket in the builder; a pinch does not select a part.
 
 The layout accommodates portrait, landscape, tablet widths, and browser-provided notch and home-indicator insets. Short screens keep extra telemetry in **Instruments** so the flight buttons remain accessible.

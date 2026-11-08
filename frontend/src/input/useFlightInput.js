@@ -77,7 +77,7 @@ export function useFlightInput({
     const inputState = state.current;
     const down = e => {
       const c = latest.current;
-      if (!c.enabled || e.metaKey || e.altKey || editableTarget(e.target)) return;
+      if (e.defaultPrevented || !c.enabled || e.metaKey || e.altKey || editableTarget(e.target)) return;
       if (e.key === "Escape" && c.onMenu) {
         e.preventDefault();
         if (!e.repeat) c.onMenu();

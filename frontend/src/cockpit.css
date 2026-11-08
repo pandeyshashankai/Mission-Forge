@@ -1,0 +1,1006 @@
+/* Compact cockpit: controls frame the spacecraft rather than occupying its view. */
+.cockpit-corners {
+  position: absolute;
+  z-index: 18;
+  top: max(8px,env(safe-area-inset-top));
+  left: max(8px,env(safe-area-inset-left));
+  right: max(8px,env(safe-area-inset-right));
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  pointer-events: none;
+}
+.cockpit-corner-left,.cockpit-corner-right {
+  display: flex;
+  gap: 4px;
+  position: relative;
+  pointer-events: auto;
+}
+.cockpit-corners button {
+  min-width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: 1px solid #8eacbc70;
+  border-radius: 7px;
+  background: #10293fe0;
+  color: #fff;
+  box-shadow: 0 2px 8px #0002;
+}
+.cockpit-corners button span {
+  font-size: 11px;
+  font-weight: 700;
+}
+.cockpit-corner-right output {
+  position: absolute;
+  top: 48px;
+  right: 0;
+  font-size: 11px;
+  color: #fff;
+  text-shadow: 0 1px 3px #000;
+  background: #10293fc9;
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+.cockpit-readings {
+  position: absolute;
+  top: 88px;
+  right: 10px;
+  z-index: 7;
+  display: grid;
+  gap: 8px;
+  text-align: right;
+  color: #fff;
+  text-shadow: 0 1px 4px #000;
+  font-size: 11px;
+  pointer-events: none;
+}
+.cockpit-readings span,.cockpit-readings strong {
+  display: block;
+}
+.cockpit-readings strong {
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+.cockpit-fuel {
+  position: absolute;
+  left: 0;
+  bottom: 114px;
+  width: 92px;
+  max-height: 100px;
+  overflow: auto;
+  color: #fff;
+  text-shadow: 0 1px 3px #000;
+  font-size: 10px;
+  pointer-events: auto;
+}
+.cockpit-fuel>strong {
+  display: block;
+  margin-bottom: 4px;
+}
+.cockpit-fuel>div {
+  display: grid;
+  gap: 2px;
+  margin-bottom: 4px;
+}
+.cockpit-fuel span {
+  font-size: 9px;
+}
+.cockpit-fuel meter {
+  display: block;
+  width: 100%;
+  height: 7px;
+}
+.cockpit-fuel meter::-webkit-meter-bar {
+  background: #374957;
+  border: 0;
+  border-radius: 1px;
+}
+.cockpit-fuel meter::-webkit-meter-optimum-value {
+  background: #e0f5ff;
+}
+:is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls {
+  inset: 0;
+  bottom: env(safe-area-inset-bottom);
+  left: max(8px,env(safe-area-inset-left));
+  right: max(8px,env(safe-area-inset-right));
+  padding: 0!important;
+  min-height: 0!important;
+  background: none!important;
+  border: 0!important;
+  display: block!important;
+  --touch-button: 46px;
+}
+:is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-steering {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  order: initial;
+}
+:is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-steering>.touch-control-label,:is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-pad-center {
+  display: none;
+}
+:is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-direction-pad {
+  grid-template-columns: repeat(2,var(--touch-button));
+  grid-template-rows: repeat(2,var(--touch-button));
+  gap: 4px;
+}
+:is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-north {
+  grid-area: 1/1;
+}
+:is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-south {
+  grid-area: 1/2;
+}
+:is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-west {
+  grid-area: 2/1;
+}
+:is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-east {
+  grid-area: 2/2;
+}
+:is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-flight-actions {
+  position: absolute;
+  left: 0;
+  bottom: 8px;
+  width: 92px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  transform: none;
+}
+:is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-flight-actions button {
+  min-width: 44px;
+  min-height: 44px;
+  width: 100%;
+  padding: 3px;
+  font-size: 9px;
+  flex-direction: column;
+  gap: 1px;
+}
+:is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-stage {
+  grid-column: 1/-1;
+}
+:is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-thrust {
+  position: absolute;
+  right: 0;
+  bottom: 8px;
+  width: 54px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  order: initial;
+}
+:is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-thrust-hold {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+:is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-thrust .touch-control-label {
+  display: block;
+  margin: 0;
+  padding: 4px 0;
+  text-align: center;
+  font-size: 0;
+  border: 0;
+  background: #10293fe0;
+  color: #fff;
+}
+:is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-thrust .touch-control-label strong {
+  font-size: 12px;
+}
+:is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-thrust button {
+  min-width: 44px;
+  min-height: 44px;
+  flex-direction: column;
+  gap: 0;
+  padding: 2px;
+  font-size: 10px;
+}
+:is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-thrust>button svg {
+  display: none;
+}
+:is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-flight-button {
+  border-radius: 6px;
+  background: #10293fe6;
+  color: #fff;
+  border-color: #7498b066;
+}
+:is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-flight-button.is-on {
+  background: #1a697d;
+  color: #d8fbff;
+  border-color: #8cdae9;
+}
+.cockpit-throttle {
+  writing-mode: vertical-lr;
+  direction: rtl;
+  appearance: auto;
+  accent-color: #d4f5ff;
+  width: 44px;
+  height: clamp(90px,22dvh,180px);
+  align-self: center;
+  touch-action: none;
+  background: #264357;
+  border-radius: 4px;
+}
+:is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls.steering-right .touch-flight-actions {
+  left: auto;
+  right: 0;
+}
+:is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls.steering-right .cockpit-fuel {
+  left: auto;
+  right: 0;
+}
+:is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls.steering-right .touch-thrust {
+  right: auto;
+  left: 0;
+}
+.flight-screen[data-touch="on"] .mobile-flight-summary {
+  display: none!important;
+}
+.flight-screen[data-touch="on"] .flight-camera-window {
+  top: 64px;
+  bottom: 112px;
+  left: 0;
+  right: 76px;
+}
+.flight-screen[data-touch="on"] .flight-bar,.flight-screen[data-touch="on"] .flight-context-bar {
+  display: none!important;
+}
+.flight-screen[data-touch="on"][data-cockpit-menu="open"] .flight-bar {
+  display: flex!important;
+  flex-wrap: wrap;
+  position: absolute;
+  top: 60px;
+  left: 8px;
+  right: 8px;
+  max-height: calc(100% - 76px);
+  overflow: auto;
+  z-index: 24;
+  padding: 12px;
+  background: var(--ui-panel);
+  border: 1px solid var(--ui-line);
+}
+.flight-screen[data-touch="on"][data-cockpit-menu="open"] .flight-identity {
+  width: 100%;
+  height: auto;
+}
+.flight-screen[data-touch="on"][data-cockpit-menu="open"] .flight-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  width: 100%;
+}
+.flight-screen[data-touch="on"][data-cockpit-menu="open"] .flight-actions>.ui-button {
+  font-size: 12px;
+  flex: none;
+  min-height: 44px;
+}
+.flight-screen[data-touch="on"][data-cockpit-menu="open"] .flight-camera-controls {
+  flex: 1;
+  min-width: 100px;
+}
+.flight-screen[data-touch="on"][data-cockpit-menu="open"] .flight-camera-controls select {
+  width: 100%;
+  font-size: 12px;
+}
+.flight-screen[data-touch="on"][data-cockpit-menu="open"] .flight-bar>[data-testid="display-settings-btn"] {
+  position: static;
+}
+.flight-screen[data-touch="on"][data-instruments="detailed"] .flight-instrument-panels {
+  top: 64px;
+  bottom: 112px;
+  left: 8px;
+  right: 8px;
+  z-index: 19;
+}
+.flight-screen[data-touch="on"] .touch-flight-controls {
+  inset: 0 max(8px,env(safe-area-inset-right)) env(safe-area-inset-bottom) max(8px,env(safe-area-inset-left));
+  width: auto;
+  top: 0;
+}
+.explore-workspace[data-touch="on"] {
+  display: block!important;
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+.explore-workspace[data-touch="on"] .explore-scene {
+  position: absolute;
+  top: 64px;
+  bottom: 112px;
+  left: 0;
+  right: 76px;
+  min-height: 0;
+}
+.explore-workspace[data-touch="on"] .explore-header,.explore-workspace[data-touch="on"] .explore-footer {
+  display: none;
+}
+.explore-workspace[data-touch="on"][data-cockpit-menu="open"] .explore-header {
+  display: flex;
+  flex-wrap: wrap;
+  position: absolute;
+  top: 60px;
+  left: 8px;
+  right: 8px;
+  z-index: 24;
+  background: var(--ui-panel);
+  padding: 10px;
+  border: 1px solid var(--ui-line);
+}
+.explore-workspace[data-touch="on"][data-cockpit-menu="open"] .explore-header>.ml-auto {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: 6px;
+}
+.explore-workspace[data-touch="on"][data-cockpit-menu="open"] .explore-header>div:nth-child(2) {
+  display: none;
+}
+.explore-workspace[data-touch="on"][data-cockpit-menu="open"] .explore-footer {
+  display: flex;
+  position: absolute;
+  top: 190px;
+  bottom: auto;
+  left: 8px;
+  right: 8px;
+  z-index: 24;
+  flex-wrap: wrap;
+  background: var(--ui-panel);
+  padding: 10px;
+}
+.explore-workspace[data-touch="on"]>.touch-flight-controls {
+  position: absolute;
+  inset: 0 max(8px,env(safe-area-inset-right)) env(safe-area-inset-bottom) max(8px,env(safe-area-inset-left));
+  width: auto;
+  padding: 0;
+}
+.explore-workspace[data-touch="on"] .explore-inspector {
+  top: 64px;
+  bottom: 112px;
+  left: 8px;
+  right: 8px;
+  z-index: 19;
+}
+.explore-workspace[data-touch="on"] .explore-view-tabs {
+  right: 0;
+}
+.explore-workspace[data-touch="on"] [data-testid="exploration-viewport"] {
+  top: 44px;
+}
+@media(max-width:360px) {
+  .cockpit-corners button {
+    min-width: 40px;
+  }
+  .cockpit-corner-left button span {
+    display: none;
+  }
+  :is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls {
+    --touch-button: 44px;
+  }
+  :is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls.size-large {
+    --touch-button: 46px;
+  }
+}
+@media(max-width:950px) and (orientation:landscape) {
+  .flight-screen[data-touch="on"] .flight-camera-window,.explore-workspace[data-touch="on"] .explore-scene {
+    top: 64px;
+    right: 140px;
+    bottom: 64px;
+    left: 0;
+  }
+  :is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-steering {
+    left: calc(50% - 70px);
+    bottom: 8px;
+  }
+  :is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-direction-pad {
+    grid-template-columns: repeat(4,44px);
+    grid-template-rows: 44px;
+  }
+  :is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-west {
+    grid-area: 1/1;
+  }
+  :is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-north {
+    grid-area: 1/2;
+  }
+  :is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-south {
+    grid-area: 1/3;
+  }
+  :is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-east {
+    grid-area: 1/4;
+  }
+  :is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-thrust {
+    width: 108px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  :is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-thrust>.touch-control-label {
+    grid-column: 1/-1;
+  }
+  .cockpit-throttle {
+    height: 110px;
+    grid-row: 2;
+    grid-column: 1;
+  }
+  :is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-thrust-hold {
+    grid-column: 2;
+    grid-row: 2;
+    justify-content: space-between;
+  }
+  :is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-thrust>button {
+    grid-row: 3;
+  }
+  .cockpit-fuel {
+    bottom: 112px;
+  }
+  :is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-flight-actions {
+    bottom: 8px;
+  }
+  .flight-screen[data-touch="on"][data-instruments="detailed"] .flight-instrument-panels,.explore-workspace[data-touch="on"] .explore-inspector {
+    bottom: 64px;
+  }
+}
+/* Workshop palette: original part silhouettes, continuous assembly view, blue drafting grid. */
+.part-thumbnail {
+  width: 38px;
+  height: 54px;
+  float: left;
+  margin-right: 10px;
+}
+.part-rail-name {
+  display: none;
+}
+.builder-tools-toggle,.builder-stats-toggle {
+  display: none;
+}
+.blueprint-canvas {
+  background-color: #315780;
+  background-image: linear-gradient(#6a90b329 1px,transparent 1px),linear-gradient(90deg,#6a90b329 1px,transparent 1px);
+  background-size: 20px 20px;
+}
+.assembly-catalog [data-testid^="part-catalog-item"] {
+  min-height: 74px;
+  overflow: hidden;
+}
+.assembly-viewport [data-testid="attach-toolbar"] {
+  background: #102c46e8;
+}
+.builder-toolbar [data-testid="open-readiness-btn"] {
+  font-weight: 750;
+}
+@media(max-width:999px) {
+  .builder-screen>.workflow-header {
+    min-height: 48px;
+    height: 48px;
+    padding: 4px 8px;
+    gap: 4px;
+  }
+  .builder-screen>.workflow-header .mission-steps {
+    display: none;
+  }
+  .builder-screen>.workflow-header>[data-testid="display-settings-btn"] {
+    min-height: 40px;
+  }
+  .builder-toolbar {
+    position: relative;
+    min-height: 54px;
+    height: 54px;
+    padding: 5px 8px;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+  }
+  .builder-tools-toggle {
+    display: flex;
+    min-height: 44px;
+    padding: 6px;
+  }
+  .builder-name {
+    width: calc(100% - 180px);
+    min-width: 60px;
+    font-size: 11px;
+  }
+  .builder-tools-toggle span {
+    display: none;
+  }
+  .builder-name-label {
+    display: none;
+  }
+  .builder-actions {
+    display: contents;
+  }
+  .builder-actions>* {
+    display: none!important;
+  }
+  .builder-actions>[data-testid="open-readiness-btn"] {
+    display: flex!important;
+    position: absolute;
+    right: 8px;
+    top: 5px;
+    min-height: 44px;
+    padding: 8px!important;
+    font-size: 13px;
+  }
+  .builder-screen[data-builder-tools="open"] .builder-actions {
+    display: flex;
+    position: absolute;
+    top: 54px;
+    left: 8px;
+    right: 8px;
+    background: var(--ui-panel);
+    border: 1px solid var(--ui-line);
+    padding: 10px;
+    z-index: 40;
+    flex-wrap: wrap;
+    max-height: 50dvh;
+    overflow: auto;
+  }
+  .builder-screen[data-builder-tools="open"] .builder-actions>*:not(input[type="file"]) {
+    display: flex!important;
+    position: static;
+  }
+  .builder-screen[data-builder-tools="open"] .builder-actions>select {
+    display: block!important;
+  }
+  .builder-mobile-tabs {
+    order: 4;
+    min-height: 44px;
+    padding: 3px 8px;
+    gap: 3px;
+  }
+  .builder-mobile-tabs button {
+    padding: 6px;
+    min-height: 38px;
+  }
+  .assembly-workspace {
+    order: 3;
+    display: grid;
+    grid-template-columns: 72px minmax(0,1fr);
+  }
+  .assembly-viewport {
+    position: relative;
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .assembly-catalog {
+    display: block;
+    position: relative;
+    inset: auto;
+    grid-column: 1;
+    grid-row: 1;
+    z-index: 21;
+    background: #52759a!important;
+    border-right: 1px solid #8aafce88;
+    overflow: hidden;
+  }
+  .builder-screen:not([data-builder-pane="parts"]) .assembly-catalog [data-testid="part-catalog"]>div:nth-child(-n+2) {
+    display: none;
+  }
+  .builder-screen:not([data-builder-pane="parts"]) .assembly-catalog [data-testid="part-catalog"]>div:last-child {
+    display: block;
+    padding: 3px;
+    overflow: auto;
+    min-height: 0;
+  }
+  .builder-screen:not([data-builder-pane="parts"]) .assembly-catalog [data-testid="part-catalog"]>div:last-child>div {
+    margin: 0;
+  }
+  .builder-screen:not([data-builder-pane="parts"]) .assembly-catalog .eyebrow {
+    display: none;
+  }
+  .builder-screen:not([data-builder-pane="parts"]) [data-testid^="part-catalog-item"] {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 3px;
+    min-height: 76px;
+    background: #9db9d0!important;
+    border-color: #bdcee0!important;
+    margin-bottom: 4px;
+    color: #10263d;
+  }
+  .builder-screen:not([data-builder-pane="parts"]) [data-testid^="part-catalog-item"]>div {
+    display: none;
+  }
+  .builder-screen:not([data-builder-pane="parts"]) .part-thumbnail {
+    float: none;
+    width: 42px;
+    height: 52px;
+    margin: 0;
+  }
+  .builder-screen:not([data-builder-pane="parts"]) .part-rail-name {
+    display: block;
+    max-width: 60px;
+    font-size: 8px;
+    line-height: 1.2;
+    max-height: 20px;
+    overflow: hidden;
+    text-align: center;
+    color: #10263d;
+    font-weight: 700;
+  }
+  .builder-screen[data-builder-pane="parts"] .assembly-catalog {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: min(290px,85%);
+    box-shadow: 8px 0 25px #0005;
+  }
+  .builder-screen[data-builder-pane="parts"] .assembly-catalog [data-testid="part-catalog"]>div:last-child {
+    display: block;
+    padding: 8px;
+  }
+  .builder-screen[data-builder-pane="parts"] .assembly-catalog .part-rail-name {
+    display: none;
+  }
+  .assembly-details {
+    inset: 0 0 0 72px;
+    background: var(--ui-panel)!important;
+    z-index: 30;
+  }
+  .assembly-viewport>[data-testid="attach-toolbar"] {
+    top: 6px;
+    left: 6px;
+    right: 6px;
+    max-width: calc(100% - 12px);
+    padding: 3px;
+    gap: 0;
+  }
+  .assembly-viewport>[data-testid="attach-toolbar"] .eyebrow,.assembly-viewport>[data-testid="attach-toolbar"]>span {
+    display: none;
+  }
+  .assembly-viewport>[data-testid="attach-toolbar"] button {
+    font-size: 9px;
+    padding: 5px;
+    min-height: 30px;
+  }
+  .assembly-stats {
+    left: 4px;
+    right: 4px;
+    bottom: 4px;
+    grid-template-columns: repeat(3,minmax(0,1fr));
+    padding: 4px;
+    gap: 3px;
+  }
+  .assembly-stats[data-expanded="false"]>.inset:not(:nth-child(1)):not(:nth-child(5)):not(:nth-child(7)) {
+    display: none;
+  }
+  .assembly-stats .inset {
+    padding: 3px;
+  }
+  .assembly-stats .font-mono {
+    font-size: 11px;
+  }
+  .assembly-stats .eyebrow {
+    font-size: 8px!important;
+  }
+  .assembly-stats .font-mono>span {
+    font-size: 8px;
+  }
+  .builder-stats-toggle {
+    display: block;
+    position: absolute;
+    right: 6px;
+    bottom: 64px;
+    z-index: 4;
+    padding: 4px 7px;
+    min-height: 32px;
+    font-size: 10px;
+  }
+  .assembly-stats[data-expanded="true"] {
+    max-height: 55%;
+    overflow: auto;
+    z-index: 6;
+  }
+  .mass-overlay-toggle {
+    bottom: 64px!important;
+    left: 4px!important;
+    right: auto!important;
+    font-size: 0;
+    min-width: 32px;
+    width: 32px;
+    overflow: hidden;
+  }
+  .mass-overlay-toggle::after {
+    content: "⊕";
+    font-size: 19px;
+  }
+  .selected-part-actions {
+    bottom: 105px;
+    left: 4px;
+    right: 4px;
+    padding: 5px;
+    gap: 4px;
+  }
+  .selected-part-actions>span {
+    display: none;
+  }
+  .selected-part-actions .ui-button {
+    min-height: 36px;
+    padding: 4px;
+  }
+}
+.flight-top-console {
+  display: contents;
+}
+.flight-screen[data-touch="on"] .flight-top-console {
+  display: none;
+}
+.flight-screen[data-touch="on"]:not([data-phase="flight"]) .flight-top-console {
+  display: contents;
+}
+.flight-screen[data-touch="on"]:not([data-phase="flight"]) .flight-bar {
+  display: flex!important;
+}
+.flight-screen[data-touch="on"][data-cockpit-menu="open"] .flight-top-console {
+  display: block;
+  position: absolute;
+  top: 60px;
+  left: 8px;
+  right: 8px;
+  z-index: 24;
+  max-height: calc(100% - 76px);
+  overflow: auto;
+  background: var(--ui-panel);
+  border: 1px solid var(--ui-line);
+  border-radius: 10px;
+}
+.flight-screen[data-touch="on"][data-cockpit-menu="open"] .flight-top-console .flight-bar {
+  position: static;
+  max-height: none;
+  overflow: visible;
+  border: 0;
+  box-shadow: none;
+}
+.flight-screen[data-touch="on"][data-cockpit-menu="open"] .flight-top-console .flight-context-bar {
+  display: flex!important;
+  position: static;
+  flex-wrap: wrap;
+  height: auto;
+  width: auto;
+  padding: 8px;
+  gap: 6px;
+  background: none;
+  border: 0;
+}
+.flight-screen[data-touch="on"][data-cockpit-menu="open"] .flight-guidance button {
+  font-size: 11px;
+  min-height: 44px;
+}
+.flight-screen[data-touch="on"][data-cockpit-menu="open"] .flight-warp {
+  width: 100%;
+  flex-wrap: wrap;
+}
+.flight-screen[data-touch="on"][data-cockpit-menu="open"] .flight-warp button {
+  min-height: 40px;
+}
+.flight-screen[data-touch="on"] {
+  background: var(--flight-sky,#000)!important;
+}
+.flight-screen[data-touch="on"] .flight-instrument-panels {
+  display: none;
+}
+.flight-screen[data-touch="on"][data-instruments="detailed"] .flight-instrument-panels {
+  display: grid;
+  position: absolute;
+  top: 64px;
+  bottom: 112px;
+  left: 8px;
+  right: 8px;
+  overflow: auto;
+  background: var(--ui-bg);
+  border: 1px solid var(--ui-line);
+  padding: 8px;
+  gap: 8px;
+  z-index: 19;
+}
+.flight-screen[data-touch="on"] .flight-instrument-panels>div {
+  position: static;
+  width: 100%;
+  max-height: none;
+  transform: none;
+}
+.explore-workspace[data-touch="on"] {
+  background: #020710;
+}
+.explore-workspace[data-touch="on"] .explore-inspector {
+  display: none;
+  position: absolute;
+  overflow: auto;
+  background: var(--ui-bg);
+  border: 1px solid var(--ui-line);
+  border-radius: 10px;
+}
+.explore-workspace[data-touch="on"][data-panel="open"] .explore-inspector {
+  display: block;
+}
+@media(max-width:950px) and (orientation:landscape) {
+  :is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-flight-actions {
+    width: 140px;
+    height: 44px;
+    display: flex;
+    flex-direction: row;
+  }
+  :is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-flight-actions button {
+    width: 44px;
+    flex: 1;
+    min-width: 44px;
+  }
+  :is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-steering {
+    left: calc(50% - 30px);
+  }
+  .flight-screen[data-touch="on"][data-instruments="detailed"] .flight-instrument-panels {
+    bottom: 64px;
+  }
+  .cockpit-readings {
+    top: 68px;
+    gap: 2px;
+    font-size: 9px;
+  }
+  .cockpit-readings strong {
+    display: inline;
+    font-size: 11px;
+    margin-left: 4px;
+  }
+  .cockpit-corner-right output {
+    right: 96px;
+    top: 12px;
+  }
+}
+@media(min-width:1000px) {
+  .assembly-stats {
+    grid-template-columns: repeat(3,minmax(0,1fr));
+  }
+  .assembly-stats[data-expanded="false"]>.inset:not(:nth-child(1)):not(:nth-child(5)):not(:nth-child(7)) {
+    display: none;
+  }
+  .builder-stats-toggle {
+    display: block;
+    position: absolute;
+    right: 12px;
+    bottom: 88px;
+    min-height: 36px;
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+  .assembly-stats[data-expanded="true"] {
+    max-height: 55%;
+    overflow: auto;
+    z-index: 6;
+  }
+}
+.blueprint-canvas[data-compact="true"] text,.blueprint-canvas[data-compact="true"] .blueprint-leader {
+  display: none;
+}
+@media(max-width:999px) {
+  .assembly-viewport .mass-overlay-toggle {
+    top: auto!important;
+    height: 36px;
+    bottom: 66px!important;
+    left: 6px!important;
+  }
+}
+.explore-workspace[data-touch="on"] .explore-view-tabs {
+  right: 50px;
+}
+:is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls.steering-right .touch-steering {
+  left: auto;
+  right: 0;
+  transform: none;
+}
+:is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls.steering-right .touch-flight-actions {
+  left: calc(50% - 46px);
+  right: auto;
+}
+.flight-screen[data-touch="on"][data-steering="right"] .flight-camera-window,.explore-workspace[data-touch="on"][data-steering="right"] .explore-scene {
+  left: 76px;
+  right: 0;
+}
+@media(max-width:950px) and (orientation:landscape) {
+  :is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls.steering-right .touch-flight-actions {
+    left: calc(50% - 70px);
+  }
+  .flight-screen[data-touch="on"][data-steering="right"] .flight-camera-window,.explore-workspace[data-touch="on"][data-steering="right"] .explore-scene {
+    left: 140px;
+    right: 0;
+  }
+}
+.builder-stats-toggle[aria-expanded="true"] {
+  top: 76px;
+  bottom: auto;
+  z-index: 9;
+}
+.cockpit-corners {
+  top: 8px;
+}
+.flight-screen[data-touch="on"] .flight-camera-window,.explore-workspace[data-touch="on"] .explore-scene {
+  left: env(safe-area-inset-left,0px);
+  right: calc(76px + env(safe-area-inset-right,0px));
+  bottom: calc(112px + env(safe-area-inset-bottom,0px));
+}
+.flight-screen[data-touch="on"][data-steering="right"] .flight-camera-window,.explore-workspace[data-touch="on"][data-steering="right"] .explore-scene {
+  left: calc(76px + env(safe-area-inset-left,0px));
+  right: env(safe-area-inset-right,0px);
+}
+.flight-screen[data-touch="on"][data-instruments="detailed"] .flight-instrument-panels,.explore-workspace[data-touch="on"] .explore-inspector {
+  bottom: calc(112px + env(safe-area-inset-bottom,0px));
+}
+.explore-top-console {
+  display: contents;
+}
+.explore-workspace[data-touch="on"] .explore-top-console {
+  display: none;
+}
+.explore-workspace[data-touch="on"][data-cockpit-menu="open"] .explore-top-console {
+  display: block;
+  position: absolute;
+  top: 60px;
+  left: 8px;
+  right: 8px;
+  z-index: 24;
+  max-height: calc(100% - 76px - env(safe-area-inset-bottom,0px));
+  overflow: auto;
+  background: var(--ui-panel);
+  border: 1px solid var(--ui-line);
+  border-radius: 10px;
+}
+.explore-workspace[data-touch="on"][data-cockpit-menu="open"] .explore-top-console .explore-header,.explore-workspace[data-touch="on"][data-cockpit-menu="open"] .explore-top-console .explore-footer {
+  display: flex;
+  position: static;
+  max-height: none;
+  border: 0;
+  box-shadow: none;
+  width: auto;
+}
+.explore-workspace[data-touch="on"] .explore-top-console button {
+  min-height: 44px;
+}
+@media(max-width:950px) and (orientation:landscape) {
+  .flight-screen[data-touch="on"] .flight-camera-window,.explore-workspace[data-touch="on"] .explore-scene {
+    left: env(safe-area-inset-left,0px);
+    right: calc(140px + env(safe-area-inset-right,0px));
+    bottom: calc(64px + env(safe-area-inset-bottom,0px));
+  }
+  .flight-screen[data-touch="on"][data-steering="right"] .flight-camera-window,.explore-workspace[data-touch="on"][data-steering="right"] .explore-scene {
+    left: calc(140px + env(safe-area-inset-left,0px));
+    right: env(safe-area-inset-right,0px);
+  }
+  .flight-screen[data-touch="on"][data-instruments="detailed"] .flight-instrument-panels,.explore-workspace[data-touch="on"] .explore-inspector {
+    bottom: calc(64px + env(safe-area-inset-bottom,0px));
+  }
+}
+.explore-workspace[data-touch="on"] .explore-view-tabs {
+  top: 0;
+  left: 6px;
+  right: 50px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  gap: 1px;
+}
+.explore-workspace[data-touch="on"] [data-testid="exploration-viewport"] {
+  top: 44px;
+}
+.explore-workspace[data-touch="on"] .exploration-capture {
+  top: 0;
+  bottom: auto;
+  right: 4px;
+}
+.explore-workspace[data-touch="on"] .exploration-capture button {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 4px;
+  font-size: 0;
+}
+.explore-workspace[data-touch="on"] .exploration-capture button::after {
+  content: "⇩";
+  font-size: 20px;
+}
+
+/* Reserve build actions and statistics outside the model's camera window. */
+@media (max-width: 999px) and (orientation: portrait) {
+  .assembly-viewport > [data-testid="hangar-3d-viewport"],
+  .assembly-viewport > .blueprint-canvas {
+    top: 44px;
+    bottom: 154px;
+  }
+}

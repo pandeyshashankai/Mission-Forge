@@ -1,25 +1,48 @@
 # Mobile flight visibility
 
-Phone flight uses a dedicated camera window and a separate primary control deck.
-The WebGL renderer resizes to that window, so the spacecraft is centred in the
-visible area rather than behind the interface. Portrait uses a bottom deck;
-landscape places it beside the camera. Desktop instrument layouts are retained.
+The compact cockpit keeps a dedicated camera window clear of its primary
+controls. The renderer resizes to that window, centring the spacecraft in the
+visible area. Desktop instruments and keyboard bindings remain available.
 
-- Exploration: tap **Instruments & destinations** to open the scrollable drawer.
-  Close it to return to the unobstructed view. Steering, throttle and RCS remain
-  outside the drawer. Camera tabs still offer Craft, Fleet, Orbit and System.
-- Campaign: the sliders button opens the instrument drawer. Altitude, speed and
-  throttle stay visible in a compact strip. The camera selector provides Rocket,
-  Orbit, Free and Cinema. Steering, full/cut and incremental throttle, RCS,
-  guidance and staging remain available in the deck.
-- Controls retain pointer capture, simultaneous input, handedness and safe-area
-  handling. At the narrowest widths large buttons use the available 44 px targets
-  so all controls fit without wrapping over the spacecraft.
+- Top left: Menu, Map, pause/resume and Instruments. Menu reveals the existing
+  flight tools, camera choices, saves and settings in a scrollable panel.
+- Top right: time-speed buttons, altitude and velocity.
+- Right edge: a native vertical throttle slider, plus/minus, Full and Cut.
+  Sliding upwards increases thrust. Pausing disables flight input.
+- Bottom: steering arrows, RCS, guidance and staging. Propellant meters remain
+  visible. Handedness settings mirror the controls; safe-area insets protect
+  buttons from notches and home indicators.
+- Exploration retains Craft, Fleet, Orbit and System views, capture and the
+  scrollable instruments/destinations drawer. NASA Data Explorer, Academy,
+  Mission Lab and Sandbox remain accessible from the home menu.
 
-Run `npm run test:mobile-visibility:ui` against the production browser session.
-The visibility regression checks camera dimensions, an unobstructed canvas centre,
-no control/camera intersections, button visibility/hit targets, instrument access
-and the desktop layout. It includes 320×568, 390×844, 430×932, 568×320, 844×390,
-768×1024 and two notched-screen configurations. These are emulated checks rather
-than physical-device certification. Existing multi-touch and end-to-end mobile
-flight tests provide complementary input coverage.
+The phone builder uses a blue drafting workspace and a persistent part-icon
+rail. Parts expands search and filters; Build returns to the spacecraft;
+Details opens the inspector. Selecting a part keeps the workspace visible.
+Tools contains the existing build actions. Mass, thrust and TWR stay visible;
+More stats reveals the remaining engineering values. Launch opens readiness
+review. Both the 3D workspace and selectable blueprint remain available.
+
+## Verification
+
+Run these against the production build and browser debugging session:
+
+```
+npm run test:cockpit:ui
+npm run test:controls
+npm run test:mobile-visibility:ui
+```
+
+The cockpit suite checks 15 camera layouts across phones, landscape, tablets,
+handedness and simulated notches; real touch events for simultaneous steering
+and throttle; independent pointer release; cut/pause; instruments, map, saves;
+and builder part selection, search, statistics and original menu access.
+These are Chromium emulation checks, not physical-device certification.
+
+## Current screenshots
+
+![Phone builder with persistent parts rail](images/compact-builder-phone.png)
+
+![Exploration cockpit](images/compact-exploration-phone.png)
+
+![Campaign cockpit](images/compact-campaign-phone.png)

@@ -24,6 +24,7 @@ import { Appearance, SettingsDialog } from "./components/app/Appearance";
 import { TutorialOverlay } from "./components/game/Tutorial";
 
 import "./interface.css";
+import "./cockpit.css";
 
 const SCREENS = {
   academy:Academy, data:NASADataExplorer, comparison:ModelComparison,

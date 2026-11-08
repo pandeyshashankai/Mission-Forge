@@ -3,6 +3,7 @@ import { Subassemblies } from "../components/game/Subassemblies";
 import { DesignEngineering } from "../components/instruments/EngineeringInspector";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
+  Menu,
   ArrowLeft,
   Undo2,
   Redo2,
@@ -79,6 +80,8 @@ export default function Hangar() {
   const g = useGame();
   const { design, setDesign } = g;
   const mission = getMission(g.missionId);
+  const [toolsOpen,setToolsOpen]=useState(false);
+  const [statsOpen,setStatsOpen]=useState(false);
   const [selected, setSelected] = useState(null);
   const [rightTab, setRightTab] = useState("stack");
   const [mode, setMode] = useState("below");
@@ -100,8 +103,7 @@ export default function Hangar() {
     setSelected(uid);
     if (uid) {
       setRightTab("inspect");
-      if (window.matchMedia("(max-width:999px)").matches)
-        setSmallPane("details");
+
     }
   };
 
@@ -173,6 +175,7 @@ export default function Hangar() {
   return (
     <div
       className="builder-screen flex h-full w-full flex-col"
+      data-builder-tools={toolsOpen?"open":"closed"}
       data-builder-pane={smallPane}
     >
       <div className="workflow-header">
@@ -187,6 +190,7 @@ export default function Hangar() {
         <DisplayButton compact />
       </div>
       <header className="builder-toolbar">
+        <button className="ui-button builder-tools-toggle" data-testid="builder-tools-toggle" aria-label="Builder tools and saves" aria-expanded={toolsOpen} onClick={()=>setToolsOpen(v=>!v)}><Menu size={20}/><span>Tools</span></button>
         <button
           data-testid="hangar-back-btn"
           onClick={() => g.go("planner")}
@@ -282,7 +286,7 @@ export default function Hangar() {
             onClick={() => g.go("review")}
             className="ui-button ui-button-primary"
           >
-            <ClipboardCheck size={15} /> Check & launch
+            <ClipboardCheck size={15} /> Launch
           </button>
         </div>
       </header>
@@ -295,7 +299,8 @@ export default function Hangar() {
         ].map(([id, Icon, label]) => (
           <button
             key={id}
-            onClick={() => setSmallPane(id)}
+            data-testid={`builder-panel-${id}`}
+            onClick={() => setSmallPane(p=>p===id&&id!=="build"?"build":id)}
             aria-pressed={smallPane === id}
           >
             <Icon size={16} />
@@ -405,10 +410,11 @@ export default function Hangar() {
           {overlays&&workspace==='3d'&&<p className="mass-overlay-legend">Cyan: wet mass centre · Violet: dry mass centre · Amber: side-area centre (proxy) · Green: combined engine axis. Uniform part masses; all engine positions, not a flight-stage force solution.</p>}
           <div
             className="assembly-stats panel absolute bottom-3 left-3 right-3 grid grid-cols-3 xl:grid-cols-6 gap-2 rounded-sm p-2"
+            data-expanded={statsOpen}
             data-testid="hangar-stats-bar"
           >
             <Stat
-              label="Liftoff mass"
+              label="Mass"
               value={fmt(s.mass / 1000, 1)}
               unit="t"
               testId="stat-mass"
@@ -441,7 +447,7 @@ export default function Hangar() {
               testId="stat-dv-required"
             />
             <Stat
-              label="Launch power (TWR)"
+              label="Thrust / weight"
               value={fmt(s.liftoffTWR, 2)}
               testId="stat-twr"
               tone={
@@ -457,7 +463,9 @@ export default function Hangar() {
               value={`${s.stageCount} · ${s.partCount}`}
               testId="stat-stages"
             />
+            <Stat label="Thrust" value={fmt(s.liftoffThrustSL/1000)} unit="kN" testId="stat-thrust"/>
           </div>
+          <button className="ui-button builder-stats-toggle" data-testid="builder-stats-toggle" aria-expanded={statsOpen} onClick={()=>setStatsOpen(v=>!v)}>{statsOpen?"Less stats":"More stats"}</button>
         </main>
 
         <aside className="assembly-details flex min-h-0 flex-col border-l border-slate-800 bg-slate-950/80">

@@ -31,8 +31,8 @@ export const HangarView = ({
     renderer.toneMappingExposure = 1.05;
     el.appendChild(renderer.domElement);
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color("#0a0e16");
-    scene.fog = new THREE.Fog("#0a0e16", 90, 260);
+    scene.background = new THREE.Color("#315379");
+    scene.fog = new THREE.Fog("#315379", 90, 260);
     const pm = new THREE.PMREMGenerator(renderer);
     scene.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture;
     const camera = new THREE.PerspectiveCamera(
@@ -66,7 +66,7 @@ export const HangarView = ({
     const floor = new THREE.Mesh(
       new THREE.CircleGeometry(140, 64),
       new THREE.MeshStandardMaterial({
-        color: "#151a22",
+        color: "#294a70",
         roughness: 0.85,
         metalness: 0.2,
       }),
@@ -74,7 +74,7 @@ export const HangarView = ({
     floor.rotation.x = -Math.PI / 2;
     floor.receiveShadow = true;
     scene.add(floor);
-    const grid = new THREE.GridHelper(120, 60, "#1f6f8b", "#1b2431");
+    const grid = new THREE.GridHelper(120, 60, "#7196b7", "#40658b");
     grid.position.y = 0.01;
     grid.material.transparent = true;
     grid.material.opacity = 0.5;

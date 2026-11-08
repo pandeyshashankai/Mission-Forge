@@ -1,3 +1,4 @@
+import {CockpitChrome} from "../components/game/CockpitChrome";
 import { localData } from "../persistence/localData";
 import { PhysicsBadge } from "../components/instruments/PhysicsBadge";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -165,6 +166,7 @@ export default function Flight() {
   );
   const pending = useRef(g.pendingCheckpoint);
   const [phase, setPhase] = useState(pending.current ? "flight" : "checklist");
+  const [cockpitMenu,setCockpitMenu]=useState(false);
   const [showEngineering, setShowEngineering] = useState(false);
   const [ckOpen, setCkOpen] = useState(false);
   const [endConfirm, setEndConfirm] = useState(false);
@@ -498,7 +500,12 @@ export default function Flight() {
     <div
       onClickCapture={(e) => {
         if (e.detail > 0) e.target.closest?.("button")?.blur();
+        if(e.target.closest?.(".flight-top-console button"))setCockpitMenu(false);
       }}
+      style={{"--flight-sky":s?.body==="earth"?`rgb(${[91,143,199].map(c=>Math.round(c*(1-Math.min(1,Math.max(0,s.alt/60000))))).join(" ")})`:"#000"}}
+      data-phase={phase}
+      data-steering={g.settings.steeringSide}
+      data-cockpit-menu={cockpitMenu?"open":"closed"}
       data-camera={cam}
       data-touch={touchVisible ? "on" : "off"}
       data-instruments={showEngineering ? "detailed" : "simple"}
@@ -523,6 +530,8 @@ export default function Flight() {
         </div>
       )}
 
+      {phase==="flight"&&s&&<CockpitChrome visible={touchVisible} menuOpen={cockpitMenu} onMenu={()=>setCockpitMenu(v=>!v)} onMap={()=>input.trigger("map")} onPause={()=>input.trigger("pause")} onInstruments={()=>setShowEngineering(v=>!v)} paused={paused} warp={s.warp} onWarp={action=>input.trigger(action)} altitude={s.alt} speed={s.speed}/>}
+      <div className="flight-top-console">
       <header className="flight-bar">
         <div className="flight-identity">
           <span className="flight-mission-icon">
@@ -582,7 +591,7 @@ export default function Flight() {
                 aria-label="Camera view"
                 data-testid="flight-camera-select"
                 value={cam}
-                onChange={(e) => setCam(e.target.value)}
+                onChange={(e) => {setCam(e.target.value);setCockpitMenu(false);}}
               >
                 {CAMS.map((c) => (
                   <option key={c} value={c}>
@@ -674,6 +683,7 @@ export default function Flight() {
         </div>
       )}
 
+      </div>
       {phase === "flight" && s && (
         <>
           <div className="flight-instrument-panels">
@@ -759,6 +769,8 @@ export default function Flight() {
               paused || modalOpenRef.current || simRef.current.isEnded()
             }
             settings={g.settings}
+            fuel={s.fuel}
+            onThrottle={value=>{disengage();warpRef.current=1;simRef.current.throttle=value;}}
             throttle={simRef.current.throttle}
             rcs={s.rcsEnabled}
             guidance={s.guidance}

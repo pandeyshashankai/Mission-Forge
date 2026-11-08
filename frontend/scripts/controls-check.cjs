@@ -272,7 +272,7 @@ const { browserSession } = require("./browser-session.cjs");
     await point(id);
   assert.ok(
     (await evaluate(
-      'document.querySelector(".flight-bar").getBoundingClientRect().top',
+      'document.querySelector("[data-testid=cockpit-shortcuts]").getBoundingClientRect().top',
     )) >= 59,
   );
   await b.screenshot("controls-phone-safe-area");

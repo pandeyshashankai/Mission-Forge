@@ -1,3 +1,4 @@
+import {CockpitChrome} from "../components/game/CockpitChrome";
 import { localData } from "../persistence/localData";
 import { InstrumentShelf } from "../components/sandbox/InstrumentShelf";
 import { EncounterPlanner } from "../components/sandbox/EncounterPlanner";
@@ -247,6 +248,7 @@ export default function Explore() {
         .then(() => setTick((n) => n + 1))
         .catch((error) => toast.error(error.message));
   }, []);
+  const [cockpitMenu,setCockpitMenu]=useState(false);
   const [view, setView] = useState("orbit");
   const [scope, setScope] = useState("inner");
   const [search, setSearch] = useState("");
@@ -492,17 +494,55 @@ export default function Explore() {
       toast.error("That file is not a valid expedition save");
     }
   };
+  const flightFooter=(
+      <footer className="explore-footer">
+        <button
+          data-testid="explore-play"
+          disabled={sim.status !== "flying" && !fleetRef.current.hasMeshDebris}
+          onClick={() => setPaused((p) => !p)}
+          className="flex items-center gap-2 text-xs text-cyan-200 disabled:opacity-40"
+        >
+          {paused ? <Play size={15} /> : <Pause size={15} />}
+          {paused ? "Play" : "Pause"}
+        </button>
+        <span className="mx-3 h-5 w-px bg-slate-800" />
+        <div className="flex flex-wrap gap-1">
+          {WARPS.map((w) => (
+            <button
+              data-testid={`explore-warp-${w}`}
+              key={w}
+              disabled={sim.throttle > 0 && sim.fuel > 0 && w > 1}
+              className={`explore-warp ${warp === w ? "active" : ""}`}
+              onClick={() => setWarp(w)}
+            >
+              ×{number(w, 0)}
+            </button>
+          ))}
+        </div>
+        <span className="ml-auto hidden font-mono text-[10px] text-slate-500 xl:block">
+          {sim.throttle > 0 && sim.fuel > 0
+            ? "POWERED FLIGHT · ×1"
+            : `${number(effectiveWarp, 0)}× ACTUAL · COAST`}{" "}
+          / {sim.visited.length} REGIONS VISITED
+        </span>
+      </footer>
+  );
   return (
     <div
       onClickCapture={(e) => {
         if (e.detail > 0) e.target.closest?.("button")?.blur();
+        if(e.target.closest?.(".explore-header button,.explore-footer button"))setCockpitMenu(false);
       }}
+      data-steering={g.settings.steeringSide}
+      data-cockpit-menu={cockpitMenu?"open":"closed"}
       data-touch={touchVisible ? "on" : "off"}
       data-panel={mobilePanel ? "open" : "closed"}
       className="explore-workspace"
       data-testid="explore-workspace"
       data-frame={tick}
     >
+      <CockpitChrome visible={touchVisible} menuOpen={cockpitMenu} onMenu={()=>setCockpitMenu(v=>!v)} onMap={()=>setView(v=>v==="craft"?"orbit":"craft")} onPause={()=>input.trigger("pause")} onInstruments={()=>setMobilePanel(v=>!v)} paused={paused} warp={Math.max(1,Math.round(paused?warp:effectiveWarp||warp))} onWarp={action=>input.trigger(action)} altitude={nav.altitude} speed={nav.speed} exploration/>
+      <div className="explore-top-console">
       <header className="explore-header">
         <button
           className="explore-icon"
@@ -565,6 +605,8 @@ export default function Explore() {
           />
         </div>
       </header>
+      {touchVisible&&flightFooter}
+      </div>
       <aside className="explore-destinations">
         <div className="px-5 pb-3 pt-5">
           <div className="eyebrow text-slate-500">DESTINATIONS</div>
@@ -789,15 +831,6 @@ export default function Explore() {
           </div>
         )}
       </main>
-      <button
-        className="explore-chip mobile-instruments-toggle"
-        data-testid="explore-instruments-toggle"
-        aria-controls="exploration-instruments"
-        aria-expanded={mobilePanel}
-        onClick={() => setMobilePanel((v) => !v)}
-      >
-        {mobilePanel ? "Close instruments" : "Instruments & destinations"}
-      </button>
       <aside
         id="exploration-instruments"
         className="explore-inspector scroll-thin"
@@ -1100,42 +1133,14 @@ export default function Explore() {
           sim.status !== "flying"
         }
         settings={g.settings}
+        fuel={[{label:"Fuel",pct:sim.craft.fuel?100*sim.fuel/sim.craft.fuel:0}]}
+        onThrottle={value=>{sim.cancelTransfer();sim.throttle=value;setWarp(1);}}
         throttle={sim.throttle}
         rcs={sim.rcsEnabled}
         canStage={false}
         exploration
       />
-      <footer className="explore-footer">
-        <button
-          data-testid="explore-play"
-          disabled={sim.status !== "flying" && !fleetRef.current.hasMeshDebris}
-          onClick={() => setPaused((p) => !p)}
-          className="flex items-center gap-2 text-xs text-cyan-200 disabled:opacity-40"
-        >
-          {paused ? <Play size={15} /> : <Pause size={15} />}
-          {paused ? "Play" : "Pause"}
-        </button>
-        <span className="mx-3 h-5 w-px bg-slate-800" />
-        <div className="flex flex-wrap gap-1">
-          {WARPS.map((w) => (
-            <button
-              data-testid={`explore-warp-${w}`}
-              key={w}
-              disabled={sim.throttle > 0 && sim.fuel > 0 && w > 1}
-              className={`explore-warp ${warp === w ? "active" : ""}`}
-              onClick={() => setWarp(w)}
-            >
-              ×{number(w, 0)}
-            </button>
-          ))}
-        </div>
-        <span className="ml-auto hidden font-mono text-[10px] text-slate-500 xl:block">
-          {sim.throttle > 0 && sim.fuel > 0
-            ? "POWERED FLIGHT · ×1"
-            : `${number(effectiveWarp, 0)}× ACTUAL · COAST`}{" "}
-          / {sim.visited.length} REGIONS VISITED
-        </span>
-      </footer>
+      {!touchVisible&&flightFooter}
     </div>
   );
 }

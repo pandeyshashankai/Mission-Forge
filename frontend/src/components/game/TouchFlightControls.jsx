@@ -117,6 +117,8 @@ export function TouchFlightControls({
   canStage,
   stageLabel,
   exploration = false,
+  onThrottle,
+  fuel = [],
 }) {
   if (!visible) return null;
   return (
@@ -125,6 +127,7 @@ export function TouchFlightControls({
       aria-label="Touch flight controls"
       data-testid="touch-flight-controls"
     >
+      <div className="cockpit-fuel" data-testid="cockpit-fuel"><strong>Propellant</strong>{fuel.map((f,i)=><div key={i} title={`${f.label}: ${Math.round(f.pct)}%`}><span>{f.label}</span><meter min="0" max="100" value={f.pct} aria-label={`${f.label} remaining propellant`}/></div>)}</div>
       <div className="touch-steering">
         <span className="touch-control-label">
           Steer{exploration && !rcs ? " · RCS off" : ""}
@@ -209,6 +212,7 @@ export function TouchFlightControls({
         <span className="touch-control-label">
           Throttle <strong>{Math.round(throttle * 100)}%</strong>
         </span>
+        <input className="cockpit-throttle" data-testid="cockpit-throttle" aria-label="Engine throttle" aria-orientation="vertical" orient="vertical" type="range" min="0" max="100" step="1" value={Math.round(throttle*100)} disabled={disabled} onChange={e=>onThrottle?.(Number(e.target.value)/100)}/>
         <div className="touch-thrust-hold">
           <HoldButton
             action="throttleUp"

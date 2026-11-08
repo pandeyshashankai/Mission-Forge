@@ -13,8 +13,9 @@ const { browserSession } = require("./browser-session.cjs");
       "CANVAS",
       mode + "/" + w + " camera center obstructed",
     );
+    // Portrait reserves a side rail for the vertical throttle.
     assert.ok(
-      result.width >= w * (w > h ? 0.35 : 0.95),
+      result.width >= w * (w > h ? 0.35 : 0.70),
       JSON.stringify(result),
     );
     assert.ok(
@@ -113,6 +114,10 @@ const { browserSession } = require("./browser-session.cjs");
     await b.call("Emulation.setSafeAreaInsetsOverride", {
       insets: { top: 0, bottom: 0, left: 0, right: 0 },
     });
+    await b.click("display-settings-btn");
+    await b.click("settings-tab-controls");
+    await b.select("touch-controls-select", "off");
+    await b.click("settings-done");
     await b.viewport(1440, 1000);
     await b.pause(300);
     assert.equal(

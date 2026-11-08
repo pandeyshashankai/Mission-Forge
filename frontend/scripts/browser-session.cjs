@@ -64,14 +64,27 @@ async function browserSession() {
     );
     if (hidden) await clickSelector("[data-testid=explore-instruments-toggle]");
   };
+  const revealCockpitMenu = async selector => {
+    const hidden = await evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(selector)}),root=e?.closest('.flight-screen,.explore-workspace,.builder-screen');return !!e && e.getBoundingClientRect().width===0 && !!root && !!root.querySelector('[data-testid=cockpit-menu],[data-testid=builder-tools-toggle]');})()`);
+    if(hidden){
+      const control=await evaluate(`document.querySelector(${JSON.stringify(selector)}).closest('.flight-screen,.explore-workspace,.builder-screen').classList.contains('builder-screen')?'builder-tools-toggle':'cockpit-menu'`);
+      await clickSelector('[data-testid="'+control+'"]');
+    }
+  };
   const clickSelector = async (selector) => {
     await wait(`Boolean(document.querySelector(${JSON.stringify(selector)}))`);
+    const closeTools = await evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(selector)}),r=e?.closest('.builder-screen');return r?.dataset.builderTools==='open'&&!e.closest('.builder-toolbar');})()`);
+    if(closeTools)await clickSelector('[data-testid="builder-tools-toggle"]');
+    const openDetails = await evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(selector)});return !!e?.closest('.assembly-details')&&!e.offsetWidth;})()`);
+    if(openDetails)await clickSelector('[data-testid="builder-panel-details"]');
+
     // Follow the mobile drawer navigation before operating its controls.
     const closeDrawer = await evaluate(
       `(()=>{const e=document.querySelector(${JSON.stringify(selector)}),w=document.querySelector('.explore-workspace');return w?.dataset.panel==='open' && !e?.closest('.explore-inspector') && e?.dataset.testid!=='explore-instruments-toggle' && document.querySelector('[data-testid=explore-instruments-toggle]')?.offsetWidth>0;})()`,
     );
     if (closeDrawer)
       await clickSelector("[data-testid=explore-instruments-toggle]");
+    await revealCockpitMenu(selector);
     await revealInspector(selector);
     await evaluate(
       `document.querySelector(${JSON.stringify(selector)}).scrollIntoView({block:'center',inline:'center',behavior:'instant'})`,
@@ -101,6 +114,7 @@ async function browserSession() {
   const click = (id) => clickSelector(`[data-testid="${id}"]`);
   const select = async (id, value) => {
     await wait(exists(id));
+    await revealCockpitMenu(`[data-testid="${id}"]`);
     await revealInspector(`[data-testid="${id}"]`);
     await evaluate(
       `(()=>{const e=document.querySelector('[data-testid="${id}"]');if(!e||!e.offsetWidth)throw Error('Hidden select');e.value=${JSON.stringify(value)};e.dispatchEvent(new Event('change',{bubbles:true}));})()`,

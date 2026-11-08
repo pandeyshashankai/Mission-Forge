@@ -1,16 +1,9 @@
+import {useEffect,useRef,useState} from "react";
 import { PARTS } from "../../sim/parts";
 
-const colors = {
-  tank: "#1a3d4b",
-  engine: "#59402e",
-  command: "#283f61",
-  payload: "#514833",
-  control: "#2a4752",
-  recovery: "#554466",
-  power: "#2e4d42",
-  structure: "#273344",
-};
 export function Blueprint({ design, selectedUid, onSelect }) {
+  const mount=useRef(null),[compact,setCompact]=useState(false);
+  useEffect(()=>{const o=new ResizeObserver(([e])=>setCompact(e.contentRect.width<520));o.observe(mount.current);return()=>o.disconnect();},[]);
   const totalHeight = design.stack.reduce(
     (h, n) => h + PARTS[n.partId].height,
     0,
@@ -26,15 +19,19 @@ export function Blueprint({ design, selectedUid, onSelect }) {
   });
   return (
     <div
-      className="absolute inset-0 overflow-auto bg-[#091521] scroll-thin"
+      ref={mount}
+      data-compact={compact}
+      className="blueprint-canvas absolute inset-0 overflow-auto scroll-thin"
       data-testid="blueprint-workspace"
     >
       <svg
-        viewBox={`0 0 600 ${Math.max(620, y + 70)}`}
-        className="h-full min-h-[520px] w-full"
+        viewBox={`${compact?180:0} 0 ${compact?240:600} ${Math.max(620, y + 70)}`}
+        className="h-full min-h-0 w-full"
         aria-label="Rocket assembly blueprint"
       >
         <defs>
+          <linearGradient id="blueprint-metal"><stop stopColor="#718da3"/><stop offset=".25" stopColor="#e5edf3"/><stop offset=".52" stopColor="#ffffff"/><stop offset="1" stopColor="#829cad"/></linearGradient>
+          <linearGradient id="blueprint-tank"><stop stopColor="#825b36"/><stop offset=".5" stopColor="#ddb57a"/><stop offset="1" stopColor="#906336"/></linearGradient>
           <pattern
             id="blueprint-grid"
             width="20"
@@ -75,20 +72,18 @@ export function Blueprint({ design, selectedUid, onSelect }) {
             }}
             className="cursor-pointer"
           >
+            {['fairing','capsule','nose'].some(kind=>(p.look||'').includes(kind)) ? <path d={`M${300-w/2} ${y+h}Q${300-w*.4} ${y+h*.45} 300 ${y}Q${300+w*.4} ${y+h*.45} ${300+w/2} ${y+h}Z`} fill="url(#blueprint-metal)" stroke={selectedUid===n.uid?'#a5f3fc':'#56839a'} strokeWidth={selectedUid===n.uid?1.8:.7}/> : (
             <rect
               x={300 - w / 2}
               y={y}
               width={w}
               height={h}
               rx={p.category === "tank" ? 3 : 1}
-              fill={
-                selectedUid === n.uid
-                  ? "#22647a"
-                  : colors[p.category] || "#273344"
-              }
+              fill={selectedUid===n.uid?"#8bd9f1":p.category==="tank"&&p.look!=="tank_white"?"url(#blueprint-tank)":"url(#blueprint-metal)"}
               stroke={selectedUid === n.uid ? "#a5f3fc" : "#56839a"}
               strokeWidth={selectedUid === n.uid ? 1.8 : 0.7}
             />
+            )}
             {p.engine && (
               <path
                 d={`M${300 - w * 0.2} ${y + h * 0.4}L${300 - w * 0.5} ${y + h}H${300 + w * 0.5}L${300 + w * 0.2} ${y + h * 0.4}Z`}
@@ -98,6 +93,7 @@ export function Blueprint({ design, selectedUid, onSelect }) {
               />
             )}
             <path
+              className="blueprint-leader"
               d={`M${300 + w / 2 + 4} ${y + h / 2}H${index % 2 ? 210 : 385}`}
               stroke="#436377"
               strokeWidth=".6"
