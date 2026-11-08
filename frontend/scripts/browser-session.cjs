@@ -65,7 +65,7 @@ async function browserSession() {
     if (hidden) await clickSelector("[data-testid=explore-instruments-toggle]");
   };
   const revealCockpitMenu = async selector => {
-    const hidden = await evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(selector)}),root=e?.closest('.flight-screen,.explore-workspace,.builder-screen');return !!e && e.getBoundingClientRect().width===0 && !!root && !!root.querySelector('[data-testid=cockpit-menu],[data-testid=builder-tools-toggle]');})()`);
+    const hidden = await evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(selector)}),root=e?.closest('.flight-screen,.explore-workspace,.builder-screen');return !!e && e.getBoundingClientRect().width===0 && !!root && !!e.closest('.flight-top-console,.explore-top-console,.builder-toolbar') && !!root.querySelector('[data-testid=cockpit-menu],[data-testid=builder-tools-toggle]');})()`);
     if(hidden){
       const control=await evaluate(`document.querySelector(${JSON.stringify(selector)}).closest('.flight-screen,.explore-workspace,.builder-screen').classList.contains('builder-screen')?'builder-tools-toggle':'cockpit-menu'`);
       await clickSelector('[data-testid="'+control+'"]');
@@ -77,6 +77,9 @@ async function browserSession() {
     if(closeTools)await clickSelector('[data-testid="builder-tools-toggle"]');
     const openDetails = await evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(selector)});return !!e?.closest('.assembly-details')&&!e.offsetWidth;})()`);
     if(openDetails)await clickSelector('[data-testid="builder-panel-details"]');
+
+    const catalogClosed = await evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(selector)}),d=e?.closest('.explore-world-catalog');return !!d&&!d.open&&!e.matches('summary')})()`);
+    if(catalogClosed)await clickSelector('.explore-world-catalog > summary');
 
     // Follow the mobile drawer navigation before operating its controls.
     const closeDrawer = await evaluate(

@@ -7,7 +7,7 @@ MissionForge is a browser-based space engineering and learning game by
 solar-system exploration and traceable scientific experiments. No account,
 backend, API key or multiplayer service is required.
 
-![Mission Control Academy](docs/images/release-academy.png)
+![MissionForge home](docs/images/fullscreen-home-desktop.png)
 
 ## Start playing
 
@@ -83,9 +83,10 @@ from checks that must be performed on the final hosted origin.
 | System map in exploration | M |
 | Coast warp | Comma / period |
 
-Phone flight reserves a clear camera area, with corner shortcuts, a vertical
-throttle, steering arrows and secondary instruments in a drawer. The mobile
-builder keeps its part rail and engineering statistics beside the workspace. See [mobile flight layout](docs/mobile-flight-layout.md).
+Flight uses an edge-to-edge camera with translucent controls over the scene.
+The home menu groups flying, NASA data, learning and sandbox tools. The mobile
+builder keeps its part rail and engineering statistics beside the workspace.
+See [flight layout](docs/mobile-flight-layout.md).
 
 Settings allow remapping. Touch layouts provide steering, throttle, staging and
 RCS controls. See the in-game Controls panel for mode-specific bindings and

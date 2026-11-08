@@ -52,26 +52,19 @@ export default function MainMenu() {
   };
   return <div className="home-screen" data-testid="home-screen">
       <header className="home-header">
-        <div className="home-brand">
-          <span className="brand-symbol">
-            <Rocket size={20} />
-          </span>
-          MissionForge<span className="brand-tag">Spaceflight sandbox</span>
-        </div>
-        <div className="showcase-actions"><button className="ui-button" data-testid="palette-open" onClick={()=>g.setOverlayOpen(true)}>Search · Ctrl+K</button><button className="ui-button" data-testid="menu-storage-btn" onClick={() => g.go("storage")}>Data & recovery</button>{recovery && <button className="ui-button" data-testid="resume-recovery" onClick={() => resume(recovery)}>Recover flight (paused)</button>}<button className="ui-button" data-testid="menu-sandbox-btn" onClick={() => g.go("sandbox")}>Sandbox lab</button><button className="ui-button" data-testid="menu-showcase-btn" onClick={() => g.go("showcase")}>Guided showcase</button><DisplayButton /></div>
+        <div className="home-brand"><span className="brand-symbol"><Rocket size={20}/></span>MissionForge</div>
+        <div className="home-header-actions"><button className="ui-button" data-testid="palette-open" onClick={()=>g.setOverlayOpen(true)}>Search</button><DisplayButton/></div>
       </header>
       <main className="home-content">
-        <div className="home-welcome">
-          <span className="section-kicker">
-            <span className="live-dot" /> Your mission starts here
-          </span>
-          <h1 data-testid="main-title">
-            A little curiosity.
-            <br />
-            <span>A whole solar system.</span>
-          </h1>
-          <p>Build your rocket, find your orbit, and see how far you can go.</p>
-          <button className="ui-button" data-testid="quick-first-orbit" onClick={() => {
+        <section className="home-launchpad">
+          <div className="home-welcome">
+            <span className="section-kicker">BUILD · FLY · DISCOVER</span>
+            <h1 data-testid="main-title">Your next<br/><span>great launch.</span></h1>
+            <p>A rocket, a destination, and a whole solar system to explore.</p>
+            <div className="home-play-buttons">
+              <button className="home-play-primary" data-testid="menu-new-mission-btn" onClick={()=>g.go('planner')}><Rocket size={21}/>Fly a mission<ArrowRight size={18}/></button>
+              <button data-testid="menu-explore-btn" onClick={()=>g.go('explore')}><Compass size={21}/>Explore solar system<ArrowRight size={18}/></button>
+              <button data-testid="quick-first-orbit" onClick={() => {
           g.setLearningPrediction(null);
           localData.removeItem('mf.academy-flight');
           g.loadDesign(presetFalconLike());
@@ -84,60 +77,29 @@ export default function MainMenu() {
           });
           g.setPendingCheckpoint(null);
           g.go('flight');
-        }}>Quick First Orbit · ready-to-fly preset</button><div className="showcase-actions mt-3"><button className="ui-button" data-testid="menu-challenges-btn" onClick={()=>g.go("challenges")}>Challenges</button><button className="ui-button" data-testid="menu-logbook-btn" onClick={()=>g.go("logbook")}>Logbook</button></div>
-        </div>
-        <section className="education-home science-card" data-testid="first-time-experience"><span className="science-kicker">New to orbital flight?</span><h2>Predict, launch, then explain your orbit.</h2><p>The optional Academy starts with a tested rocket and a short guide. Your existing missions and designs remain available.</p><div className="showcase-actions"><button className="ui-button ui-button-primary" data-testid="menu-academy" onClick={()=>g.go('academy')}>Start Mission Control Academy</button><button className="ui-button" data-testid="menu-data-explorer" onClick={()=>g.go('data')}>NASA Data Explorer</button><button className="ui-button" data-testid="menu-model-comparison" onClick={()=>g.go('comparison')}>Compare physics models</button></div></section><div className="home-paths">
-          <button className="home-path mission-path" data-testid="menu-new-mission-btn" onClick={() => g.go("planner")}>
-            <span className="path-topline">
-              <span className="path-icon">
-                <Rocket size={24} />
-              </span>
-              <span className="path-tag">Start here</span>
-            </span>
-            <span className="path-copy">
-              <strong>Fly a mission</strong>
-              <span>
-                A clear goal. A ready-to-fly rocket.
-                <br />
-                From your first launch to a lunar return.
-              </span>
-            </span>
-            <span className="path-action">
-              Choose a mission <ArrowRight size={18} />
-            </span>
-            <span className="path-planet earth-illustration" style={{
-            backgroundImage: "url(/textures/earth_atmos_2048.jpg)"
-          }} aria-hidden="true" />
-          </button>
-          <button className="home-path explore-path" data-testid="menu-explore-btn" onClick={() => g.go("explore")}>
-            <span className="path-topline">
-              <span className="path-icon">
-                <Compass size={24} />
-              </span>
-              <span className="path-tag">Play your way</span>
-            </span>
-            <span className="path-copy">
-              <strong>Explore freely</strong>
-              <span>
-                Eight planets. Three moons.
-                <br />
-                No score, no countdown. Just you and space.
-              </span>
-            </span>
-            <span className="path-action">
-              Open solar system <ArrowRight size={18} />
-            </span>
-            <span className="path-planet ringed-illustration" aria-hidden="true" />
-          </button>
-        </div>
-        <button className="home-science-link" data-testid="menu-science-btn" onClick={() => g.go("science")}>
-          <FlaskConical size={23} />
-          <span>
-            <strong>Mission Lab</strong>
-            <small>Predict, fly, explain · NASA data & science checks</small>
-          </span>
-          <ArrowRight size={19} />
-        </button>
+        }}><Play size={19}/>Quick First Orbit<small>Ready to fly</small></button>
+              <button data-testid="menu-resume-flight-btn" disabled={!cks.length} onClick={()=>{setCks(storage.checkpoints());setDlg('resume');}}><History size={19}/>Resume flight<small>{cks.length?`${cks.length} checkpoints`:'No saved flight'}</small></button>
+            </div>
+            {recovery&&<button className="ui-button" data-testid="resume-recovery" onClick={()=>resume(recovery)}>Recover paused flight</button>}
+          </div>
+          <div className="home-orbital-art" aria-hidden="true"><div className="home-orbit-line"/><div className="home-earth" style={{backgroundImage:"url(/textures/earth_atmos_2048.jpg)"}}/><span className="home-orbit-dot"/></div>
+        </section>
+        <section className="home-discover" aria-label="Learn and experiment" data-testid="first-time-experience">
+          <h2>Make every flight a discovery.</h2>
+          <div className="home-feature-grid">
+            <button data-testid="menu-academy" onClick={()=>g.go('academy')}><Rocket size={23}/><strong>Flight Academy</strong><small>Your first orbit, step by step</small></button>
+            <button data-testid="menu-data-explorer" onClick={()=>g.go('data')}><Compass size={23}/><strong>NASA Data Explorer</strong><small>The science behind your flight</small></button>
+            <button data-testid="menu-sandbox-btn" onClick={()=>g.go('sandbox')}><FlaskConical size={23}/><strong>Sandbox Lab</strong><small>Experiment on your own terms</small></button>
+            <button data-testid="menu-science-btn" onClick={()=>g.go('science')}><FlaskConical size={23}/><strong>Mission Lab</strong><small>Predict, fly, explain</small></button>
+          </div>
+        </section>
+        <nav className="home-more-tools" aria-label="More ways to play">
+          <button data-testid="menu-challenges-btn" onClick={()=>g.go('challenges')}>Challenges</button>
+          <button data-testid="menu-logbook-btn" onClick={()=>g.go('logbook')}>Logbook</button>
+          <button data-testid="menu-showcase-btn" onClick={()=>g.go('showcase')}>Guided showcase</button>
+          <button data-testid="menu-model-comparison" onClick={()=>g.go('comparison')}>Compare physics</button>
+          <button data-testid="menu-storage-btn" onClick={()=>g.go('storage')}>Data & recovery</button>
+        </nav>
         <div className="home-utilities" aria-label="Your saved work">
           <button data-testid="menu-continue-btn" disabled={!g.hasAutosave} onClick={() => g.go("hangar")}>
             <Play size={19} />
@@ -145,19 +107,6 @@ export default function MainMenu() {
               <strong>Continue building</strong>
               <small>
                 {g.hasAutosave ? g.design.name : "Your next rocket will appear here"}
-              </small>
-            </span>
-            <ArrowRight size={15} />
-          </button>
-          <button data-testid="menu-resume-flight-btn" disabled={!cks.length} onClick={() => {
-          setCks(storage.checkpoints());
-          setDlg("resume");
-        }}>
-            <History size={19} />
-            <span>
-              <strong>Resume a flight</strong>
-              <small>
-                {cks.length ? `${cks.length} saved checkpoints` : "No flights saved yet"}
               </small>
             </span>
             <ArrowRight size={15} />
@@ -212,7 +161,7 @@ export default function MainMenu() {
       </main>
       <footer className="home-footer">
         <OfflinePlay />
-        <span>Built for curious minds. Ready for liftoff.</span>
+        <span>Build. Fly. Understand.</span>
         <span>
           Your saves stay in this browser. Export them to keep a copy.
         </span>

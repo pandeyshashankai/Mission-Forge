@@ -1,5 +1,9 @@
 # Compact cockpit validation — 8 November 2026
 
+Historical check for the first compact layout. The reserved camera rectangle
+was subsequently replaced by a full-screen overlay layout; see
+[the current flight guide](mobile-flight-layout.md).
+
 The flight interface now places shortcuts in the corners, a vertical throttle
 at the side, steering and stage/RCS actions below the camera, and propellant
 meters at the lower edge. Its renderer uses the clear camera rectangle. The

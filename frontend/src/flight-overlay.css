@@ -1,0 +1,107 @@
+/* Flight remains edge to edge. Only interactive controls intercept gestures. */
+:is(.flight-screen, .explore-workspace)[data-touch="on"][data-steering] :is(.flight-camera-window, .explore-scene) {
+  position: absolute;
+  inset: 0 !important;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+.explore-workspace[data-touch="on"] [data-testid="exploration-viewport"] {
+  inset: 0 !important;
+}
+.cockpit-corners button,
+:is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-flight-button,
+.explore-workspace[data-touch="on"] .explore-view-tabs,
+.explore-workspace[data-touch="on"] .exploration-capture button {
+  background: rgb(16 41 63 / 80%);
+  color: #fff;
+  border-color: rgb(200 225 242 / 35%);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+:is(.flight-screen, .explore-workspace)[data-touch="on"] .touch-flight-controls .touch-flight-button.is-on {
+  background: rgb(16 95 115 / 80%);
+}
+.cockpit-throttle { background: rgb(16 41 63 / 80%); }
+.cockpit-fuel { z-index: 2; }
+.explore-workspace[data-touch="on"] .explore-view-tabs {
+  top: 60px;
+  left: max(8px, env(safe-area-inset-left));
+  right: auto;
+  width: auto;
+  max-width: calc(100% - 64px);
+  height: 44px;
+  border-radius: 6px;
+  z-index: 9;
+  transform: none;
+}
+.explore-workspace[data-touch="on"] .explore-view-tabs button {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 4px 8px;
+}
+.explore-workspace[data-touch="on"] .exploration-capture {
+  top: 60px;
+  right: max(8px, env(safe-area-inset-right));
+  z-index: 9;
+}
+.explore-workspace[data-touch="on"] .cockpit-readings { top: 116px; }
+.explore-workspace[data-touch="on"] .explore-paused {
+  top: 116px;
+  left: max(8px, env(safe-area-inset-left));
+  right: auto;
+}
+.explore-workspace[data-touch="on"] .explore-inspector { display: none; }
+.explore-workspace[data-touch="on"][data-panel="open"] .explore-inspector {
+  display: block;
+  position: absolute;
+  overflow: auto;
+  top: 60px;
+  bottom: max(12px, env(safe-area-inset-bottom));
+  left: max(8px, env(safe-area-inset-left));
+  right: max(8px, env(safe-area-inset-right));
+  max-width: 560px;
+  margin-inline: auto;
+  border-radius: 12px;
+  background: var(--ui-panel);
+}
+.explore-workspace[data-touch="on"] .explore-inspector .explore-destinations {
+  display: block;
+  position: static;
+  width: auto;
+  height: auto;
+  border: 0;
+}
+.flight-screen[data-touch="on"][data-instruments="detailed"] .flight-instrument-panels {
+  bottom: max(12px, env(safe-area-inset-bottom));
+  max-width: 560px;
+  margin-inline: auto;
+  border-radius: 12px;
+}
+@media (min-width: 1000px) {
+  .cockpit-corners { left: 16px; right: 16px; top: 12px; }
+  .cockpit-readings { right: 18px; }
+  .explore-workspace[data-touch="on"] .explore-view-tabs { left: 16px; }
+}
+@media (max-height: 450px) {
+  .explore-workspace[data-touch="on"] .cockpit-readings { top: 112px; }
+}
+.explore-world-catalog { border-bottom: 1px solid var(--ui-line); margin-bottom: 12px; }
+.explore-world-catalog > summary { padding: 12px; min-height: 44px; cursor: pointer; font-size: 13px; color: var(--ui-accent); }
+/* Keep the speed label beside Capture rather than over its icon. */
+.explore-workspace[data-touch="on"] .cockpit-corner-right output {
+  top: 48px;
+  right: 52px;
+}
+.flight-screen[data-touch="on"][data-cockpit-menu="open"] .flight-top-console,
+.explore-workspace[data-touch="on"][data-cockpit-menu="open"] .explore-top-console {
+  max-width: 560px;
+  margin-inline: auto;
+  border-radius: 12px;
+}
+.explore-workspace[data-touch="on"] [data-testid="solar-map"] > div:first-child {
+  top: 112px;
+  left: max(8px, env(safe-area-inset-left));
+  max-width: calc(100% - 120px);
+  flex-wrap: wrap;
+}

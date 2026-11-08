@@ -34,7 +34,7 @@ Touch controls appear automatically on coarse-pointer devices and narrow windows
 - Use the corner shortcuts for Map, pause, Instruments and time speed. Menu opens camera options, saves and the remaining flight tools.
 - Pinch and drag to inspect a rocket in the builder; a pinch does not select a part.
 
-The layout accommodates portrait, landscape, tablet widths, and browser-provided notch and home-indicator insets. Short screens keep extra telemetry in **Instruments** so the flight buttons remain accessible.
+The flight camera fills the workspace on phones, tablets and desktops. Button backgrounds are 20% transparent; labels stay opaque. The layout accommodates portrait, landscape, and browser-provided notch and home-indicator insets. Short screens keep extra telemetry in **Instruments** so the flight buttons remain accessible.
 
 ![Phone flight controls with right-side steering](images/controls-phone.png)
 

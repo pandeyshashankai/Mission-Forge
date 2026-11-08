@@ -535,13 +535,14 @@ export default function Explore() {
       }}
       data-steering={g.settings.steeringSide}
       data-cockpit-menu={cockpitMenu?"open":"closed"}
-      data-touch={touchVisible ? "on" : "off"}
+      data-touch="on"
+      data-input-touch={touchVisible ? "on" : "off"}
       data-panel={mobilePanel ? "open" : "closed"}
       className="explore-workspace"
       data-testid="explore-workspace"
       data-frame={tick}
     >
-      <CockpitChrome visible={touchVisible} menuOpen={cockpitMenu} onMenu={()=>setCockpitMenu(v=>!v)} onMap={()=>setView(v=>v==="craft"?"orbit":"craft")} onPause={()=>input.trigger("pause")} onInstruments={()=>setMobilePanel(v=>!v)} paused={paused} warp={Math.max(1,Math.round(paused?warp:effectiveWarp||warp))} onWarp={action=>input.trigger(action)} altitude={nav.altitude} speed={nav.speed} exploration/>
+      <CockpitChrome visible menuOpen={cockpitMenu} onMenu={()=>setCockpitMenu(v=>!v)} onMap={()=>setView(v=>v==="craft"?"orbit":"craft")} onPause={()=>input.trigger("pause")} onInstruments={()=>setMobilePanel(v=>!v)} paused={paused} warp={Math.max(1,Math.round(paused?warp:effectiveWarp||warp))} onWarp={action=>input.trigger(action)} altitude={nav.altitude} speed={nav.speed} exploration/>
       <div className="explore-top-console">
       <header className="explore-header">
         <button
@@ -605,89 +606,8 @@ export default function Explore() {
           />
         </div>
       </header>
-      {touchVisible&&flightFooter}
+      {flightFooter}
       </div>
-      <aside className="explore-destinations">
-        <div className="px-5 pb-3 pt-5">
-          <div className="eyebrow text-slate-500">DESTINATIONS</div>
-          <h2 className="mt-1 font-display text-2xl uppercase">Beyond Earth</h2>
-          <p className="mt-2 text-xs leading-relaxed text-slate-500">
-            {PLANETS.length} planets. {MOONS.length} moons.
-            <br />
-            One continuous flight space.
-          </p>
-        </div>
-        <div className="min-h-0 flex-1 overflow-y-auto px-3 scroll-thin">
-          <label className="destination-search">
-            Find a world
-            <input
-              type="search"
-              aria-label="Search destinations"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </label>
-          {PLANETS.filter(
-            (b) =>
-              !search ||
-              b.name.toLowerCase().includes(search.toLowerCase()) ||
-              MOONS.some(
-                (m) =>
-                  m.parent === b.id &&
-                  m.name.toLowerCase().includes(search.toLowerCase()),
-              ),
-          ).map((b, index) => (
-            <div key={b.id}>
-              <button
-                data-testid={`destination-${b.id}`}
-                className={`destination-row ${selectedId === b.id ? "selected" : ""}`}
-                onClick={() => select(b.id)}
-              >
-                <span
-                  className="destination-globe"
-                  style={{ "--body-color": b.color }}
-                />
-                <span className="flex-1">
-                  <span className="block text-sm">{b.name}</span>
-                  <span className="block font-mono text-[9px] text-slate-500">
-                    {number(b.a / AU, 2)} AU / {b.gas ? "GIANT" : "TERRESTRIAL"}
-                  </span>
-                </span>
-                <span className="font-mono text-[10px] text-slate-600">
-                  0{index + 1}
-                </span>
-              </button>
-              {MOONS.filter((m) => m.parent === b.id).map((m) => (
-                <button
-                  data-testid={`destination-${m.id}`}
-                  key={m.id}
-                  className={`destination-row moon ${selectedId === m.id ? "selected" : ""}`}
-                  onClick={() => select(m.id)}
-                >
-                  <span className="h-1 w-1 rounded-full bg-slate-500" />
-                  <span className="flex-1 text-xs">{m.name}</span>
-                  <span className="font-mono text-[9px] text-slate-600">
-                    MOON
-                  </span>
-                </button>
-              ))}
-            </div>
-          ))}
-        </div>
-        <div className="border-t border-slate-800 p-5">
-          <div className="eyebrow mb-2 text-cyan-300">EXPEDITION LOG</div>
-          <div className="space-y-2 text-[10px] leading-relaxed text-slate-400">
-            {sim.log.slice(-3).map((e, i) => (
-              <div key={i}>
-                <span className="font-mono text-slate-600">
-                  D+{number(e.t / DAY, 2)}{" "}
-                </span>
-                {e.text}
-              </div>
-            ))}
-          </div>
-        </div>
-      </aside>
       <main className="explore-scene">
         <ExplorationView
           fleetRef={fleetRef}
@@ -836,6 +756,90 @@ export default function Explore() {
         className="explore-inspector scroll-thin"
         aria-label="Expedition instruments"
       >
+        <details className="explore-world-catalog"><summary>Browse destinations & expedition log</summary>
+      <aside className="explore-destinations">
+        <div className="px-5 pb-3 pt-5">
+          <div className="eyebrow text-slate-500">DESTINATIONS</div>
+          <h2 className="mt-1 font-display text-2xl uppercase">Beyond Earth</h2>
+          <p className="mt-2 text-xs leading-relaxed text-slate-500">
+            {PLANETS.length} planets. {MOONS.length} moons.
+            <br />
+            One continuous flight space.
+          </p>
+        </div>
+        <div className="min-h-0 flex-1 overflow-y-auto px-3 scroll-thin">
+          <label className="destination-search">
+            Find a world
+            <input
+              type="search"
+              aria-label="Search destinations"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </label>
+          {PLANETS.filter(
+            (b) =>
+              !search ||
+              b.name.toLowerCase().includes(search.toLowerCase()) ||
+              MOONS.some(
+                (m) =>
+                  m.parent === b.id &&
+                  m.name.toLowerCase().includes(search.toLowerCase()),
+              ),
+          ).map((b, index) => (
+            <div key={b.id}>
+              <button
+                data-testid={`destination-${b.id}`}
+                className={`destination-row ${selectedId === b.id ? "selected" : ""}`}
+                onClick={() => select(b.id)}
+              >
+                <span
+                  className="destination-globe"
+                  style={{ "--body-color": b.color }}
+                />
+                <span className="flex-1">
+                  <span className="block text-sm">{b.name}</span>
+                  <span className="block font-mono text-[9px] text-slate-500">
+                    {number(b.a / AU, 2)} AU / {b.gas ? "GIANT" : "TERRESTRIAL"}
+                  </span>
+                </span>
+                <span className="font-mono text-[10px] text-slate-600">
+                  0{index + 1}
+                </span>
+              </button>
+              {MOONS.filter((m) => m.parent === b.id).map((m) => (
+                <button
+                  data-testid={`destination-${m.id}`}
+                  key={m.id}
+                  className={`destination-row moon ${selectedId === m.id ? "selected" : ""}`}
+                  onClick={() => select(m.id)}
+                >
+                  <span className="h-1 w-1 rounded-full bg-slate-500" />
+                  <span className="flex-1 text-xs">{m.name}</span>
+                  <span className="font-mono text-[9px] text-slate-600">
+                    MOON
+                  </span>
+                </button>
+              ))}
+            </div>
+          ))}
+        </div>
+        <div className="border-t border-slate-800 p-5">
+          <div className="eyebrow mb-2 text-cyan-300">EXPEDITION LOG</div>
+          <div className="space-y-2 text-[10px] leading-relaxed text-slate-400">
+            {sim.log.slice(-3).map((e, i) => (
+              <div key={i}>
+                <span className="font-mono text-slate-600">
+                  D+{number(e.t / DAY, 2)}{" "}
+                </span>
+                {e.text}
+              </div>
+            ))}
+          </div>
+        </div>
+      </aside>
+        </details>
+
         <label className="explore-mobile-destination">
           Choose a destination
           <select
@@ -1140,7 +1144,7 @@ export default function Explore() {
         canStage={false}
         exploration
       />
-      {!touchVisible&&flightFooter}
+
     </div>
   );
 }

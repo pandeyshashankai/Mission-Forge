@@ -25,6 +25,8 @@ import { TutorialOverlay } from "./components/game/Tutorial";
 
 import "./interface.css";
 import "./cockpit.css";
+import "./flight-overlay.css";
+import "./home.css";
 
 const SCREENS = {
   academy:Academy, data:NASADataExplorer, comparison:ModelComparison,

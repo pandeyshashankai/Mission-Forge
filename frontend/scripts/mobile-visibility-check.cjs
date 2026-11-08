@@ -13,9 +13,9 @@ const { browserSession } = require("./browser-session.cjs");
       "CANVAS",
       mode + "/" + w + " camera center obstructed",
     );
-    // Portrait reserves a side rail for the vertical throttle.
+    // Overlay controls never reduce the rendered flight area.
     assert.ok(
-      result.width >= w * (w > h ? 0.35 : 0.70),
+      result.width >= w * (0.99),
       JSON.stringify(result),
     );
     assert.ok(
@@ -24,7 +24,7 @@ const { browserSession } = require("./browser-session.cjs");
     );
     for (const c of result.controls) {
       assert.ok(
-        c.visible && c.hit && !c.overlapsCamera && c.w >= 40 && c.h >= 40,
+        c.visible && c.hit && c.w >= 40 && c.h >= 40,
         mode + "/" + w + " " + JSON.stringify(c),
       );
     }
@@ -124,7 +124,7 @@ const { browserSession } = require("./browser-session.cjs");
       await b.evaluate(
         "getComputedStyle(document.querySelector('.flight-instrument-panels')).display",
       ),
-      "contents",
+      "none",
     );
     assert.deepEqual(b.errors, []);
     fs.writeFileSync(

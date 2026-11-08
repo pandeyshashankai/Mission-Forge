@@ -507,7 +507,8 @@ export default function Flight() {
       data-steering={g.settings.steeringSide}
       data-cockpit-menu={cockpitMenu?"open":"closed"}
       data-camera={cam}
-      data-touch={touchVisible ? "on" : "off"}
+      data-touch="on"
+      data-input-touch={touchVisible ? "on" : "off"}
       data-instruments={showEngineering ? "detailed" : "simple"}
       className="flight-screen relative h-full w-full overflow-hidden bg-black"
     >
@@ -530,7 +531,7 @@ export default function Flight() {
         </div>
       )}
 
-      {phase==="flight"&&s&&<CockpitChrome visible={touchVisible} menuOpen={cockpitMenu} onMenu={()=>setCockpitMenu(v=>!v)} onMap={()=>input.trigger("map")} onPause={()=>input.trigger("pause")} onInstruments={()=>setShowEngineering(v=>!v)} paused={paused} warp={s.warp} onWarp={action=>input.trigger(action)} altitude={s.alt} speed={s.speed}/>}
+      {phase==="flight"&&s&&<CockpitChrome visible menuOpen={cockpitMenu} onMenu={()=>setCockpitMenu(v=>!v)} onMap={()=>input.trigger("map")} onPause={()=>input.trigger("pause")} onInstruments={()=>setShowEngineering(v=>!v)} paused={paused} warp={s.warp} onWarp={action=>input.trigger(action)} altitude={s.alt} speed={s.speed}/>}
       <div className="flight-top-console">
       <header className="flight-bar">
         <div className="flight-identity">
