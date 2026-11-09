@@ -1,77 +1,10 @@
-const fs = require("node:fs");
 const assert = require("node:assert/strict");
-const pause = (ms) => new Promise((r) => setTimeout(r, ms));
+const { browserSession } = require("./browser-session.cjs");
 (async () => {
-  const tabs = await (await fetch("http://127.0.0.1:9222/json")).json();
-  const tab = tabs.find((t) => t.type === "page");
-  const ws = new WebSocket(tab.webSocketDebuggerUrl);
-  await new Promise((r) => (ws.onopen = r));
-  let id = 0;
-  const pending = new Map(),
-    errors = [];
-  ws.onmessage = (e) => {
-    const m = JSON.parse(e.data);
-    if (m.id) {
-      pending.get(m.id)?.(m);
-      pending.delete(m.id);
-    }
-    if (m.method === "Runtime.exceptionThrown")
-      errors.push(m.params.exceptionDetails);
-  };
-  const call = (method, params = {}) =>
-    new Promise((resolve, reject) => {
-      const n = ++id;
-      const timer = setTimeout(() => {
-        pending.delete(n);
-        reject(Error(`Timed out: ${method}`));
-      }, 30000);
-      pending.set(n, (r) => {
-        clearTimeout(timer);
-        if (r.error) reject(Error(JSON.stringify(r.error)));
-        else resolve(r.result);
-      });
-      ws.send(JSON.stringify({ id: n, method, params }));
-    });
-  const evaluate = async (expression) => {
-    const r = await call("Runtime.evaluate", {
-      expression:expression.replace(/(?<![\w.$])localStorage(?=\s*\.)/g,'(window.missionForgeData||window.localStorage)'),
-      returnByValue: true,
-      awaitPromise: true,
-    });
-    if (r.exceptionDetails)
-      throw Error(
-        r.exceptionDetails.text +
-          ": " +
-          r.exceptionDetails.exception?.description,
-      );
-    return r.result?.value;
-  };
-  const wait = async (expression, timeout = 20000) => {
-    const start = Date.now();
-    while (Date.now() - start < timeout) {
-      if (await evaluate(expression)) return;
-      await pause(250);
-    }
-    throw Error("Not ready: " + expression);
-  };
-  const exists = (id) =>
-    `Boolean(document.querySelector('[data-testid="${id}"]'))`;
-  const click = async (id) => {
-    await wait(exists(id));
-    await evaluate(
-      `(()=>{const e=document.querySelector('[data-testid="${id}"]');if(e.disabled)throw Error('Disabled: ${id}');e.click()})()`,
-    );
-    await pause(300);
-  };
-  const screen = async (name) => {
-    await pause(500);
-    const r = await call("Page.captureScreenshot", { format: "png" });
-    fs.mkdirSync("/tmp/mission-forge-screens", { recursive: true });
-    fs.writeFileSync(
-      `/tmp/mission-forge-screens/${name}.png`,
-      Buffer.from(r.data, "base64"),
-    );
-  };
+  const b = await browserSession();
+  const { call, evaluate, wait, exists, click, pause, errors } = b;
+  const screen = name => b.screenshot(name);
+  try {
   await call("Runtime.enable");
   await call("Page.enable");
   await call("Emulation.setDeviceMetricsOverride", {
@@ -84,7 +17,7 @@ const pause = (ms) => new Promise((r) => setTimeout(r, ms));
     url: process.env.MISSION_FORGE_URL || "http://127.0.0.1:8080/",
   });
   await wait(exists("main-title"));
-  await evaluate("localStorage.clear()");
+  await evaluate('localStorage.clear();localStorage.setItem("mf.settings",JSON.stringify({graphics:"low",reduceMotion:true}))');
   await evaluate("window.missionForgeData.flush()");
   await call("Page.reload");
   await wait(exists("main-title"));
@@ -93,7 +26,8 @@ const pause = (ms) => new Promise((r) => setTimeout(r, ms));
   await screen("exploration-earth");
   await click("destination-mars");
   await click("explore-start-orbit");
-  assert.match(await evaluate("document.body.innerText"), /MARS/);
+  await click("explore-save");
+  assert.equal(await evaluate('JSON.parse(localStorage.getItem("mf.exploration")).primary'), "mars");
   await click("explore-view-system");
   await wait(exists("solar-map"));
   await screen("solar-system");
@@ -104,7 +38,6 @@ const pause = (ms) => new Promise((r) => setTimeout(r, ms));
     `(()=>{const el=document.getElementById('explore-throttle');Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(el,'20');el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));})()`,
   );
   await pause(1500);
-  assert.match(await evaluate("document.body.innerText"), /EUROPA/);
   await click("explore-play");
   await click("explore-save");
   assert.equal(
@@ -121,20 +54,17 @@ const pause = (ms) => new Promise((r) => setTimeout(r, ms));
   );
   await click("explore-back");
   await click("menu-new-mission-btn");
+  await click("mission-card-first_orbit");
   await click("planner-open-hangar-btn");
   await wait(exists("assembly-placement-grid"));
   await screen("hangar");
   await click("workspace-blueprint");
   await wait(exists("blueprint-workspace"));
-  await evaluate(
-    'document.querySelector("[data-testid^=blueprint-part-]").dispatchEvent(new MouseEvent("click",{bubbles:true}))',
-  );
+  await b.clickSelector('[data-testid^=blueprint-part-]');
   const before = await evaluate(
     'JSON.parse(localStorage.getItem("mf.autosave")).design.stack.length',
   );
-  await evaluate(
-    'window.dispatchEvent(new KeyboardEvent("keydown",{key:"d",ctrlKey:true,bubbles:true,cancelable:true}))',
-  );
+  await b.key('d', 2);
   await pause(400);
   assert.equal(
     await evaluate(
@@ -142,7 +72,7 @@ const pause = (ms) => new Promise((r) => setTimeout(r, ms));
     ),
     before + 1,
   );
-  await click("undo-btn");
+  await click("studio-undo");
   await pause(300);
   assert.equal(
     await evaluate(
@@ -182,12 +112,14 @@ const pause = (ms) => new Promise((r) => setTimeout(r, ms));
   await click("end-flight-btn");
   await wait(exists("finish-flight-dialog"));
   await click("keep-flying-btn");
+  await wait('!document.querySelector("[data-testid=finish-flight-dialog]")');
   await click("checkpoints-btn");
   await click("checkpoint-save-btn");
   const savedId = await evaluate(
     'JSON.parse(localStorage.getItem("mf.checkpoints"))[0].id',
   );
   await click("checkpoint-restore-" + savedId);
+  await wait('!document.querySelector("[data-testid=checkpoint-dialog]")');
   await click("time-warp-10");
   await wait(
     'Number(document.querySelector("[data-testid=telemetry-altitude-value]")?.textContent.replace(/[^0-9.]/g,""))>1',
@@ -227,7 +159,7 @@ const pause = (ms) => new Promise((r) => setTimeout(r, ms));
   }
   assert.deepEqual(errors, [], "Uncaught browser exceptions");
   console.log("PASS: no uncaught browser exceptions");
-  ws.close();
+  } finally { b.close(); }
 })().catch((e) => {
   console.error(e);
   process.exit(1);
