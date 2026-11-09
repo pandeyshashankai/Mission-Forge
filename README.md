@@ -16,7 +16,7 @@ a predict–fly–reflect lesson. **NASA Data Explorer** shows which source valu
 affect gravity, orbital speed and atmosphere. Advanced laboratories are optional.
 
 - **Engineering:** full-grid construction with free placement, magnetic snapping, pan/zoom, mirrored
-  side tanks and engines, group editing, deployed landing legs,
+  side tanks and engines, physical attachment/feed checks, group editing, deployed landing legs,
   41 parts, seven presets, staging, readiness checks,
   fuel and delta-v calculations, three difficulties and mission reports.
 - **Learning:** five Academy lessons, first-flight guide, evidence-linked debriefs,
@@ -31,6 +31,7 @@ affect gravity, orbital speed and atmosphere. Advanced laboratories are optional
 - **Access:** keyboard remapping, touch steering/throttle/stage/RCS, themes, local
   saves and exports, recovery tools and prepared offline play.
 
+[Engine connection and thrust-direction corrections](docs/engine-connection-fix.md) ·
 [Builder controls and model details](docs/builder-studio.md) ·
 [Reference-led interaction update](docs/sfs-reference-review.md)
 

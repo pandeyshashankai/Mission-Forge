@@ -1,3 +1,4 @@
+import {assemblyConnections} from './assemblyConnections';
 import { G0 } from "./constants";
 import { designStats, engineIssues, buildSections } from "./design";
 import { engineSL, PARTS } from "./parts";
@@ -156,6 +157,8 @@ export function runReadiness(design, mission, difficulty) {
   const budget = missionBudget(mission, difficulty);
   if (!design.stack.length) return {stats,req,budget,overall:"NO-GO",checks:[simple("empty","Blueprint",false, "Add a command part, fuel and engines before launch.","A launch vehicle needs equipment",[],[])]};
   const checks = [propulsionCheck(stats, mission, req), twrCheck(stats)];
+  const loose=assemblyConnections(design).loose;
+  checks.push(simple("connections","Physical assembly",!loose.length,loose.length?`${loose.length} disconnected part(s): move them into contact with the rocket. Disconnected engines cannot fire.`:"All parts touch the controlled assembly", "Parts must form a continuous contact path to the command part",[],loose.map(n=>PARTS[n.partId].name)));
   checks.push(attitudeCheck(stats));
   const up = upperTwrCheck(stats);
   if (up) checks.push(up);
@@ -165,7 +168,7 @@ export function runReadiness(design, mission, difficulty) {
       "feed",
       "Engine propellant feed",
       feed.length === 0 && stats.dv.phases.length > 0,
-      feed.length ? `${feed[0].engine} in Stage ${feed[0].section + 1} has no ${feed[0].propellant} tank in its stage` : stats.dv.phases.length ? "Every engine has matching propellant in its stage" : "No engine can produce thrust",
+      feed.length ? `${feed[0].engine} in Stage ${feed[0].section + 1} has no connected ${feed[0].propellant} feed in its stage` : stats.dv.phases.length ? "Every engine has a connected matching propellant feed in its stage" : "No engine can produce thrust",
       "Engine propellant type ∈ tanks in the same stage",
       feed.map((f) => ({ name: f.engine, value: `Stage ${f.section + 1}`, unit: "", source: `needs ${f.propellant}` })),
       feed.map((f) => `${f.engine}: no ${f.propellant} tank in Stage ${f.section + 1}`)

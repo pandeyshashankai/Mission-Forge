@@ -22,7 +22,7 @@
   "scripts": {
     "start": "craco start",
     "build": "craco build",
-    "test": "node tests/physics.test.cjs && node tests/exploration.test.cjs && node tests/fleet.test.cjs && node tests/appearance.test.cjs && node tests/controls.test.cjs && node tests/science.test.cjs && node tests/engineering.test.cjs && node tests/visuals.test.cjs && node tests/roadmap.test.cjs && node tests/advanced.test.cjs && node tests/precision.test.cjs && node tests/damage.test.cjs && node tests/contact.test.cjs && node tests/tpsx.test.cjs && node tests/thermalBench.test.cjs && node tests/import-integrity.test.cjs && node tests/persistence.test.cjs && node tests/backlog.test.cjs && node tests/optimization.test.cjs && node tests/education.test.cjs && node tests/milestones.test.cjs && node tests/assembly.test.cjs && node tests/studio.test.cjs && node tests/profile-view.test.cjs",
+    "test": "node tests/physics.test.cjs && node tests/exploration.test.cjs && node tests/fleet.test.cjs && node tests/appearance.test.cjs && node tests/controls.test.cjs && node tests/science.test.cjs && node tests/engineering.test.cjs && node tests/visuals.test.cjs && node tests/roadmap.test.cjs && node tests/advanced.test.cjs && node tests/precision.test.cjs && node tests/damage.test.cjs && node tests/contact.test.cjs && node tests/tpsx.test.cjs && node tests/thermalBench.test.cjs && node tests/import-integrity.test.cjs && node tests/persistence.test.cjs && node tests/backlog.test.cjs && node tests/optimization.test.cjs && node tests/education.test.cjs && node tests/milestones.test.cjs && node tests/assembly.test.cjs && node tests/studio.test.cjs && node tests/profile-view.test.cjs && node tests/connections.test.cjs",
     "test:missions": "node scripts/mission-check.cjs first_orbit && node scripts/mission-check.cjs earth_observer && node scripts/mission-check.cjs lunar_orbiter && node scripts/mission-check.cjs crewed_lunar_flyby",
     "test:ui": "node scripts/ui-check.cjs",
     "test:campaign": "node scripts/campaign-check.cjs",
@@ -78,7 +78,8 @@
     "test:offline:update": "node scripts/offline-update-check.cjs",
     "test:magnets:ui": "node scripts/magnetic-builder-check.cjs",
     "test:placed-parts:ui": "node scripts/placed-part-touch-check.cjs",
-    "test:profile-view:ui": "node scripts/profile-view-check.cjs"
+    "test:profile-view:ui": "node scripts/profile-view-check.cjs",
+    "test:connections:ui": "node scripts/engine-connection-check.cjs"
   },
   "browserslist": {
     "production": [

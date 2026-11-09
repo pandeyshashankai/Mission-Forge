@@ -32,7 +32,7 @@ test('rectangle selection operations copy mount graphs, move children, transform
  const moved=moveSelection(c.design,c.ids,8,3),rotated=transformSelection(moved,c.ids,'rotate');assert.ok(isValidDesign(rotated));assert.equal(rotated.stack.find(n=>n.uid===copiedEngine.uid).rotation,270);assert.equal(deleteSelection(rotated,c.ids).stack.length,d.stack.length);assert.equal(deleteSelection(d,d.stack.map(n=>n.uid)).stack.length,0);
 });
 test('engine rotation changes physical thrust direction and prevents upside-down liftoff',()=>{
- const d=rocket(),engine=d.stack.find(n=>n.partId==='eng_k1');function force(rotation){const design={...d,stack:d.stack.map(n=>n.uid===engine.uid?{...n,rotation}:n)},rt=createRuntime(design);applyEvent(rt,'ignite-0');return {design,force:thrustState(rt,1,1)};}
+ const d=rocket(),engine=d.stack.find(n=>n.partId==='eng_k1');function force(rotation){const design={...d,stack:d.stack.map(n=>n.uid===engine.uid?{...n,rotation,...(rotation===90?{position:{...n.position,y:n.position.y+(PARTS[n.partId].height-PARTS[n.partId].diameter)/2}}:{})}:n)},rt=createRuntime(design);applyEvent(rt,'ignite-0');return {design,force:thrustState(rt,1,1)};}
  const upright=force(0).force,side=force(90).force,reverse=force(180);assert.ok(upright.axial>0);assert.ok(Math.abs(side.axial)<1e-6);assert.ok(side.forceBody[0]<0);assert.ok(reverse.force.axial<0);assert.ok(reverse.force.flows.length);
  const sim=new FlightSim({design:reverse.design,mission:MISSIONS[0],guidanceOn:false});sim.launch();sim.step(.1);assert.equal(sim.clamped,true);
 });

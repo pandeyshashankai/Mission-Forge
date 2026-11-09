@@ -1,3 +1,4 @@
+import {assemblyConnections,contactReachable} from './assemblyConnections';
 import {layoutDesign} from "./assemblyLayout";
 import { PARTS, engineSL } from "./parts";
 import { G0, LAUNCH_OPS_COST } from "./constants";
@@ -5,6 +6,7 @@ import { G0, LAUNCH_OPS_COST } from "./constants";
 export const newUid = () => Math.random().toString(36).slice(2, 10);
 
 export function buildSections(design) {
+  const connections=assemblyConnections(design);
   const top = [];
   let cur = [];
   for (const n of design.stack.filter(n => !n.mount)) {
@@ -40,8 +42,15 @@ export function buildSections(design) {
       maxD = Math.max(maxD, p.diameter);
       if (p.fairing) fairings.push({ uid: n.uid, mass: p.dryMass, diameter: p.diameter });
       else dryMass += p.dryMass;
-      if (p.propellant) tanks[p.propellant.type] = (tanks[p.propellant.type] || 0) + p.propellant.mass;
-      if (p.engine) engines.push({ uid: n.uid, partId: n.partId, rotation:n.rotation || 0 });
+      if (p.propellant) {
+        if(connections.connected.has(n.uid))tanks[p.propellant.type] = (tanks[p.propellant.type] || 0) + p.propellant.mass;
+        else dryMass+=p.propellant.mass;
+      }
+      if (p.engine) {
+        const feed=contactReachable(connections.neighbors,n.uid,uids);
+        const connected=connections.connected.has(n.uid)&&parts.some(t=>feed.has(t.uid)&&connections.connected.has(t.uid)&&PARTS[t.partId].propellant?.type===p.engine.propellant);
+        engines.push({ uid: n.uid, partId: n.partId, rotation:n.rotation || 0, connected });
+      }
     }
     const radials = (design.radials || []).filter((r) => uids.has(r.parentUid));
     return { index, parts, uids, tanks, engines, dryMass, cost, maxD, fairings, radials };
@@ -90,6 +99,7 @@ export function describeEvent(id, sections) {
 
 export function createRuntime(design) {
   const sections = buildSections(design);
+  const connections=assemblyConnections(design);
   const placed = design.stack.some(n=>n.mount) ? layoutDesign(design).items : [];
   return {
     events: getEvents(design, sections),
@@ -111,7 +121,7 @@ export function createRuntime(design) {
       s.radials.map((r) => {
         const p = PARTS[r.partId];
         const fuel = (p.propellant ? p.propellant.mass : 0) * r.symmetry;
-        return { uid: r.uid, section: s.index, partId: r.partId, n: r.symmetry, dryEach: p.dryMass, diameter: p.diameter, fuel, fuelFull: fuel, def: p.engine, attached: true, ignited: false };
+        return { connected:connections.connected.has(r.parentUid), uid: r.uid, section: s.index, partId: r.partId, n: r.symmetry, dryEach: p.dryMass, diameter: p.diameter, fuel, fuelFull: fuel, def: p.engine, attached: true, ignited: false };
       })
     ),
   };
@@ -154,14 +164,14 @@ export function activeSources(rt) {
   for (const s of rt.sections) {
     if (!s.attached || !s.ignited) continue;
     const byProp = {};
-    for (const e of s.engines) (byProp[e.def.propellant] = byProp[e.def.propellant] || []).push(e.def);
+    for (const e of s.engines.filter(e=>e.connected!==false)) (byProp[e.def.propellant] = byProp[e.def.propellant] || []).push(e.def);
     for (const prop in byProp) {
       if ((s.tanks[prop] || 0) <= 0) continue;
       out.push({ kind: "section", s: s.index, prop, defs: byProp[prop], solid: false });
     }
   }
   for (const r of rt.radials) {
-    if (r.attached && r.ignited && r.fuel > 0) out.push({ kind: "radial", uid: r.uid, defs: Array(r.n).fill(r.def), solid: true });
+    if (r.connected!==false && r.attached && r.ignited && r.fuel > 0) out.push({ kind: "radial", uid: r.uid, defs: Array(r.n).fill(r.def), solid: true });
   }
   return out;
 }
@@ -332,7 +342,7 @@ export function engineIssues(design) {
   for (const s of buildSections(design)) {
     for (const e of s.engines) {
       const p = PARTS[e.partId];
-      if (!p.engine.solid && !(s.tanks[p.engine.propellant] > 0))
+      if (!p.engine.solid && (e.connected===false || !(s.tanks[p.engine.propellant] > 0)))
         issues.push({ section: s.index, engine: p.name, propellant: p.engine.propellant });
     }
   }

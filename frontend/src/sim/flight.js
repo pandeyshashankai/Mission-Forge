@@ -1,3 +1,4 @@
+import {thrustDirection} from './thrustDirection';
 import { EARTH, G0, LAUNCH_SITES, DEG, STABLE_PERIAPSIS } from "./constants";
 import { add, cross, dot, len, norm, scale, sub, clamp } from "./vec";
 import { atmosphere, dragCoefficient, ATMOS_TOP } from "./atmosphere";
@@ -624,11 +625,7 @@ export class FlightSim {
     const F = ts.F;
     // Match the body-frame thrust vector to the same attitude used by the renderers.
     let forceDir=dir;
-    if(ts.directional&&F>0){
-      const qv=[dir[2],0,-dir[0]],qw=1+dir[1],qm=Math.hypot(...qv,qw),v=ts.forceBody;
-      if(qm<1e-8)forceDir=norm([-v[0],-v[1],v[2]]);
-      else{const q=scale(qv,1/qm),t=scale(cross(q,v),2);forceDir=norm(add(add(v,scale(t,qw/qm)),cross(q,t)));}
-    }
+    if(ts.directional&&F>0)forceDir=thrustDirection(dir,ts.forceBody);
     const r0 = this.r;
     const v0 = this.v;
     const t0 = this.t;
@@ -888,6 +885,9 @@ export class FlightSim {
   restore(st) {
     const { guidance, maneuver, ...rest } = JSON.parse(JSON.stringify(st));
     Object.assign(this, rest);
+    const fresh=createRuntime(this.design);
+    for(const section of this.rt.sections)for(const engine of section.engines){const expected=fresh.sections[section.index]?.engines.find(e=>e.uid===engine.uid);engine.connected=expected?.connected!==false;}
+    for(const radial of this.rt.radials)radial.connected=fresh.radials.find(r=>r.uid===radial.uid)?.connected!==false;
     if (this.maxApo === null) this.maxApo = -Infinity;
     if (this.lastSample === null) this.lastSample = -Infinity;
     if (guidance) {

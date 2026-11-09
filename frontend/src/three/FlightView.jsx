@@ -453,7 +453,7 @@ export const FlightView = ({
         plume.position.y = offset;
         rocketHolder.add(rocket);
         for(const p of sidePlumes){rocketHolder.remove(p.mesh);disposeObject(p.mesh);}sidePlumes.length=0;
-        for(const n of nowVis.stack)if((n.mount||n.rotation)&&PARTS[n.partId].engine){const mesh=makePlume();rocketHolder.add(mesh);sidePlumes.push({uid:n.uid,def:PARTS[n.partId].engine,rotation:n.rotation||0,height:PARTS[n.partId].height,mesh});}
+        for(const n of nowVis.stack)if((nowVis.editorLayout||n.mount||n.rotation)&&PARTS[n.partId].engine){const mesh=makePlume();rocketHolder.add(mesh);sidePlumes.push({uid:n.uid,def:PARTS[n.partId].engine,rotation:n.rotation||0,height:PARTS[n.partId].height,mesh});}
         visKey = key;
       }
       const rPos = toThree(sim.r);
@@ -469,7 +469,7 @@ export const FlightView = ({
       earthSpin.rotation.y = EARTH.rotationRate * sim.t;
       clouds.rotation.y = sim.t * 1e-6;
       const nav = sim.nav;
-      const dir = toThree(sim.dirFromAtt(sim.att, nav)).normalize();
+      const dir = toThree(sim.dir).normalize();
       const up = rPos.clone().normalize();
       rocketHolder.quaternion.setFromUnitVectors(
         new THREE.Vector3(0, 1, 0),
@@ -478,7 +478,7 @@ export const FlightView = ({
       const thr = nav.F > 0 ? Math.max(0.15, nav.F / Math.max(1, nav.Fmax)) : 0;
       let sideForce=0;
       for(const p of sidePlumes){
-        const stage=sim.rt.sections.find(s=>s.attached&&s.ignited&&s.engines.some(e=>e.uid===p.uid));
+        const stage=sim.rt.sections.find(s=>s.attached&&s.ignited&&s.engines.some(e=>e.uid===p.uid&&e.connected!==false));
         const burning=stage&&(stage.tanks[p.def.propellant]||0)>0&&sim.throttle>0;
         p.mesh.visible=!!burning;
         if(burning){const child=rocket.children.find(c=>c.userData.uid===p.uid);p.mesh.position.copy(child.position);p.mesh.position.y+=rocket.position.y;
@@ -487,7 +487,7 @@ export const FlightView = ({
           const force=p.def.thrustVac*Math.max(p.def.minThrottle||0,sim.throttle)*(p.def.ispVac-(p.def.ispVac-p.def.ispSL)*nav.pRatio)/p.def.ispVac;sideForce+=force;
           const factor=Math.sqrt(force/1e6);p.mesh.scale.set(.4+.4*factor,(8+12*factor)*(.95+Math.random()*.1),.4+.4*factor);}
       }
-      plume.visible = thr > 0 && nav.F>sideForce;
+      plume.visible = !nowVis.editorLayout && thr > 0 && nav.F>sideForce;
       const vac = 1 - Math.min(1, nav.pRatio);
       const fmn = Math.sqrt(Math.max(0, nav.F-sideForce) / 1e6);
       const pr = (0.4 + 0.4 * fmn) * (1 + vac);
