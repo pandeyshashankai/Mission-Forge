@@ -1,12 +1,15 @@
 const assert=require('node:assert/strict');
 const {browserSession}=require('./browser-session.cjs');
+const replay=require('../public/science/showcase-replay.json');
 (async()=>{
  const b=await browserSession();
  try{
   await b.viewport(1440,900);await b.home();await b.click('menu-showcase-btn');
   await b.wait(b.exists('showcase-page'));await b.click('showcase-verify');
   await b.wait('document.querySelector("[data-testid=showcase-verification]").textContent.includes("Verified")');
-  assert.match(await b.evaluate('document.querySelector("[data-testid=showcase-verification]").textContent'),/6ec55bdd/);
+  assert.equal(await b.evaluate('document.querySelector("[data-testid=showcase-verification]").textContent'),
+   `Verified · ${replay.reference.outcome} · ${replay.reference.commandsExecuted} commands · hash ${replay.reference.hash}`);
+  assert.equal(replay.reference.outcome,'success');
   await b.screenshot('guided-showcase');
   await b.click('showcase-begin');await b.click('science-tab-data');
   if(!await b.evaluate('document.querySelector("[data-testid=body-science-earth]").open'))await b.clickSelector('[data-testid=body-science-earth] > summary');
