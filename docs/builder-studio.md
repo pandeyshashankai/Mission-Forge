@@ -25,7 +25,9 @@ beginner rocket-building video.
   stays where it was placed instead of being pushed into one vertical column.
 - **1 | 2** mirrors new side equipment about the central axis. Add a side fuel
   tank, then an engine beneath it, to make a paired liquid booster assembly.
-- Tap a placed part to select it, or use the rectangle tool to select a group.
+- Tap a placed part to select it immediately and show its editing controls.
+  Small parts have a forgiving touch target without getting larger, and slight
+  finger movement does not begin a drag. Use the rectangle tool to select a group.
   Shift-drag also selects a rectangle; Shift-click adds/removes a selection.
   Drag the group, copy it, rotate 90°, flip horizontally/vertically, inspect or
   delete it. Attached children travel with their parent. Ctrl+D copies,

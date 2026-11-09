@@ -88,3 +88,28 @@ context menus, and keyboard focus with the single SVG border. Native mobile
 pickup/drop, cancellation, multi-touch, magnetic assembly and the complete
 reference-build studio audit also passed. These checks do not test or control
 phone-level touch indicators drawn outside the web page.
+
+## Tapping an already-placed part — 9 November 2026
+
+Placed-part pointer presses now prevent native SVG activation and select the
+part immediately. The game handles the gesture instead of allowing the browser
+to focus or magnify the tapped graphic. All grid graphics explicitly use the
+application's touch gestures. Pinching restores the prior selection; cancelled
+or off-grid gestures restore it too. Interrupting rectangle selection disarms
+the tool and removes the box. A ten-CSS-pixel touch drag threshold prevents
+ordinary finger jitter from moving placed parts; a twelve-pixel invisible
+proximity target makes small parts selectable without enlarging their artwork.
+
+`test:placed-parts:ui` runs with mobile-browser layout enabled, native touch
+input and device pixel ratios of 2 and 3. It exercises 36 quick/repeated/held
+taps, including slight finger jitter, on small, long and side-mounted parts at 360×720, 390×844, 320×568 and
+844×390. It checks selection and editing controls while the finger is down,
+unchanged artwork bounds, unchanged page/camera zoom, an unobstructed part,
+no native focus or floating part, and no saved-design changes. Pinch and
+cancellation cases check that selection and the rectangle tool recover cleanly.
+Additional near-taps verify small-part selection without visual enlargement.
+The strict production build, this mobile regression, the magnetic/keyboard
+audit, the native mobile gesture audit and full reference-build studio audit
+passed.
+The test is included in the browser release pipeline. These are Chromium mobile
+emulation checks; physical-device rendering remains a separate check.

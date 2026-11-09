@@ -4,8 +4,8 @@ import {editorLayout} from '../../sim/assemblyLayout';
 import {expandSelection,snapPosition,magneticTranslation} from '../../game/studioOps';
 import {PartDrawing,MetalGradient} from './PartDrawing';
 
-function bounds(item,design){
- const node=design.stack.find(n=>n.uid===item.uid),p=PARTS[item.partId];
+function bounds(item,design,nodeMap){
+ const node=nodeMap?.get(item.uid)||design.stack.find(n=>n.uid===item.uid),p=PARTS[item.partId];
  const sideways=Math.abs(node?.rotation||0)%180===90;
  const halfWidth=(sideways?item.height:p.diameter)/2,halfHeight=(sideways?p.diameter:item.height)/2;
  return {left:(item.x||0)-halfWidth,right:(item.x||0)+halfWidth,low:item.y+item.height/2-halfHeight,high:item.y+item.height/2+halfHeight};
@@ -40,13 +40,15 @@ export function Blueprint({design,selectedUid,selectedUids=[],onSelect,onSelectM
   const g=gesture.current;pointers.current.delete(e.pointerId);
   const r=svg.current.getBoundingClientRect(),inside=e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom;
   if(g&&!g.multi&&inside&&e.type==='pointerup'){
-   const p=world(e),moved=Math.hypot(e.clientX-g.startX,e.clientY-g.startY)>5;
+   const p=world(e),moved=Math.hypot(e.clientX-g.startX,e.clientY-g.startY)>g.slop;
    if(heldPart){ /* Palette drops are committed by the active drag handler. */ }
-   else if(g.area){const a=g.start,b=p;const ids=all.filter(n=>{const r=bounds(n,design);return r.right>=Math.min(a.x,b.x)&&r.left<=Math.max(a.x,b.x)&&r.high>=Math.min(a.y,b.y)&&r.low<=Math.max(a.y,b.y);}).map(n=>n.uid);onSelectMany?.([...new Set(ids)]);onAreaDone?.();}
+   else if(g.area){const a=g.start,b=p;const ids=all.filter(n=>{const r=bounds(n,design);return r.right>=Math.min(a.x,b.x)&&r.left<=Math.max(a.x,b.x)&&r.high>=Math.min(a.y,b.y)&&r.low<=Math.max(a.y,b.y);}).map(n=>n.uid);onSelectMany?.([...new Set(ids)]);}
    else if(g.uid&&moved)onMoveGroup?.(g.ids,(e.clientX-g.startX)/g.zoom,-(e.clientY-g.startY)/g.zoom);
    else if(g.uid)onSelect(g.uid,e.shiftKey);
    else if(!moved)onSelectMany?.([]);
   }
+  if(g&&!g.multi&&(e.type==='pointercancel'||!inside))onSelectMany?.(g.previousIds||[]);
+  if(g?.area&&(e.type==='pointercancel'||!pointers.current.size))onAreaDone?.();
   if(!pointers.current.size)gesture.current=null;setDrag(null);setBox(null);
  };
  const selected=new Set(selectedUids.length?selectedUids:selectedUid?[selectedUid]:[]);
@@ -55,14 +57,17 @@ export function Blueprint({design,selectedUid,selectedUids=[],onSelect,onSelectM
  return <div ref={mount} className="blueprint-canvas studio-grid absolute inset-0" data-testid="blueprint-workspace" onContextMenu={e=>e.preventDefault()}>
   <svg ref={svg} data-testid="assembly-placement-grid" aria-label="Rocket build grid: drag parts, drag empty space to pan, pinch to zoom" className="h-full w-full" style={{touchAction:'none'}}
    viewBox={`${view.x-width/(2*view.zoom)} ${-view.y-height/(2*view.zoom)} ${width/view.zoom} ${height/view.zoom}`}
-   onPointerDown={e=>{if(e.button>0)return;svg.current.setPointerCapture(e.pointerId);pointers.current.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pointers.current.size>1){if(gesture.current)gesture.current.multi=true;return;}
-    const uid=e.target.closest('[data-assembly-uid]')?.dataset.assemblyUid;const ids=uid&&selected.has(uid)?[...selected]:uid?[uid]:[];
-    gesture.current={uid,ids:[...expandSelection(design,ids)],zoom:view.zoom,startX:e.clientX,startY:e.clientY,lastX:e.clientX,lastY:e.clientY,start:world(e),area:!heldPart&&(areaMode||(e.shiftKey&&!uid)),multi:false};}}
+   onPointerDown={e=>{if(e.button>0)return;e.preventDefault();document.activeElement?.blur?.();svg.current.setPointerCapture(e.pointerId);pointers.current.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pointers.current.size>1){const g=gesture.current;if(g&&!g.multi){g.multi=true;onSelectMany?.(g.previousIds||[]);if(g.area)onAreaDone?.();setDrag(null);setBox(null);}return;}
+    let uid=e.target.closest('[data-assembly-uid]')?.dataset.assemblyUid;
+    if(!uid&&e.pointerType==='touch'&&!heldPart&&!areaMode){const p=world(e),near=all.map(n=>{const r=bounds(n,design,nodes);return {uid:n.uid,distance:Math.hypot(Math.max(r.left-p.x,0,p.x-r.right),Math.max(r.low-p.y,0,p.y-r.high))};}).filter(n=>n.distance<=12/view.zoom).sort((a,b)=>a.distance-b.distance);uid=near[0]?.uid;}
+    const ids=uid&&selected.has(uid)?[...selected]:uid?[uid]:[];
+    if(uid&&!heldPart&&!areaMode&&!e.shiftKey&&!selected.has(uid))onSelect(uid);
+    gesture.current={uid,slop:e.pointerType==='touch'?10:5,previousIds:[...selected],ids:[...expandSelection(design,ids)],zoom:view.zoom,startX:e.clientX,startY:e.clientY,lastX:e.clientX,lastY:e.clientY,start:world(e),area:!heldPart&&(areaMode||(e.shiftKey&&!uid)),multi:false};}}
    onPointerMove={e=>{if(!pointers.current.has(e.pointerId))return;const before=[...pointers.current.values()];pointers.current.set(e.pointerId,{x:e.clientX,y:e.clientY});const after=[...pointers.current.values()],g=gesture.current;
     if(after.length===2){const dist=a=>Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y),mid=a=>({x:(a[0].x+a[1].x)/2,y:(a[0].y+a[1].y)/2});const old=mid(before),next=mid(after);zoom(dist(after)/Math.max(1,dist(before)),next);const v=frameRef.current;put({...v,x:v.x-(next.x-old.x)/v.zoom,y:v.y+(next.y-old.y)/v.zoom});if(g)g.multi=true;return;}
     if(!g||g.multi)return;
     if(g.area)setBox({a:g.start,b:world(e)});
-    else if(g.uid&&!heldPart){const d=magneticTranslation(design,g.ids,(e.clientX-g.startX)/g.zoom,-(e.clientY-g.startY)/g.zoom,snap);setDrag({ids:new Set(g.ids),x:d.dx,y:d.dy});}
+    else if(g.uid&&!heldPart){if(Math.hypot(e.clientX-g.startX,e.clientY-g.startY)<=g.slop){setDrag(null);return;}const d=magneticTranslation(design,g.ids,(e.clientX-g.startX)/g.zoom,-(e.clientY-g.startY)/g.zoom,snap);setDrag({ids:new Set(g.ids),x:d.dx,y:d.dy});}
     else if(!heldPart){const v=frameRef.current||view;put({...v,x:v.x-(e.clientX-g.lastX)/v.zoom,y:v.y+(e.clientY-g.lastY)/v.zoom});}
     g.lastX=e.clientX;g.lastY=e.clientY;
    }} onPointerUp={finish} onPointerCancel={finish}>

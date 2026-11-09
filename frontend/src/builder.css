@@ -133,3 +133,8 @@
 .studio-builder [data-assembly-uid]:focus-visible { outline: none; box-shadow: none; }
 .studio-builder .assembly-catalog button:focus:not(:focus-visible) { outline: none; box-shadow: none; }
 .studio-builder .assembly-catalog button:focus-visible { outline: 1px solid #111; outline-offset: 0; border-radius: 0; }
+
+/* Own gestures before Android/Safari can turn a placed-part tap into native
+   SVG activation, text selection or double-tap magnification. */
+.studio-builder .studio-grid,
+.studio-builder .studio-grid * { touch-action: none; }

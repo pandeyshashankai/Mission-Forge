@@ -76,7 +76,8 @@
     "test:assembly:mobile": "node scripts/assembly-mobile-check.cjs",
     "test:studio:ui": "node scripts/studio-check.cjs",
     "test:offline:update": "node scripts/offline-update-check.cjs",
-    "test:magnets:ui": "node scripts/magnetic-builder-check.cjs"
+    "test:magnets:ui": "node scripts/magnetic-builder-check.cjs",
+    "test:placed-parts:ui": "node scripts/placed-part-touch-check.cjs"
   },
   "browserslist": {
     "production": [
