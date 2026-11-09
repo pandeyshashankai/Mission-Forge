@@ -274,6 +274,14 @@ export const FlightView = ({
     padSite.position.copy(ecef(lat, lon, R));
     padSite.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), padUp);
     earthSpin.add(padSite);
+    const parkedParts=[];
+    if(sim0.leftBehindDesign){
+      const parked=buildRocket(sim0.leftBehindDesign),left=layoutDesign(sim0.leftBehindDesign),main=layoutDesign(sim0.design);
+      parked.position.set(left.anchorX-main.anchorX,left.minY-main.minY+2,0);
+      for(const mesh of parked.children){const box=new THREE.Box3().setFromObject(mesh),floor=Math.hypot(mesh.position.x+parked.position.x,mesh.position.z)<76?1.85:.45;
+        parkedParts.push({mesh,y:mesh.position.y,drop:Math.max(0,box.min.y+parked.position.y-floor)});}
+      parked.name="Equipment left at launch site";padSite.add(parked);
+    }
     const starGeo = new THREE.BufferGeometry();
     const sp = [];
     for (let i = 0; i < 4000; i++) {
@@ -524,6 +532,7 @@ export const FlightView = ({
       scene.background = sky;
       cap.visible = alt < 200000;
       padSite.visible = alt < 80000;
+      for(const part of parkedParts)part.mesh.position.y=part.y-Math.min(part.drop,.5*9.80665*sim.t*sim.t);
       clouds.visible = alt > 15000;
       stars.material.opacity = Math.min(1, Math.max(0, (alt - 20000) / 40000));
       stars.visible = stars.material.opacity > 0.01;

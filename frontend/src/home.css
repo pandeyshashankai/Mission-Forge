@@ -88,3 +88,5 @@
 .flight-end-choices{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin-top:12px}.flight-end-choices button{min-height:44px;padding:8px 14px;border:1px solid #73869b;border-radius:6px;color:#e9f5ff;background:#142232}
 
 .explore-scene .flight-view-shortcuts{top:calc(116px + env(safe-area-inset-top,0px))}.explore-workspace[data-touch="on"] .explore-paused{top:calc(164px + env(safe-area-inset-top,0px))}.flight-screen :is([data-testid="splashdown-overlay"],[data-testid="vehicle-lost-overlay"]){z-index:30}
+
+.flight-guidance-note{position:absolute;z-index:8;left:calc(8px + env(safe-area-inset-left,0px));top:calc(114px + env(safe-area-inset-top,0px));max-width:138px;padding:4px 6px;border-radius:5px;color:#e3f6fa;background:#1023328c;font-size:10px;line-height:1.4;pointer-events:none;}

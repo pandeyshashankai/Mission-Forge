@@ -6,7 +6,7 @@ import { MISSIONS } from '../sim/missions';
 import { validateLocalBodies, validateLocalParts, validateLocalMissions, readLocalContent } from '../sim/advanced/localContent';
 import { validateEntries } from './backup';
 // Keep imported state from replacing methods on FlightSim / guidance objects.
-const FLIGHT_FIELDS = new Set('t r v dir omega wheelH rt status clamped att cmd throttle attMode holdDir rcsEnabled autoStage log telemetry flameouts prematureStaging stagedAt maxQ maxApo maxAlt lastSample orbitAt lastAutoCkpt lastBurnEnergy stageDelay acc node wheelsSaturated rcsEmptyLogged sys region eph sunAU ls entry moonClosest lunarOrbitAt crewLost lossReason endReason input inputActive guidance maneuver'.split(' '));
+const FLIGHT_FIELDS = new Set('leftBehindDesign t r v dir omega wheelH rt status clamped att cmd throttle attMode holdDir rcsEnabled autoStage log telemetry flameouts prematureStaging stagedAt maxQ maxApo maxAlt lastSample orbitAt lastAutoCkpt lastBurnEnergy stageDelay acc node wheelsSaturated rcsEmptyLogged sys region eph sunAU ls entry moonClosest lunarOrbitAt crewLost lossReason endReason input inputActive guidance maneuver'.split(' '));
 const onlyKeys = (value, allowed) => value && typeof value === 'object' && !Array.isArray(value) && Object.keys(value).every(k => allowed.has(k));
 export function validateArchive(entries) {
   validateEntries(entries);
@@ -35,6 +35,7 @@ export function validateArchive(entries) {
     craft(c?.design);
     if (!missionIds.has(c.missionId) || !['amateur', 'intermediate', 'expert'].includes(c.difficulty) || !c.state?.rt || !vector(c.state.r) || !vector(c.state.v) || !Number.isFinite(c.state.t) || c.state.t < 0 || !Array.isArray(c.state.rt.sections) || c.state.rt.sections.length > 512) throw Error('Invalid campaign checkpoint');
     if (c.schemaVersion !== undefined && c.schemaVersion !== 1) throw Error('Unsupported checkpoint schema');
+    if(c.state.leftBehindDesign)craft(c.state.leftBehindDesign);
     if (!onlyKeys(c.state, FLIGHT_FIELDS) || !vector(c.state.dir) || !vector(c.state.omega) || !Array.isArray(c.state.log) || !Array.isArray(c.state.telemetry) || !Array.isArray(c.state.rt.radials) || !Array.isArray(c.state.rt.events) || !Number.isInteger(c.state.rt.eventIndex) || c.state.rt.eventIndex < 0 || c.state.rt.eventIndex > c.state.rt.events.length) throw Error('Invalid checkpoint runtime');
     if (c.state.guidance && !onlyKeys(c.state.guidance, new Set('p phase phaseT done frozenDir disengaged'.split(' ')))) throw Error('Unsupported guidance state');
     if (c.state.maneuver && !onlyKeys(c.state.maneuver, new Set('node dvVec dvTot burnTime tStart delivered phase done pulse failed'.split(' ')))) throw Error('Unsupported maneuver state');

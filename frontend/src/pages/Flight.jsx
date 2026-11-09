@@ -109,6 +109,7 @@ function snapshot(sim, warp) {
     guidance: !!sim.guidance && !sim.guidance.disengaged,
     guidancePhase: sim.guidance ? sim.guidance.phase : "",
     guidanceDone: sim.guidance?.done,
+    guidanceHoldReason:sim.guidance?.holdReason||null,
     log: [...sim.log],
     warp,
     orbitAt: sim.orbitAt,
@@ -222,7 +223,7 @@ export default function Flight() {
     if (pending.current) {
       g.setPendingCheckpoint(null);
       pending.current = null;
-      toast.success("Flight resumed from checkpoint");
+
       return;
     }
     if (phase === "checklist") rebuildSim(guidanceOn);
@@ -319,7 +320,7 @@ export default function Flight() {
     warpRef.current = 1;
     endedRef.current = false;
     setCkOpen(false);
-    toast.success(`Restored "${ck.label}"`);
+
   };
 
   useEffect(() => {
@@ -376,7 +377,7 @@ export default function Flight() {
   const stage = useCallback(() => {
     const sim = simRef.current;
     if (phaseRef.current !== "flight" || pausedRef.current) return;
-    if (sim.stage()) toast.message("Staging");
+    sim.stage();
   }, []);
 
   const disengage = () => {
@@ -526,6 +527,7 @@ export default function Flight() {
         />
       </div>
       {phase==="flight"&&!cockpitMenu&&!showEngineering&&<div className="flight-view-shortcuts" aria-label="Flight view"><button data-testid="camera-side-btn" aria-pressed={cam==="side"} onClick={()=>setCam("side")}>Side</button><button data-testid="camera-3d-btn" aria-pressed={cam==="chase"} onClick={()=>setCam("chase")}>3D</button><button data-testid="camera-fit-btn" onClick={()=>setViewCommand(v=>v+1)}>Focus</button></div>}
+      {phase==="flight"&&s?.guidance&&!cockpitMenu&&!showEngineering&&<output className="flight-guidance-note" data-testid="guidance-flight-note">{s.guidanceHoldReason?"Waiting for thrust":({vertical:"Vertical ascent",pitchover:"Gentle pitch-over",gravityTurn:"Gravity turn",ascent:"Building orbital speed",insert:"Orbit correction",done:"Orbit complete · holding"}[s.guidancePhase]||"Guidance active")}</output>}
       {s && (
         <div
           className="mobile-flight-summary"

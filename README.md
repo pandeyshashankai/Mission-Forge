@@ -31,6 +31,7 @@ affect gravity, orbital speed and atmosphere. Advanced laboratories are optional
 - **Access:** keyboard remapping, touch steering/throttle/stage/RCS, themes, local
   saves and exports, recovery tools and prepared offline play.
 
+[Launch ownership, guidance and cockpit update](docs/launch-ownership-and-guidance.md) ·
 [Engine connection and thrust-direction corrections](docs/engine-connection-fix.md) ·
 [Builder controls and model details](docs/builder-studio.md) ·
 [Reference-led interaction update](docs/sfs-reference-review.md)
@@ -39,7 +40,7 @@ Flight now includes a side profile with zoom/pan and Focus, alongside the existi
 3D views. Deployed recovery canopies and heat glow follow simulation state.
 Desktop and touch keep the same edge-mounted flight controls.
 
-![Side-profile flight on desktop](docs/images/reference-side-desktop.png)
+![Refreshed launch station](docs/images/refreshed-launch-station-desktop.png)
 
 [Interaction validation and test commands](docs/sfs-interaction-validation.md)
 

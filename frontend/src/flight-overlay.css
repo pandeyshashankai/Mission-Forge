@@ -117,3 +117,18 @@
 :is(.flight-screen, .explore-workspace)[data-input-touch="off"] .touch-flight-button { flex-direction: column; gap: 2px !important; }
 :is(.flight-screen, .explore-workspace)[data-input-touch="off"] .touch-flight-actions .touch-flight-button > svg { display: none; }
 :is(.flight-screen, .explore-workspace)[data-input-touch="off"] .touch-direction-pad .touch-flight-button > svg { width: 19px; height: 19px; }
+/* Quiet edge controls: fewer outlines and a consistent muted active color. */
+.cockpit-corners button,
+:is(.flight-screen,.explore-workspace)[data-touch="on"] .touch-flight-controls .touch-flight-button,
+.explore-workspace[data-touch="on"] .explore-view-tabs,
+.explore-workspace[data-touch="on"] .exploration-capture button {
+ background:rgb(12 25 37 / 78%);border:1px solid rgb(219 235 245 / 16%);border-radius:9px;
+}
+:is(.flight-screen,.explore-workspace)[data-touch="on"] .touch-flight-controls .touch-flight-button.is-on {background:rgb(26 83 96 / 82%);border-color:rgb(104 205 219 / 38%);}
+.cockpit-readings {font-variant-numeric:tabular-nums;text-shadow:0 1px 4px #0008;}
+.cockpit-readings span {font-size:11px;letter-spacing:.02em;color:#e1edf3;}
+.cockpit-readings strong {font-size:18px;letter-spacing:-.02em;}
+:is(.flight-screen,.explore-scene) .flight-view-shortcuts {gap:0;border-radius:8px;overflow:hidden;border:1px solid #dbeaf225;}
+:is(.flight-screen,.explore-scene) .flight-view-shortcuts button {border:0;border-radius:0;background:#102332b8;min-height:40px;}
+:is(.flight-screen,.explore-scene) .flight-view-shortcuts button[aria-pressed="true"] {background:#255362ba;color:#e2faff;}
+.cockpit-fuel meter::-webkit-meter-optimum-value {background:#99d1d9;}

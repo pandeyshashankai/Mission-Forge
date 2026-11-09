@@ -82,12 +82,20 @@ export class AscentGuidance {
         const vDes = add(scale(hdir, nav.vc), scale(nav.up, clamp(dh / 60, -15, 15)));
         const dv = sub(vDes, sim.v);
         const dvm = len(dv);
-        if (dvm < 0.5 || nav.Fmax <= 0) {
+        if (dvm < 0.5) {
           this.setPhase("done");
           this.done = true;
+          this.holdReason=null;
+          sim.holdDir=[...sim.dir];sim.attMode="hold";
+          sim.addLog?.("info","Ascent guidance complete — engine cutoff; holding current attitude");
           thr = 0;
           break;
         }
+        if (nav.Fmax <= 0) {
+          this.holdReason="Waiting for thrust — check fuel, engine ignition or the next stage";
+          thr=0;break;
+        }
+        this.holdReason=null;
         if (dvm > 4 || !this.frozenDir) this.frozenDir = norm(dv);
         att = sim.attFromDir(this.frozenDir, nav);
         const align = Math.max(0, dot(sim.dir, this.frozenDir));

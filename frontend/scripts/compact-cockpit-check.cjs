@@ -25,7 +25,7 @@ const {browserSession}=require('./browser-session.cjs');
   assert.equal(await b.evaluate("document.querySelector('.builder-screen').dataset.builderPane"),'build','Selection hid the workspace');
   await b.click('builder-stats-toggle');assert.ok(await b.evaluate("document.querySelector('[data-testid=stat-dv]').offsetWidth>0"));await b.click('builder-stats-toggle');
   await b.click('builder-panel-parts');assert.ok(await b.evaluate("document.querySelector('[data-testid=part-search-input]').offsetWidth>0"));await b.click('builder-panel-parts');
-  const before=await b.evaluate("document.querySelector('[data-testid=stat-mass]').textContent");await b.click('part-catalog-item-probe_core');assert.notEqual(await b.evaluate("document.querySelector('[data-testid=stat-mass]').textContent"),before);
+  const before=await b.evaluate("document.querySelectorAll('[data-assembly-uid]').length");await b.click('part-catalog-item-probe_core');assert.ok(await b.evaluate("document.querySelectorAll('[data-assembly-uid]').length")>before,'Palette drag must add equipment to the editable blueprint, even when it is outside the launch assembly');
   await b.click('workspace-3d');await b.screenshot('compact-builder-phone');
   await b.home();await b.click('menu-explore-btn');await b.click('explore-view-craft');await b.wait(b.exists('cockpit-throttle'));
   for(const [w,h]of [[320,568],[390,844],[430,932],[568,320],[844,390],[768,1024]]){await viewport(w,h);await b.pause(350);await geometry('[data-testid=exploration-viewport]',`explore ${w}x${h}`);}

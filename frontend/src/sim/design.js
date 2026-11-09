@@ -1,4 +1,4 @@
-import {assemblyConnections,contactReachable} from './assemblyConnections';
+import {assemblyConnections,contactReachable,launchAssembly} from './assemblyConnections';
 import {layoutDesign} from "./assemblyLayout";
 import { PARTS, engineSL } from "./parts";
 import { G0, LAUNCH_OPS_COST } from "./constants";
@@ -307,6 +307,7 @@ export function deltaVFromRuntime(rtIn, { applyFirst = false, padAvg = false } =
 }
 
 export function designStats(design) {
+  design=launchAssembly(design).design;
   const sections = buildSections(design);
   const rt = createRuntime(design);
   const mass = runtimeMass(rt);

@@ -23,3 +23,12 @@ export function contactReachable(neighbors,start,allowed){
  for(let i=0;i<queue.length;i++){const uid=queue[i];if(reached.has(uid))continue;reached.add(uid);for(const next of neighbors.get(uid)||[])if(allowed.has(next)&&!reached.has(next))queue.push(next);}
  return reached;
 }
+
+// A launch owns only the component containing the command part. The editor's
+// original blueprint is retained by the caller; parked equipment stays on Earth.
+export function launchAssembly(blueprint){
+ const {connected,loose}=assemblyConnections(blueprint);
+ if(!loose.length)return {design:blueprint,leftBehind:null};
+ const stack=blueprint.stack.filter(n=>connected.has(n.uid)).map(n=>n.mount&&!connected.has(n.mount.parentUid)?Object.fromEntries(Object.entries(n).filter(([k])=>k!=='mount')):n);
+ return {design:{...blueprint,stack,radials:(blueprint.radials||[]).filter(r=>connected.has(r.parentUid)),events:null},leftBehind:{...blueprint,stack:loose.map(n=>Object.fromEntries(Object.entries(n).filter(([k])=>k!=='mount'))),radials:(blueprint.radials||[]).filter(r=>!connected.has(r.parentUid)),events:null}};
+}

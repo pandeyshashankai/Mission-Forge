@@ -25,7 +25,7 @@ export function buildLaunchStation(height=90,quality='medium'){
   concrete:new THREE.MeshStandardMaterial({color:'#a3aaa6',roughness:.95}),
   dark:new THREE.MeshStandardMaterial({color:'#253039',roughness:.85}),
   steel:new THREE.MeshStandardMaterial({color:'#89979e',metalness:.65,roughness:.42}),
-  red:new THREE.MeshStandardMaterial({color:'#b94d36',metalness:.4,roughness:.55}),
+  red:new THREE.MeshStandardMaterial({color:'#527b91',metalness:.4,roughness:.55}),
   white:new THREE.MeshStandardMaterial({color:'#e3e5de',metalness:.25,roughness:.55}),
   yellow:new THREE.MeshStandardMaterial({color:'#efb936',roughness:.7}),
   light:new THREE.MeshStandardMaterial({color:'#f7e9be',emissive:'#f4d59a',emissiveIntensity:.6}),
@@ -51,7 +51,7 @@ export function buildLaunchStation(height=90,quality='medium'){
  for(let z=110;z<870;z+=28)box('yellow',0,.82,z,.3,.02,12);
  for(const x of [-12,12])box('white',x,.82,490,.25,.02,820);
  // Open steel service gantry: columns, cross bracing and floor landings.
- const h=Math.max(55,Math.min(140,height+8)),tx=25,tz=-10;
+ const h=Math.max(55,Math.min(140,height+8)),tx=33,tz=-18;
  for(const x of [tx-5,tx+5])for(const z of [tz-5,tz+5])pipe('steel',[x,2,z],[x,h,z],.38);
  for(let y=3;y<h;y+=9){
   box('dark',tx,y,tz,12,.35,12);
@@ -61,9 +61,18 @@ export function buildLaunchStation(height=90,quality='medium'){
  }
  box('red',tx,h+1,tz,14,2.5,14);
  for(const fraction of [.34,.62,.84]){
-  const y=h*fraction;box('steel',13,y,tz,16,.65,3);pipe('yellow',[5,y+1.3,tz-1.5],[21,y+1.3,tz-1.5],.08);pipe('white',[6,y-.6,tz],[24,y-.6,tz],.25);
+  const y=h*fraction;box('steel',21,y,tz,16,.65,3);pipe('yellow',[13,y+1.3,tz-1.5],[29,y+1.3,tz-1.5],.08);pipe('white',[14,y-.6,tz],[32,y-.6,tz],.25);
  }
  pipe('steel',[tx,h+2,tz],[tx,h+17,tz],.14);
+ // Low service buildings keep the rocket silhouette clear in side view.
+ for(const [x,z,w,d]of [[-125,-95,34,22],[105,-110,42,26]]){
+  box('white',x,5,z,w,8,d);box('dark',x,9.3,z,w+2,.6,d+2);
+  for(let k=-2;k<=2;k++)box('steel',x+k*5,5.3,z+d/2+.1,3,2.2,.2);
+  box('yellow',x,1.8,z+d/2+4,w+4,.12,.4);
+ }
+ // Raised support pedestals and perimeter pad lights.
+ for(const x of [-7,7])for(const z of [-7,7]){box('concrete',x,2.5,z,3,2,3);box('steel',x,3.6,z,3.4,.2,3.4);}
+ for(let i=0;i<20;i++){const a=i*Math.PI/10;box('light',Math.cos(a)*73,1.9,Math.sin(a)*73,.7,.35,.7);}
  // Cryogenic storage, deluge reservoir, feed lines and floodlight heads.
  for(const x of [-68,-92]){
   add('cylinder','white',[x,9,-35],[7,16,7]);add('sphere','white',[x,17,-35],[7,3,7]);

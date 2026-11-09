@@ -158,7 +158,7 @@ export function runReadiness(design, mission, difficulty) {
   if (!design.stack.length) return {stats,req,budget,overall:"NO-GO",checks:[simple("empty","Blueprint",false, "Add a command part, fuel and engines before launch.","A launch vehicle needs equipment",[],[])]};
   const checks = [propulsionCheck(stats, mission, req), twrCheck(stats)];
   const loose=assemblyConnections(design).loose;
-  checks.push(simple("connections","Physical assembly",!loose.length,loose.length?`${loose.length} disconnected part(s): move them into contact with the rocket. Disconnected engines cannot fire.`:"All parts touch the controlled assembly", "Parts must form a continuous contact path to the command part",[],loose.map(n=>PARTS[n.partId].name)));
+  checks.push(simple("connections","Physical assembly",!loose.length,loose.length?`${loose.length} disconnected part(s): reconnect them or leave them at the launch site. They will not fly with the rocket.`:"All parts touch the controlled assembly", "Parts must form a continuous contact path to the command part",[],loose.map(n=>PARTS[n.partId].name)));
   checks.push(attitudeCheck(stats));
   const up = upperTwrCheck(stats);
   if (up) checks.push(up);

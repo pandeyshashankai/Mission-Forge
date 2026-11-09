@@ -7,8 +7,9 @@ a separate geometric contact graph determines whether a placed part belongs to
 the controlled assembly.
 
 - Disconnected liquid engines and disconnected solid-booster groups cannot fire.
-- Disconnected tanks remain loaded inert mass and cannot contribute usable fuel
-  to a freshly launched rocket.
+- Disconnected tanks cannot contribute fuel. In the subsequent
+  [launch-ownership update](launch-ownership-and-guidance.md), all unused equipment
+  stays at the launch site instead of contributing flight mass.
 - Readiness lists disconnected parts and reports missing connected engine feed.
 - Reconnecting the equipment restores its capability without deleting the part.
 - Rotated engine force uses the same mesh-to-inertial coordinate mapping as the

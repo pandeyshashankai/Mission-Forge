@@ -182,6 +182,9 @@ export function buildPartMesh(part, height = part.height) {
     case "tank_orange": {
       g.add(cyl(r, r, h, part.look === "tank_white" ? M.white() : M.orange()));
       g.add(ring(r, 0), ring(r, h - 0.12));
+      const stripe=new THREE.MeshStandardMaterial({color:part.look==="tank_white"?'#2b8294':'#e2b567',metalness:.25,roughness:.55});
+      g.add(cyl(r*1.004,r*1.004,Math.min(.24,h*.045),stripe,32,Math.max(.15,h*.12)));
+      const service=new THREE.Mesh(new THREE.BoxGeometry(Math.max(.12,r*.16),Math.min(1,h*.15),.08),new THREE.MeshStandardMaterial({color:"#344653",roughness:.7}));service.position.set(0,h*.65,r+.02);g.add(service);
       if (h > 8) g.add(ring(r, h / 2, 0.08));
       break;
     }

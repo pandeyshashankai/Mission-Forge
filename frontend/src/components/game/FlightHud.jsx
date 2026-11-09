@@ -189,7 +189,7 @@ export const OrbitPanel = ({ s, detailed = false }) => (
       )}
     </div>
     <p className="hud-next-step">
-      {s.status === "orbit"
+      {s.guidanceHoldReason || (s.status === "orbit"
         ? "Orbit map lets you plan your next burn."
         : s.guidance
           ? {
@@ -200,7 +200,7 @@ export const OrbitPanel = ({ s, detailed = false }) => (
               insert: "Making the final orbital corrections.",
               done: "Ascent complete. You have control.",
             }[s.guidancePhase] || "Guidance is following your flight plan."
-          : "Use the throttle and steering keys to fly."}
+          : "Use the throttle and steering keys to fly.")}
     </p>
   </div>
 );

@@ -44,7 +44,7 @@ test('landing gear deployment and all new parts survive save/import and physical
 test('deployed paired legs allow slow upright touchdown, while folded legs and hard impacts crash',()=>{
  const {EARTH}=require('../src/sim/constants');
  for(const [deployed,speed,expected]of [[true,1,'landed'],[false,1,'crashed'],[true,20,'crashed']]){
-  const d=rocket();d.stack.push({uid:'foot-a',partId:'landing_leg',deployed},{uid:'foot-b',partId:'landing_leg',deployed});
+  const d=rocket();const tank=d.stack.find(n=>PARTS[n.partId].propellant);d.stack.push(...[-1,1].map((side,i)=>({uid:'foot-'+i,partId:'landing_leg',deployed,position:{x:side*2.1,y:tank.position.y,z:0},mount:{parentUid:tank.uid,x:side*2.1,y:0,z:0}})));
   const sim=new FlightSim({design:d,mission:MISSIONS[0],guidanceOn:false});sim.status='flight';sim.clamped=false;sim.throttle=0;sim.r=[EARTH.radius-.1,0,0];sim.v=[-speed,EARTH.rotationRate*sim.r[0],0];sim.dir=[1,0,0];sim.nav=sim.computeNav();sim.step(.01);assert.equal(sim.status,expected);assert.ok(sim.isEnded());
  }
 });
@@ -57,7 +57,7 @@ test('exploration adapter rejects rotated engines instead of silently adding the
  const {explorationStarter,hangarCraft}=require('../src/sim/hangarCraft');const d=explorationStarter();d.stack=d.stack.map(n=>PARTS[n.partId].engine?{...n,rotation:180}:n);assert.throws(()=>hangarCraft(d),/aligned engines/);
 });
 test('lunar touchdown uses the Moon-relative surface normal',()=>{
- const {moonState,MOON}=require('../src/sim/bodies'),{add}=require('../src/sim/vec');const d=rocket();d.stack.push({uid:'lunar-foot-a',partId:'landing_leg',deployed:true},{uid:'lunar-foot-b',partId:'landing_leg',deployed:true});
+ const {moonState,MOON}=require('../src/sim/bodies'),{add}=require('../src/sim/vec');const d=rocket();const tank=d.stack.find(n=>PARTS[n.partId].propellant);d.stack.push(...[-1,1].map((side,i)=>({uid:'lunar-foot-'+i,partId:'landing_leg',deployed:true,position:{x:side*2.1,y:tank.position.y,z:0},mount:{parentUid:tank.uid,x:side*2.1,y:0,z:0}})));
  const s=new FlightSim({design:d,mission:MISSIONS.find(m=>m.moon),guidanceOn:false});const moon=moonState(0,s.eph);s.status='flight';s.clamped=false;s.throttle=0;s.r=add(moon.r,[0,MOON.radius-.1,0]);s.v=add(moon.v,[0,-1,0]);s.dir=[0,1,0];s.nav=s.computeNav();assert.equal(s.nav.body,'moon');s.step(.01);assert.equal(s.status,'landed');
 });
 test('magnetic moves snap edge-to-edge, preserve children and allow an exact unsnapped override',()=>{

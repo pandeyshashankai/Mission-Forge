@@ -1,3 +1,4 @@
+import {launchAssembly} from './assemblyConnections';
 import {thrustDirection} from './thrustDirection';
 import { EARTH, G0, LAUNCH_SITES, DEG, STABLE_PERIAPSIS } from "./constants";
 import { add, cross, dot, len, norm, scale, sub, clamp } from "./vec";
@@ -62,6 +63,9 @@ export class FlightSim {
     guidanceOn = true,
     difficulty = "amateur",
   }) {
+    const assembly=launchAssembly(design);
+    this.leftBehindDesign=assembly.leftBehind;
+    design=assembly.design;
     if (!design.stack.length) throw new Error("Add parts to the blueprint before launching.");
     this.sys = newSystems(mission.id, difficulty);
     this.sunAU = 1;
@@ -382,6 +386,7 @@ export class FlightSim {
         `Staged with ${(fuel / 1000).toFixed(1)} t of propellant still in the dropped stage`,
       );
     }
+    this.stageDelay=0;
     applyEvent(this.rt, id);
     this.rt.eventIndex++;
     const cap0 = this.config ? this.config.wheelMomentum : 0;
@@ -806,6 +811,7 @@ export class FlightSim {
     const mv = this.maneuver;
     return JSON.parse(
       JSON.stringify({
+        leftBehindDesign:this.leftBehindDesign,
         t: this.t,
         r: this.r,
         v: this.v,
