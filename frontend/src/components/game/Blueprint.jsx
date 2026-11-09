@@ -11,7 +11,7 @@ function bounds(item,design,nodeMap){
  return {left:(item.x||0)-halfWidth,right:(item.x||0)+halfWidth,low:item.y+item.height/2-halfHeight,high:item.y+item.height/2+halfHeight};
 }
 
-export function Blueprint({design,selectedUid,selectedUids=[],onSelect,onSelectMany,onMoveGroup,heldPart,cursor,mirror=false,snap=true,areaMode=false,onAreaDone,viewCommand}){
+export function Blueprint({design,selectedUid,selectedUids=[],onSelect,onSelectMany,onMoveGroup,heldPart,cursor,mirror=false,snap=true,areaMode=false,onAreaDone,viewCommand,xray=false}){
  const mount=useRef(null),svg=useRef(null),pointers=useRef(new Map()),gesture=useRef(null),frameRef=useRef(null),measured=useRef(false),designRef=useRef(design);
  const [size,setSize]=useState({width:0,height:0}),[frame,setFrame]=useState(null),[drag,setDrag]=useState(null),[box,setBox]=useState(null);
  designRef.current=design;
@@ -79,7 +79,7 @@ export function Blueprint({design,selectedUid,selectedUids=[],onSelect,onSelectM
      onFocus={e=>{if(e.currentTarget.matches(':focus-visible'))onSelect(n.uid);}}
      onClick={e=>{if(e.detail===0)onSelect(n.uid);}} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();onSelect(n.uid,e.shiftKey);}}} style={{cursor:'grab'}}>
      <rect x={-w/2} y={-h} width={w} height={h} fill="transparent"/>
-     <PartDrawing part={p} height={h} deployed={node.deployed} flipX={node.flipX}/>
+     <PartDrawing part={p} height={h} deployed={node.deployed} flipX={node.flipX} xray={xray}/>
      {selected.has(n.uid)&&<rect data-testid="part-selection-border" x={-w/2} y={-h} width={w} height={h} fill="none" stroke="#111" strokeWidth="1" vectorEffect="non-scaling-stroke"/>}
     </g>;
    })}

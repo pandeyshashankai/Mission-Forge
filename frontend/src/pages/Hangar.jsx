@@ -339,7 +339,7 @@ export default function Hangar() {
               onSelect={selectPart}
               selectedUids={selection} onSelectMany={selectMany}
               heldPart={heldPart} cursor={cursor} mirror={mirror} snap={snap} areaMode={areaMode} onAreaDone={()=>setAreaMode(false)}
-              onPlace={onPlace} onMoveGroup={onMoveGroup} viewCommand={viewCommand}
+              onPlace={onPlace} onMoveGroup={onMoveGroup} viewCommand={viewCommand} xray={xray}
             />
           ) : (
             <HangarView

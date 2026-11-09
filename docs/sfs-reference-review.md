@@ -56,3 +56,24 @@ model limitations continue to apply. Physical Android/iOS testing and the exact
 Cloudflare deployment require a device/live-origin check after deployment.
 
 See `sfs-interaction-validation.md` for checks run against this revision.
+
+## Higher-resolution reference, November 9
+
+Reviewed the supplied 157.77-second 720p clip using contact sheets spanning the
+whole video. It contains a solar-system/news montage, a mod loader and custom
+parts; it is not evidence of a complete stock-game mission workflow. The supplied
+rocket image is useful for reading engine feed lines, nozzle rims and visible
+payload interiors.
+
+This refinement adds original pump fittings, paired feed-line supports and a
+nozzle rim to the shared palette/blueprint engine drawing. The existing **Show
+fairing interior** option now also makes the 2D shell translucent; **Hide** restores
+it. It retains the shell outline and full selection target. This is an inspection
+view, not physical shell removal or fairing jettison. The 3D inspection option
+continues to use its existing translucent shell. No source-game artwork is bundled.
+
+Validation: strict production build; 18 visual/studio geometry checks; native
+builder flow across five viewport sizes, group operations, safe-area controls,
+3D preview and save/resume. A separate browser check exercises the fairing toggle
+on phone and desktop. These are browser-emulated layouts, not physical-device
+certification. Propulsion, dimensions, mass and thermal behavior are unchanged.
