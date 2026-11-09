@@ -1,3 +1,4 @@
+import {validateFlightThermal} from '../sim/flightThermal';
 import {validMounts} from "../sim/assemblyLayout";
 import {hangarCraft} from '../sim/hangarCraft';
 import { PART_LIST } from '../sim/parts';
@@ -36,6 +37,7 @@ export function validateArchive(entries) {
     if (!missionIds.has(c.missionId) || !['amateur', 'intermediate', 'expert'].includes(c.difficulty) || !c.state?.rt || !vector(c.state.r) || !vector(c.state.v) || !Number.isFinite(c.state.t) || c.state.t < 0 || !Array.isArray(c.state.rt.sections) || c.state.rt.sections.length > 512) throw Error('Invalid campaign checkpoint');
     if (c.schemaVersion !== undefined && c.schemaVersion !== 1) throw Error('Unsupported checkpoint schema');
     if(c.state.leftBehindDesign)craft(c.state.leftBehindDesign);
+    validateFlightThermal(c.state.entry?.thermal,c.design);
     if (!onlyKeys(c.state, FLIGHT_FIELDS) || !vector(c.state.dir) || !vector(c.state.omega) || !Array.isArray(c.state.log) || !Array.isArray(c.state.telemetry) || !Array.isArray(c.state.rt.radials) || !Array.isArray(c.state.rt.events) || !Number.isInteger(c.state.rt.eventIndex) || c.state.rt.eventIndex < 0 || c.state.rt.eventIndex > c.state.rt.events.length) throw Error('Invalid checkpoint runtime');
     if (c.state.guidance && !onlyKeys(c.state.guidance, new Set('p phase phaseT done frozenDir disengaged'.split(' ')))) throw Error('Unsupported guidance state');
     if (c.state.maneuver && !onlyKeys(c.state.maneuver, new Set('node dvVec dvTot burnTime tStart delivered phase done pulse failed'.split(' ')))) throw Error('Unsupported maneuver state');

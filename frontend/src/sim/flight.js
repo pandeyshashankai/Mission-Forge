@@ -1,3 +1,4 @@
+import {flightThermalStep,validateFlightThermal} from './flightThermal';
 import {launchAssembly} from './assemblyConnections';
 import {thrustDirection} from './thrustDirection';
 import { EARTH, G0, LAUNCH_SITES, DEG, STABLE_PERIAPSIS } from "./constants";
@@ -460,6 +461,7 @@ export class FlightSim {
           ? this.maneuver.tStart - 10
           : Infinity;
       if (dt === DT_COAST && this.t < stopAt) {
+        const thermalStart=this.t;
         while (
           steps < maxSteps * 20 &&
           !this.inAtmo() &&
@@ -483,6 +485,7 @@ export class FlightSim {
             break;
         }
         this.nav = this.computeNav();
+        flightThermalStep(this,{...this.nav,atm:{rho:0,T:220}},this.t-thermalStart);
         this.att = this.attFromDir(this.dir, this.nav);
         this.postStep(this.nav);
         if (
@@ -665,6 +668,7 @@ export class FlightSim {
       this.aeroAccel(this.r, this.v, mNow, area),
     );
     if (!this.isEnded()) entryUpdate(this, nav, dt, sensedAccelG(sensed));
+    flightThermalStep(this,nav,dt);
     if (this.isEnded()) return;
     this.postStep(nav);
   }
@@ -889,6 +893,7 @@ export class FlightSim {
   }
 
   restore(st) {
+    validateFlightThermal(st.entry?.thermal,this.design);
     const { guidance, maneuver, ...rest } = JSON.parse(JSON.stringify(st));
     Object.assign(this, rest);
     const fresh=createRuntime(this.design);

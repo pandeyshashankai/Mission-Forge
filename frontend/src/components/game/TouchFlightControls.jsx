@@ -107,6 +107,8 @@ function ActionButton({
   );
 }
 
+export function HeatGauge({heat}){if(!heat)return null;return <div className="cockpit-heat" data-testid="cockpit-heat" data-critical={heat.failed||heat.pct>=80} title={`${heat.name}: ${Math.round(heat.celsius)} °C; failure at ${heat.limit} °C`}><strong>Heat <output>{Math.round(heat.celsius)} °C</output></strong><span>{heat.name}</span><span>Limit {heat.limit} °C</span><meter min="0" max="100" value={heat.pct} aria-label="Thermal limit used"/>{heat.shield!==null&&<span>Heat shield {Math.round(heat.shield*100)}%</span>}</div>;}
+
 export function TouchFlightControls({
   controls,
   visible,
@@ -120,6 +122,7 @@ export function TouchFlightControls({
   exploration = false,
   onThrottle,
   fuel = [],
+  heat=null,
 }) {
   if (!visible) return null;
   return (
@@ -128,6 +131,7 @@ export function TouchFlightControls({
       aria-label="Touch flight controls"
       data-testid="touch-flight-controls"
     >
+      {heat&&<div className="cockpit-heat-slot" style={{bottom:`${122+Math.min(100,16+fuel.length*26)}px`}}><HeatGauge heat={heat}/></div>}
       <div className="cockpit-fuel" data-testid="cockpit-fuel"><strong>Propellant</strong>{fuel.map((f,i)=><div key={i} title={`${f.label}: ${Math.round(f.pct)}%`}><span>{f.label}</span><meter min="0" max="100" value={f.pct} aria-label={`${f.label} remaining propellant`}/></div>)}</div>
       <div className="touch-steering">
         <span className="touch-control-label">

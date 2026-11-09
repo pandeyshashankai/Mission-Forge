@@ -1,3 +1,4 @@
+import {explorationThermalSummary} from './flightThermal';
 import {vehicleFragments,restoreMeshFragment} from './advanced/meshFracture';
 import {hangarCraft} from './hangarCraft';
 import { tpsxMaterial } from "./advanced/tpsx";
@@ -583,12 +584,15 @@ export class ExplorationSim {
                   : { type: "exposed", heatCapacity: 180000, emissivity: 0.8 }
                 : null,
         );
+        const heatStatus=explorationThermalSummary(this);
+        const overheated=heatStatus.celsius>=heatStatus.limit;
+        if(overheated)this.damage.integrity=0;
         if (this.damage.integrity <= 0) {
           this.status = "crashed";
           this.throttle = 0;
           this.cancelTransfer("Structural breakup");
           this.debris = vehicleFragments(this) || breakup(this.r, this.v, this.dryMass + this.fuel);
-          this.record("Vehicle lost: structural/thermal failure");
+          this.record(overheated?`Vehicle lost: hull ${heatStatus.celsius.toFixed(0)} °C exceeded ${heatStatus.limit} °C limit`:"Vehicle lost: structural/thermal failure");
         }
       }
       if (this.rigidEnabled) {

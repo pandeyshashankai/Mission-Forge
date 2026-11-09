@@ -19,6 +19,7 @@ affect gravity, orbital speed and atmosphere. Advanced laboratories are optional
   side tanks and engines, physical attachment/feed checks, group editing, deployed landing legs,
   41 parts, seven presets, staging, readiness checks,
   fuel and delta-v calculations, three difficulties and mission reports.
+- **Flight heating:** per-part Celsius limits, shield protection/capacity, hot surfaces, plasma glow and thermal breakup. [Model and screenshots](docs/flight-heating.md).
 - **Learning:** five Academy lessons, first-flight guide, evidence-linked debriefs,
   reflection journal and paired scientific model comparison.
 - **Exploration:** eleven destinations, three stock spacecraft, compatible

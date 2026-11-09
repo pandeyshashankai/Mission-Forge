@@ -180,6 +180,7 @@ export const OrbitPanel = ({ s, detailed = false }) => (
         testId="telemetry-beta-value"
       />
     )}
+    {s.heat&&<section data-testid="thermal-instruments" className="hud-next-step"><strong>Heat · {Math.round(s.heat.celsius)} °C / {s.heat.limit} °C</strong><p>{s.heat.name}{s.heat.shield!==null?` · shield ${Math.round(s.heat.shield*100)}% remaining`:" · no heat shield"}</p></section>}
     <div className="eyebrow mb-1 mt-3 text-cyan-400">Guidance</div>
     <div className="font-mono text-xs" data-testid="guidance-status">
       {s.guidance ? (

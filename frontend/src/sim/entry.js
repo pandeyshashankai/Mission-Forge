@@ -79,15 +79,15 @@ export function entryUpdate(sim, nav, dt, sensedG) {
     sim.addLog("info", `Entry interface (122 km) — ${nav.surfSpeed.toFixed(0)} m/s, flight-path angle ${nav.surfFPA.toFixed(2)}°`);
   }
   const rho = nav.atm.rho;
-  if (!(rho > 0)) return;
+  if (!(rho > 0)) {e.flux=0;return;}
   e.flux = stagnationFlux(rho, nav.surfSpeed, a.noseRadius);
   e.maxFlux = Math.max(e.maxFlux, e.flux);
-  if (a.crew || a.blunt) {
+  if (a.crew || a.blunt || a.shield) {
     if (a.shield) {
       e.heatLoad += e.flux * dt;
       if (e.flux > a.shield.maxFlux) return sim.loseCrew(`Heat shield failed — peak heat flux ${(e.flux / 1e6).toFixed(1)} MW/m² above its ${(a.shield.maxFlux / 1e6).toFixed(0)} MW/m² limit`, true);
       if (e.heatLoad > a.shield.capacity) return sim.loseCrew(`Heat shield ablator exhausted — heat load ${(e.heatLoad / 1e7).toFixed(1)} kJ/cm²`, true);
-    } else if (e.flux > BARE_FLUX_LIMIT && a.crew) return sim.loseCrew(`Capsule burned up — no heat shield (${(e.flux / 1e6).toFixed(2)} MW/m²)`, true);
+    } // Unshielded skin failure is integrated by flightThermalStep, not an instant flux kill.
   }
   if (!a.blunt) return;
   if (e.bankMode === "auto") e.bank = nav.vr > 30 ? 180 : nav.vr < -30 ? 0 : 90;

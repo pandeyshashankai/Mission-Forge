@@ -1,3 +1,4 @@
+import {explorationThermalSummary} from '../sim/flightThermal';
 import {CockpitChrome} from "../components/game/CockpitChrome";
 import { localData } from "../persistence/localData";
 import { InstrumentShelf } from "../components/sandbox/InstrumentShelf";
@@ -34,7 +35,7 @@ import {
   useTouchControlsVisible,
 } from "../input/useFlightInput";
 import { keyLabel, steeringAxes } from "../input/bindings";
-import { TouchFlightControls } from "../components/game/TouchFlightControls";
+import { TouchFlightControls, HeatGauge } from "../components/game/TouchFlightControls";
 import { DisplayButton } from "../components/app/Appearance";
 import { useGame } from "../game/GameContext";
 import { PLANETS, MOONS, BODY_BY_ID, AU, DAY } from "../sim/solarSystem";
@@ -1129,6 +1130,7 @@ export default function Explore() {
           </p>
         </div>
       </aside>
+      {g.settings.touchControls==="off"&&sim.physics.damage&&<aside className="standalone-heat"><HeatGauge heat={explorationThermalSummary(sim)}/></aside>}
       <TouchFlightControls
         controls={input}
         visible={touchVisible || g.settings.touchControls !== "off"}
@@ -1141,6 +1143,7 @@ export default function Explore() {
         }
         settings={g.settings}
         fuel={[{label:"Fuel",pct:sim.craft.fuel?100*sim.fuel/sim.craft.fuel:0}]}
+        heat={explorationThermalSummary(sim)}
         onThrottle={value=>{sim.cancelTransfer();sim.throttle=value;setWarp(1);}}
         throttle={sim.throttle}
         rcs={sim.rcsEnabled}

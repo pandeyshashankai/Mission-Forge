@@ -1,5 +1,6 @@
 import {profileFraming,profileBasis} from './profileCamera';
 import {createRecoveryVisuals,updateRecoveryVisuals} from './recoveryVisuals';
+import {thermalMaterial} from '../sim/flightThermal';
 import {PARTS} from "../sim/parts";
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
@@ -21,6 +22,7 @@ const QUALITY = {
 const toThree = (v) => new THREE.Vector3(v[0], v[2], -v[1]);
 
 function visibleDesign(sim) {
+  if(sim.entry.thermal?.failure)return {editorLayout:sim.design.editorLayout,stack:[],radials:[]};
   const rt = sim.rt;
   const uids = new Set();
   const gone = new Set();
@@ -430,7 +432,14 @@ export const FlightView = ({
               rocket.remove(c);
               disposeObject(c);
             });
-          if (rocket.children.length) {
+          if(sim.entry.thermal?.failure&&rocket.children.length){
+            const pieces=[...rocket.children];
+            for(const piece of pieces){rocket.remove(piece);piece.position.y+=rocket.position.y;const wrap=new THREE.Group();wrap.quaternion.copy(rocketHolder.quaternion);wrap.add(piece);
+              const velocity=new THREE.Vector3().randomDirection().multiplyScalar(3+Math.random()*5);
+              debris.push({obj:wrap,r:[...sim.r],v:[velocity.x,-velocity.z,velocity.y],spin:new THREE.Vector3().randomDirection(),age:0});scene.add(wrap);}
+            el.dataset.thermalFragments=String(pieces.length);
+            disposeObject(rocket);
+          } else if (rocket.children.length) {
             const wrap = new THREE.Group();
             wrap.quaternion.copy(rocketHolder.quaternion);
             wrap.add(rocket);
@@ -456,7 +465,7 @@ export const FlightView = ({
           } else disposeObject(rocket);
         }
         rocket = buildRocket(nowVis);
-        const box=new THREE.Box3().setFromObject(rocket);bounds={top:box.max.y,bottom:box.min.y,width:Math.max(box.max.x-box.min.x,box.max.z-box.min.z),minX:box.min.x,maxX:box.max.x,minZ:box.min.z,maxZ:box.max.z};
+        const box=new THREE.Box3().setFromObject(rocket);if(!box.isEmpty())bounds={top:box.max.y,bottom:box.min.y,width:Math.max(box.max.x-box.min.x,box.max.z-box.min.z),minX:box.min.x,maxX:box.max.x,minZ:box.min.z,maxZ:box.max.z};
         rocket.position.y = offset;
         plume.position.y = offset;
         rocketHolder.add(rocket);
@@ -483,11 +492,14 @@ export const FlightView = ({
         new THREE.Vector3(0, 1, 0),
         dir,
       );
+      for(const mesh of rocket?.children||[]){const state=sim.entry.thermal?.parts[mesh.userData.uid],node=sim.design.stack.find(n=>n.uid===mesh.userData.uid)||(sim.design.radials||[]).find(n=>n.uid===mesh.userData.uid);if(!state||!node)continue;
+        const celsius=state.temperature-273.15,ratio=celsius/thermalMaterial(PARTS[node.partId]).limitC,glow=Math.max(0,(ratio-.3)/.7);
+        mesh.traverse(o=>{if(o.material?.emissive){o.material.emissive.setRGB(glow*.8,glow*.13,glow*.015);o.material.emissiveIntensity=1;}});}
       const thr = nav.F > 0 ? Math.max(0.15, nav.F / Math.max(1, nav.Fmax)) : 0;
       let sideForce=0;
       for(const p of sidePlumes){
         const stage=sim.rt.sections.find(s=>s.attached&&s.ignited&&s.engines.some(e=>e.uid===p.uid&&e.connected!==false));
-        const burning=stage&&(stage.tanks[p.def.propellant]||0)>0&&sim.throttle>0;
+        const burning=!sim.isEnded()&&stage&&(stage.tanks[p.def.propellant]||0)>0&&sim.throttle>0;
         p.mesh.visible=!!burning;
         if(burning){const child=rocket.children.find(c=>c.userData.uid===p.uid);p.mesh.position.copy(child.position);p.mesh.position.y+=rocket.position.y;
           const angle=p.rotation*Math.PI/180;p.mesh.rotation.z=angle;
@@ -495,7 +507,7 @@ export const FlightView = ({
           const force=p.def.thrustVac*Math.max(p.def.minThrottle||0,sim.throttle)*(p.def.ispVac-(p.def.ispVac-p.def.ispSL)*nav.pRatio)/p.def.ispVac;sideForce+=force;
           const factor=Math.sqrt(force/1e6);p.mesh.scale.set(.4+.4*factor,(8+12*factor)*(.95+Math.random()*.1),.4+.4*factor);}
       }
-      plume.visible = !nowVis.editorLayout && thr > 0 && nav.F>sideForce;
+      plume.visible = !sim.isEnded() && !nowVis.editorLayout && thr > 0 && nav.F>sideForce;
       const vac = 1 - Math.min(1, nav.pRatio);
       const fmn = Math.sqrt(Math.max(0, nav.F-sideForce) / 1e6);
       const pr = (0.4 + 0.4 * fmn) * (1 + vac);
@@ -506,10 +518,11 @@ export const FlightView = ({
       );
       for (let i = debris.length - 1; i >= 0; i--) {
         const d = debris[i];
-        d.age += simDt;
-        const steps = Math.ceil(simDt / 0.5) || 0;
+        const debrisDt=sim.entry.thermal?.failure?Math.min(.05,dtReal):simDt;
+        d.age += debrisDt;
+        const steps = Math.ceil(debrisDt / 0.5) || 0;
         for (let s = 0; s < steps; s++) {
-          const h = simDt / steps;
+          const h = debrisDt / steps;
           const rm = Math.hypot(...d.r);
           const k = -EARTH.mu / (rm * rm * rm);
           d.v = [
@@ -520,7 +533,7 @@ export const FlightView = ({
           d.r = [d.r[0] + d.v[0] * h, d.r[1] + d.v[1] * h, d.r[2] + d.v[2] * h];
         }
         d.obj.position.copy(toThree(d.r)).sub(rPos);
-        d.obj.rotateOnAxis(d.spin, 0.3 * simDt);
+        d.obj.rotateOnAxis(d.spin, 0.3 * debrisDt);
         if (d.age > 120 || Math.hypot(...d.r) < R) {
           scene.remove(d.obj);
           disposeObject(d.obj);
@@ -589,7 +602,7 @@ export const FlightView = ({
       soiShell.visible = mode0() === "map" && !!sim.eph;
       if(mode0()!=="map")soiMarkers.forEach(m=>m.visible=false);
       recovery.position.y=rocket?rocket.position.y:0;
-      const visual=updateRecoveryVisuals(recovery,{state:sim.entry?.chute,time:sim.t,chuteTime:sim.entry?.chuteT??sim.t,drogueCdA:sim.aero?.chute?.drogueCdA,mainCdA:sim.aero?.chute?.mainCdA,top:bounds.top,bottom:bounds.bottom,bodyWidth:bounds.width,flux:sim.entry?.flux});
+      const visual=updateRecoveryVisuals(recovery,{state:sim.entry.thermal?.failure?"failed":sim.entry?.chute,time:sim.t,chuteTime:sim.entry?.chuteT??sim.t,drogueCdA:sim.aero?.chute?.drogueCdA,mainCdA:sim.aero?.chute?.mainCdA,top:bounds.top,bottom:bounds.bottom,bodyWidth:bounds.width,flux:sim.entry.thermal?.failure?0:sim.entry?.flux});
       const h = visual.top-bounds.bottom;
       const radius=visual.chute?visual.width/2:0;
       const minX=Math.min(bounds.minX,-radius),maxX=Math.max(bounds.maxX,radius),minZ=Math.min(bounds.minZ,-radius),maxZ=Math.max(bounds.maxZ,radius);

@@ -1,3 +1,4 @@
+import {explorationThermalSummary} from '../sim/flightThermal';
 import {profileBasis,profileFraming} from './profileCamera';
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
@@ -216,6 +217,8 @@ export function ExplorationView({
       if(sim.rigidEnabled){const q=sim.rigid.q;ship.quaternion.set(q[0],q[1],q[2],q[3]).premultiply(new THREE.Quaternion(-Math.SQRT1_2,0,0,Math.SQRT1_2));}
       else ship.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction);
       ship.scale.setScalar(mode.current ? Math.max(0.001, b.radius / 150000) : 0.001);
+      const heat=explorationThermalSummary(sim),glow=heat?Math.max(0,(heat.pct-30)/100):0;
+      if(ship.userData.thermalGlow!==glow){ship.userData.thermalGlow=glow;ship.traverse(o=>{if(o.material?.emissive){o.material.emissive.setRGB(glow,glow*.16,glow*.02);o.material.emissiveIntensity=1;}});}
       const plume = ship.userData.plume;
       plume.visible =
         sim.throttle > 0 && sim.fuel > 0 && sim.status === "flying";

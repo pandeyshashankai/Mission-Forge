@@ -43,7 +43,7 @@ test("checkpoint restoration preserves deterministic motion", () => {
   const sim = make();
   sim.launch();
   sim.advance(25);
-  const restored = make();
+  const restored = new FlightSim({design:sim.design,mission:sim.mission,profile:DEFAULT_PROFILE});
   restored.restore(sim.serialize());
   assert.equal(restored.digest(), sim.digest());
   sim.advance(10);

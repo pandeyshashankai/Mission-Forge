@@ -1,3 +1,4 @@
+import {thermalSummary} from '../sim/flightThermal';
 import {CockpitChrome} from "../components/game/CockpitChrome";
 import { localData } from "../persistence/localData";
 import { PhysicsBadge } from "../components/instruments/PhysicsBadge";
@@ -23,7 +24,7 @@ import {
   useTouchControlsVisible,
 } from "../input/useFlightInput";
 import { keyLabel, steeringAxes } from "../input/bindings";
-import { TouchFlightControls } from "../components/game/TouchFlightControls";
+import { TouchFlightControls, HeatGauge } from "../components/game/TouchFlightControls";
 import { DisplayButton } from "../components/app/Appearance";
 import { FlightView } from "../three/FlightView";
 import { FlightSim } from "../sim/flight";
@@ -82,6 +83,7 @@ function snapshot(sim, warp) {
     );
   const next = sim.rt.events[sim.rt.eventIndex];
   return {
+    heat:thermalSummary(sim),
     t: sim.t,
     alt: n.alt,
     surfSpeed: n.surfSpeed,
@@ -528,6 +530,7 @@ export default function Flight() {
       </div>
       {phase==="flight"&&!cockpitMenu&&!showEngineering&&<div className="flight-view-shortcuts" aria-label="Flight view"><button data-testid="camera-side-btn" aria-pressed={cam==="side"} onClick={()=>setCam("side")}>Side</button><button data-testid="camera-3d-btn" aria-pressed={cam==="chase"} onClick={()=>setCam("chase")}>3D</button><button data-testid="camera-fit-btn" onClick={()=>setViewCommand(v=>v+1)}>Focus</button></div>}
       {phase==="flight"&&s?.guidance&&!cockpitMenu&&!showEngineering&&<output className="flight-guidance-note" data-testid="guidance-flight-note">{s.guidanceHoldReason?"Waiting for thrust":({vertical:"Vertical ascent",pitchover:"Gentle pitch-over",gravityTurn:"Gravity turn",ascent:"Building orbital speed",insert:"Orbit correction",done:"Orbit complete · holding"}[s.guidancePhase]||"Guidance active")}</output>}
+      {s?.heat&&g.settings.touchControls==="off"&&<aside className="standalone-heat"><HeatGauge heat={s.heat}/></aside>}
       {s && (
         <div
           className="mobile-flight-summary"
@@ -780,6 +783,7 @@ export default function Flight() {
             }
             settings={g.settings}
             fuel={s.fuel}
+            heat={s.heat}
             onThrottle={value=>{disengage();warpRef.current=1;simRef.current.throttle=value;}}
             throttle={simRef.current.throttle}
             rcs={s.rcsEnabled}
@@ -839,7 +843,7 @@ export default function Flight() {
           )}
           {crashed && (
             <div
-              className="absolute inset-0 flex items-center justify-center bg-black/50"
+              className={`absolute inset-0 flex items-center justify-center bg-black/50 ${s.heat?.failed?"thermal-failure":""}`}
               data-testid="vehicle-lost-overlay"
             >
               <div className="panel rounded-sm border-red-500/60 p-6 text-center">

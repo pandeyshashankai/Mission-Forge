@@ -1,3 +1,4 @@
+import {thermalMaterial} from '../../sim/flightThermal';
 import { ChevronUp, ChevronDown, Trash2 } from "lucide-react";
 import { PARTS, PROPELLANTS, engineSL } from "../../sim/parts";
 import { describeEvent, validEventOrder } from "../../sim/design";
@@ -246,6 +247,8 @@ export const Inspector = ({ node }) => {
         {p.name}
       </div>
       {p.desc && <p className="mt-1 text-xs text-slate-400">{p.desc}</p>}
+      <p className="mt-2 text-xs text-amber-200" data-testid="part-thermal-limit">Thermal failure limit: {thermalMaterial(p).limitC} °C <span className="text-slate-400">· simulation material rating</span></p>
+      {p.heatShield&&<p className="mt-1 text-xs text-slate-400">Put the shield below the capsule and face it into the airflow during reentry. Protection ends when its ablator is exhausted.</p>}
       <table className="mt-2 w-full font-mono text-[11px]">
         <tbody>
           {rows.map(([k, v]) => (

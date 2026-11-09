@@ -1,0 +1,26 @@
+.cockpit-heat{margin-bottom:9px}
+.cockpit-heat strong{display:flex;justify-content:space-between;gap:6px;color:#ffe4bd}
+.cockpit-heat span{display:block;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cockpit-heat meter::-webkit-meter-optimum-value{background:#efaf5f}
+.cockpit-heat[data-critical="true"] strong{color:#ff9c87}
+.cockpit-heat[data-critical="true"] meter::-webkit-meter-optimum-value{background:#f57360}
+.cockpit-heat-slot{position:absolute;left:0;width:128px;color:white;font-size:10px;pointer-events:none;text-shadow:0 1px 3px #000}
+.cockpit-heat-slot meter{width:100%;height:7px}
+.cockpit-heat-slot .cockpit-heat{margin:0}
+.cockpit-heat-slot .cockpit-heat strong{font-size:10px}
+.cockpit-heat-slot .cockpit-heat span{font-size:9px;line-height:12px}
+.steering-right .cockpit-heat-slot{left:auto;right:0}
+.standalone-heat{position:absolute;bottom:max(12px,env(safe-area-inset-bottom));left:max(8px,env(safe-area-inset-left));z-index:18;width:140px;padding:8px;border-radius:7px;background:#102332bf;color:#eef5fa;font-size:10px}
+.standalone-heat meter{width:100%;height:7px}
+.standalone-heat .cockpit-heat{margin:0}
+@media(max-height:450px){
+ .cockpit-fuel{bottom:64px;max-height:80px}
+ .cockpit-heat-slot{bottom:auto!important;top:114px}
+ .flight-screen .flight-guidance-note{left:calc(210px + env(safe-area-inset-left,0px));top:calc(16px + env(safe-area-inset-top,0px));max-width:150px}
+}
+@media(max-height:450px) and (max-width:499px){.flight-screen .flight-guidance-note{display:none}}
+/* Keep the breakup visible; terminal actions remain available in a corner card. */
+.flight-screen [data-testid="vehicle-lost-overlay"].thermal-failure{background:transparent;align-items:flex-end;justify-content:flex-end;pointer-events:none}
+.thermal-failure>.panel{pointer-events:auto;width:min(320px,calc(100% - 24px));margin:12px;padding:14px;border-radius:10px;background:#101f32ed}
+.thermal-failure .font-display{font-size:20px;line-height:1.2}
+.thermal-failure .flight-end-choices{margin-top:8px;gap:6px}
