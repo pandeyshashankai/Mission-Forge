@@ -7,11 +7,11 @@ MissionForge is a browser-based space engineering and learning game by
 solar-system exploration and traceable scientific experiments. No account,
 backend, API key or multiplayer service is required.
 
-![MissionForge home](docs/images/fullscreen-home-desktop.png)
+![MissionForge home](docs/images/reference-home-desktop.png)
 
 ## Start playing
 
-Choose **First Orbit** for an assisted launch or **Mission Control Academy** for
+Choose **Build a new rocket** for a blank construction grid, **First Orbit** for an assisted launch or **Mission Control Academy** for
 a predict–fly–reflect lesson. **NASA Data Explorer** shows which source values
 affect gravity, orbital speed and atmosphere. Advanced laboratories are optional.
 
@@ -31,7 +31,16 @@ affect gravity, orbital speed and atmosphere. Advanced laboratories are optional
 - **Access:** keyboard remapping, touch steering/throttle/stage/RCS, themes, local
   saves and exports, recovery tools and prepared offline play.
 
-[Builder controls and model details](docs/builder-studio.md)
+[Builder controls and model details](docs/builder-studio.md) ·
+[Reference-led interaction update](docs/sfs-reference-review.md)
+
+Flight now includes a side profile with zoom/pan and Focus, alongside the existing
+3D views. Deployed recovery canopies and heat glow follow simulation state.
+Desktop and touch keep the same edge-mounted flight controls.
+
+![Side-profile flight on desktop](docs/images/reference-side-desktop.png)
+
+[Interaction validation and test commands](docs/sfs-interaction-validation.md)
 
 ![Rocket construction studio](docs/images/studio-builder-desktop.png)
 

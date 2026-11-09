@@ -26,9 +26,9 @@ export const storage = {
       graphics: ["auto", "low", "medium", "high"].includes(saved.graphics)
         ? saved.graphics
         : "auto",
-      camera: ["chase", "cinematic", "free", "map"].includes(saved.camera)
+      camera: ["side", "chase", "cinematic", "free", "map"].includes(saved.camera)
         ? saved.camera
-        : "chase",
+        : "side",
       theme: ["orbital", "nebula", "daylight"].includes(saved.theme)
         ? saved.theme
         : "orbital",

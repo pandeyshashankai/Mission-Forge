@@ -15,6 +15,7 @@ export function snapPosition(design,partId,point,enabled=true){
  const targets=l.items.filter(n=>!PARTS[n.partId].fairing).flatMap(n=>[{x:n.x,y:n.y+n.height},{x:n.x,y:n.y-p.height},...[-1,1].flatMap(side=>[n.y,n.y+(n.height-p.height)/2,n.y+n.height-p.height].map(y=>({x:n.x+side*(PARTS[n.partId].diameter+p.diameter)/2,y}))) ]).sort((a,b)=>Math.hypot(a.x-point.x,a.y-point.y)-Math.hypot(b.x-point.x,b.y-point.y));
  return targets[0]&&Math.hypot(targets[0].x-point.x,targets[0].y-point.y)<Math.max(1.1,Math.min(2.5,p.diameter*.5))?targets[0]:{x:Math.round(point.x*4)/4,y:Math.round(point.y*4)/4};
 }
+export function paletteAnchor(partId,point){return {...point,y:point.y-PARTS[partId].height/2};}
 export function studioDrop(design,partId,point,mirror=false,boosterCount=2,snap=true){
  point=snapPosition(design,partId,point,snap);
   const d=freezeLayout(design);

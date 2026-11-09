@@ -1,3 +1,4 @@
+import {profileBasis,profileFraming} from './profileCamera';
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -12,6 +13,7 @@ export function ExplorationView({
   simRef,
   fleetRef,
   formation = false,
+  sideProfile = true,
   overview,
   quality = "medium",
   active = true,
@@ -22,6 +24,7 @@ export function ExplorationView({
   const mount = useRef(null),
     mode = useRef(overview);
   mode.current = overview;
+  const sideRef=useRef(sideProfile);sideRef.current=sideProfile;
   const formationRef = useRef(formation);
   formationRef.current = formation;
   const activeRef = useRef(active);
@@ -78,7 +81,9 @@ export function ExplorationView({
     Object.values(textures).forEach((t) => {
       t.colorSpace = THREE.SRGBColorSpace;
     });
+    const modelSpan=model=>{const size=new THREE.Box3().setFromObject(model).getSize(new THREE.Vector3());return Math.max(size.x,size.y,size.z);};
     let ship = buildExplorer(simRef.current.craft.id, quality, simRef.current.baseCraft?.design);
+    let craftSpan=modelSpan(ship);
     scene.add(ship);
     const companions=new Map();
     const makeFragment=()=>{const m=new THREE.Mesh(new THREE.IcosahedronGeometry(.0005,0),new THREE.MeshStandardMaterial({color:'#f59e0b'}));m.visible=false;scene.add(m);return m;};const fragmentModels=Array.from({length:32},makeFragment);
@@ -149,6 +154,7 @@ export function ExplorationView({
     let frames=0, sampleAt=performance.now();
     let raf,
       lastMode,
+      lastSide,
       lastBody,
       lastCraft,
       timer = 0,
@@ -172,7 +178,7 @@ export function ExplorationView({
       const reduced = motionRef.current || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       if (ship.name !== sim.craft.id || (sim.craft.id==='hangar' && ship.userData.design!==sim.baseCraft.design)) {
         scene.remove(ship); disposeExplorer(ship);
-        ship = buildExplorer(sim.craft.id, quality, sim.baseCraft?.design); scene.add(ship);
+        ship = buildExplorer(sim.craft.id, quality, sim.baseCraft?.design);craftSpan=modelSpan(ship); scene.add(ship);
       }
       ship.visible=!(sim.debris?.length);
       const debrisWorld=fleetRef?.current;const debris=debrisWorld?.entries.some(e=>e.sim.debris?.some(f=>f.mesh))?debrisWorld.entries.flatMap(e=>e.sim.debris||[]).slice(0,64):sim.debris||[];while(fragmentModels.length<debris.length)fragmentModels.push(makeFragment());fragmentModels.forEach((m,i)=>{const f=debris[i];m.visible=!!f&&!mode.current;if(f){if(f.mesh&&m.userData.fragmentMesh!==f.mesh){m.geometry.dispose();const positions=[];for(const face of f.mesh.faces)for(const k of face)positions.push(...f.mesh.vertices[k].map(x=>x/1000));m.geometry=new THREE.BufferGeometry();m.geometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));m.geometry.computeVertexNormals();m.userData.fragmentMesh=f.mesh;}if(!f.mesh&&m.userData.fragmentMesh){m.geometry.dispose();m.geometry=new THREE.IcosahedronGeometry(.0005,0);m.userData.fragmentMesh=null;}m.position.copy(point(f.r.map((x,k)=>x-sim.r[k])));if(f.q)m.quaternion.set(...f.q);else m.quaternion.identity();}});
@@ -216,8 +222,10 @@ export function ExplorationView({
       plume.scale.y = 0.2 + 0.8 * sim.throttle;
       plume.scale.x = plume.scale.z = 0.5 + 0.5 * sim.throttle;
       light.position.copy(point(sim.r).normalize().multiplyScalar(-100000));
-      const cameraChanged = mode.current !== lastMode || b.id !== lastBody || sim.craft.id !== lastCraft;
+      const cameraChanged = sideRef.current !== lastSide || mode.current !== lastMode || b.id !== lastBody || sim.craft.id !== lastCraft;
       if (cameraChanged) {
+        camera.fov=!mode.current&&sideRef.current&&!formationRef.current?1:48;camera.updateProjectionMatrix();
+        lastSide=sideRef.current;
         if (lastMode !== undefined && !reduced)
           host.animate([{ opacity: 0.25 }, { opacity: 1 }], { duration: 420, easing: "ease-out" });
         controls.enabled = mode.current;
@@ -251,6 +259,7 @@ export function ExplorationView({
           .addScaledVector(direction, -distance * 0.65)
           .addScaledVector(up, distance * 0.32).add(focus);
         camera.position.lerp(desired, cameraChanged || reduced ? 1 : 1 - Math.exp(-dt * 8));
+        if(sideRef.current&&!formationRef.current){const basis=profileBasis(up);const fit=profileFraming(craftSpan,craftSpan,host.clientWidth,host.clientHeight);camera.up.copy(basis.up);camera.position.copy(basis.normal).multiplyScalar(fit.distance/1000);}
         camera.lookAt(focus);
       } else {
         controls.target.copy(planet.position);

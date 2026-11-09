@@ -62,7 +62,7 @@ import {
 } from "../components/ui/dialog";
 
 const WARPS = [1, 10, 100, 1000, 20000];
-const CAMS = ["chase", "cinematic", "free", "map"];
+const CAMS = ["side", "chase", "cinematic", "free", "map"];
 const fmtT = (n) =>
   `T${n <= 0 ? "-" : "+"}${String(Math.abs(n)).padStart(2, "0")}`;
 
@@ -180,7 +180,10 @@ export default function Flight() {
   modalOpenRef.current = ckOpen || endConfirm || g.settingsOpen;
   pausedRef.current =
     paused || ckOpen || endConfirm || g.settingsOpen || g.overlayOpen;
-  const [cam, setCam] = useState(g.settings.camera || "chase");
+  const [viewCommand,setViewCommand]=useState(0);
+  const lastCraftCamera=useRef(g.settings.camera==="map"?"side":g.settings.camera||"side");
+  const [cam, setCam] = useState(g.settings.camera || "side");
+  if(cam!=="map")lastCraftCamera.current=cam;
   const [snap, setSnap] = useState(null);
   const simRef = useRef(null);
   if (!simRef.current) {
@@ -350,7 +353,7 @@ export default function Flight() {
     if (w > max) toast.message(`Warp limited to ×${max} while ${why}`);
   };
 
-  const finish = useCallback(() => {
+  const finish = useCallback((destination="results") => {
     if (endedRef.current) return;
     endedRef.current = true;
     const sim = simRef.current;
@@ -366,7 +369,8 @@ export default function Flight() {
     if (res.learning) saveLearningReview(res.learning);
     storage.addAttempt(res);
     g.setResult(res);
-    g.go("results");
+    g.setPendingCheckpoint(null);
+    g.go(typeof destination==="string"?destination:"results");
   }, [g, mission]);
 
   const stage = useCallback(() => {
@@ -409,7 +413,7 @@ export default function Flight() {
         return;
       }
       if (action === "map") {
-        setCam((c) => (c === "map" ? "chase" : "map"));
+        setCam((c) => {if(c!=="map")lastCraftCamera.current=c;return c === "map" ? lastCraftCamera.current : "map";});
         return;
       }
       if (action === "camera") {
@@ -516,10 +520,12 @@ export default function Flight() {
         <FlightView
           simRef={simRef}
           cameraMode={cam}
+          viewCommand={viewCommand}
           quality={g.settings.graphics}
           onFrame={onFrame}
         />
       </div>
+      {phase==="flight"&&!cockpitMenu&&!showEngineering&&<div className="flight-view-shortcuts" aria-label="Flight view"><button data-testid="camera-side-btn" aria-pressed={cam==="side"} onClick={()=>setCam("side")}>Side</button><button data-testid="camera-3d-btn" aria-pressed={cam==="chase"} onClick={()=>setCam("chase")}>3D</button><button data-testid="camera-fit-btn" onClick={()=>setViewCommand(v=>v+1)}>Focus</button></div>}
       {s && (
         <div
           className="mobile-flight-summary"
@@ -531,7 +537,7 @@ export default function Flight() {
         </div>
       )}
 
-      {phase==="flight"&&s&&<CockpitChrome visible menuOpen={cockpitMenu} onMenu={()=>setCockpitMenu(v=>!v)} onMap={()=>input.trigger("map")} onPause={()=>input.trigger("pause")} onInstruments={()=>setShowEngineering(v=>!v)} paused={paused} warp={s.warp} onWarp={action=>input.trigger(action)} altitude={s.alt} speed={s.speed}/>}
+      {phase==="flight"&&s&&<CockpitChrome visible menuOpen={cockpitMenu} onMenu={()=>setCockpitMenu(v=>!v)} onMap={()=>input.trigger("map")} onPause={()=>input.trigger("pause")} onInstruments={()=>setShowEngineering(v=>!v)} paused={paused} warp={s.warp} onWarp={action=>input.trigger(action)} altitude={s.alt} speed={s.alt<100000?s.surfSpeed:s.speed} speedLabel={s.alt<100000?"Surface speed":"Orbital speed"}/>}
       <div className="flight-top-console">
       <header className="flight-bar">
         <div className="flight-identity">
@@ -598,12 +604,13 @@ export default function Flight() {
                   <option key={c} value={c}>
                     {touchVisible
                       ? {
+                          side: "Side",
                           chase: "Rocket",
                           map: "Orbit",
                           free: "Free",
                           cinematic: "Cinema",
                         }[c]
-                      : c === "chase"
+                      : c === "side" ? "Side profile" : c === "chase"
                         ? "Follow rocket"
                         : c === "map"
                           ? "Orbital map"
@@ -824,6 +831,7 @@ export default function Flight() {
                 >
                   View mission report
                 </button>
+                <div className="flight-end-choices"><button data-testid="end-edit-rocket" onClick={()=>finish("hangar")}>Edit rocket</button><button data-testid="end-retry-launch" onClick={()=>finish("review")}>Retry launch</button></div>
               </div>
             </div>
           )}
@@ -846,6 +854,7 @@ export default function Flight() {
                 >
                   View mission report
                 </button>
+                <div className="flight-end-choices"><button data-testid="end-edit-rocket" onClick={()=>finish("hangar")}>Edit rocket</button><button data-testid="end-retry-launch" onClick={()=>finish("review")}>Retry launch</button></div>
               </div>
             </div>
           )}

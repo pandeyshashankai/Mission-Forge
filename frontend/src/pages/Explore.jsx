@@ -249,6 +249,7 @@ export default function Explore() {
         .catch((error) => toast.error(error.message));
   }, []);
   const [cockpitMenu,setCockpitMenu]=useState(false);
+  const [sideProfile,setSideProfile]=useState(true);
   const [view, setView] = useState("orbit");
   const [scope, setScope] = useState("inner");
   const [search, setSearch] = useState("");
@@ -609,12 +610,14 @@ export default function Explore() {
       {flightFooter}
       </div>
       <main className="explore-scene">
+        {view==="craft"&&!cockpitMenu&&!mobilePanel&&<div className="flight-view-shortcuts" aria-label="Craft view"><button data-testid="explore-side-btn" aria-pressed={sideProfile} onClick={()=>setSideProfile(true)}>Side</button><button data-testid="explore-3d-btn" aria-pressed={!sideProfile} onClick={()=>setSideProfile(false)}>3D</button></div>}
         <ExplorationView
           fleetRef={fleetRef}
           active={view !== "system"}
           simRef={simRef}
           overview={view === "orbit"}
           formation={view === "fleet"}
+          sideProfile={sideProfile}
           quality={g.settings.graphics}
           reduceMotion={g.settings.reduceMotion}
         />

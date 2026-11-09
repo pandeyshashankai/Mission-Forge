@@ -1,4 +1,5 @@
 import { validateArchive } from "../persistence/domain";
+import {newBlueprint} from "../game/studioOps";
 import { presetFalconLike } from "../sim/presets";
 import { DEFAULT_PROFILE } from "../sim/guidance";
 import { localData } from "../persistence/localData";
@@ -63,8 +64,27 @@ export default function MainMenu() {
             <p>A rocket, a destination, and a whole solar system to explore.</p>
             <div className="home-play-buttons">
               <button className="home-play-primary" data-testid="menu-new-mission-btn" onClick={()=>g.go('planner')}><Rocket size={21}/>Fly a mission<ArrowRight size={18}/></button>
+              <button data-testid="menu-create-rocket" onClick={()=>{g.setLearningPrediction(null);localData.removeItem('mf.academy-flight');g.setPendingCheckpoint(null);g.loadDesign(newBlueprint());g.setMissionId('first_orbit');g.setProfile({...DEFAULT_PROFILE,targetAltitude:200000,targetInclination:28.6});g.go('hangar');}}><Rocket size={21}/>Build a new rocket<small>Blank blueprint</small></button>
               <button data-testid="menu-explore-btn" onClick={()=>g.go('explore')}><Compass size={21}/>Explore solar system<ArrowRight size={18}/></button>
-              <button data-testid="quick-first-orbit" onClick={() => {
+
+
+            </div>
+            {recovery&&<button className="ui-button" data-testid="resume-recovery" onClick={()=>resume(recovery)}>Recover paused flight</button>}
+          </div>
+          <div className="home-orbital-art" aria-hidden="true"><div className="home-orbit-line"/><div className="home-earth" style={{backgroundImage:"url(/textures/earth_atmos_2048.jpg)"}}/><span className="home-orbit-dot"/></div>
+        </section>
+        <div className="home-resume-row">          <button data-testid="menu-continue-btn" disabled={!g.hasAutosave} onClick={() => g.go("hangar")}>
+            <Play size={19} />
+            <span>
+              <strong>Continue building</strong>
+              <small>
+                {g.hasAutosave ? g.design.name : "Your next rocket will appear here"}
+              </small>
+            </span>
+            <ArrowRight size={15} />
+          </button>              <button data-testid="menu-resume-flight-btn" disabled={!cks.length} onClick={()=>{setCks(storage.checkpoints());setDlg('resume');}}><History size={19}/>Resume flight<small>{cks.length?`${cks.length} checkpoints`:'No saved flight'}</small></button></div>
+        <section className="home-discover" aria-label="Learn and experiment" data-testid="first-time-experience">
+          <div className="home-learning-start"><h2>Make every flight a discovery.</h2>              <button data-testid="quick-first-orbit" onClick={() => {
           g.setLearningPrediction(null);
           localData.removeItem('mf.academy-flight');
           g.loadDesign(presetFalconLike());
@@ -77,15 +97,7 @@ export default function MainMenu() {
           });
           g.setPendingCheckpoint(null);
           g.go('flight');
-        }}><Play size={19}/>Quick First Orbit<small>Ready to fly</small></button>
-              <button data-testid="menu-resume-flight-btn" disabled={!cks.length} onClick={()=>{setCks(storage.checkpoints());setDlg('resume');}}><History size={19}/>Resume flight<small>{cks.length?`${cks.length} checkpoints`:'No saved flight'}</small></button>
-            </div>
-            {recovery&&<button className="ui-button" data-testid="resume-recovery" onClick={()=>resume(recovery)}>Recover paused flight</button>}
-          </div>
-          <div className="home-orbital-art" aria-hidden="true"><div className="home-orbit-line"/><div className="home-earth" style={{backgroundImage:"url(/textures/earth_atmos_2048.jpg)"}}/><span className="home-orbit-dot"/></div>
-        </section>
-        <section className="home-discover" aria-label="Learn and experiment" data-testid="first-time-experience">
-          <h2>Make every flight a discovery.</h2>
+        }}><Play size={19}/>Quick First Orbit<small>Ready to fly</small></button></div>
           <div className="home-feature-grid">
             <button data-testid="menu-academy" onClick={()=>g.go('academy')}><Rocket size={23}/><strong>Flight Academy</strong><small>Your first orbit, step by step</small></button>
             <button data-testid="menu-data-explorer" onClick={()=>g.go('data')}><Compass size={23}/><strong>NASA Data Explorer</strong><small>The science behind your flight</small></button>
@@ -101,16 +113,7 @@ export default function MainMenu() {
           <button data-testid="menu-storage-btn" onClick={()=>g.go('storage')}>Data & recovery</button>
         </nav>
         <div className="home-utilities" aria-label="Your saved work">
-          <button data-testid="menu-continue-btn" disabled={!g.hasAutosave} onClick={() => g.go("hangar")}>
-            <Play size={19} />
-            <span>
-              <strong>Continue building</strong>
-              <small>
-                {g.hasAutosave ? g.design.name : "Your next rocket will appear here"}
-              </small>
-            </span>
-            <ArrowRight size={15} />
-          </button>
+
           <button data-testid="menu-load-btn" onClick={() => {
           setDesigns(storage.designs());
           setDlg("load");

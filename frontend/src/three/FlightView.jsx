@@ -1,3 +1,5 @@
+import {profileFraming,profileBasis} from './profileCamera';
+import {createRecoveryVisuals,updateRecoveryVisuals} from './recoveryVisuals';
 import {PARTS} from "../sim/parts";
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
@@ -175,12 +177,14 @@ function makePlume() {
 export const FlightView = ({
   simRef,
   cameraMode,
+  viewCommand,
   quality = "medium",
   onFrame,
 }) => {
   const mountRef = useRef(null);
   const camModeRef = useRef(cameraMode);
   const frameRef = useRef(onFrame);
+  const commandRef=useRef(viewCommand);commandRef.current=viewCommand;
   camModeRef.current = cameraMode;
   frameRef.current = onFrame;
 
@@ -326,6 +330,8 @@ export const FlightView = ({
     const sidePlumes = [];
     const plume = makePlume();
     rocketHolder.add(plume);
+    const recovery=createRecoveryVisuals();rocketHolder.add(recovery);
+    let bounds={top:30,bottom:0,width:4,minX:-2,maxX:2,minZ:-2,maxZ:2};
     let rocket = null;
     let visKey = "";
     const debris = [];
@@ -342,16 +348,26 @@ export const FlightView = ({
     let orbitTimer = 0;
     let chaseDist = 0;
     let lastMode = null;
+    let commandSeen=null;
+    const pan=new THREE.Vector2(),pointers=new Map();
+    let pinch=0;
+    renderer.domElement.style.touchAction="none";
+    const pointerDown=e=>{if(camModeRef.current!=="side")return;e.preventDefault();renderer.domElement.setPointerCapture(e.pointerId);pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});pinch=0;};
+    const pointerMove=e=>{const old=pointers.get(e.pointerId);if(!old||camModeRef.current!=="side")return;e.preventDefault();pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pointers.size===2){const [a,b]=[...pointers.values()],d=Math.hypot(a.x-b.x,a.y-b.y);if(pinch>0)chaseDist=Math.max(.25,Math.min(40,(chaseDist||1)*pinch/d));pinch=d;}else if(pointers.size===1){const span=profileFraming(bounds.top-bounds.bottom,bounds.width,el.clientWidth,el.clientHeight,chaseDist||1).span;pan.x-=(e.clientX-old.x)*span/el.clientHeight;pan.y+=(e.clientY-old.y)*span/el.clientHeight;}};
+    const pointerUp=e=>{pointers.delete(e.pointerId);pinch=0;};
+    for(const [type,fn]of [["pointerdown",pointerDown],["pointermove",pointerMove],["pointerup",pointerUp],["pointercancel",pointerUp]])renderer.domElement.addEventListener(type,fn);
     let lastBody = "earth";
     const frameOf = (body) => (body === "moon" ? moonCenter : earthCenter);
     const onWheel = (e) => {
-      if (camModeRef.current === "chase")
+      if (["chase","side"].includes(camModeRef.current)){
+        e.preventDefault();
         chaseDist = Math.max(
           0.5,
           Math.min(40, (chaseDist || 1) * (e.deltaY > 0 ? 1.1 : 0.9)),
         );
+      }
     };
-    renderer.domElement.addEventListener("wheel", onWheel, { passive: true });
+    renderer.domElement.addEventListener("wheel", onWheel, { passive: false });
     const debug=new URLSearchParams(window.location.search).get('debug')==='1';
     const diagnostics=debug?document.createElement('output'):null;
     if(diagnostics){diagnostics.className='dev-performance';diagnostics.dataset.testid='dev-performance';el.appendChild(diagnostics);}
@@ -432,6 +448,7 @@ export const FlightView = ({
           } else disposeObject(rocket);
         }
         rocket = buildRocket(nowVis);
+        const box=new THREE.Box3().setFromObject(rocket);bounds={top:box.max.y,bottom:box.min.y,width:Math.max(box.max.x-box.min.x,box.max.z-box.min.z),minX:box.min.x,maxX:box.max.x,minZ:box.min.z,maxZ:box.max.z};
         rocket.position.y = offset;
         plume.position.y = offset;
         rocketHolder.add(rocket);
@@ -562,11 +579,16 @@ export const FlightView = ({
       vesselM.visible = mode0() === "map";
       soiShell.visible = mode0() === "map" && !!sim.eph;
       if(mode0()!=="map")soiMarkers.forEach(m=>m.visible=false);
-      const h = rocket ? rocket.userData.height : 30;
-      const center = dir
-        .clone()
-        .multiplyScalar((rocket ? rocket.position.y : 0) + h / 2);
+      recovery.position.y=rocket?rocket.position.y:0;
+      const visual=updateRecoveryVisuals(recovery,{state:sim.entry?.chute,time:sim.t,chuteTime:sim.entry?.chuteT??sim.t,drogueCdA:sim.aero?.chute?.drogueCdA,mainCdA:sim.aero?.chute?.mainCdA,top:bounds.top,bottom:bounds.bottom,bodyWidth:bounds.width,flux:sim.entry?.flux});
+      const h = visual.top-bounds.bottom;
+      const radius=visual.chute?visual.width/2:0;
+      const minX=Math.min(bounds.minX,-radius),maxX=Math.max(bounds.maxX,radius),minZ=Math.min(bounds.minZ,-radius),maxZ=Math.max(bounds.maxZ,radius);
+      const visualWidth=Math.max(maxX-minX,maxZ-minZ);
+      const center = new THREE.Vector3((minX+maxX)/2,(rocket ? rocket.position.y : 0)+bounds.bottom+h/2,(minZ+maxZ)/2).applyQuaternion(rocketHolder.quaternion);
       const mode = camModeRef.current;
+      if(commandRef.current!==commandSeen){commandSeen=commandRef.current;chaseDist=1;pan.set(0,0);lastMode=null;}
+      el.dataset.zoom=String(chaseDist||1);el.dataset.camera=mode;el.dataset.chute=sim.entry?.chute||"stowed";el.dataset.heat=String(visual.heat);
       const east = new THREE.Vector3(0, 1, 0).cross(up).normalize();
       const north = up.clone().cross(east);
       let side = new THREE.Vector3().crossVectors(up, dir);
@@ -577,6 +599,7 @@ export const FlightView = ({
       lastBody = scaleKey;
       const mapTarget = frameOf(nav.body);
       if (mode !== lastMode) {
+        camera.fov=mode==="side"?1:50;camera.updateProjectionMatrix();
         controls.enabled = mode === "free" || mode === "map";
         if (mode === "free") {
           camera.up.copy(up);
@@ -608,7 +631,11 @@ export const FlightView = ({
         lastMode = mode;
       }
       scene.background = mode === "map" ? skyHigh : sky;
-      if (mode === "chase") {
+      if(mode==="side"){
+        const basis=profileBasis(up,sim.azimuth??90),vertical=Math.abs(dir.dot(basis.up)),horizontal=Math.abs(dir.dot(basis.right)),framing=profileFraming(h*vertical+visualWidth*Math.sqrt(Math.max(0,1-vertical*vertical)),h*horizontal+visualWidth*Math.sqrt(Math.max(0,1-horizontal*horizontal)),el.clientWidth,el.clientHeight,chaseDist||1);
+        const target=center.clone().addScaledVector(basis.right,pan.x).addScaledVector(basis.up,pan.y);
+        camera.up.copy(basis.up);camera.position.copy(target).addScaledVector(basis.normal,framing.distance);camera.lookAt(target);
+      } else if (mode === "chase") {
         if (!chaseDist) chaseDist = 1;
         const d = (h * 1.6 + 12) * chaseDist;
         const off = new THREE.Vector3();
@@ -709,6 +736,7 @@ export const FlightView = ({
       ro.disconnect();
       controls.dispose();
       renderer.domElement.removeEventListener("wheel", onWheel);
+      for(const [type,fn]of [["pointerdown",pointerDown],["pointermove",pointerMove],["pointerup",pointerUp],["pointercancel",pointerUp]])renderer.domElement.removeEventListener(type,fn);
       scene.traverse((o) => {
         if (o.geometry) o.geometry.dispose();
         if(o.isSprite)o.material.map?.dispose();

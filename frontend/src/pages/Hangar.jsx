@@ -1,4 +1,4 @@
-import {newBlueprint,studioDrop,magnetMove,copySelection,deleteSelection,transformSelection} from "../game/studioOps";
+import {newBlueprint,studioDrop,paletteAnchor,magnetMove,copySelection,deleteSelection,transformSelection} from "../game/studioOps";
 import {BuildToExplore} from '../components/education/BuildToExplore';
 import { Subassemblies } from "../components/game/Subassemblies";
 import { DesignEngineering } from "../components/instruments/EngineeringInspector";
@@ -118,7 +118,8 @@ export default function Hangar() {
   };
   const onPlace = position => {
     if(!heldPart)return;
-    const result=studioDrop(design,heldPart,position,mirror,symmetry,snap);
+    const anchor=paletteAnchor(heldPart,position);
+    const result=studioDrop(design,heldPart,anchor,mirror,symmetry,snap);
     if(result.error){toast.error(result.error);setHeldPart(null);setCursor(null);return;}
     setDesign(result.design);selectMany([result.uid||result.design.stack[0]?.uid].filter(Boolean));setHeldPart(null);setCursor(null);
   };
@@ -144,6 +145,8 @@ export default function Hangar() {
   useEffect(() => {
     const onKey = (e) => {
       if (["INPUT", "TEXTAREA", "SELECT"].includes(e.target.tagName)) return;
+      if(g.settingsOpen||g.overlayOpen)return;
+      if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="a"){e.preventDefault();selectMany([...design.stack,...(design.radials||[])].map(n=>n.uid));setAreaMode(false);return;}
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") {
         e.preventDefault();
         e.shiftKey ? g.redo() : g.undo();
@@ -233,6 +236,7 @@ export default function Hangar() {
         <p className="studio-help">Drag parts onto the grid. Drag empty space to pan; pinch or Ctrl + scroll to zoom. Use the rectangle tool to select a group, then copy, move, rotate or delete it. Mirror adds balanced side pairs.</p>
         <div className="builder-actions"><DisplayButton compact />
           <button className="ui-button" data-testid="new-blueprint" onClick={startNew}>New blank rocket</button>
+          <button className="ui-button" data-testid="select-whole-rocket" onClick={()=>{selectMany([...design.stack,...(design.radials||[])].map(n=>n.uid));setToolsOpen(false);}}>Select whole rocket · Ctrl+A</button>
           <HdrBtn
             icon={Undo2}
             label="Undo"

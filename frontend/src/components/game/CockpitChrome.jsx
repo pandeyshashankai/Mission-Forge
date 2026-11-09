@@ -1,6 +1,6 @@
 import {Menu,Map,Pause,Play,SlidersHorizontal,ChevronsLeft,ChevronsRight} from 'lucide-react';
 
-export function CockpitChrome({visible,menuOpen,onMenu,onMap,onPause,onInstruments,paused,warp,onWarp,altitude,speed,exploration=false}) {
+export function CockpitChrome({visible,menuOpen,onMenu,onMap,onPause,onInstruments,paused,warp,onWarp,altitude,speed,speedLabel="Velocity",exploration=false}) {
   if(!visible)return null;
   return <>
     <nav className="cockpit-corners" aria-label="Flight shortcuts" data-testid="cockpit-shortcuts">
@@ -16,6 +16,6 @@ export function CockpitChrome({visible,menuOpen,onMenu,onMap,onPause,onInstrumen
         <output data-testid="cockpit-warp">{warp.toLocaleString()}×</output>
       </div>
     </nav>
-    <div className="cockpit-readings" data-testid="cockpit-readings"><span>Altitude <strong>{altitude>=10000?(altitude/1000).toFixed(1)+' km':Math.max(0,altitude).toFixed(0)+' m'}</strong></span><span>Velocity <strong>{Math.round(speed).toLocaleString()} m/s</strong></span></div>
+    <div className="cockpit-readings" data-testid="cockpit-readings"><span>Altitude <strong>{altitude>=10000?(altitude/1000).toFixed(1)+' km':Math.max(0,altitude).toFixed(0)+' m'}</strong></span><span>{speedLabel} <strong>{Math.round(speed).toLocaleString()} m/s</strong></span></div>
   </>;
 }

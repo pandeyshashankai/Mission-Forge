@@ -1,7 +1,7 @@
 import {useEffect,useRef,useState} from 'react';
 import {PARTS} from '../../sim/parts';
 import {editorLayout} from '../../sim/assemblyLayout';
-import {expandSelection,snapPosition,magneticTranslation} from '../../game/studioOps';
+import {expandSelection,snapPosition,paletteAnchor,magneticTranslation} from '../../game/studioOps';
 import {PartDrawing,MetalGradient} from './PartDrawing';
 
 function bounds(item,design,nodeMap){
@@ -53,7 +53,7 @@ export function Blueprint({design,selectedUid,selectedUids=[],onSelect,onSelectM
  };
  const selected=new Set(selectedUids.length?selectedUids:selectedUid?[selectedUid]:[]);
  let ghost=null;
- if(heldPart&&cursor&&svg.current){const r=svg.current.getBoundingClientRect();if(cursor.x>r.left&&cursor.x<r.right&&cursor.y>r.top&&cursor.y<r.bottom)ghost=snapPosition(design,heldPart,world({clientX:cursor.x,clientY:cursor.y}),snap);}
+ if(heldPart&&cursor&&svg.current){const r=svg.current.getBoundingClientRect();if(cursor.x>r.left&&cursor.x<r.right&&cursor.y>r.top&&cursor.y<r.bottom){const p=world({clientX:cursor.x,clientY:cursor.y});ghost=snapPosition(design,heldPart,paletteAnchor(heldPart,p),snap);}}
  return <div ref={mount} className="blueprint-canvas studio-grid absolute inset-0" data-testid="blueprint-workspace" onContextMenu={e=>e.preventDefault()}>
   <svg ref={svg} data-testid="assembly-placement-grid" aria-label="Rocket build grid: drag parts, drag empty space to pan, pinch to zoom" className="h-full w-full" style={{touchAction:'none'}}
    viewBox={`${view.x-width/(2*view.zoom)} ${-view.y-height/(2*view.zoom)} ${width/view.zoom} ${height/view.zoom}`}

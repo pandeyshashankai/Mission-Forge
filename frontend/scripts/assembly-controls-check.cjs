@@ -12,7 +12,7 @@ const {PARTS}=require('../src/sim/parts');
  const dragPalette=async(id,x,y)=>{
   await b.evaluate(`document.querySelector('[data-testid=part-catalog-item-${id}]').scrollIntoView({block:'center'})`);await b.pause(200);
   const start=await b.evaluate(`(()=>{const r=document.querySelector('[data-testid=part-catalog-item-${id}]').getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2}})()`);
-  await mouse('mousePressed',start,{button:'left',clickCount:1});await b.wait(b.exists('held-part'));await b.pause(200);const end=await gridPoint(x,y);
+  await mouse('mousePressed',start,{button:'left',clickCount:1});await b.wait(b.exists('held-part'));await b.pause(200);const end=await gridPoint(x,y+PARTS[id].height/2);
   for(let i=1;i<=8;i++){await mouse('mouseMoved',{x:start.x+(end.x-start.x)*i/8,y:start.y+(end.y-start.y)*i/8},{button:'left',buttons:1});await b.pause(20);}
   await mouse('mouseReleased',end,{button:'left',clickCount:1});await b.wait("!document.querySelector('[data-testid=held-part]')");
  };

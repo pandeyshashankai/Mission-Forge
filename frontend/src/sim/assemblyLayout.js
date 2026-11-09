@@ -74,8 +74,8 @@ export function layoutDesign(design) {
         partId: r.partId,
         y: Math.max(0, parent.y - 1.5),
         height: bp.height,
-        x: Math.cos(a) * rad,
-        z: Math.sin(a) * rad,
+        x: (parent.x || 0) + Math.cos(a) * rad,
+        z: (parent.z || 0) + Math.sin(a) * rad,
       });
     }
   }

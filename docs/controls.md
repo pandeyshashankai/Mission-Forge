@@ -57,3 +57,21 @@ The browser suite covers remapping, persistence, simultaneous inputs, independen
 Open **Orbit transfer** in the exploration inspector, enter a nearby target altitude, and start the first finite burn. Coast using the time-speed controls; the simulation holds at the circularization window until you confirm the second burn. The result shows the achieved orbit rather than an exact-target promise.
 
 Steering, throttle, RCS, or burn-direction input cancels assistance and cuts its thrust before returning control. The cancel button also cuts thrust. A restored save always has engines off and no armed transfer. The assistant requires a near-circular start, enough propellant, a safe atmospheric/surface margin, a target inside the body's sphere of influence, and burns short enough for the approximation.
+
+### Side profile and whole-rocket editing
+
+Fresh settings start scored flights in **Side**. The on-screen **Side / 3D / Focus**
+shortcuts stay outside the central flight view. In Side, drag empty scene space
+to pan and pinch or use the mouse wheel to zoom; **Focus** recenters the craft.
+Wheel zoom also works in 3D follow. **Map** returns to the preceding craft view.
+The flight menu still offers cinematic and free cameras. Exploration's Craft
+view has its own Side/3D switch; Fleet retains its formation view.
+
+Palette equipment follows the pointer at its center. Keep dragging from the
+palette to the grid and release to place it. A tap followed by a grid tap does
+not place equipment. Choose **Tools → Select whole rocket** or press **Ctrl+A**
+(**Cmd+A** on macOS) outside an input to use the existing group operations on
+the entire assembly. Individual selection keeps a thin border.
+
+At the end of a flight, **Edit rocket** returns to construction and **Retry launch**
+returns to readiness review. Both record the attempt before leaving the flight.
