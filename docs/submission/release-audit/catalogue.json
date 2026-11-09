@@ -1,8 +1,0 @@
-{
-  "name": "catalogue",
-  "command": "npm run test:catalogue:ui",
-  "status": "PASS",
-  "durationMs": 63329,
-  "completedAt": "2026-11-06T14:06:30.663Z",
-  "log": "catalogue.txt"
-}

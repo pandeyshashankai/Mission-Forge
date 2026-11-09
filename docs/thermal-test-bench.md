@@ -12,4 +12,4 @@ This is an educational **model-prediction bench**, not measured experimental val
 
 Four tests verify hot/cold exposure conversion and sensitivity; all 18 published-case/material combinations; bounded finite states and missing recession behavior; input validation/CSV units; and integration-step convergence. Full regression suite: 276 tests. A production-browser test checks phone layout, reference switching, stale-result clearing, three charts and actual CSV/JSON downloads.
 
-Source data: `frontend/public/science/arcjet-cases.json`, extracted from the user-supplied `AIAA_2022_Monk.pdf`, Table 4. Original SHA-256 and review: `thermal-report-review.md`. This completes the public-data educational comparison feature without requesting additional source collection.
+Source data: `frontend/public/science/arcjet-cases.json`, extracted from the user-supplied `AIAA_2022_Monk.pdf`, Table 4. Original SHA-256 and review: `thermal-sources.md`. This completes the public-data educational comparison feature without requesting additional source collection.

@@ -1,8 +1,0 @@
-{
-  "name": "education",
-  "command": "npm run test:education:ui",
-  "status": "PASS",
-  "durationMs": 168189,
-  "completedAt": "2026-11-06T14:09:42.530Z",
-  "log": "education.txt"
-}

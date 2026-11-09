@@ -85,7 +85,7 @@ const {
       });
     }
     assert.deepEqual(b.errors, []);
-    fs.writeFileSync(path.resolve(__dirname, '../../docs/submission/skip-path-results.json'), JSON.stringify({
+    fs.writeFileSync(path.resolve(require('./audit-output.cjs'), 'skip-path-results.json'), JSON.stringify({
       status: 'PASS',
       results
     }, null, 2) + '\n');

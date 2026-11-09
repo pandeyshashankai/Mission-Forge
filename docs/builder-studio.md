@@ -89,7 +89,7 @@ flies a custom side-tank/engine design through guided orbital insertion.
 The unit checks cover empty drafts, physical propulsion, poses, transforms,
 import validation and soft versus destructive landing outcomes.
 
-See the [recorded validation results](builder-studio-validation.md).
+See the recorded validation results (see testing.md for current commands).
 
 Browser device layouts are Chromium emulation, not physical-device certification.
 

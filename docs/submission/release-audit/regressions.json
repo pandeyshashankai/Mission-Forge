@@ -1,9 +1,0 @@
-{
-  "name": "regressions",
-  "command": "npm run test",
-  "status": "PASS",
-  "durationMs": 43102,
-  "completedAt": "2026-11-06T13:55:51.358Z",
-  "log": "regressions.txt",
-  "checks": 321
-}

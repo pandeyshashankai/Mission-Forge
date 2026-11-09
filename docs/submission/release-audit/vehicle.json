@@ -1,8 +1,0 @@
-{
-  "name": "vehicle",
-  "command": "npm run test:vehicle:ui",
-  "status": "PASS",
-  "durationMs": 6069,
-  "completedAt": "2026-11-06T14:20:35.969Z",
-  "log": "vehicle.txt"
-}

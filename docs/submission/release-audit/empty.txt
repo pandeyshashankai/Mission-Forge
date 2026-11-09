@@ -1,5 +1,0 @@
-
-> mission-forge@1.0.0 test:empty:ui
-> node scripts/empty-vehicle-check.cjs
-
-PASS: forced fairing-only launch ends cleanly after jettison, with readable failure UI and no NaN or browser exceptions

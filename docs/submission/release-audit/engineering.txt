@@ -1,7 +1,0 @@
-
-> mission-forge@1.0.0 test:engineering:ui
-> node scripts/engineering-check.cjs
-
-PASS: phone engineering workbench uses NASA densities, speed-squared dynamic pressure, rocket equation and six independent engineering checks
-PASS: real phone touch starts and cancels transfer assistance with reachable 44px targets
-PASS: real browser finite transfer, coast hold, confirmed circularization, achieved orbit, fuel use, and keyboard takeover; no uncaught exceptions

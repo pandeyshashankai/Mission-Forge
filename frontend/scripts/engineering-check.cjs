@@ -122,6 +122,8 @@ const { ExplorationSim } = require("../src/sim/exploration");
     enabled: true,
     maxTouchPoints: 5,
   });
+  // Resizing closes the mobile drawer; open it through the visible UI before touch.
+  await click("explore-instruments-toggle");
   const tap = async (id) => {
     await evaluate(
       `document.querySelector('[data-testid="${id}"]').scrollIntoView({block:'center',behavior:'instant'})`,
@@ -132,7 +134,7 @@ const { ExplorationSim } = require("../src/sim/exploration");
     );
     assert.ok(
       p.ok && p.height >= 44 && p.width >= 44,
-      `${id} touch target must be reachable`,
+      `${id} touch target must be reachable: ${JSON.stringify(p)}`,
     );
     await call("Input.dispatchTouchEvent", {
       type: "touchStart",

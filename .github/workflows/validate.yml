@@ -22,7 +22,7 @@ jobs:
         run: |
           python3 -m http.server 8080 --directory frontend/build > /tmp/mission-forge-http.log 2>&1 &
           CHROME=$(command -v google-chrome || command -v chromium || command -v chromium-browser)
-          "$CHROME" --headless --no-sandbox --disable-dev-shm-usage --enable-unsafe-swiftshader --remote-debugging-port=9222 --user-data-dir=/tmp/mission-forge-chromium about:blank > /tmp/mission-forge-chromium.log 2>&1 &
+          "$CHROME" --headless --no-sandbox --disable-dev-shm-usage --disable-gpu-rasterization --use-angle=swiftshader --enable-unsafe-swiftshader --remote-debugging-port=9222 --user-data-dir=/tmp/mission-forge-chromium about:blank > /tmp/mission-forge-chromium.log 2>&1 &
           for attempt in $(seq 1 30); do
             if curl --fail --silent http://127.0.0.1:9222/json/version > /dev/null; then exit 0; fi
             sleep 1

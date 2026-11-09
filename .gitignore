@@ -6,12 +6,12 @@ coverage/
 *.log
 .DS_Store
 
-# Submission handouts are maintained privately outside this repository.
+# Keep private handouts and generated test output out of the source tree.
 frontend/public/submission/
-docs/submission/*.pdf
-docs/submission/*.pptx
-docs/submission/*.html
-docs/submission/project-report.md
-docs/submission/demo-script.md
-docs/submission/user-testing-protocol.md
+docs/submission/
+artifacts/
+docs/**/*.pptx
+docs/**/*project-report*
+docs/**/*presentation*
+docs/**/*cheat-sheet*
 docs/project-status-report-*.md

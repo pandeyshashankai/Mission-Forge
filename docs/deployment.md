@@ -20,7 +20,7 @@ A deployment is not verified merely because the repository passed its local audi
 6. Run the station-loading, fracture and full-engine labs, including paired parity.
 7. Prepare offline play, wait for ready, close/reopen the site offline and run a lab.
 8. Reconnect after a new deployment; verify the build ID changes and saves survive.
-9. Rehearse the three-minute demo and keep the exported backup presentation handy.
+9. Verify that old cached assets are replaced and local saves still load.
 
 Physical-device checks, hosted-origin behavior and participant usability results
 are not replaced by local emulation. The release evidence identifies the exact
@@ -36,4 +36,3 @@ must remain warning-free; disabling CI warning checks hides deployment failures.
 The 6 November build-log failure was fixed by capturing the command palette's
 actual effect dependencies, removing an unused lint global declaration and
 parenthesizing existing input conditions without changing their precedence.
-See `docs/submission/cloudflare-build-fix.json` for the follow-up build evidence.

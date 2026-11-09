@@ -1,5 +1,0 @@
-
-> mission-forge@1.0.0 test:vehicle:ui
-> node scripts/vehicle-systems-check.cjs
-
-PASS: phone thermal, degree-three tides, JPL flight, saved damage and strict docking controls; no browser exceptions

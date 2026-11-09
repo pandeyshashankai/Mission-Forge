@@ -50,7 +50,6 @@ const fs = require("node:fs"),
   ].every((r) => r.pass);
   if (!result.pass) throw Error("Advanced reference validation failed");
   for (const target of [
-    "docs/submission/advanced-validation-results.json",
     "frontend/public/science/advanced-validation-results.json",
   ])
     fs.writeFileSync(

@@ -1,8 +1,0 @@
-{
-  "name": "backlog",
-  "command": "npm run test:backlog:ui",
-  "status": "PASS",
-  "durationMs": 16256,
-  "completedAt": "2026-11-06T14:09:58.786Z",
-  "log": "backlog.txt"
-}

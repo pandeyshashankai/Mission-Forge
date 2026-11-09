@@ -135,7 +135,7 @@ const setInput = (selector, value) => `(()=>{const e=document.querySelector(${JS
     await b.screenshot('backlog-performance-phone');
     assert.equal(await b.evaluate('document.documentElement.scrollWidth>innerWidth'), false);
     assert.deepEqual(b.errors, []);
-    fs.writeFileSync(path.resolve(__dirname, '../../docs/submission/backlog-validation.json'), JSON.stringify({
+    fs.writeFileSync(path.resolve(require('./audit-output.cjs'), 'backlog-validation.json'), JSON.stringify({
       status: 'PASS',
       scope: 'Chromium integration; synthetic gamepad/wake/haptic API fixtures, not physical-device certification',
       results,

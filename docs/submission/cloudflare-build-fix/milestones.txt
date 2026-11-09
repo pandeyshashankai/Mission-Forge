@@ -1,5 +1,0 @@
-
-> mission-forge@1.0.0 test:milestones:ui
-> node scripts/milestones-check.cjs
-
-PASS: 342-constituent loading and hourly displacement table; 2/4/8 closed fracture meshes and conservation diagnostics; actual Wasm worker, advanced atmosphere/forces, powered flight, fleet and paired parity; campaign launch, staging, paired verification and standard-renderer handoff; phone layout, Wasm initialization and cancellation

@@ -1,8 +1,0 @@
-{
-  "name": "thermal",
-  "command": "npm run test:thermal:ui",
-  "status": "PASS",
-  "durationMs": 3938,
-  "completedAt": "2026-11-06T14:20:57.934Z",
-  "log": "thermal.txt"
-}

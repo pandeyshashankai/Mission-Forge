@@ -29,8 +29,6 @@
     "test:controls": "node scripts/controls-check.cjs",
     "test:science": "node tests/science.test.cjs",
     "test:showcase": "node scripts/showcase-check.cjs",
-    "docs:slides": "node scripts/export-presentation.cjs",
-    "test:submission": "node scripts/submission-check.cjs",
     "test:engineering": "node tests/engineering.test.cjs",
     "test:engineering:ui": "node scripts/engineering-check.cjs",
     "test:visuals": "node tests/visuals.test.cjs",
@@ -80,7 +78,8 @@
     "test:placed-parts:ui": "node scripts/placed-part-touch-check.cjs",
     "test:profile-view:ui": "node scripts/profile-view-check.cjs",
     "test:connections:ui": "node scripts/engine-connection-check.cjs",
-    "test:flight-thermal:ui": "node scripts/flight-thermal-check.cjs"
+    "test:flight-thermal:ui": "node scripts/flight-thermal-check.cjs",
+    "test:private-assets": "node scripts/private-assets-check.cjs"
   },
   "browserslist": {
     "production": [

@@ -1,5 +1,0 @@
-
-> mission-forge@1.0.0 test:education:ui
-> node scripts/education-check.cjs
-
-PASS: NASA source-to-value comparison and Academy prediction/experiment/reflection on phone, landscape and desktop; Real worker zero-difference/J2 runs, stale-result clearing, synthetic worker cancellation and Worker-absent yielding fallback; Restricted builder adapter, actual craft rendering, fuel use, explicit replacement and paused persistence; Complete beginner predict/review/countdown/flight/debrief/reflection loop retains an incorrect original prediction

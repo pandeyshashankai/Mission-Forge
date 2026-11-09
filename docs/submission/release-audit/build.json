@@ -1,8 +1,0 @@
-{
-  "name": "build",
-  "command": "npm run build",
-  "status": "PASS",
-  "durationMs": 19715,
-  "completedAt": "2026-11-06T13:56:11.075Z",
-  "log": "build.txt"
-}

@@ -1,5 +1,0 @@
-
-> mission-forge@1.0.0 test:persistence:ui
-> node scripts/persistence-check.cjs
-
-PASS: native-to-IndexedDB migration, actual disk persistence, backup preview/merge, tamper rejection, quota failure atomicity, recovery resumed paused, evidence mobile layout

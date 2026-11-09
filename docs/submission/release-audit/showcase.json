@@ -1,8 +1,0 @@
-{
-  "name": "showcase",
-  "command": "npm run test:showcase",
-  "status": "PASS",
-  "durationMs": 153474,
-  "completedAt": "2026-11-06T14:25:18.076Z",
-  "log": "showcase.txt"
-}

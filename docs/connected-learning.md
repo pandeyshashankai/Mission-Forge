@@ -52,9 +52,7 @@ exposed capacities. It is not a measured material calibration or entry predictio
 - `npm --prefix frontend run audit:release -- --extended`: includes the new suite
   alongside existing campaign, device, specialist and offline workflows.
 
-See `submission/education-validation.json` and the build-scoped release manifest
-for actual completion status. Emulated browser tests are not physical-device or
-learner-study evidence.
+Emulated browser tests are not physical-device or learner-study evidence.
 
 
 ## Browser evidence
@@ -67,11 +65,3 @@ they are not observations from a learner study.
 - [Model comparison zero-difference control](images/connected-model-comparison.png)
 - [Actual Hangar craft in Exploration](images/connected-hangar-exploration.png)
 - [Optional guide on a phone layout](images/connected-guide-phone.png)
-
-## Completed release audit
-
-All 29 release-audit groups passed on 6 November 2026: 309 regressions, 621,913
-generated checks, 330 emulated device/world/craft cases, all five lesson records,
-one full Academy flight, the existing showcase and offline play. The offline
-suite also exercises Data Explorer, the Academy heat experiment and comparison
-worker. This does not establish physical-device certification or learner outcomes.

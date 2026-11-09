@@ -73,5 +73,5 @@ const report = {
   cases,
   decision: 'Retain the existing integration steps, force models, rendering quality and requested warp behavior. Optimize repeated harmonic, tide and Kepler calculations with exact-result regression checks. No automatic step-budget throttling is active. The isolated Wasm component remains a diagnostic experiment, not a flight-engine replacement.'
 };
-fs.writeFileSync(process.env.MF_PROFILE_OUTPUT || path.resolve(__dirname, '../../docs/submission/performance-profile.json'), JSON.stringify(report, null, 2) + '\n');
+fs.writeFileSync(process.env.MF_PROFILE_OUTPUT || path.resolve(require('./audit-output.cjs'), 'performance-profile.json'), JSON.stringify(report, null, 2) + '\n');
 console.log(JSON.stringify(report));

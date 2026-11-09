@@ -1,5 +1,0 @@
-
-> mission-forge@1.0.0 test:contact:ui
-> node scripts/contact-systems-check.cjs
-
-PASS: phone ocean tides, source-backed material, measured-data fitter, calibration save and rigid-body contact controls; no browser exceptions

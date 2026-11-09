@@ -86,7 +86,7 @@ const report = {
     report.finishedAt = new Date().toISOString();
     report.total = report.cases.length;
     report.sample = selected.length!==devices.length;report.executedProfiles=selected.map(d=>d[0]);
-    fs.writeFileSync(path.resolve(__dirname, '../../docs/submission/device-matrix-results.json'), JSON.stringify(report, null, 2) + '\n');
+    fs.writeFileSync(path.resolve(require('./audit-output.cjs'), 'device-matrix-results.json'), JSON.stringify(report, null, 2) + '\n');
     await b.call('Emulation.setTouchEmulationEnabled', {
       enabled: false
     });

@@ -194,7 +194,7 @@ report.total = Object.values(report.groups).reduce((n, g) => n + g.cases, 0);
 report.failed = Object.values(report.groups).reduce((n, g) => n + g.failed, 0);
 report.status = report.failed ? 'FAIL' : 'PASS';
 report.limits = 'Finite short-step and state-transition matrix. Does not establish long-duration accuracy or exhaust continuous trajectories, custom content, materials and all numerical settings jointly.';
-const output = path.resolve(__dirname, '../../docs/submission/scenario-audit-results.json');
+const output = path.resolve(require('./audit-output.cjs'), 'scenario-audit-results.json');
 fs.writeFileSync(output, JSON.stringify(report, null, 2) + '\n');
 console.log(JSON.stringify({
   status: report.status,

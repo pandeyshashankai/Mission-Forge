@@ -5,13 +5,13 @@ const {
   spawnSync
 } = require('node:child_process');
 const frontend = path.resolve(__dirname, '..');
-const output = path.resolve(frontend, process.env.MF_AUDIT_OUTPUT || '../docs/submission/release-audit');
+const output = path.resolve(frontend, process.env.MF_AUDIT_OUTPUT || path.join(require('./audit-output.cjs'), 'release-audit'));
 fs.mkdirSync(output, {
   recursive: true
 });
 const extended = process.argv.includes('--extended');
 const browser = extended || process.argv.includes('--browser');
-const tasks = [['regressions', 'test'], ['build', 'build'], ['campaign', 'test:campaign'], ['combinations', 'test:combinations'], ...(extended ? [['scenarios','test:scenarios'],['challenges','test:challenges'],['profile','test:optimization:profile']] : []), ...(browser ? [['persistence', 'test:persistence:ui'], ['interface', 'test:ui'], ['controls', 'test:controls'], ['engineering', 'test:engineering:ui'], ['visuals', 'test:visuals:ui'], ['roadmap', 'test:roadmap:ui'], ['advanced', 'test:advanced:ui'], ['catalogue', 'test:catalogue:ui'], ['submission', 'test:submission'], ['lab-scrolling', 'test:labs:ui'], ['compact-cockpit', 'test:cockpit:ui'], ['assembly-controls','test:assembly:ui'], ['assembly-mobile','test:assembly:mobile'], ['builder-studio','test:studio:ui'], ['magnetic-builder','test:magnets:ui'], ['placed-part-touch','test:placed-parts:ui'], ...(extended ? [['mobile-visibility','test:mobile-visibility:ui'],['milestones','test:milestones:ui'],['education','test:education:ui'],['backlog','test:backlog:ui'],['devices', 'test:devices:ui'], ['skips', 'test:skips:ui'], ['mobile', 'test:mobile:ui'], ['vehicle', 'test:vehicle:ui'], ['contact', 'test:contact:ui'], ['tpsx', 'test:tpsx:ui'], ['thermal', 'test:thermal:ui'], ['empty', 'test:empty:ui'], ['legacy-flow', 'test:legacy-flow:ui']] : []), ['showcase', 'test:showcase'], ['offline', 'test:offline'], ['offline-update','test:offline:update']] : [])];
+const tasks = [['regressions', 'test'], ['build', 'build'], ['campaign', 'test:campaign'], ['combinations', 'test:combinations'], ...(extended ? [['scenarios','test:scenarios'],['challenges','test:challenges'],['profile','test:optimization:profile']] : []), ...(browser ? [['persistence', 'test:persistence:ui'], ['interface', 'test:ui'], ['controls', 'test:controls'], ['engineering', 'test:engineering:ui'], ['visuals', 'test:visuals:ui'], ['roadmap', 'test:roadmap:ui'], ['advanced', 'test:advanced:ui'], ['catalogue', 'test:catalogue:ui'], ['private-assets', 'test:private-assets'], ['lab-scrolling', 'test:labs:ui'], ['compact-cockpit', 'test:cockpit:ui'], ['assembly-controls','test:assembly:ui'], ['assembly-mobile','test:assembly:mobile'], ['builder-studio','test:studio:ui'], ['magnetic-builder','test:magnets:ui'], ['placed-part-touch','test:placed-parts:ui'], ...(extended ? [['mobile-visibility','test:mobile-visibility:ui'],['milestones','test:milestones:ui'],['education','test:education:ui'],['backlog','test:backlog:ui'],['devices', 'test:devices:ui'], ['skips', 'test:skips:ui'], ['mobile', 'test:mobile:ui'], ['vehicle', 'test:vehicle:ui'], ['contact', 'test:contact:ui'], ['tpsx', 'test:tpsx:ui'], ['thermal', 'test:thermal:ui'], ['empty', 'test:empty:ui'], ['legacy-flow', 'test:legacy-flow:ui']] : []), ['showcase', 'test:showcase'], ['offline', 'test:offline'], ['offline-update','test:offline:update']] : [])];
 const results = [];
 let failed = false;
 for (const [name, script] of tasks) {
@@ -40,6 +40,7 @@ for (const [name, script] of tasks) {
   console.log(`${report.status}: ${name} (${(report.durationMs / 1000).toFixed(1)} s)`);
   if (run.status !== 0) {
     failed = true;
+    console.error(`\n${name} failure details (last 80 lines):\n${text.split('\n').slice(-80).join('\n')}\nFull log: ${path.join(output, name + '.log')}`);
     break;
   }
 }

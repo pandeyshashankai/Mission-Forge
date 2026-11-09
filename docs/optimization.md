@@ -19,10 +19,8 @@ regression evidence, not independent physical reference data.
 `npm --prefix frontend run test:optimization:profile` runs three pairs of isolated
 processes in alternating order. Nine workloads each use ten warmups and 100 advance
 requests. All 27 paired final-state SHA-256 hashes and achieved simulation times
-must match. The latest release-audit measurement reduced median CPU time by about
-59% for the heavy advanced case (78.6 to 31.9 ms), 31% for the central high-warp
-case, and 21% for the adaptive high-warp case. See the timestamped raw rounds in
-`submission/optimization-validation.json` for the latest measurement.
+must match. Inspect the generated temporary output for workload-specific timing
+measurements.
 
 Timings depend on the machine and workload; small sub-millisecond cases are noisy.
 These results do not establish a universal frame rate or physical-device guarantee.

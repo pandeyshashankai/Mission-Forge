@@ -1,7 +1,0 @@
-
-> mission-forge@1.0.0 test:showcase
-> node scripts/showcase-check.cjs
-
-PASS: phone NASA provenance, Moon comparison, downloadable dataset, and three live scientific benchmarks
-PASS: prediction, guided NASA-data-backed launch, orbital insertion, successful report, measured explanation, saved reflection, JSON export, journal reload
-PASS: no uncaught browser exceptions

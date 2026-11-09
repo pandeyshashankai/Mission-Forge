@@ -1,8 +1,0 @@
-{
-  "name": "submission",
-  "command": "npm run test:submission",
-  "status": "PASS",
-  "durationMs": 2059,
-  "completedAt": "2026-11-06T14:06:32.722Z",
-  "log": "submission.txt"
-}

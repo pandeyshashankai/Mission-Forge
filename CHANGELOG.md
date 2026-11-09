@@ -64,7 +64,7 @@
 - Added rotational rigid-body box contacts with spin, friction and finite-inertia response.
 - Added a source-backed NASA CEA aluminium heat-capacity curve and experimental thermal inverse fitting with held-out checks.
 - Added degree-eight FES2004 ocean-tide gravity and three actual Orekit coefficient comparisons; full ocean loading remains unfinished.
-- Kept explicit data-access and physical-calibration limitations in the implementation report.
+- Kept explicit data-access and physical-calibration limitations in the model documentation.
 
 
 - Added opt-in thermal/structural failure, ablation mass loss, fragment generation and swept vessel/debris collisions.
@@ -100,7 +100,7 @@
 - Added interactive density/drag, rocket-equation and Hohmann-transfer workbench with six independent engineering benchmarks.
 - Added finite-burn exploration transfers with fuel accounting, coast-window hold, confirmed circularization, achieved-orbit reporting, cancellation, and restore disarming.
 - Added 77 regression checks, including 66 complete transfers across all exploration craft and destinations, plus a native browser engineering workflow.
-- Updated report, provenance downloads and simulator documentation review.
+- Updated provenance downloads and simulator documentation.
 
 ### NASA data and Mission Lab
 
@@ -108,7 +108,6 @@
 - Destination science panels with source-field provenance, Earth/world comparisons, and downloadable data.
 - Independent 60-digit benchmarks and live Earth/Moon/Mars numerical and full-orbit integration checks.
 - Predict–fly–explain First Orbit showcase, recorded-flight explanations, saved reflections, learning journal, and exports.
-- Detailed project report, printable PDFs, presentation, demo script, and learner pilot protocol.
 - Fixed lunar-return targeting that could choose an orbit with a low perigee but an impractically long return time.
 - Added 22 source/science/learning regression checks and a complete browser showcase check.
 

@@ -1,8 +1,0 @@
-{
-  "name": "skips",
-  "command": "npm run test:skips:ui",
-  "status": "PASS",
-  "durationMs": 157931,
-  "completedAt": "2026-11-06T14:19:54.771Z",
-  "log": "skips.txt"
-}

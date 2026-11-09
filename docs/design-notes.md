@@ -40,7 +40,7 @@ See the [NASA source audit](../data/nasa/README.md) and [scientific model notes]
 
 Earth/Mars drag now uses archived NASA GMAT density tables in exploration; scored Earth blends the imported upper density over 86–90 km. Signed rotation periods come from the NAIF linear prime-meridian coefficients. Source-range cutoffs, spherical altitude, and simplified spin axes are explicit model boundaries. Vacuum integration checks disable drag deliberately and are distinct from tests of atmospheric energy loss.
 
-Exploration now provides a finite-burn transfer sequence: first burn, coast-window hold, and pilot-confirmed circularization. The ideal estimate uses a Hohmann half-ellipse, but the actual state is advanced under finite thrust and decreasing propellant. Guards reject unsafe or unsuitable plans, manual input cancels, and restoring a save disarms the plan. See [the reviewed simulator/mission-analysis references](simulator-reference-review.md).
+Exploration now provides a finite-burn transfer sequence: first burn, coast-window hold, and pilot-confirmed circularization. The ideal estimate uses a Hohmann half-ellipse, but the actual state is advanced under finite thrust and decreasing propellant. Guards reject unsafe or unsuitable plans, manual input cancels, and restoring a save disarms the plan. See the reviewed simulator/mission-analysis references (see testing.md for current commands).
 
 ## Exploration visual update
 

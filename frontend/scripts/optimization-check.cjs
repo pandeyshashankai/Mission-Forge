@@ -40,7 +40,7 @@ try {
     scope: 'Three paired isolated Node processes per implementation; alternating execution order. Each case uses 10 warmups and 100 identical advance requests. Median of per-process medians; timings are environment-specific, not a universal FPS guarantee. Small sub-millisecond timings are noisy.',
     invariants: 'No force-model, integrator, step-limit, warp, rendering-quality, control or UI changes. State checksums and achieved simulation times must match exactly.',
     cases, rounds };
-  const output = path.resolve(__dirname, '../../docs/submission/optimization-validation.json');
+  const output = path.resolve(require('./audit-output.cjs'), 'optimization-validation.json');
   fs.writeFileSync(output, JSON.stringify(report, null, 2) + '\n');
   console.log('PASS: all 27 paired workload outcomes have identical states and achieved simulation times');
   console.table(cases.map(({ name, requestedSeconds, beforeMs, afterMs, cpuTimeReductionPercent }) => ({ name, requestedSeconds, beforeMs, afterMs, cpuTimeReductionPercent })));

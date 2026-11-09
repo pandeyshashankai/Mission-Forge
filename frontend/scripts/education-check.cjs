@@ -296,8 +296,8 @@ const input = (id, value, area = false) =>
     );
     fs.writeFileSync(
       path.resolve(
-        __dirname,
-        "../../docs/submission/education-validation.json",
+        require("./audit-output.cjs"),
+        "education-validation.json",
       ),
       JSON.stringify(
         {

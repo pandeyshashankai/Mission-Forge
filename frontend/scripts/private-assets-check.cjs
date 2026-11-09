@@ -13,9 +13,7 @@ const {browserSession} = require('./browser-session.cjs');
     const response = await fetch(base + '/submission/' + name);
     assert.ok([404,410].includes(response.status), `${name} still served: ${response.status}`);
   }
-  for (const name of ['project-report.md','presentation.html','demo-script.md','user-testing-protocol.md','MissionForge-7-Slide-Presentation.pptx','MissionForge-Short-Project-Report.pdf']) {
-    assert.equal(fs.existsSync(path.resolve(frontend, '../docs/submission', name)), false, name);
-  }
+  assert.equal(fs.existsSync(path.resolve(frontend, '../docs/submission')), false);
   const data = await (await fetch(base + '/science/planetary-data.json')).json();
   assert.equal(data.atmospheres.earth.bands.length,28);
   assert.equal(data.atmospheres.mars.bands.length,150);
