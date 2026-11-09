@@ -55,7 +55,7 @@ export const PartCatalog = ({ onHover, onPickup, onCancelPickup, compact=false }
       <div className="flex-1 overflow-y-auto scroll-thin p-3">
         {compact ? (()=>{
           const order=['chute_pack','capsule_3','capsule_1','truss_separator_37','decoupler_37','tank_k_37_s','tank_k_37_m','tank_k_37_l','tank_k_18','eng_k9','eng_k1','eng_kv','eng_h10','rcs_block','nose_37','nose_slanted_37','landing_leg'];
-          return parts.slice().sort((a,b)=>(order.indexOf(a.id)<0?99:order.indexOf(a.id))-(order.indexOf(b.id)<0?99:order.indexOf(b.id))).map(p=><button key={p.id} title={p.name} aria-label={`Pick up ${p.name}`} data-testid={`part-catalog-item-${p.id}`} onPointerCancel={onCancelPickup} onPointerDown={e=>onPickup?.(p.id,e)} style={{touchAction:'pan-y',height:Math.min(92,Math.max(34,p.height*5+16))}}><PartIcon part={p}/></button>);
+          return parts.slice().sort((a,b)=>(order.indexOf(a.id)<0?99:order.indexOf(a.id))-(order.indexOf(b.id)<0?99:order.indexOf(b.id))).map(p=><button key={p.id} title={p.name} aria-label={`Pick up ${p.name}`} data-testid={`part-catalog-item-${p.id}`} onContextMenu={e=>e.preventDefault()} onPointerCancel={onCancelPickup} onPointerDown={e=>onPickup?.(p.id,e)} style={{touchAction:'pan-y',height:Math.min(92,Math.max(34,p.height*5+16))}}><PartIcon part={p}/></button>);
         })() : CATEGORIES.map((c) => {
           const list = parts.filter((p) => p.category === c.id);
           if (!list.length) return null;
@@ -69,7 +69,7 @@ export const PartCatalog = ({ onHover, onPickup, onCancelPickup, compact=false }
                     data-testid={`part-catalog-item-${p.id}`}
                     title={p.name}
                     aria-label={`Add ${p.name}`}
-                    onPointerCancel={onCancelPickup} onPointerDown={e=>onPickup?.(p.id,e)}
+                    onContextMenu={e=>e.preventDefault()} onPointerCancel={onCancelPickup} onPointerDown={e=>onPickup?.(p.id,e)}
                     style={{touchAction:"pan-y"}}
                     onMouseEnter={() => onHover?.(p.id)}
                     className="group w-full border border-slate-800/80 bg-slate-950/70 px-2.5 py-2 text-left transition-[border-color,background-color,transform] hover:translate-x-0.5 hover:border-cyan-500/50 hover:bg-slate-900"

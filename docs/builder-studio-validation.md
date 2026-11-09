@@ -72,3 +72,19 @@ their relative positions, and selection is a one-pixel black unfilled border.
 The detailed station renders in phone and desktop flight views without uncaught
 errors. The full reference-build studio audit and mobile gesture audit passed.
 The magnetic browser check is included in the release pipeline.
+
+## Intermittent browser highlight follow-up — 9 November 2026
+
+The app-wide keyboard-focus rule also reached focusable SVG parts. The studio
+now suppresses the additional browser halo, native tap flash and text-selection
+callout over parts. Keyboard focus selects the part using its existing one-pixel
+black SVG border, rather than adding a second outline. Palette keyboard focus
+keeps a one-pixel outline; text fields and the rest of the application's focus
+styles remain available.
+
+The strict production build passed. The magnetic browser audit now verifies
+computed pointer/touch outline and tap-highlight styles, prevented workspace
+context menus, and keyboard focus with the single SVG border. Native mobile
+pickup/drop, cancellation, multi-touch, magnetic assembly and the complete
+reference-build studio audit also passed. These checks do not test or control
+phone-level touch indicators drawn outside the web page.

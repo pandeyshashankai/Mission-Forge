@@ -121,3 +121,15 @@
  .studio-builder .selected-part-actions { bottom: calc(8px + var(--studio-bottom)); right: calc(62px + var(--studio-right)); }
  .studio-builder .assembly-stats { bottom: calc(50px + var(--studio-bottom)); }
 }
+/* The part border is the selection indicator. Do not layer the browser's
+   tap flash, SVG focus halo or long-press text selection over the workspace. */
+.studio-builder .assembly-viewport,
+.studio-builder .assembly-viewport *,
+.studio-builder .assembly-catalog button { -webkit-tap-highlight-color: transparent; }
+.studio-builder .studio-grid,
+.studio-builder .studio-grid *,
+.studio-builder .assembly-catalog button { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.studio-builder [data-assembly-uid]:focus,
+.studio-builder [data-assembly-uid]:focus-visible { outline: none; box-shadow: none; }
+.studio-builder .assembly-catalog button:focus:not(:focus-visible) { outline: none; box-shadow: none; }
+.studio-builder .assembly-catalog button:focus-visible { outline: 1px solid #111; outline-offset: 0; border-radius: 0; }

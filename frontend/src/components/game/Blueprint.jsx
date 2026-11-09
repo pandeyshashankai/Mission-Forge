@@ -52,7 +52,7 @@ export function Blueprint({design,selectedUid,selectedUids=[],onSelect,onSelectM
  const selected=new Set(selectedUids.length?selectedUids:selectedUid?[selectedUid]:[]);
  let ghost=null;
  if(heldPart&&cursor&&svg.current){const r=svg.current.getBoundingClientRect();if(cursor.x>r.left&&cursor.x<r.right&&cursor.y>r.top&&cursor.y<r.bottom)ghost=snapPosition(design,heldPart,world({clientX:cursor.x,clientY:cursor.y}),snap);}
- return <div ref={mount} className="blueprint-canvas studio-grid absolute inset-0" data-testid="blueprint-workspace">
+ return <div ref={mount} className="blueprint-canvas studio-grid absolute inset-0" data-testid="blueprint-workspace" onContextMenu={e=>e.preventDefault()}>
   <svg ref={svg} data-testid="assembly-placement-grid" aria-label="Rocket build grid: drag parts, drag empty space to pan, pinch to zoom" className="h-full w-full" style={{touchAction:'none'}}
    viewBox={`${view.x-width/(2*view.zoom)} ${-view.y-height/(2*view.zoom)} ${width/view.zoom} ${height/view.zoom}`}
    onPointerDown={e=>{if(e.button>0)return;svg.current.setPointerCapture(e.pointerId);pointers.current.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pointers.current.size>1){if(gesture.current)gesture.current.multi=true;return;}
@@ -71,6 +71,7 @@ export function Blueprint({design,selectedUid,selectedUids=[],onSelect,onSelectM
    {all.map((n,i)=>{const p=PARTS[n.partId],node=nodes.get(n.uid)||{},dx=drag?.ids.has(n.uid)?drag.x:0,dy=drag?.ids.has(n.uid)?drag.y:0,w=p.diameter,h=n.height;
     return <g key={`${n.uid}-${i}`} role="button" tabIndex="0" aria-label={`Select ${p.name}`} data-assembly-uid={n.uid} data-testid={`${i<lay.items.length?'blueprint-part':'blueprint-radial'}-${n.uid}`}
      transform={`translate(${(n.x||0)+dx} ${-n.y-dy-h/2}) rotate(${-(node.rotation||0)}) translate(0 ${h/2})`}
+     onFocus={e=>{if(e.currentTarget.matches(':focus-visible'))onSelect(n.uid);}}
      onClick={e=>{if(e.detail===0)onSelect(n.uid);}} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();onSelect(n.uid,e.shiftKey);}}} style={{cursor:'grab'}}>
      <rect x={-w/2} y={-h} width={w} height={h} fill="transparent"/>
      <PartDrawing part={p} height={h} deployed={node.deployed} flipX={node.flipX}/>
