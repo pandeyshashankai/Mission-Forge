@@ -58,3 +58,14 @@ desktop use. These are Chromium emulation checks, not physical-device certificat
 ![Full-screen campaign flight](images/fullscreen-campaign-phone.png)
 
 ![Keyboard-only desktop flight](images/fullscreen-campaign-desktop.png)
+
+## Flight path
+
+The cyan line is a predicted coast trajectory from the current flight state; it
+is not an autopilot route or a promise of the final orbit under thrust. Burns
+change that forecast. Its displayed curve blends between prediction refreshes,
+starts at the live spacecraft and discards samples already passed during warp.
+Coordinates are made relative to the spacecraft before GPU upload to preserve
+nearby detail. This presentation layer does not change forces or integration.
+
+![Coast trajectory during ascent on a phone](images/trajectory-ascent-phone.png)

@@ -1,3 +1,4 @@
+import {FlightPath} from './flightPath';
 import {profileFraming,profileBasis} from './profileCamera';
 import {createRecoveryVisuals,updateRecoveryVisuals} from './recoveryVisuals';
 import {thermalMaterial} from '../sim/flightThermal';
@@ -301,16 +302,9 @@ export const FlightView = ({
       }),
     );
     scene.add(stars);
-    const orbitLine = new THREE.Line(
-      new THREE.BufferGeometry(),
-      new THREE.LineBasicMaterial({
-        color: "#38bdf8",
-        transparent: true,
-        opacity: 0.8,
-      }),
-    );
-    orbitLine.frustumCulled = false;
-    earthCenter.add(orbitLine);
+    const flightPath = new FlightPath();
+    const orbitLine = flightPath.line;
+    scene.add(orbitLine);
     const nodeLine = new THREE.Line(
       new THREE.BufferGeometry(),
       new THREE.LineDashedMaterial({
@@ -356,6 +350,7 @@ export const FlightView = ({
     ro.observe(el);
     let last = performance.now();
     let orbitTimer = 0;
+    let pathSim = null;
     let chaseDist = 0;
     let lastMode = null;
     let commandSeen=null;
@@ -552,6 +547,11 @@ export const FlightView = ({
       sun.position.copy(sunDir).multiplyScalar(1e8);
       sun.target.position.set(0, 0, 0);
       atmo.material.uniforms.sunDir.value.copy(sunDir);
+      if (pathSim !== sim) {
+        pathSim = sim;
+        flightPath.reset();
+        orbitTimer = 0;
+      }
       orbitTimer -= dtReal;
       if (orbitTimer <= 0) {
         orbitTimer = sim.eph ? 1 : 0.25;
@@ -565,8 +565,8 @@ export const FlightView = ({
             ctx: sim.ctx(),
           });
           const grp = frameOf(pred.body);
-          grp.add(orbitLine, apoM, periM);
-          setLine(orbitLine, pred.pts);
+          grp.add(apoM, periM);
+          flightPath.setTarget(pred.pts, pred.body);
           (pred.soi||[]).slice(0,4).forEach((entry,i)=>{
             const m=soiMarkers[i];grp.add(m);m.position.copy(toThree(entry.r));m.visible=mode0()==="map";
           });
@@ -598,6 +598,7 @@ export const FlightView = ({
           setLine(nodeLine, pp.pts);
         }
       }
+      flightPath.update(dtReal, sim.r, flightPath.body === "moon" ? moonState(sim.t, sim.eph).r : undefined);
       vesselM.visible = mode0() === "map";
       soiShell.visible = mode0() === "map" && !!sim.eph;
       if(mode0()!=="map")soiMarkers.forEach(m=>m.visible=false);

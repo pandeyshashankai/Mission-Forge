@@ -23,3 +23,42 @@ test('recovery rendering follows stowed, inflating, main and failed chute states
 test('solid booster groups follow an off-axis core instead of staying at the origin',()=>{
  const {presetBoosted}=require('../src/sim/presets'),{layoutDesign}=require('../src/sim/assemblyLayout');const d=presetBoosted(),parent=d.stack.find(n=>n.uid===d.radials[0].parentUid);parent.position={x:12,y:10,z:4};const l=layoutDesign(d),core=l.items.find(n=>n.uid===parent.uid);assert.equal(l.radials.length,2);assert.ok(Math.abs(l.radials.reduce((s,n)=>s+n.x,0)/2-core.x)<1e-10);assert.ok(Math.abs(l.radials.reduce((s,n)=>s+n.z,0)/2-core.z)<1e-10);
 });
+
+test('flight path keeps its live start and sub-metre detail without geometry replacement', () => {
+  const {FlightPath} = require('../src/three/flightPath');
+  const path = new FlightPath(3), craft = [6371000.123, 0, 0];
+  path.setTarget([craft, [craft[0] + .125, 1, 2], [craft[0] + .25, 2, 4]], 'earth');
+  const geometry = path.geometry, buffer = path.positions.array;
+  path.update(1 / 60, craft);
+  assert.deepEqual([...buffer.slice(0, 3)], [0, 0, 0]);
+  assert.ok(Math.abs(buffer[3] - .125) < 1e-6);
+  path.update(1 / 60, [craft[0] + .01, 0, 0]);
+  assert.deepEqual([...buffer.slice(0, 3)], [0, 0, 0]);
+  assert.ok(Math.abs(buffer[3] - .115) < 1e-6);
+  assert.equal(path.geometry, geometry);
+  assert.equal(path.positions.array, buffer);
+});
+
+test('flight path transitions continuously and resets between body frames', () => {
+  const {FlightPath} = require('../src/three/flightPath');
+  const path = new FlightPath(3);
+  path.setTarget([[0,0,0],[10,0,0]], 'earth');path.update(0, [0,0,0]);
+  const before = path.positions.array[3];
+  path.setTarget([[0,0,0],[0,10,0]], 'earth');path.update(0, [0,0,0]);
+  assert.equal(path.positions.array[3], before);
+  path.update(.016, [0,0,0]);
+  assert.ok(path.positions.array[3] > 0 && path.positions.array[3] < before);
+  path.setTarget([[100,0,0],[110,0,0]], 'moon');path.update(0, [200,0,0], [100,0,0]);
+  assert.equal(path.positions.array[3], 5);
+  path.reset();assert.equal(path.line.visible, false);
+});
+
+test('flight path trims passed samples instead of reversing its near segment at time warp', () => {
+  const {FlightPath} = require('../src/three/flightPath');
+  const path = new FlightPath(5);
+  path.setTarget([[100,0,0],[140,0,0]], 'earth');
+  path.update(0, [125,0,0]);
+  assert.equal(path.geometry.drawRange.start, 2);
+  assert.deepEqual([...path.positions.array.slice(6,9)], [0,0,0]);
+  assert.equal(path.positions.array[9], 5);
+});
