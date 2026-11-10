@@ -1,0 +1,9 @@
+.flight-map-planner,.map-planning-shortcut { position:absolute; z-index:18; top:124px; left:max(8px,env(safe-area-inset-left)); max-width:min(380px,calc(100% - 92px)); color:var(--ui-text,#e4eefc); background:var(--ui-panel,#122236ed); border:1px solid var(--ui-line,#38516e); border-radius:6px; }
+.flight-map-planner>details>summary { cursor:pointer; min-height:44px; padding:12px; font-size:13px; }
+.flight-map-planner>details[open] { max-height:calc(100dvh - 290px); overflow:auto; overscroll-behavior:contain; padding:0 10px 10px; }
+.flight-map-planner p { font-size:12px; line-height:1.5; margin:8px 0; }
+.flight-map-planner [data-testid=maneuver-panel] { width:100%; border:0; padding:0; }
+.flight-map-planner button { min-height:40px; }
+.map-path-legend { color:#a6d8fa; }
+.map-planning-shortcut { min-height:44px; padding:8px 12px; font-size:12px; }
+@media (max-height:450px) { .flight-map-planner,.map-planning-shortcut { top:76px; left:130px; } .flight-map-planner>details[open] { max-height:calc(100dvh - 160px); } }

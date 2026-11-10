@@ -3,10 +3,10 @@ import { useState } from "react";
 import { PLANETS, BODY_BY_ID, bodyState, DAY } from "../../sim/solarSystem";
 import { lambert } from "../../sim/advanced/lambert";
 import { len, sub } from "../../sim/vec";
-export function TransferWindows() {
-  const [from, setFrom] = useState("earth"),
-    [to, setTo] = useState("mars"),
-    [start, setStart] = useState(0),
+export function TransferWindows({fromId="earth", toId="mars", startDay=0}) {
+  const [from, setFrom] = useState(PLANETS.some(p=>p.id===fromId)?fromId:"earth"),
+    [to, setTo] = useState(PLANETS.some(p=>p.id===toId)&&toId!==fromId?toId:(fromId==="mars"?"earth":"mars")),
+    [start, setStart] = useState(Math.max(0,startDay)),
     [grid, setGrid] = useState(null),
     [selected, setSelected] = useState(null),
     [error, setError] = useState("");

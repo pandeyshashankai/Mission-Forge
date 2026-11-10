@@ -362,7 +362,7 @@ export const ManeuverPanel = ({ s, sim, mission, targetAlt, onWarpTo }) => {
               className="text-right text-sky-300"
               data-testid="node-burn-time"
             >
-              {bt ? `${fmt(bt, 1)} s` : "insufficient propellant"}
+              {bt === 0 ? "No Δv requested" : bt ? `${fmt(bt, 1)} s` : "insufficient propellant"}
             </span>
             <span className="text-slate-500">
               After: Ap × Pe{pred.body === "moon" ? " (Moon)" : ""}

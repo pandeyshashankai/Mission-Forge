@@ -1,3 +1,4 @@
+import {TransferWindows} from '../components/sandbox/TransferWindows';
 import {explorationThermalSummary} from '../sim/flightThermal';
 import {CockpitChrome} from "../components/game/CockpitChrome";
 import { localData } from "../persistence/localData";
@@ -545,6 +546,7 @@ export default function Explore() {
       data-frame={tick}
     >
       <CockpitChrome visible menuOpen={cockpitMenu} onMenu={()=>setCockpitMenu(v=>!v)} onMap={()=>setView(v=>v==="craft"?"orbit":"craft")} onPause={()=>input.trigger("pause")} onInstruments={()=>setMobilePanel(v=>!v)} paused={paused} warp={Math.max(1,Math.round(paused?warp:effectiveWarp||warp))} onWarp={action=>input.trigger(action)} altitude={nav.altitude} speed={nav.speed} exploration/>
+      {(view === 'orbit' || view === 'system') && !mobilePanel && <button className="map-planning-shortcut ui-button" data-testid="map-planning-shortcut" onClick={()=>{setInstrumentTab('plan');setMobilePanel(true);}}>Transfer windows & encounters</button>}
       <div className="explore-top-console">
       <header className="explore-header">
         <button
@@ -947,6 +949,7 @@ export default function Explore() {
                   }}
                 />
 
+                <details className="engineering-inspector" data-testid="map-transfer-windows"><summary>Interplanetary transfer windows</summary><TransferWindows fromId={sim.primary} toId={selectedId} startDay={sim.t/86400}/></details>
                 <EncounterPlanner sim={sim} selectedId={selectedId} />
                 <AerobrakingPanel sim={sim} />
               </>

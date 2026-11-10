@@ -11,7 +11,7 @@ import {buildLaunchStation} from "./launchStation";
 import { buildRocket, disposeObject,layoutDesign } from "./partMeshes";
 import { EARTH, DEG } from "../sim/constants";
 import { predictPath, nodePrediction } from "../sim/maneuver";
-import { moonState, MOON } from "../sim/bodies";
+import { moonState, MOON, gravity } from "../sim/bodies";
 
 const R = EARTH.radius;
 const QUALITY = {
@@ -183,10 +183,14 @@ export const FlightView = ({
   viewCommand,
   quality = "medium",
   onFrame,
+  onPrediction,
+  mapOverview = false,
 }) => {
   const mountRef = useRef(null);
   const camModeRef = useRef(cameraMode);
   const frameRef = useRef(onFrame);
+  const overviewRef = useRef(mapOverview); overviewRef.current = mapOverview;
+  const predictionRef = useRef(onPrediction); predictionRef.current = onPrediction;
   const commandRef=useRef(viewCommand);commandRef.current=viewCommand;
   camModeRef.current = cameraMode;
   frameRef.current = onFrame;
@@ -323,6 +327,7 @@ export const FlightView = ({
     scene.add(vesselM);
     const soiMarkers = Array.from({length:4},()=>marker("SOI", "#c4b5fd"));
     soiMarkers.forEach(m=>{m.visible=false;earthCenter.add(m);});
+    const closestM = marker("Moon CA", "#c4b5fd"); closestM.visible = false; earthCenter.add(closestM);
     const soiShell = new THREE.Mesh(new THREE.SphereGeometry(MOON.soi,24,12),new THREE.MeshBasicMaterial({color:"#a78bfa",wireframe:true,transparent:true,opacity:0.12,depthWrite:false}));
     moonCenter.add(soiShell);
     const mapPrev = new THREE.Vector3();
@@ -350,7 +355,7 @@ export const FlightView = ({
     ro.observe(el);
     let last = performance.now();
     let orbitTimer = 0;
-    let pathSim = null;
+    let pathSim = null, pathMode = null, pathStage = null;
     let chaseDist = 0;
     let lastMode = null;
     let commandSeen=null;
@@ -547,7 +552,8 @@ export const FlightView = ({
       sun.position.copy(sunDir).multiplyScalar(1e8);
       sun.target.position.set(0, 0, 0);
       atmo.material.uniforms.sunDir.value.copy(sunDir);
-      if (pathSim !== sim) {
+      if (pathSim !== sim || pathMode !== mode0() || pathStage !== sim.rt.eventIndex) {
+        pathMode = mode0(); pathStage = sim.rt.eventIndex;
         pathSim = sim;
         flightPath.reset();
         orbitTimer = 0;
@@ -555,15 +561,18 @@ export const FlightView = ({
       orbitTimer -= dtReal;
       if (orbitTimer <= 0) {
         orbitTimer = sim.eph ? 1 : 0.25;
-        const show = alt > 25000 || mode0() === "map";
+        const show = mode0() === "map";
         orbitLine.visible = show;
         apoM.visible = periM.visible = false;
         soiMarkers.forEach(m=>m.visible=false);
+        closestM.visible = false;
+        let forecast = null;
         if (show) {
           const pred = predictPath(sim.r, sim.v, {
             points: 240,
             ctx: sim.ctx(),
           });
+          forecast = pred;
           const grp = frameOf(pred.body);
           grp.add(apoM, periM);
           flightPath.setTarget(pred.pts, pred.body);
@@ -596,9 +605,27 @@ export const FlightView = ({
             ),
           );
           setLine(nodeLine, pp.pts);
+          forecast = pp;
+        }
+        if (forecast) {
+          const closest = forecast.closest;
+          if (closest) { frameOf(forecast.body).add(closestM); closestM.position.copy(toThree(closest.r)); closestM.visible = true; }
+          predictionRef.current?.({ t: sim.t, planned: !!node, closest, soi: forecast.soi || [] });
         }
       }
-      flightPath.update(dtReal, sim.r, flightPath.body === "moon" ? moonState(sim.t, sim.eph).r : undefined);
+      if (mode0() === "map") {
+        flightPath.update(dtReal, sim.r, flightPath.body === "moon" ? moonState(sim.t, sim.eph).r : undefined);
+      } else {
+        orbitLine.visible = alt > 25000 && !sim.isEnded();
+        const bodyVelocity = sim.nav.body === "moon" ? moonState(sim.t, sim.eph).v : [0,0,0];
+        const acceleration = gravity(sim.r, sim.t, sim.eph, true);
+        const originAcceleration = sim.nav.body === "moon" ? gravity(moonState(sim.t, sim.eph).r, sim.t, null, false) : [0,0,0];
+        flightPath.updateLocal(sim.v.map((v,i)=>v-bodyVelocity[i]), acceleration.map((v,i)=>v-originAcceleration[i]));
+        apoM.visible = periM.visible = closestM.visible = false;
+      }
+      el.dataset.trajectoryMode = mode0() === "map" ? "map" : "local";
+      el.dataset.trajectoryVisible = String(orbitLine.visible);
+      el.dataset.stageIndex = String(sim.rt.eventIndex);
       vesselM.visible = mode0() === "map";
       soiShell.visible = mode0() === "map" && !!sim.eph;
       if(mode0()!=="map")soiMarkers.forEach(m=>m.visible=false);
@@ -620,7 +647,7 @@ export const FlightView = ({
       const scaleKey = `${nav.body}|${nav.el.e < 1 && nav.el.ra > 1e8 ? "far" : "near"}`;
       if (mode === "map" && scaleKey !== lastBody) lastMode = null;
       lastBody = scaleKey;
-      const mapTarget = frameOf(nav.body);
+      const mapTarget = overviewRef.current && sim.eph ? { position: earthCenter.position.clone().add(moonCenter.position).multiplyScalar(.5) } : frameOf(nav.body);
       if (mode !== lastMode) {
         camera.fov=mode==="side"?1:50;camera.updateProjectionMatrix();
         controls.enabled = mode === "free" || mode === "map";
@@ -635,7 +662,7 @@ export const FlightView = ({
         if (mode === "map") {
           camera.up.set(0, 1, 0);
           const el0 = nav.el;
-          const D =
+          const D = overviewRef.current && sim.eph ? MOON.a * 3.5 :
             nav.body === "moon"
               ? MOON.radius * 7
               : el0.ra && el0.ra < 1e9 && el0.e < 1

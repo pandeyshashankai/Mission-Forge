@@ -28,6 +28,7 @@ import "./cockpit.css";
 import "./flight-overlay.css";
 import "./home.css";
 import "./heat.css";
+import "./map-planner.css";
 import "./builder.css";
 
 const SCREENS = {

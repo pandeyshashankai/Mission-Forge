@@ -59,13 +59,27 @@ desktop use. These are Chromium emulation checks, not physical-device certificat
 
 ![Keyboard-only desktop flight](images/fullscreen-campaign-desktop.png)
 
-## Flight path
+## Flight path and transfer map
 
-The cyan line is a predicted coast trajectory from the current flight state; it
-is not an autopilot route or a promise of the final orbit under thrust. Burns
-change that forecast. Its displayed curve blends between prediction refreshes,
-starts at the live spacecraft and discards samples already passed during warp.
-Coordinates are made relative to the spacecraft before GPU upload to preserve
-nearby detail. This presentation layer does not change forces or integration.
+Close-up views draw a short coast guide directly from the current velocity and
+gravity every frame. It is not tied to the rocket's nose direction or a past
+staging state. The display does not morph different orbit shapes or reconnect
+an arbitrary point of an old orbit to the live craft. Coordinates stay local to
+avoid losing nearby detail in the GPU.
 
-![Coast trajectory during ascent on a phone](images/trajectory-ascent-phone.png)
+The orbit map retains the full numerical coast forecast. Open **Transfer &
+encounters** directly on the map to reach maneuver planning. Lunar missions show
+the closest sampled Moon altitude/time, any predicted encounter or impact, and
+a purple closest-approach marker. **Earth–Moon overview** includes both bodies;
+use **Follow local orbit** to return. The planned departure countdown appears
+when a node is set. Thrust, staging and node edits require a fresh prediction.
+These forecasts do not include future pilot commands or guarantee an encounter.
+
+Exploration orbit/system maps have a **Transfer windows & encounters** shortcut
+that opens the Plan instruments. Its interplanetary window grid uses fixed
+heliocentric planet models and excludes launch, escape and capture losses. The
+closest-approach tool propagates a coast-only copy over the selected horizon.
+
+![Live coast guide after staging](images/trajectory-ascent-phone.png)
+
+![Campaign transfer planner and sampled Moon approach](images/campaign-transfer-map.png)

@@ -79,7 +79,8 @@
     "test:profile-view:ui": "node scripts/profile-view-check.cjs",
     "test:connections:ui": "node scripts/engine-connection-check.cjs",
     "test:flight-thermal:ui": "node scripts/flight-thermal-check.cjs",
-    "test:private-assets": "node scripts/private-assets-check.cjs"
+    "test:private-assets": "node scripts/private-assets-check.cjs",
+    "test:map-path:ui": "node scripts/map-path-check.cjs"
   },
   "browserslist": {
     "production": [

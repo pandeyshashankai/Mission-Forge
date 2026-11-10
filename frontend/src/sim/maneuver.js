@@ -7,7 +7,7 @@ import {
   consume,
   applyEvent,
 } from "./design";
-import { rk4, propagate, primaryOf, elementsOf, moonState } from "./bodies";
+import { rk4, propagate, primaryOf, elementsOf, moonState, MOON } from "./bodies";
 
 // Step the motion forward (vacuum). Without ctx: Earth with J2, fixed steps. With ctx {t0, eph}: patched-conic Earth/Moon, adaptive steps.
 export function stateAt(r, v, dt, maxStep = 5, ctx = null) {
@@ -58,6 +58,7 @@ export function predictPath(r, v, { points = 240, ctx = null } = {}) {
   let impact = false;
   let n = 0;
   const soi = [];
+  let closest = null;
   let reg = p0.body;
   propagate(r, v, t0, span, {
     eph,
@@ -66,6 +67,8 @@ export function predictPath(r, v, { points = 240, ctx = null } = {}) {
     hi: 1800,
     onStep: (s, t) => {
       const q = primaryOf(s.r, s.v, t, eph);
+      const distance = len(sub(s.r, moonState(t, eph).r));
+      if (!closest || distance < closest.distance) closest = { t, distance, altitude: distance - MOON.radius, r: toFrame(s.r, t), encounter: distance < MOON.soi };
       if (q.body !== reg) {
         soi.push({ t, body: q.body, r: toFrame(s.r, t) });
         reg = q.body;
@@ -78,7 +81,7 @@ export function predictPath(r, v, { points = 240, ctx = null } = {}) {
       return pts.length < 3000;
     },
   });
-  return { pts, impact, el, body: p0.body, soi };
+  return { pts, impact, el, body: p0.body, soi, closest };
 }
 
 export function nodeFrame(r, v) {

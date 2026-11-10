@@ -24,41 +24,56 @@ test('solid booster groups follow an off-axis core instead of staying at the ori
  const {presetBoosted}=require('../src/sim/presets'),{layoutDesign}=require('../src/sim/assemblyLayout');const d=presetBoosted(),parent=d.stack.find(n=>n.uid===d.radials[0].parentUid);parent.position={x:12,y:10,z:4};const l=layoutDesign(d),core=l.items.find(n=>n.uid===parent.uid);assert.equal(l.radials.length,2);assert.ok(Math.abs(l.radials.reduce((s,n)=>s+n.x,0)/2-core.x)<1e-10);assert.ok(Math.abs(l.radials.reduce((s,n)=>s+n.z,0)/2-core.z)<1e-10);
 });
 
-test('flight path keeps its live start and sub-metre detail without geometry replacement', () => {
+test('map trajectory retains its world curve and sub-metre detail without replacing geometry', () => {
   const {FlightPath} = require('../src/three/flightPath');
   const path = new FlightPath(3), craft = [6371000.123, 0, 0];
-  path.setTarget([craft, [craft[0] + .125, 1, 2], [craft[0] + .25, 2, 4]], 'earth');
-  const geometry = path.geometry, buffer = path.positions.array;
-  path.update(1 / 60, craft);
-  assert.deepEqual([...buffer.slice(0, 3)], [0, 0, 0]);
-  assert.ok(Math.abs(buffer[3] - .125) < 1e-6);
-  path.update(1 / 60, [craft[0] + .01, 0, 0]);
-  assert.deepEqual([...buffer.slice(0, 3)], [0, 0, 0]);
-  assert.ok(Math.abs(buffer[3] - .115) < 1e-6);
-  assert.equal(path.geometry, geometry);
-  assert.equal(path.positions.array, buffer);
+  path.setTarget([craft, [craft[0]+.125,1,2], [craft[0]+.25,2,4]], 'earth');
+  const geometry=path.geometry, buffer=path.positions.array;
+  path.update(0, craft);
+  assert.ok(Math.abs(buffer[3]-.125)<1e-6);
+  path.update(0, [craft[0]+.01,0,0]);
+  assert.ok(Math.abs(buffer[0]+.01)<1e-6, 'Do not splice the old curve onto the moving craft');
+  assert.ok(Math.abs(buffer[3]-.115)<1e-6);
+  assert.equal(path.geometry,geometry);assert.equal(path.positions.array,buffer);
 });
 
-test('flight path transitions continuously and resets between body frames', () => {
-  const {FlightPath} = require('../src/three/flightPath');
-  const path = new FlightPath(3);
-  path.setTarget([[0,0,0],[10,0,0]], 'earth');path.update(0, [0,0,0]);
-  const before = path.positions.array[3];
-  path.setTarget([[0,0,0],[0,10,0]], 'earth');path.update(0, [0,0,0]);
-  assert.equal(path.positions.array[3], before);
-  path.update(.016, [0,0,0]);
-  assert.ok(path.positions.array[3] > 0 && path.positions.array[3] < before);
-  path.setTarget([[100,0,0],[110,0,0]], 'moon');path.update(0, [200,0,0], [100,0,0]);
-  assert.equal(path.positions.array[3], 5);
-  path.reset();assert.equal(path.line.visible, false);
+test('map forecasts replace changed topology without inventing intermediate curves', () => {
+  const {FlightPath}=require('../src/three/flightPath');const path=new FlightPath(3);
+  path.setTarget([[0,0,0],[10,0,0]],'earth');path.update(0,[0,0,0]);
+  path.setTarget([[0,0,0],[0,10,0]],'earth');path.update(0,[0,0,0]);
+  assert.equal(path.positions.array[3],0);assert.equal(path.positions.array[5],-5);
+  path.setTarget([[100,0,0],[110,0,0]],'moon');path.update(0,[200,0,0],[100,0,0]);
+  assert.equal(path.positions.array[3],5);path.reset();assert.equal(path.line.visible,false);
 });
 
-test('flight path trims passed samples instead of reversing its near segment at time warp', () => {
-  const {FlightPath} = require('../src/three/flightPath');
-  const path = new FlightPath(5);
-  path.setTarget([[100,0,0],[140,0,0]], 'earth');
-  path.update(0, [125,0,0]);
-  assert.equal(path.geometry.drawRange.start, 2);
-  assert.deepEqual([...path.positions.array.slice(6,9)], [0,0,0]);
-  assert.equal(path.positions.array[9], 5);
+test('close-up trajectory starts fresh each frame through velocity changes and staging', () => {
+  const {FlightPath}=require('../src/three/flightPath');const path=new FlightPath(21);
+  const geometry=path.geometry;
+  for(const velocity of [[0,200,0],[800,1600,30],[-40,0,0],[0,0,0],[11000,0,0]]) {
+    const before=velocity.slice();path.updateLocal(velocity,[0,-9.8,0]);
+    assert.deepEqual([...path.positions.array.slice(0,3)],[0,0,0]);
+    assert.ok([...path.positions.array].every(Number.isFinite));
+    assert.equal(path.geometry,geometry);assert.deepEqual(velocity,before);
+    const [x,z,ny]=path.positions.array.slice(3,6);
+    if(Math.hypot(...velocity)>0)assert.ok(x*velocity[0]-ny*velocity[1]+z*velocity[2]>0,'First segment follows the live velocity');
+    assert.equal(path.geometry.drawRange.start,0);assert.equal(path.geometry.drawRange.count,21);
+  }
+});
+
+test('an actual stage separation cannot jump the local forecast without a velocity change', () => {
+  const {FlightPath}=require('../src/three/flightPath');
+  const {FlightSim}=require('../src/sim/flight');
+  const {presetFalconLike}=require('../src/sim/presets');
+  const {getMission}=require('../src/sim/missions');
+  const {DEFAULT_PROFILE}=require('../src/sim/guidance');
+  const {gravity}=require('../src/sim/bodies');
+  const sim=new FlightSim({design:presetFalconLike(),mission:getMission('first_orbit'),difficulty:'amateur',profile:DEFAULT_PROFILE});
+  sim.launch();sim.advance(60);sim.advance(60);
+  const path=new FlightPath(),r=sim.r.slice(),v=sim.v.slice(),stage=sim.rt.eventIndex;
+  path.updateLocal(sim.v,gravity(sim.r,sim.t,sim.eph));
+  const before=path.positions.array.slice();
+  sim.stage();assert.ok(sim.rt.eventIndex>stage);
+  assert.deepEqual(sim.r,r);assert.deepEqual(sim.v,v);
+  path.updateLocal(sim.v,gravity(sim.r,sim.t,sim.eph));
+  assert.deepEqual(path.positions.array,before);
 });

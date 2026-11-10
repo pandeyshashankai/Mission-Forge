@@ -4,7 +4,6 @@ import * as THREE from 'three';
 export class FlightPath {
   constructor(count = 241) {
     this.count = count;
-    this.current = new Float64Array(count * 3);
     this.target = new Float64Array(count * 3);
     this.geometry = new THREE.BufferGeometry();
     this.positions = new THREE.BufferAttribute(new Float32Array(count * 3), 3);
@@ -44,37 +43,38 @@ export class FlightPath {
         this.target[i * 3 + j] = points[segment - 1][j] * (1 - fraction) + points[segment][j] * fraction;
       }
     }
-    // Never blend curves belonging to different planetary coordinate frames.
-    if (!this.ready || body !== this.body) this.current.set(this.target);
     this.body = body;
     this.ready = true;
   }
 
+  // Full map forecasts retain their original topology: do not morph an old
+  // suborbital arc into a new staged/escape trajectory or splice its far loop.
   update(dt, craft, bodyOrigin = [0, 0, 0]) {
     if (!this.ready) return;
-    const blend = -Math.expm1(-Math.max(0, dt) / 0.12);
     const out = this.positions.array;
-    for (let i = 0; i < this.current.length; i += 3) {
-      for (let j = 0; j < 3; j++) this.current[i + j] += (this.target[i + j] - this.current[i + j]) * blend;
-      // Subtract the floating origin in double precision BEFORE the GPU upload.
-      // Sending planet-sized Float32 positions loses detail beside the rocket.
-      out[i] = this.current[i] + bodyOrigin[0] - craft[0];
-      out[i + 1] = this.current[i + 2] + bodyOrigin[2] - craft[2];
-      out[i + 2] = -(this.current[i + 1] + bodyOrigin[1] - craft[1]);
+    for (let i = 0; i < this.target.length; i += 3) {
+      out[i] = this.target[i] + bodyOrigin[0] - craft[0];
+      out[i + 1] = this.target[i + 2] + bodyOrigin[2] - craft[2];
+      out[i + 2] = -(this.target[i + 1] + bodyOrigin[1] - craft[1]);
     }
-    // Discard the travelled prefix between predictions, especially at time warp.
-    // Otherwise the first segment can point backwards until the next refresh.
-    let start = 0, closest = Infinity;
-    for (let i = 0; i < this.count - 1; i++) {
-      const a = i * 3, b = a + 3;
-      const dx = out[b] - out[a], dy = out[b + 1] - out[a + 1], dz = out[b + 2] - out[a + 2];
-      const length2 = dx * dx + dy * dy + dz * dz;
-      const t = length2 > 0 ? Math.max(0, Math.min(1, -(out[a] * dx + out[a + 1] * dy + out[a + 2] * dz) / length2)) : 0;
-      const distance2 = (out[a] + t * dx) ** 2 + (out[a + 1] + t * dy) ** 2 + (out[a + 2] + t * dz) ** 2;
-      if (distance2 < closest) { closest = distance2; start = i; }
+    this.geometry.setDrawRange(0, this.count);
+    this.positions.needsUpdate = true;
+  }
+
+  // Close-up views need a live local tangent, not a planet-sized polyline
+  // crossing the camera. This short coast forecast starts anew every frame.
+  updateLocal(velocity, acceleration) {
+    const speed = Math.hypot(...velocity);
+    const horizon = Math.min(3, 2000 / Math.max(1, speed));
+    const out = this.positions.array;
+    for (let i = 0; i < this.count; i++) {
+      const t = horizon * i / (this.count - 1);
+      out[i * 3] = velocity[0] * t + acceleration[0] * t * t / 2;
+      out[i * 3 + 1] = velocity[2] * t + acceleration[2] * t * t / 2;
+      out[i * 3 + 2] = -(velocity[1] * t + acceleration[1] * t * t / 2);
     }
-    out[start * 3] = out[start * 3 + 1] = out[start * 3 + 2] = 0;
-    this.geometry.setDrawRange(start, this.count - start);
+    out[0] = out[1] = out[2] = 0;
+    this.geometry.setDrawRange(0, this.count);
     this.positions.needsUpdate = true;
   }
 }

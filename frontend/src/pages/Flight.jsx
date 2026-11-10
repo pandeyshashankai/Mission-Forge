@@ -188,6 +188,8 @@ export default function Flight() {
   const [cam, setCam] = useState(g.settings.camera || "side");
   if(cam!=="map")lastCraftCamera.current=cam;
   const [snap, setSnap] = useState(null);
+  const [mapPrediction, setMapPrediction] = useState(null);
+  const [mapOverview, setMapOverview] = useState(false);
   const simRef = useRef(null);
   if (!simRef.current) {
     simRef.current = new FlightSim({
@@ -526,10 +528,25 @@ export default function Flight() {
           viewCommand={viewCommand}
           quality={g.settings.graphics}
           onFrame={onFrame}
+          onPrediction={setMapPrediction}
+          mapOverview={mapOverview}
         />
       </div>
       {phase==="flight"&&!cockpitMenu&&!showEngineering&&<div className="flight-view-shortcuts" aria-label="Flight view"><button data-testid="camera-side-btn" aria-pressed={cam==="side"} onClick={()=>setCam("side")}>Side</button><button data-testid="camera-3d-btn" aria-pressed={cam==="chase"} onClick={()=>setCam("chase")}>3D</button><button data-testid="camera-fit-btn" onClick={()=>setViewCommand(v=>v+1)}>Focus</button></div>}
-      {phase==="flight"&&s?.guidance&&!cockpitMenu&&!showEngineering&&<output className="flight-guidance-note" data-testid="guidance-flight-note">{s.guidanceHoldReason?"Waiting for thrust":({vertical:"Vertical ascent",pitchover:"Gentle pitch-over",gravityTurn:"Gravity turn",ascent:"Building orbital speed",insert:"Orbit correction",done:"Orbit complete · holding"}[s.guidancePhase]||"Guidance active")}</output>}
+      {phase==="flight"&&s?.guidance&&cam!=="map"&&!s.hasNode&&!cockpitMenu&&!showEngineering&&<output className="flight-guidance-note" data-testid="guidance-flight-note">{s.guidanceHoldReason?"Waiting for thrust":({vertical:"Vertical ascent",pitchover:"Gentle pitch-over",gravityTurn:"Gravity turn",ascent:"Building orbital speed",insert:"Orbit correction",done:"Orbit complete · holding"}[s.guidancePhase]||"Guidance active")}</output>}
+      {phase === "flight" && s && (cam === "map" || s.hasNode) && <aside className="flight-map-planner" data-testid="flight-map-planner">
+        <details>
+          <summary>Transfer & encounters</summary>
+          {simRef.current.eph && <button className="ui-button" data-testid="map-focus-encounter" aria-pressed={mapOverview} onClick={()=>{setMapOverview(v=>!v);setViewCommand(v=>v+1);}}>{mapOverview ? 'Follow local orbit' : 'Earth–Moon overview'}</button>}
+          <p className="map-path-legend">Blue: current coast · Orange: planned burn · Purple: closest Moon approach</p>
+          {simRef.current.eph ? <div data-testid="map-encounter-status">
+            {mapPrediction?.closest ? <p>{mapPrediction.planned ? "After planned burn" : "Current coast"}: {mapPrediction.closest.altitude < 0 ? "Predicted Moon impact" : mapPrediction.closest.encounter ? "Moon encounter" : "No Moon encounter in forecast"}. Closest sampled altitude {(mapPrediction.closest.altitude/1000).toFixed(0)} km, in {Math.max(0,(mapPrediction.closest.t-s.t)/3600).toFixed(1)} h.</p> : <p>Open the orbit map to calculate a Moon approach forecast.</p>}
+            <p data-testid="map-transfer-window">{simRef.current.node ? `Planned departure in ${Math.max(0,simRef.current.node.t-s.t).toFixed(0)} s. Burn start is adjusted for engine duration by guidance.` : "Transfer window: reach a parking orbit, then use Trans-lunar injection to search the next departure opportunity."}</p>
+          </div> : <p>Earth-orbit mission: use an apsis maneuver below. Moon transfers are available in lunar missions; interplanetary windows are in the exploration map.</p>}
+          {s.clamped ? <p>Launch and establish a parking orbit before planning a transfer.</p> : <ManeuverPanel s={s} sim={simRef.current} mission={mission} targetAlt={mission.target.altitude} onWarpTo={()=>setWarp(20000)}/>}
+          <p>Coast-only numerical forecast. A purple closest-approach marker is not a guaranteed encounter; thrust or staging invalidates the previous forecast.</p>
+        </details>
+      </aside>}
       {s?.heat&&g.settings.touchControls==="off"&&<aside className="standalone-heat"><HeatGauge heat={s.heat}/></aside>}
       {s && (
         <div
@@ -718,19 +735,6 @@ export default function Flight() {
                 />
               )}
             </div>
-            {(cam === "map" || s.hasNode) &&
-              s.status !== "prelaunch" &&
-              !s.clamped && (
-                <div className="flight-maneuver">
-                  <ManeuverPanel
-                    s={s}
-                    sim={simRef.current}
-                    mission={mission}
-                    targetAlt={mission.target.altitude}
-                    onWarpTo={() => setWarp(20000)}
-                  />
-                </div>
-              )}
             <div className="flight-propulsion">
               <PropulsionPanel
                 s={s}
