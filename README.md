@@ -30,6 +30,10 @@ key remapping, themes, local-save recovery and prepared offline play.
 
 ![Rocket construction](docs/images/builder-engine-detail-phone.png)
 
+## Mission Design Studio
+
+Plan an Earth, Moon or Mars science mission; balance spacecraft, launch and operations budgets; simulate power, eclipses, observations and downlink; and explain the science actually returned. Play solo or with up to four teammates sharing a device. Save locally, compare designs, export reports and share design files or links. No server or account is needed. [Studio guide and model assumptions](docs/mission-design-studio.md).
+
 ## Run locally
 
 Use Node.js 24 and npm:

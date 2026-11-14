@@ -99,6 +99,7 @@ export default function MainMenu() {
           g.go('flight');
         }}><Play size={19}/>Quick First Orbit<small>Ready to fly</small></button></div>
           <div className="home-feature-grid">
+            <button data-testid="menu-mission-design" onClick={()=>g.go('missionDesign')}><Compass size={23}/><strong>Mission Design Studio</strong><small>Design, operate and return science · solo or local team</small></button>
             <button data-testid="menu-academy" onClick={()=>g.go('academy')}><Rocket size={23}/><strong>Flight Academy</strong><small>Your first orbit, step by step</small></button>
             <button data-testid="menu-data-explorer" onClick={()=>g.go('data')}><Compass size={23}/><strong>NASA Data Explorer</strong><small>The science behind your flight</small></button>
             <button data-testid="menu-sandbox-btn" onClick={()=>g.go('sandbox')}><FlaskConical size={23}/><strong>Sandbox Lab</strong><small>Experiment on your own terms</small></button>

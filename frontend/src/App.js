@@ -1,3 +1,4 @@
+import MissionDesign from './pages/MissionDesign';
 import Academy from './pages/Academy';
 import NASADataExplorer from './pages/NASADataExplorer';
 import ModelComparison from './pages/ModelComparison';
@@ -32,6 +33,7 @@ import "./map-planner.css";
 import "./builder.css";
 
 const SCREENS = {
+  missionDesign: MissionDesign,
   academy:Academy, data:NASADataExplorer, comparison:ModelComparison,
   challenges:Challenges,
   logbook:Logbook,

@@ -53,3 +53,7 @@ Use `npm run` to list all checks. Tests include finite scenario matrices,
 construction, numerical references, persistence, responsive layouts and offline
 recovery. Physical-device ergonomics, thermal throttling and graphics-driver
 compatibility require direct testing on the hosted game.
+
+## Mission Design Studio
+
+`npm run test:mission-design` exercises the science-mission operations model and design validation. With the production server and isolated browser above running, `npm run test:mission-design:ui` covers scenarios, local teams, reports, import/export, share links and mobile layouts.

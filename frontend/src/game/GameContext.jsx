@@ -19,7 +19,15 @@ export const useGame = () => useContext(GameCtx);
 
 export function GameProvider({ children }) {
   const [auto] = useState(() => storage.autosave());
-  const [screen, setScreen] = useState("menu");
+  const [screen, setScreen] = useState(() => window.location.hash.startsWith("#mission=") ? "missionDesign" : "menu");
+  useEffect(() => {
+    const openSharedMission = event => {
+      if (window.location.hash.startsWith('#mission=')) setScreen('missionDesign');
+      else if (new URL(event.oldURL).hash.startsWith('#mission=')) setScreen('menu');
+    };
+    window.addEventListener('hashchange', openSharedMission);
+    return () => window.removeEventListener('hashchange', openSharedMission);
+  }, []);
   const [difficulty, setDifficulty] = useState(
     DIFFICULTIES[auto?.difficulty] ? auto.difficulty : "amateur",
   );

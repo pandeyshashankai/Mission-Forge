@@ -1,4 +1,4 @@
-export const NAV_COMMANDS = [{
+export const NAV_COMMANDS = [{id: 'missionDesign', label: 'Mission Design Studio', hint: 'Science objectives, spacecraft budgets, operations, sharing and local teams'}, {
   id: 'menu',
   label: 'Home',
   hint: 'Start or recover a flight'

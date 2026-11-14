@@ -1,0 +1,33 @@
+.mission-studio {height:100%; overflow-y:auto; color:var(--ui-text); background:var(--ui-bg); padding:clamp(16px,3vw,40px); padding-bottom:calc(40px + env(safe-area-inset-bottom)); line-height:1.6;}
+.mission-studio-header {display:flex; align-items:center; gap:20px; flex-wrap:wrap;}
+.mission-studio h1 {font-size:clamp(24px,4vw,38px); font-weight:700;}
+.mission-studio h2 {font-size:22px; font-weight:650; margin:0 0 12px;}
+.mission-studio h3 {font-size:17px; font-weight:650; margin-top:16px;}
+.mission-studio p {margin:12px 0; max-width:100ch;}
+.mission-studio section {border:1px solid #71809b55; border-radius:16px; padding:clamp(14px,2vw,24px); margin:20px 0; min-width:0;}
+.mission-studio-grid {display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px;}
+.mission-studio label {display:flex; flex-direction:column; gap:6px; margin:14px 0; font-weight:600;}
+.mission-studio input:not([type=checkbox]), .mission-studio select {width:100%; min-width:0; max-width:100%; min-height:44px; border:1px solid #71809b88; border-radius:8px; padding:8px; background:var(--ui-input); color:inherit;}
+.mission-studio small {font-size:12px; font-weight:400; overflow-wrap:anywhere;}
+.mission-studio fieldset {min-width:0;}
+.mission-studio fieldset:disabled {opacity:.7;}
+.mission-studio .mission-approval {flex-direction:row; align-items:center; gap:12px; min-height:44px;}
+.mission-approval input {width:22px; height:22px; flex-shrink:0;}
+.mission-studio ul {list-style:disc; padding-left:22px;}
+.mission-studio li {margin:8px 0;}
+.mission-actions {display:flex; flex-wrap:wrap; gap:10px; margin:16px 0;}
+.mission-studio .ui-button {min-height:44px; white-space:normal;}
+.mission-studio button:disabled {opacity:.5; cursor:not-allowed;}
+.mission-studio a {color:var(--ui-accent); text-decoration:underline;}
+.mission-metrics {display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px;}
+.mission-metric {display:flex; flex-direction:column; padding:12px; background:#71809b18; border-radius:10px; overflow-wrap:anywhere;}
+.mission-metric span {font-size:13px;}
+.mission-metric meter, .mission-studio progress {width:100%; height:12px; margin-top:8px;}
+.mission-error {border-left:4px solid #fb927d; padding:12px; background:#fa70551a;}
+.mission-note {font-size:14px;}
+.mission-table-scroll {overflow-x:auto; max-height:350px;}
+.mission-studio table {border-collapse:collapse; width:100%; text-align:left;}
+.mission-studio th,.mission-studio td {padding:10px; border-bottom:1px solid #71809b55;}
+.mission-studio summary {cursor:pointer; padding:12px 0;}
+.mission-studio :focus-visible {outline:2px solid #72bfff; outline-offset:3px;}
+@media(max-width:760px) {.mission-studio-grid {grid-template-columns:minmax(0,1fr); gap:0;}.mission-metrics {grid-template-columns:minmax(0,1fr);}}

@@ -1,3 +1,4 @@
+import { validateLibrary } from '../features/missionDesign/library';
 import {validateFlightThermal} from '../sim/flightThermal';
 import {validMounts} from "../sim/assemblyLayout";
 import {hangarCraft} from '../sim/hangarCraft';
@@ -51,6 +52,7 @@ export function validateArchive(entries) {
   };
   for (const [key, value] of entries) {
     const d = JSON.parse(value);
+    if (key === 'mf.mission-design') validateLibrary(d);
     if (key === 'mf.autosave') {
       craft(d?.design);
       if (!missionIds.has(d.missionId)) throw Error('Unknown autosaved mission');

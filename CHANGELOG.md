@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-11-14 — complete science mission design
+
+- Add browser-only Earth, Moon and Mars science missions with spacecraft selection, connected budgets and launch compatibility checks.
+- Simulate eclipse power, battery state, observations, data storage, downlink and science return with explanatory reports and hourly telemetry.
+- Add up to four shared-device team roles, local design libraries, comparison, file sharing and direct mission links.
+- Label hardware assumptions and cite NASA/JPL references; add core and browser regression coverage.
+
 ## 2026-11-07 — clear mobile flight views
 
 - Reserve a real camera window above/beside the primary touch controls, keeping spacecraft centred in the unobstructed area.
